@@ -19,6 +19,11 @@ categoryName = 'كهرباء';
 
   toggleSidebar() {
     this.showSidebar = !this.showSidebar;
+    if (this.showSidebar) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 
   changePageSize(event: any) {
