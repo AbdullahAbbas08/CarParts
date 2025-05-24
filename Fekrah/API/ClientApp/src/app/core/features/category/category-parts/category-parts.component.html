@@ -1,4 +1,5 @@
 <div class="category-parts-page" [class.shifted]="showSidebar">
+  <div class="sidebar-overlay" *ngIf="showSidebar" (click)="toggleSidebar()"></div>
 
   <!-- ✅ Header ثابت ويتحرك عند فتح الفلتر -->
   <header class="header">
