@@ -12,7 +12,10 @@ import { registerLocaleData } from '@angular/common';
 import localeAr from '@angular/common/locales/ar';
 import { EnhancedSearchComponent } from './Shared/components/enhanced-search/enhanced-search.component';
 import { PartsFilterComponent } from './Shared/components/parts-filter/parts-filter.component';
-
+import { API_BASE_URL,SwaggerClient } from './Shared/Services/Swagger/SwaggerClient.service';
+import { environment } from 'src/environments/environment';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HeaderInterceptor } from './Shared/Services/header.interceptor';
 registerLocaleData(localeAr);
 
 @NgModule({
@@ -38,7 +41,18 @@ registerLocaleData(localeAr);
     EnhancedSearchComponent,
     PartsFilterComponent
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'ar-EG' }
+  providers: [  
+        {
+      provide: API_BASE_URL,
+      useValue: environment.BASE_URL
+    },
+      {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HeaderInterceptor,
+      multi: true
+    },
+    SwaggerClient,
+    { provide: LOCALE_ID, useValue: 'ar-EG' }
   ],
   bootstrap: [AppComponent]
 })
