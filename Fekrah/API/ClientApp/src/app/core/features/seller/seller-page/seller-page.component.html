@@ -8,7 +8,7 @@
           <i class="fas fa-store"></i>
         </div>
         <div class="seller-details">
-          <h1>مؤسسة قطع غيار السيارات الأصلية</h1>
+          <h1>{{sellerDetails.shopName}}</h1>
 
           <!-- <div class="seller-badges">
                       <div class="badge">
@@ -25,20 +25,20 @@
                       </div>
                   </div> -->
 
-          <div class="rating">
-            <div class="stars">
-              <i class="fas fa-star star"></i>
-              <i class="fas fa-star star"></i>
-              <i class="fas fa-star star"></i>
-              <i class="fas fa-star star"></i>
-              <i class="fas fa-star star"></i>
-            </div>
-            <span class="rating-text">(4.8/5) • 247 تقييم</span>
-          </div>
+       <div class="rating">
+  <div class="stars">
+    <ng-container *ngFor="let star of ratingStars">
+      <i
+        class="fas fa-star star"
+        [ngClass]="star === 1 ? 'active-star' : 'inactive-star'"
+      ></i>
+    </ng-container>
+  </div>
+  <span class="rating-text">({{ sellerDetails.rating }}/5)</span>
+</div>
 
           <p class="seller-description">
-            متخصصون في بيع قطع الغيار الأصلية والمستعملة للسيارات الأوروبية واليابانية والكورية بأفضل الأسعار في السوق
-            المصري مع ضمان جودة المنتج
+            {{sellerDetails.description}}
           </p>
 
           <!-- <div class="seller-meta">

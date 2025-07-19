@@ -22,7 +22,10 @@ button {
   font-weight: 400;
   box-sizing: border-box;
 }
-
+.no-scroll {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
 * {
   user-select: none;
   -webkit-user-select: none;

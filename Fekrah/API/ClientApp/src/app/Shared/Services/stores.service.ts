@@ -67,7 +67,7 @@ export class StoresService {
   public stores$ = this.storesSubject.asObservable();
 
   constructor(private http: HttpClient, private sellersSwagger: SwaggerClient) {
-    this.loadInitialStores();
+    // this.loadInitialStores();
   }
 
   /**

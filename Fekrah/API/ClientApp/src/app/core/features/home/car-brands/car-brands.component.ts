@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { CarsModelDto, DataSourceResultOfCarsModelDto, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { LoaderService } from '../../../../Shared/Services/Loader.service';
 
 @Component({
   selector: 'app-car-brands',
@@ -8,32 +10,10 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules';
   styleUrls: ['./car-brands.component.scss']
 })
 export class CarBrandsComponent implements OnInit {
-  carBrands = [
-    { id: 1, name: 'تويوتا', logo: 'assets/images/image_100_100.png' },
-    { id: 2, name: 'هيونداي', logo: 'assets/images/image_100_100.png' },
-    { id: 3, name: 'نيسان', logo: 'assets/images/image_100_100.png' },
-    { id: 4, name: 'شيفروليه', logo: 'assets/images/image_100_100.png' },
-    { id: 5, name: 'كيا', logo: 'assets/images/image_100_100.png' },
-    { id: 1, name: 'تويوتا', logo: 'assets/images/image_100_100.png' },
-    { id: 2, name: 'هيونداي', logo: 'assets/images/image_100_100.png' },
-    { id: 3, name: 'نيسان', logo: 'assets/images/image_100_100.png' },
-    { id: 4, name: 'شيفروليه', logo: 'assets/images/image_100_100.png' },
-    { id: 5, name: 'كيا', logo: 'assets/images/image_100_100.png' },
-    { id: 1, name: 'تويوتا', logo: 'assets/images/image_100_100.png' },
-    { id: 2, name: 'هيونداي', logo: 'assets/images/image_100_100.png' },
-    { id: 3, name: 'نيسان', logo: 'assets/images/image_100_100.png' },
-    { id: 4, name: 'شيفروليه', logo: 'assets/images/image_100_100.png' },
-    { id: 5, name: 'كيا', logo: 'assets/images/image_100_100.png' },
-    { id: 1, name: 'تويوتا', logo: 'assets/images/image_100_100.png' },
-    { id: 2, name: 'هيونداي', logo: 'assets/images/image_100_100.png' },
-    { id: 3, name: 'نيسان', logo: 'assets/images/image_100_100.png' },
-    { id: 4, name: 'شيفروليه', logo: 'assets/images/image_100_100.png' },
-    { id: 5, name: 'كيا', logo: 'assets/images/image_100_100.png' },
-    // أكمل باقي الماركات
-  ];
-
+  carBrands:CarsModelDto[] = [];
+  constructor(private swagger: SwaggerClient,private loaderService: LoaderService) {}
   ngOnInit() {
-    new Swiper('.swiper', {
+                     new Swiper('.swiper', {
       modules: [Navigation, Pagination, Autoplay],
       slidesPerView: 'auto',
       spaceBetween: 2,
@@ -72,7 +52,16 @@ export class CarBrandsComponent implements OnInit {
       }
 
     });
+    this.getAllCarBrands();
 
-
+  }
+  getAllCarBrands(){
+          this.loaderService.show(); 
+        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfCarsModelDto) => {
+        if(res){
+           this.carBrands = res.data;
+           this.loaderService.hide(); 
+        }
+    })
   }
 }

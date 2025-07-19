@@ -1,3 +1,4 @@
+
 // featured-stores.component.ts
 import {
   Component,
@@ -10,10 +11,12 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { StoresService } from 'src/app/Shared/Services/stores.service';
+
 import { BehaviorSubject, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import Swiper from 'swiper';
+import { StoresService } from '../../../../Shared/Services/stores.service';
+import { LoaderService } from '../../../../Shared/Services/Loader.service';
 
 export interface Seller {
   id: number;
@@ -24,6 +27,7 @@ export interface Seller {
   isTrusted: boolean;
   rating?: number;
   reviewsCount?: number;
+  sellerCategories?:[{id: number, name: string}];
 }
 
 @Component({
@@ -51,7 +55,8 @@ export class FeaturedStoresComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(
     private storesService: StoresService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -68,27 +73,27 @@ export class FeaturedStoresComponent implements OnInit, AfterViewInit, OnDestroy
 
   loadFeaturedStores(): void {
     this.loadingSubject.next(true);
-
+    this.loaderService.show();
     this.storesService.getFeaturedStores(8)
       .pipe(
         finalize(() => this.loadingSubject.next(false))
       )
       .subscribe({
         next: (stores: any[]) => {
+        this.loaderService.hide(); 
           const sellers = stores.map(store => ({
-            id: store.id,
+            id: store.sellerId,
             name: store.shopName,
-            imageUrl: store.imageUrl || 'assets/images/default-store-logo.png',
+            imageUrl: store.imageUrl || 'assets/images/image100_100.png',
             location: store.location,
             category: store.arabicSpecialties?.[0] || 'قطع غيار',
             isTrusted: store.isVerified || true,
             rating: store.rating,
-            reviewsCount: store.reviewsCount
+            reviewsCount: store.reviewsCount,
+            sellerCategories:store.sellerCategories || []
           }));
-           console.log(sellers)
           this.sellersSubject.next(sellers);
           this.showViewMore = sellers.length >= 6;
-
           // Update swiper after data is loaded
           if (this.swiperInitialized) {
             setTimeout(() => this.swiper?.update(), 50);
@@ -171,8 +176,8 @@ export class FeaturedStoresComponent implements OnInit, AfterViewInit, OnDestroy
   // Pre-bound methods to avoid template function calls
   onImageError = (event: Event): void => {
     const target = event.target as HTMLImageElement;
-    if (target.src !== 'assets/images/default-store-logo.png') {
-      target.src = 'assets/images/default-store-logo.png';
+    if (target.src !== 'assets/images/image100_100.png') {
+      target.src = 'assets/images/image100_100.png';
     }
   };
 
@@ -194,6 +199,7 @@ export class FeaturedStoresComponent implements OnInit, AfterViewInit, OnDestroy
 
   // Helper method to get star class
   getStarClass(star: number, rating: number): string {
+    console.log(star, rating);
     return star <= rating ? 'fas fa-star active' : 'fas fa-star';
   }
 

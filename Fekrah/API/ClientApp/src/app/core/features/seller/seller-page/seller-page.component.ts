@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CarPart } from '../../../../Shared/Models/car-card';
+import { ActivatedRoute } from '@angular/router';
+import { SellerDto, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 type FilterKey = 'brands' | 'models' | 'years' | 'types' | 'categories' | 'condition';
 
@@ -219,12 +221,23 @@ export class SellerPageComponent implements OnInit {
     { key: 'categories', title: 'الفئة', icon: 'fa-list' },
     { key: 'condition', title: 'الحالة', icon: 'fa-check-circle' }
   ];
-
+  sellerId: number | undefined = undefined;
+  sellerDetails:SellerDto = new SellerDto();
+  constructor(private route: ActivatedRoute,private swagger:SwaggerClient) {}
   ngOnInit(): void {
+    this.sellerId = Number(this.route.snapshot.paramMap.get('id'));
+    this.getsellerById()
     this.initializeFilters();
     this.filteredProducts = [...this.sellerProducts];
   }
-
+  getsellerById(){
+    this.swagger.apiSellersGetDetailsGet(this.sellerId).subscribe((res) => {
+      if(res) {
+        this.sellerDetails = res;
+        this.updateRatingStars(this.sellerDetails.rating);
+      }
+    });
+  }
   private initializeFilters(): void {
     const brands = new Set<string>();
     const models = new Set<string>();
@@ -249,7 +262,17 @@ export class SellerPageComponent implements OnInit {
     this.availableCategories = Array.from(categories);
     this.availableConditions = Array.from(conditions);
   }
+  ratingStars: number[] = [];
 
+updateRatingStars(rating: number): void {
+  const fullStars = Math.floor(rating); // عدد النجوم المضيئة
+  const emptyStars = 5 - fullStars;     // عدد النجوم الفارغة
+
+  this.ratingStars = [
+    ...Array(fullStars).fill(1),   // 1 تمثل نجمة مضيئة
+    ...Array(emptyStars).fill(0)   // 0 تمثل نجمة مطفية
+  ];
+}
   toggleFilterSection(sectionKey: string): void {
     this.activeFilterSection = this.activeFilterSection === sectionKey ? '' : sectionKey;
   }

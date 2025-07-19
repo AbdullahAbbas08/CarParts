@@ -2,7 +2,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs/operators';
+import { StoresService } from '../../../../Shared/Services/stores.service';
 
 export interface Store {
   id: number;
@@ -136,7 +137,7 @@ export class AllStoresComponent implements OnInit, OnDestroy {
     { value: 'establishedYear', label: 'سنة التأسيس' }
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private storesService: StoresService) { }
 
   ngOnInit(): void {
     this.initializeComponent();
@@ -189,20 +190,32 @@ export class AllStoresComponent implements OnInit, OnDestroy {
     
     // Simulate API call with enhanced mock data
     setTimeout(() => {
-      this.stores = [
-        {
-          id: 1,
-          arabicName: 'أوتوزون مصر',
-          description: 'Leading auto parts retailer',
-          arabicDescription: 'أكبر متجر لقطع غيار السيارات مع تشكيلة واسعة من المنتجات عالية الجودة',
-          logo: 'assets/images/image_100_100.png',
-          rating: 4.5,
-          reviewsCount: 250,
-          location: 'Cairo, Egypt',
-          arabicLocation: 'القاهرة، مصر',
-          isVerified: true,
-          isFeatured: true,
-          arabicSpecialties: ['قطع المحرك', 'الفرامل', 'الكهرباء', 'الإطارات'],
+      //    this.storesService.getFeaturedStores(8)
+      // .pipe(
+      //   finalize(() =>    this.isLoading = false)
+      // )
+      // .subscribe({
+      //   next: (stores: any[]) => {
+
+      //   },
+      //   error: (error) => {
+      //    this.filteredStores = [];
+      //   }
+      // });
+    this.storesService.getFeaturedStores(8).subscribe((res:any) => {
+         this.filteredStores = res.map((store:any) => ({
+          id: store.sellerId,
+          arabicName: store.shopName,
+          description: store.description,
+          arabicDescription: store.description,
+          logo:  store.imageUrl || 'assets/images/image100_100.png',
+          rating: store.rating,
+          reviewsCount: store.reviewsCount,
+          location: store.location,
+          arabicLocation: store.location,
+          isVerified: store.isVerified || true,
+          isFeatured:true,
+          arabicSpecialties: store.sellerCategories ? store.sellerCategories.map((category:any) => category.name) : [],
           openingHours: '9:00 AM - 10:00 PM',
           arabicOpeningHours: '9:00 ص - 10:00 م',
           productsCount: 1500,
@@ -212,124 +225,8 @@ export class AllStoresComponent implements OnInit, OnDestroy {
           phone: '+20123456789',
           email: 'info@autozone.com',
           website: 'www.autozone-egypt.com'
-        },
-        {
-          id: 2,
-          arabicName: 'برو قطع الغيار',
-          description: 'Quality spare parts specialist',
-          arabicDescription: 'متخصص في قطع الغيار عالية الجودة للسيارات الأوروبية والآسيوية',
-          logo: 'assets/images/image_100_100.png',
-          rating: 4.2,
-          reviewsCount: 180,
-          location: 'Alexandria, Egypt',
-          arabicLocation: 'الإسكندرية، مصر',
-          isVerified: true,
-          isFeatured: false,
-          arabicSpecialties: ['الإطارات', 'نظام التعليق', 'قطع الهيكل'],
-          openingHours: '8:00 AM - 9:00 PM',
-          arabicOpeningHours: '8:00 ص - 9:00 م',
-          productsCount: 800,
-          establishedYear: 2015,
-          tags: ['tires', 'body'],
-          arabicTags: ['إطارات', 'هيكل'],
-          phone: '+20123456790',
-          email: 'sales@prospareparts.com'
-        },
-        {
-          id: 3,
-          arabicName: 'عالم الموتور',
-          description: 'Complete automotive solutions',
-          arabicDescription: 'حلول شاملة للسيارات مع خدمة العملاء المميزة والاستشارات الفنية',
-          logo: 'assets/images/image_100_100.png',
-          rating: 4.7,
-          reviewsCount: 320,
-          location: 'Giza, Egypt',
-          arabicLocation: 'الجيزة، مصر',
-          phone: '+20123456791',
-          email: 'info@motorworld.com',
-          website: 'www.motorworld.com',
-          isVerified: true,
-          isFeatured: true,
-          arabicSpecialties: ['جميع الفئات', 'خدمة الاستيراد', 'القطع الأصلية'],
-          openingHours: '7:00 AM - 11:00 PM',
-          arabicOpeningHours: '7:00 ص - 11:00 م',
-          productsCount: 2500,
-          establishedYear: 2008,
-          tags: ['engine', 'brakes', 'electrical', 'tires', 'body', 'accessories'],
-          arabicTags: ['محرك', 'فرامل', 'كهرباء', 'إطارات', 'هيكل', 'إكسسوارات']
-        },
-        {
-          id: 4,
-          arabicName: 'خبراء الفرامل',
-          description: 'Brake system specialists',
-          arabicDescription: 'متخصصون في أنظمة الفرامل مع ضمان الجودة والأمان',
-          logo: 'assets/images/image_100_100.png',
-          rating: 4.3,
-          reviewsCount: 95,
-          location: 'Mansoura, Egypt',
-          arabicLocation: 'المنصورة، مصر',
-          phone: '+20123456792',
-          email: 'sales@brakemasters.com',
-          website: 'www.brakemasters.com',
-          isVerified: false,
-          isFeatured: false,
-          arabicSpecialties: ['تيل الفرامل', 'أقراص الفرامل', 'زيت الفرامل'],
-          openingHours: '9:00 AM - 8:00 PM',
-          arabicOpeningHours: '9:00 ص - 8:00 م',
-          productsCount: 150,
-          establishedYear: 2018,
-          tags: ['brakes'],
-          arabicTags: ['فرامل']
-        },
-        {
-          id: 5,
-          arabicName: 'الكترو أوتو',
-          description: 'Automotive electrical specialist',
-          arabicDescription: 'متخصص في كهرباء السيارات والأنظمة الإلكترونية الحديثة',
-          logo: 'assets/images/image_100_100.png',
-          rating: 4.1,
-          reviewsCount: 140,
-          location: 'Aswan, Egypt',
-          arabicLocation: 'أسوان، مصر',
-          phone: '+20123456793',
-          email: 'info@electroauto.com',
-          website: 'www.electroauto.com',
-          isVerified: true,
-          isFeatured: false,
-          arabicSpecialties: ['البطاريات', 'الدينامو', 'المارش', 'الأنظمة الذكية'],
-          openingHours: '8:30 AM - 9:30 PM',
-          arabicOpeningHours: '8:30 ص - 9:30 م',
-          productsCount: 450,
-          establishedYear: 2012,
-          tags: ['electrical'],
-          arabicTags: ['كهرباء']
-        },
-        {
-          id: 6,
-          arabicName: 'مملكة الإطارات',
-          description: 'Premium tire retailer',
-          arabicDescription: 'متجر الإطارات المميز مع أحدث التقنيات وخدمة التركيب',
-          logo: 'assets/images/image_100_100.png',
-          rating: 4.6,
-          reviewsCount: 220,
-          location: 'Luxor, Egypt',
-          arabicLocation: 'الأقصر، مصر',
-          phone: '+20123456794',
-          email: 'sales@tirekingdom.com',
-          website: 'www.tirekingdom.com',
-          isVerified: true,
-          isFeatured: true,
-          arabicSpecialties: ['إطارات السيارات', 'إطارات الشاحنات', 'خدمة الإطارات', 'الجنوط'],
-          openingHours: '7:00 AM - 10:00 PM',
-          arabicOpeningHours: '7:00 ص - 10:00 م',
-          productsCount: 600,
-          establishedYear: 2014,
-          tags: ['tires'],
-          arabicTags: ['إطارات']
-        }
-      ];
-      
-      this.filteredStores = [...this.stores];
+          }));
+    });
       this.isLoading = false;
       this.sortStores();
     }, 1000);
