@@ -11,7 +11,9 @@ namespace Data.DTOs
         public string ConditionName { get; set; }
         public string ImageUrl { get; set; }
         public int SellerId { get; set; }
-        public int CategoryId { get; set; } // Added
+        public string SellerName { get; set; }
+        public int CategoryId { get; set; } 
+        public string CategoryName { get; set; } 
         public int? CarModelId { get; set; } 
         public string? CarModelName { get; set; } 
     }

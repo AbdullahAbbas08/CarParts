@@ -16,5 +16,6 @@ namespace Data.DTOs
         public string CityName { get; set; }
         public bool IsFavoritSeller { get; set; }
         public ICollection<SellerCategoryDto> SellerCategories { get; set; }
+        public ICollection<PartDto> Parts { get; set; }
     }
 }

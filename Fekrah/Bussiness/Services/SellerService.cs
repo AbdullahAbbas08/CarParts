@@ -60,12 +60,19 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
     public override SellerDto GetById(object id)
     {
         var user = _UnitOfWork.Repository<User>()
-            .GetAll()
-            .Include(s => s.Seller)
-            .ThenInclude(s => s.SellerCategories)
-            .FirstOrDefault(s => s.Id == (int)id &&
-                        s.IsActive &&
-                        s.UserType == UserTypeEnum.Seller);
+         .GetAll()
+         .Include(s => s.Seller)
+             .ThenInclude(s => s.SellerCategories)
+         .Include(s => s.Seller)
+             .ThenInclude(s => s.Parts)
+                 .ThenInclude(p => p.Category)
+         .Include(s => s.Seller)
+             .ThenInclude(s => s.Parts)
+                 .ThenInclude(p => p.CarsModel)
+          .AsSplitQuery()
+         .FirstOrDefault(s => s.Id == (int)id &&
+                                   s.IsActive &&
+                                   s.UserType == UserTypeEnum.Seller);
 
         if (user is null) return new SellerDto();
 
@@ -86,6 +93,22 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
             {
                 Id = c.Id,
                 Name = c.Name,
+            }).ToList(),
+            Parts = user?.Seller?.Parts.Select(p => new PartDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl,
+                Condition = p.Condition,
+                ConditionName = Enum.GetName(p.Condition),
+                SellerId = p.SellerId,
+                SellerName = user.Seller.ShopName,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                CarModelId = p.CarsModelId,
+                CarModelName = p.CarsModel.Name
             }).ToList()
         };
     }

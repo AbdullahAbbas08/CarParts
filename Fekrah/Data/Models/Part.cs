@@ -14,7 +14,7 @@
 
     public int CarsModelId { get; set; }
     [ForeignKey(nameof(CarsModelId))]
-    public virtual CarsModel CarsModel { get; set; }
+    public CarsModel CarsModel { get; set; }
 
     public virtual ICollection<Offer> Offers { get; set; }
 
