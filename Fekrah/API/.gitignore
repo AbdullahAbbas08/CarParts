@@ -229,6 +229,11 @@ _pkginfo.txt
 # but keep track of directories ending in .cache
 !?*.[Cc]ache/
 
+
+# Ignore bin and debug folders
+**/bin/
+**/debug/
+
 # Others
 ClientBin/
 ~$*

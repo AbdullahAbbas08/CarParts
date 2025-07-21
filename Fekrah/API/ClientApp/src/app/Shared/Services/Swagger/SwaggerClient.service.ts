@@ -2337,9 +2337,7 @@ export class PartDto implements IPartDto {
     conditionName!: string;
     imageUrl!: string;
     sellerId!: number;
-    sellerName!: string;
     categoryId!: number;
-    categoryName!: string;
     carModelId?: number | undefined;
     carModelName?: string | undefined;
 
@@ -2362,9 +2360,7 @@ export class PartDto implements IPartDto {
             this.conditionName = _data["conditionName"];
             this.imageUrl = _data["imageUrl"];
             this.sellerId = _data["sellerId"];
-            this.sellerName = _data["sellerName"];
             this.categoryId = _data["categoryId"];
-            this.categoryName = _data["categoryName"];
             this.carModelId = _data["carModelId"];
             this.carModelName = _data["carModelName"];
         }
@@ -2387,9 +2383,7 @@ export class PartDto implements IPartDto {
         data["conditionName"] = this.conditionName;
         data["imageUrl"] = this.imageUrl;
         data["sellerId"] = this.sellerId;
-        data["sellerName"] = this.sellerName;
         data["categoryId"] = this.categoryId;
-        data["categoryName"] = this.categoryName;
         data["carModelId"] = this.carModelId;
         data["carModelName"] = this.carModelName;
         return data;
@@ -2405,9 +2399,7 @@ export interface IPartDto {
     conditionName: string;
     imageUrl: string;
     sellerId: number;
-    sellerName: string;
     categoryId: number;
-    categoryName: string;
     carModelId?: number | undefined;
     carModelName?: string | undefined;
 }
@@ -2487,7 +2479,6 @@ export class SellerDto implements ISellerDto {
     cityName!: string;
     isFavoritSeller!: boolean;
     sellerCategories!: SellerCategoryDto[];
-    parts!: PartDto[];
 
     constructor(data?: ISellerDto) {
         if (data) {
@@ -2498,7 +2489,6 @@ export class SellerDto implements ISellerDto {
         }
         if (!data) {
             this.sellerCategories = [];
-            this.parts = [];
         }
     }
 
@@ -2520,11 +2510,6 @@ export class SellerDto implements ISellerDto {
                 this.sellerCategories = [] as any;
                 for (let item of _data["sellerCategories"])
                     this.sellerCategories!.push(SellerCategoryDto.fromJS(item));
-            }
-            if (Array.isArray(_data["parts"])) {
-                this.parts = [] as any;
-                for (let item of _data["parts"])
-                    this.parts!.push(PartDto.fromJS(item));
             }
         }
     }
@@ -2555,11 +2540,6 @@ export class SellerDto implements ISellerDto {
             for (let item of this.sellerCategories)
                 data["sellerCategories"].push(item.toJSON());
         }
-        if (Array.isArray(this.parts)) {
-            data["parts"] = [];
-            for (let item of this.parts)
-                data["parts"].push(item.toJSON());
-        }
         return data;
     }
 }
@@ -2578,7 +2558,6 @@ export interface ISellerDto {
     cityName: string;
     isFavoritSeller: boolean;
     sellerCategories: SellerCategoryDto[];
-    parts: PartDto[];
 }
 
 export class SellerCategoryDto implements ISellerCategoryDto {
