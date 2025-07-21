@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, delay } from 'rxjs/operators';
+import { DataSourceResultOfSellerDto, SwaggerClient } from './Swagger/SwaggerClient.service';
 
 export interface Store {
   id: number;
@@ -30,6 +31,8 @@ export interface Store {
   arabicTags: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  shopName?:string
+  phoneNumber?: string;
 }
 
 export interface StoreSearchParams {
@@ -42,10 +45,12 @@ export interface StoreSearchParams {
   limit?: number;
   featured?: boolean;
   verified?: boolean;
+    pageSize?:number;
+  searchTerm?:string;
 }
 
 export interface StoreSearchResponse {
-  stores: Store[];
+  stores: any[];
   total: number;
   page: number;
   totalPages: number;
@@ -61,38 +66,43 @@ export class StoresService {
   private storesSubject = new BehaviorSubject<Store[]>([]);
   public stores$ = this.storesSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.loadInitialStores();
+  constructor(private http: HttpClient, private sellersSwagger: SwaggerClient) {
+    // this.loadInitialStores();
   }
 
   /**
    * تحميل جميع المتاجر
    */
-  getAllStores(params?: StoreSearchParams): Observable<StoreSearchResponse> {
-    // في حالة عدم وجود API، نستخدم البيانات الوهمية
-    if (this.isUsingMockData()) {
+getAllStores(params?: StoreSearchParams): Observable<StoreSearchResponse> {
+  // if (this.isUsingMockData()) {
+  //   return this.getMockStores(params);
+  // }
+
+  return this.sellersSwagger.apiSellersGetAllGet(
+    params?.pageSize || 10,
+    params?.page || 1,
+    params?.searchTerm || ''
+  ).pipe(
+    map((response: DataSourceResultOfSellerDto): StoreSearchResponse => {
+      const total = response.count || 0;
+      const pageSize = params?.pageSize || 10;
+      const currentPage = params?.page || 1;
+      return {
+        stores: response.data || [],
+        total,
+        page: currentPage,
+        totalPages: Math.ceil(total / pageSize),
+        hasNext: currentPage * pageSize < total,
+        hasPrevious: currentPage > 1
+      };
+    }),
+
+    catchError(error => {
+      console.error('Error from Swagger API:', error);
       return this.getMockStores(params);
-    }
-
-    let httpParams = new HttpParams();
-    
-    if (params) {
-      Object.keys(params).forEach(key => {
-        const value = params[key as keyof StoreSearchParams];
-        if (value !== undefined && value !== null) {
-          httpParams = httpParams.set(key, value.toString());
-        }
-      });
-    }
-
-    return this.http.get<StoreSearchResponse>(`${this.apiUrl}`, { params: httpParams })
-      .pipe(
-        catchError(error => {
-          console.error('Error fetching stores:', error);
-          return this.getMockStores(params);
-        })
-      );
-  }
+    })
+  );
+}
 
   /**
    * البحث عن المتاجر
@@ -133,14 +143,14 @@ export class StoresService {
       featured: true,
       limit: limit,
       sortBy: 'rating',
-      sortOrder: 'desc'
+      sortOrder: 'desc',
+      page:1,
+      pageSize:limit
     };
-
     return this.getAllStores(params).pipe(
       map(response => response.stores)
     );
   }
-
   /**
    * الحصول على المتاجر الأحدث
    */

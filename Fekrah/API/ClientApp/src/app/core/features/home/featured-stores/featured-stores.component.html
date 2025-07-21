@@ -52,9 +52,9 @@
             </p>
 
             <!-- Category -->
-            <span class="seller-category"
-                  (click)="viewStoresByCategory(seller.category); $event.stopPropagation()">
-              {{ seller.category }}
+            <span *ngFor="let cat of seller.sellerCategories" class="seller-category"
+                  (click)="viewStoresByCategory(cat.name); $event.stopPropagation()">
+              {{ cat.name}}
             </span>
 
             <!-- Rating (if available) -->
@@ -62,7 +62,7 @@
               <div class="stars" [attr.aria-label]="'تقييم ' + seller.rating + ' من 5 نجوم'">
                 <i *ngFor="let star of starArray; trackBy: trackByIndex"
                    [class]="getStarClass(star, seller.rating!)"
-                   aria-hidden="true"></i>
+                  ></i>
               </div>
               <span class="rating-text">{{ seller.rating }} ({{ seller.reviewsCount }})</span>
             </div>

@@ -185,7 +185,7 @@
   border: 2px solid transparent;
   position: relative;
   transition: all 0.4s ease;
-
+  overflow: hidden;
   &:not(.hidden) {
     display: flex;
   }

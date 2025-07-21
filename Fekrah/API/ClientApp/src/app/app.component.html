@@ -1,5 +1,5 @@
 <!-- الحاوي الرئيسي للموقع مع إمكانية النقر للإغلاق -->
-<div class="app-container" [class.filter-active]="filtersOpened" (click)="onSiteClick($event)">
+<div class="app-container " [class.filter-active]="filtersOpened" (click)="onSiteClick($event)">
 
   <!-- ✅ Pre-Navbar مع بيانات المستخدم -->
   <app-pre-navbar
@@ -15,11 +15,12 @@
     [isFilterOpen]="filtersOpened"
     (toggleFilter)="toggleFilters()">
   </app-header>
-
+  <app-loader></app-loader>
   <!-- ✅ محتوى الصفحة الرئيسية -->
-  <main class="main-content">
-    <router-outlet></router-outlet>
-  </main>
+<main class="main-content position-relative">
+
+  <router-outlet></router-outlet>
+</main>
 
   <!-- ✅ الفوتر -->
   <app-footer></app-footer>

@@ -1,3 +1,4 @@
+
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,7 +13,12 @@ import { registerLocaleData } from '@angular/common';
 import localeAr from '@angular/common/locales/ar';
 import { EnhancedSearchComponent } from './Shared/components/enhanced-search/enhanced-search.component';
 import { PartsFilterComponent } from './Shared/components/parts-filter/parts-filter.component';
+import { API_BASE_URL,SwaggerClient } from './Shared/Services/Swagger/SwaggerClient.service';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HeaderInterceptor } from './Shared/Services/header.interceptor';
+import { LoaderComponent } from './Shared/components/loader/loader.component';
+import { environment } from '../environments/environment';
 registerLocaleData(localeAr);
 
 @NgModule({
@@ -22,7 +28,8 @@ registerLocaleData(localeAr);
     PromoTickerComponent,
     PreNavbarComponent,
     EnhancedSearchComponent,
-    PartsFilterComponent
+    PartsFilterComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +45,18 @@ registerLocaleData(localeAr);
     EnhancedSearchComponent,
     PartsFilterComponent
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'ar-EG' }
+  providers: [  
+        {
+      provide: API_BASE_URL,
+      useValue: environment.BASE_URL
+    },
+      {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HeaderInterceptor,
+      multi: true
+    },
+    SwaggerClient,
+    { provide: LOCALE_ID, useValue: 'ar-EG' }
   ],
   bootstrap: [AppComponent]
 })

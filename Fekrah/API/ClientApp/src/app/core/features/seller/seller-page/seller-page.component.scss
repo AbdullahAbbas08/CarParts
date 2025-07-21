@@ -1292,3 +1292,14 @@ input:invalid {
     visibility: visible;
   }
 }
+.star {
+  font-size: 20px;
+}
+
+.active-star {
+  color: #f39c12;
+}
+
+.inactive-star {
+  color: #ccc;
+}
