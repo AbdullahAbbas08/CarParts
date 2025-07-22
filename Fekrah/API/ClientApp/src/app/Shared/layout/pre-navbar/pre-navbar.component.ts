@@ -55,7 +55,7 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
 
   // Update component visibility
   updateVisibility(): void {
-    this.isVisible = this.isMerchant || this.isDriver;
+    this.isVisible =true// this.isMerchant || this.isDriver;
   }
 
   // Check if current route is active
