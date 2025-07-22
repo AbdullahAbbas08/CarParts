@@ -18,7 +18,7 @@ namespace Data.Models
         public int? SellerId { get; set; }
 
         [ForeignKey(nameof(SellerId))]
-        public virtual Seller? Seller { get; set; }
+        public virtual Merchant? Seller { get; set; }
 
         public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }

@@ -48,7 +48,7 @@ namespace Bussiness.Services
                     break;
 
                 case "sellers":
-                    result = _unitOfWork.Repository<Seller>()
+                    result = _unitOfWork.Repository<Merchant>()
                         .GetAll()
                         .Where(s => string.IsNullOrEmpty(searchTerm) || s.ShopName.Contains(searchTerm))
                         .Select(c => new LookupDTO
@@ -60,7 +60,7 @@ namespace Bussiness.Services
                 case "cities":
                     result = _unitOfWork.Repository<City>()
                         .GetAll()
-                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.NameAr.Contains(searchTerm) || s.NameEn.Contains(searchTerm))
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.NameAr.Contains(searchTerm) )
                         .Select(c => new LookupDTO
                         {
                             Id = c.Id,

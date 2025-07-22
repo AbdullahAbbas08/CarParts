@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Interfaces
 {
-    public interface ICityService : _IBusinessService<City, CityDto>
+    public interface ICityService : _IBusinessService<City, CityDTO>
     {
     }
 }

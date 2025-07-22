@@ -10,7 +10,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : _BaseController<User, UserDto>
+    public class AccountController : _BaseController<User, UserDTO>
     {
         private readonly IAccountService _accountService;
 

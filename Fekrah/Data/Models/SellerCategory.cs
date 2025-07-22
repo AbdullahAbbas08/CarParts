@@ -14,7 +14,7 @@ namespace Data.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int SellerId { get; set; }
-        public Seller Seller { get; set; }
+        public Merchant Seller { get; set; }
 
         public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }

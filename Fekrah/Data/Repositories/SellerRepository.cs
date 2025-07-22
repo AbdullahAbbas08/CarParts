@@ -2,7 +2,7 @@
 
 namespace Data.Repositories
 {
-    public class SellerRepository : GeneraicRepository<Seller>, ISellerRepository
+    public class SellerRepository : GeneraicRepository<Merchant>, ISellerRepository
     {
         public SellerRepository(DatabaseContext context, ISessionService sessionService) : base(context, sessionService)
         {

@@ -14,7 +14,7 @@ namespace Api.Services
         {
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IPartService, PartService>();
-            services.AddScoped<ISellerService, SellerService>();
+            services.AddScoped<ISellerService, MerchantService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILookupService, LookupService>();
             services.AddScoped<ICarsModelService, CarsModelService>();

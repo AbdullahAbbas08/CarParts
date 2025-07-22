@@ -14,11 +14,11 @@ namespace Bussiness.Profilers
         public ApplicationProfile()
         {
             CreateMap<Category, CategoryDto>().ReverseMap();
-            CreateMap<Seller, SellerDto>().ReverseMap();
-            CreateMap<Part, PartDto>().ReverseMap();
-            CreateMap<SellerCategory, SellerCategoryDto>().ReverseMap();
+            CreateMap<Merchant, MerchantDTO>().ReverseMap();
+            CreateMap<Part, PartDTO>().ReverseMap();
+            CreateMap<SellerCategory, SellerCategoryDTO>().ReverseMap();
             CreateMap<CarsModel, CarsModelDto>().ReverseMap();
-            CreateMap<City, CityDto>().ReverseMap();
+            CreateMap<City, CityDTO>().ReverseMap();
         }
     }
 }

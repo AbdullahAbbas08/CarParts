@@ -7,7 +7,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SellerCategoryController : _BaseController<SellerCategory, SellerCategoryDto>
+    public class SellerCategoryController : _BaseController<SellerCategory, SellerCategoryDTO>
     {
         public SellerCategoryController(ISellerCategoryService sellerCategoryService) : base(sellerCategoryService)
         {

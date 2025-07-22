@@ -10,6 +10,6 @@ namespace Data.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        ICollection<PartDto> Parts { get; set; }
+        ICollection<PartDTO> Parts { get; set; }
     }
 }
