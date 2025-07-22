@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.IRepositories
 {
-    public interface ISellerRepository : IGeneraicRepository<Seller>
+    public interface ISellerRepository : IGeneraicRepository<Merchant>
     {
 
     }

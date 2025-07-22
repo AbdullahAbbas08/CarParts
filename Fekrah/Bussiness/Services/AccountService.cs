@@ -20,7 +20,7 @@ using Microsoft.Extensions.Options;
 
 namespace Bussiness.Services
 {
-    public class AccountService : _BusinessService<User, UserDto>, IAccountService
+    public class AccountService : _BusinessService<User, UserDTO>, IAccountService
     {
         private readonly JWTSetting _JWT;
 

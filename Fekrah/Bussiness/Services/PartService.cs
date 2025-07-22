@@ -5,14 +5,14 @@ using Data;
 using Data.DTOs;
 using Microsoft.EntityFrameworkCore;
 
-public class PartService : _BusinessService<Part, PartDto>, IPartService
+public class PartService : _BusinessService<Part, PartDTO>, IPartService
 {
     public PartService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
     {
 
     }
 
-    public override DataSourceResult<PartDto> GetAll(int pageSize, int page, string? searchTerm = null)
+    public override DataSourceResult<PartDTO> GetAll(int pageSize, int page, string? searchTerm = null)
     {
         var allParts = _UnitOfWork.Repository<Part>()
             .GetAll()
@@ -20,9 +20,9 @@ public class PartService : _BusinessService<Part, PartDto>, IPartService
             .Where(p => string.IsNullOrEmpty(searchTerm) || p.Name.Contains(searchTerm))
             .ToList();
 
-        List<PartDto> result = allParts
+        List<PartDTO> result = allParts
             .Take(((page - 1) * pageSize)..(page * pageSize))
-            .Select(p => new PartDto
+            .Select(p => new PartDTO
             {
                 Id  = p.Id,
                 Condition = p.Condition,
@@ -37,7 +37,7 @@ public class PartService : _BusinessService<Part, PartDto>, IPartService
             })
             .ToList();
 
-        return new DataSourceResult<PartDto>
+        return new DataSourceResult<PartDTO>
         {
             Data = result,
             Count = allParts.Count

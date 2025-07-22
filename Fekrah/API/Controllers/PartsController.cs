@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PartsController : _BaseController<Part, PartDto>
+public class PartsController : _BaseController<Part, PartDTO>
 {
     public PartsController(IPartService partService) : base(partService)
     {

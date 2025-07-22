@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.DTOs
 {
-    public class SellerCategoryDto
+    public class SellerCategoryDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

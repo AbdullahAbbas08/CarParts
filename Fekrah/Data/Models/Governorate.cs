@@ -1,17 +1,14 @@
 ﻿using Data.ModelInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data.Models
 {
-    public class City : IAuditableInsert, IAuditableUpdate
+    public class Governorate : IAuditableInsert, IAuditableUpdate
     {
+        [Key]
         public int Id { get; set; }
-        public string NameAr { get; set; }
 
+        [Required, MaxLength(100)]
+        public string Name { get; set; }
 
 
 
@@ -23,8 +20,12 @@ namespace Data.Models
 
         public int? UpdatedBy { get; set; }
         public DateTimeOffset? UpdatedOn { get; set; }
+
         [ForeignKey(nameof(UpdatedBy))]
         public User? UpdatedByUser { get; set; }
+
+        // Navigation property to Cities
+        public ICollection<City> Cities { get; set; } = new List<City>();
     }
 
 

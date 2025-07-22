@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Interfaces
 {
-    public interface IAccountService : _IBusinessService<User, UserDto>
+    public interface IAccountService : _IBusinessService<User, UserDTO>
     {
         Task<AuthDto> Login(LoginViewModel loginViewModel);
         Task<AuthDto> RegisterNewUser(RegisterViewModel registerViewModel);

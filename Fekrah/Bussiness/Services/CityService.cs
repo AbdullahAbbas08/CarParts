@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Services
 {
-    public class CityService : _BusinessService<City, CityDto>, ICityService
+    public class CityService : _BusinessService<City, CityDTO>, ICityService
     {
         public CityService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {

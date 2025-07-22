@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Interfaces
 {
-    public interface ISellerCategoryService : _IBusinessService<SellerCategory, SellerCategoryDto>
+    public interface ISellerCategoryService : _IBusinessService<SellerCategory, SellerCategoryDTO>
     {
     }
 }

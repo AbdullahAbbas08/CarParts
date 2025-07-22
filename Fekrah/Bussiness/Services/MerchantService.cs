@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using Data.ViewModels;
 using Azure;
 
-public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
+public class MerchantService : _BusinessService<Merchant, MerchantDTO>, ISellerService
 {
-    public SellerService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+    public MerchantService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
     {
         
     }
 
-    public override DataSourceResult<SellerDto> GetAll(int pageSize, int page, string? searchTerm = null)
+    public override DataSourceResult<MerchantDTO> GetAll(int pageSize, int page, string? searchTerm = null)
     {
         var allSellers = _UnitOfWork.Repository<User>()
             .GetAll()
@@ -27,9 +27,9 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
                     (string.IsNullOrEmpty(searchTerm) || s.Seller.ShopName.Contains(searchTerm)))
             .ToList();
 
-        List<SellerDto> result = allSellers
+        List<MerchantDTO> result = allSellers
             .Take(((page - 1) * pageSize)..(page * pageSize))
-            .Select(s => new SellerDto
+            .Select(s => new MerchantDTO
             {
                 SellerId = s.Seller.Id,
                 UserId = s.Id,
@@ -42,7 +42,7 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
                 Description = s.Seller.Description,
                 CityId = s.Seller?.CityId,
                 CityName = s.Seller?.City?.NameAr,
-                SellerCategories = s?.Seller.SellerCategories?.Select(c => new SellerCategoryDto
+                SellerCategories = s?.Seller.SellerCategories?.Select(c => new SellerCategoryDTO
                 {
                     Id = c.Id,
                     Name = c.Name,
@@ -50,14 +50,14 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
             })
             .ToList();
 
-        return new DataSourceResult<SellerDto>()
+        return new DataSourceResult<MerchantDTO>()
         {
             Data = result,
             Count = allSellers.Count
         };
     }
 
-    public override SellerDto GetById(object id)
+    public override MerchantDTO GetById(object id)
     {
         var user = _UnitOfWork.Repository<User>()
          .GetAll()
@@ -74,9 +74,9 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
                                    s.IsActive &&
                                    s.UserType == UserTypeEnum.Seller);
 
-        if (user is null) return new SellerDto();
+        if (user is null) return new MerchantDTO();
 
-        return new SellerDto
+        return new MerchantDTO
         {
             SellerId = user.Seller.Id,
             UserId = user.Id,
@@ -89,12 +89,12 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
             Description = user.Seller.Description,
             CityId = user.Seller?.CityId,
             CityName = user.Seller?.City?.NameAr,
-            SellerCategories = user?.Seller.SellerCategories?.Select(c => new SellerCategoryDto
+            SellerCategories = user?.Seller.SellerCategories?.Select(c => new SellerCategoryDTO
             {
                 Id = c.Id,
                 Name = c.Name,
             }).ToList(),
-            Parts = user?.Seller?.Parts.Select(p => new PartDto
+            Parts = user?.Seller?.Parts.Select(p => new PartDTO
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -113,7 +113,7 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
         };
     }
 
-    public DataSourceResult<SellerDto> GetAllFilteredSeller(SellerFilterViewModel sellerFilterViewModel)
+    public DataSourceResult<MerchantDTO> GetAllFilteredSeller(SellerFilterViewModel sellerFilterViewModel)
     {
         var allSellers = _UnitOfWork.Repository<User>()
            .GetAll()
@@ -141,10 +141,10 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
         };
 
 
-        List<SellerDto> result = allSellers
+        List<MerchantDTO> result = allSellers
         .AsEnumerable()
         .Take(((sellerFilterViewModel.Page - 1) * sellerFilterViewModel.PageSize)..(sellerFilterViewModel.Page * sellerFilterViewModel.PageSize))
-        .Select(s => new SellerDto
+        .Select(s => new MerchantDTO
             {
                 SellerId = s.Seller.Id,
                 UserId = s.Id,
@@ -157,7 +157,7 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
                 Description = s.Seller.Description,
                 CityId = s.Seller?.CityId,
                 CityName = s.Seller?.City?.NameAr,
-                SellerCategories = s?.Seller.SellerCategories?.Select(c => new SellerCategoryDto
+                SellerCategories = s?.Seller.SellerCategories?.Select(c => new SellerCategoryDTO
                 {
                     Id = c.Id,
                     Name = c.Name,
@@ -166,7 +166,7 @@ public class SellerService : _BusinessService<Seller, SellerDto>, ISellerService
             .ToList();
 
 
-        return new DataSourceResult<SellerDto>()
+        return new DataSourceResult<MerchantDTO>()
         {
             Data = result,
             Count = allSellers.Count()

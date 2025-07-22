@@ -3,8 +3,8 @@ using Bussiness.Interfaces;
 using Data.DTOs;
 using Data.ViewModels;
 
-public interface ISellerService : _IBusinessService<Seller, SellerDto>
+public interface ISellerService : _IBusinessService<Merchant, MerchantDTO>
 {
-    DataSourceResult<SellerDto> GetAllFilteredSeller(SellerFilterViewModel sellerFilterViewModel);
+    DataSourceResult<MerchantDTO> GetAllFilteredSeller(SellerFilterViewModel sellerFilterViewModel);
 }
 

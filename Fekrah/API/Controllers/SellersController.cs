@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-public class SellersController : _BaseController<Seller, SellerDto>
+public class SellersController : _BaseController<Merchant, MerchantDTO>
 {
     private readonly ISellerService _sellerService;
 
@@ -18,6 +18,6 @@ public class SellersController : _BaseController<Seller, SellerDto>
     }
 
     [HttpGet("GetAllFilteredSeller")]
-    public DataSourceResult<SellerDto> GetAllFilteredSeller([FromQuery]SellerFilterViewModel sellerFilterViewModel) =>
+    public DataSourceResult<MerchantDTO> GetAllFilteredSeller([FromQuery]SellerFilterViewModel sellerFilterViewModel) =>
         _sellerService.GetAllFilteredSeller(sellerFilterViewModel);
 }

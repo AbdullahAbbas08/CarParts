@@ -8,7 +8,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CityController : _BaseController<City, CityDto>
+    public class CityController : _BaseController<City, CityDTO>
     {
         public CityController(ICityService cityService) : base(cityService)
         {

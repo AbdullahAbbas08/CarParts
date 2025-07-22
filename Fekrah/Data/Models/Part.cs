@@ -10,7 +10,7 @@
 
     public int SellerId { get; set; }
     [ForeignKey(nameof(SellerId))]
-    public Seller Seller { get; set; }
+    public Merchant Seller { get; set; }
 
     public int CarsModelId { get; set; }
     [ForeignKey(nameof(CarsModelId))]
