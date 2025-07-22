@@ -35,8 +35,8 @@ namespace API.Middlewares
 
             if (app.Environment.IsDevelopment())
             {
-                app.Swagger();
                 app.SinglePageApp(app.Environment, Configuration);
+                app.Swagger();
             }
         }
     }

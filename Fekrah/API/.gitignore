@@ -368,3 +368,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 Business/obj/
+# Ignore all bin and obj folders recursively
+**/[Bb]in/
+**/[Oo]bj/

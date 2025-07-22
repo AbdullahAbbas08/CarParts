@@ -1,8 +1,8 @@
 <!-- Pre-Navbar للتجار والمراسلين -->
-<div class="pre-navbar" *ngIf="isVisible">
+<div class="pre-navbar" >
   <div class="pre-navbar-container">
     <!-- للتجار -->
-    <div class="merchant-pre-nav" *ngIf="isMerchant">
+    <div class="merchant-pre-nav" >
       <div class="pre-nav-brand">
         <i [class]="getBrandIcon()"></i>
         <span class="brand-text">{{ getBrandText() }}</span>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- للمراسلين -->
-    <div class="driver-pre-nav" *ngIf="isDriver">
+    <div class="driver-pre-nav">
       <div class="pre-nav-brand">
         <i [class]="getBrandIcon()"></i>
         <span class="brand-text">{{ getBrandText() }}</span>
