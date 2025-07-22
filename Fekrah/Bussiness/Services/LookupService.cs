@@ -1,5 +1,7 @@
 ﻿using Bussiness.Interfaces;
+using Data;
 using Data.DTOs;
+using Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +26,8 @@ namespace Bussiness.Services
             switch (lookupName.ToLower())
             {
                 case "categories":
-                    result = _unitOfWork.Categories
-                        .GetAllAsync()
-                        .Result
+                    result = _unitOfWork.Repository<Category>()
+                        .GetAll()
                         .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm))
                         .Select(c => new LookupDTO
                         {
@@ -36,9 +37,8 @@ namespace Bussiness.Services
                     break;
 
                 case "parts":
-                    result = _unitOfWork.Parts
-                        .GetAllAsync()
-                        .Result
+                    result = _unitOfWork.Repository<Part>()
+                        .GetAll()
                         .Where (p => string.IsNullOrEmpty(searchTerm) || p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
                         .Select(c => new LookupDTO
                         {
@@ -48,14 +48,23 @@ namespace Bussiness.Services
                     break;
 
                 case "sellers":
-                    result = _unitOfWork.Sellers
-                        .GetAllAsync()
-                        .Result
+                    result = _unitOfWork.Repository<Seller>()
+                        .GetAll()
                         .Where(s => string.IsNullOrEmpty(searchTerm) || s.ShopName.Contains(searchTerm))
                         .Select(c => new LookupDTO
                         {
                             Id = c.Id,
                             Text = c.ShopName,
+                        }).ToList();
+                    break;
+                case "cities":
+                    result = _unitOfWork.Repository<City>()
+                        .GetAll()
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.NameAr.Contains(searchTerm) || s.NameEn.Contains(searchTerm))
+                        .Select(c => new LookupDTO
+                        {
+                            Id = c.Id,
+                            Text = c.NameAr,
                         }).ToList();
                     break;
                 default:

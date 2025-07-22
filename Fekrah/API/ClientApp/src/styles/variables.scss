@@ -34,3 +34,18 @@ $box-shadow-medium: 0 15px 35px rgba(102, 126, 234, 0.25);
 $box-shadow-heavy: 0 20px 40px rgba(118, 75, 162, 0.3);
 $orange-light: #ffe0b2; // برتقالي فاتح
 $orange-medium: #ffb74d; // برتقالي متوسط
+
+// Variables
+$primary-gradient: #764ba2;
+$success-gradient: #45a049;
+$white: #ffffff;
+$overlay-bg: rgba(0, 0, 0, 0.5);
+$border-radius: 12px;
+$box-shadow: none;
+$transition: none;
+
+// Animation Variables
+$animation-duration: 0.4s;
+$bounce-timing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+$smooth-timing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);

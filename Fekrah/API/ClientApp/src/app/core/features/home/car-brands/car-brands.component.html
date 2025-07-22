@@ -1,19 +1,25 @@
 <div class="brand-section">
-  <h2>أختر موديل السيارة</h2>
-  <div class="swiper" >
+  <div class="section-header">
+    <h2 class="section-title">أختر موديل السيارة</h2>
+    <a routerLink="/brands" class="view-more-link">
+      <span>عرض المزيد</span>
+      <i class="fas fa-arrow-left"></i>
+    </a>
+  </div>
+
+  <div class="swiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide" *ngFor="let brand of carBrands">
-        <div class="brand-card" [routerLink]="['/parts/brand', brand.id]">
+        <div class="brand-card" [routerLink]="['/category', brand.id]">
           <div class="brand-image">
-            <img [src]="brand.logo" [alt]="brand.name" />
+            <img src="../../../../../assets/images/image_100_100.png" [alt]="brand.name" />
           </div>
           <p>{{ brand.name }}</p>
         </div>
       </div>
-
     </div>
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
+    <!-- <div class="swiper-pagination"></div> -->
+    <!-- <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div> -->
   </div>
 </div>

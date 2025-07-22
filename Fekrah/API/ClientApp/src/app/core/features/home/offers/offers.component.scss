@@ -2,6 +2,8 @@
   background: linear-gradient(135deg, #e65100 0%, #ff6b00 50%, #ff9248 100%);
   min-height: 500px;
   position: relative;
+  margin-left: 20px;
+  margin-right: 20px;
 
   &::before {
     content: "";
@@ -26,7 +28,7 @@
 }
 
 .section-title {
-  color: var(--white);
+  color: #fff;
   font-weight: 900;
   font-size: 2.5rem;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
@@ -58,7 +60,7 @@
 }
 
 .section-subtitle {
-  color: var(--white);
+  color:#feff36 !important;
   font-size: 1rem;
   font-weight: 600;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -84,7 +86,6 @@
   display: flex;
   flex-direction: column;
   max-width: 260px;
-  // margin: 0 auto;
   padding: 0.5rem;
   cursor: pointer;
 
@@ -171,13 +172,10 @@
   color: #2c2c2c;
   line-height: 1.6;
   text-align: center;
-
   background: linear-gradient(to right, #fddbdb, #f3d157);
-
   padding: 3px 10px;
   border-radius: 12px;
   margin-bottom: 10px;
-
   height: 65px;
   overflow: hidden;
   display: -webkit-box;
@@ -305,6 +303,112 @@
   }
 }
 
+// View More Button Styles
+.view-more-btn {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+  color: #ff6b00;
+  font-weight: 900;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  position: relative;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 8px 32px rgba(255, 107, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 107, 0, 0.1) 0%,
+      rgba(255, 146, 72, 0.2) 50%,
+      rgba(255, 107, 0, 0.1) 100%
+    );
+    transform: translateX(-100%);
+    transition: all 0.6s ease;
+  }
+
+  .btn-glow {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ff6b00, #ff9248, #ffab74, #ff6b00);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: rotateGlow 3s linear infinite;
+  }
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    color: #fff;
+    background: linear-gradient(135deg, #ff6b00 0%, #ff9248 50%, #ff6b00 100%);
+    box-shadow:
+      0 15px 40px rgba(255, 107, 0, 0.4),
+      0 0 50px rgba(255, 107, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    &::before {
+      transform: translateX(100%);
+    }
+
+    .btn-glow {
+      opacity: 1;
+    }
+
+    i {
+      animation: bounceIcon 0.6s ease;
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  i {
+    transition: all 0.3s ease;
+  }
+}
+
+@keyframes rotateGlow {
+  0% {
+    background: linear-gradient(45deg, #ff6b00, #ff9248, #ffab74, #ff6b00);
+  }
+  25% {
+    background: linear-gradient(45deg, #ff9248, #ffab74, #ff6b00, #ff9248);
+  }
+  50% {
+    background: linear-gradient(45deg, #ffab74, #ff6b00, #ff9248, #ffab74);
+  }
+  75% {
+    background: linear-gradient(45deg, #ff6b00, #ff9248, #ffab74, #ff6b00);
+  }
+  100% {
+    background: linear-gradient(45deg, #ff9248, #ffab74, #ff6b00, #ff9248);
+  }
+}
+
+@keyframes bounceIcon {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
 @keyframes patternMove {
   0% {
     background-position: 0 0;
@@ -315,8 +419,7 @@
 }
 
 @keyframes bounce {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(-50%);
   }
   50% {
@@ -325,8 +428,7 @@
 }
 
 @keyframes sparkle {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -346,8 +448,7 @@
 }
 
 @keyframes pulse {
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1);
   }
   50% {
@@ -357,4 +458,56 @@
 
 .seller-name {
   cursor: pointer;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-15px) rotate(180deg);
+    opacity: 0.4;
+  }
+}
+
+.blur-sm {
+  filter: blur(30px);
+}
+
+.section-title {
+  font-size: 50px;
+
+  @media (max-width: 768px) {
+    font-size: 35px !important;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 22px !important;
+    &::before {
+      content: "🔥";
+      position: absolute;
+      left: 0px;
+    }
+  }
+}
+
+// Responsive design for view more button
+@media (max-width: 768px) {
+  .view-more-btn {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-more-btn {
+    font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+
+    span {
+      flex-direction: column;
+      gap: 0.5rem !important;
+    }
+  }
 }

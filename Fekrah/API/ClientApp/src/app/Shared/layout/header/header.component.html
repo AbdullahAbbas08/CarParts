@@ -1,54 +1,439 @@
-<header class="header-container" [class.sticky]="isSticky">
-  <!-- Logo -->
-  <div class="logo">
-    <a routerLink="/">
-      <i class="fas fa-tools"></i> قطع غيار
-    </a>
-  </div>
+<!-- ===================================
+     HEADER TEMPLATE UPDATES - استبدال الجزء الأوسط
+     ================================== -->
 
-  <!-- Search Bar -->
-  <div class="search-bar">
-    <select class="category-select">
-      <option value="">{{ searchCategories.default }}</option>
-      <option *ngFor="let category of searchCategories.options" [value]="category.value">
-        {{ category.label }}
-      </option>
-    </select>
-    <input type="text" [placeholder]="searchPlaceholder" [(ngModel)]="searchTerm" />
-    <button class="search-button" (click)="search()">
-      <i class="fas fa-search"></i> {{ searchButtonText }}
-    </button>
-  </div>
-
-  <!-- Right Menu -->
-  <div class="right-menu">
-    <a *ngFor="let menuItem of rightMenuItems" [routerLink]="menuItem.route" class="nav-link">
-      <i [class]="menuItem.icon"></i> {{ menuItem.label }}
-    </a>
-
-
-    <!-- سلة المشتريات -->
-    <a [routerLink]="['/addCart']" class="cart-icon nav-link">
-      <i class="fas fa-shopping-cart"></i> {{ cartText }}
-      <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
-    </a>
-    <!-- تسجيل الدخول -->
-    <a routerLink="/auth/login" class="nav-link">
-      <i class="fas fa-sign-in-alt"></i> دخول
-    </a>
-  </div>
-</header>
-
-<!-- Navigation Menu -->
-<nav class="main-nav">
-  <div class="container">
-    <ul class="nav-list">
-      <li *ngFor="let item of navItems">
-        <a (click)="goToNavItem(item)">
-          {{ item.label }}
+     <header class="header-container" [class.sticky]="isSticky">
+      <!-- Logo - نفس الشيء -->
+      <div class="logo">
+        <a routerLink="/">
+          <i class="fas fa-tools"></i>
+          <span class="logo-text">قطع غيار</span>
+          <span class="mobile-logo-text">قطع غيار</span>
         </a>
-      </li>
-    </ul>
-  </div>
-</nav>
+      </div>
 
+      <!-- ===================================
+           CENTER SIMPLE SEARCH BAR - يظهر في الوضع البسيط
+           ================================== -->
+      <div class="center-search" [class.show]="showSearch && isSimpleSearchMode()" *ngIf="isSimpleSearchMode()">
+        <div class="simple-search-bar">
+          <div class="search-input-container" [class.loading]="isSearchLoading">
+            <input
+              id="simpleSearchInput"
+              type="text"
+              [(ngModel)]="simpleSearchTerm"
+              (input)="onSimpleSearchInput()"
+              (focus)="onSimpleSearchFocus()"
+              (blur)="onSimpleSearchBlur()"
+              (keydown)="onSimpleSearchKeyPress($event)"
+              placeholder="ابحث عن قطعة غيار..."
+              autocomplete="off"
+              [attr.aria-expanded]="showSimpleAutocomplete"
+              [attr.aria-haspopup]="true"
+              role="combobox"
+            />
+
+            <!-- Clear Button -->
+            <button
+              class="clear-btn"
+              [class.show]="simpleSearchTerm.length > 0"
+              (click)="clearSimpleSearch()"
+              type="button"
+              aria-label="مسح البحث"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Search Button -->
+          <button
+            class="search-btn"
+            [class.searching]="isSearchLoading"
+            (click)="performSimpleSearch()"
+            type="button"
+            [disabled]="isSearchLoading"
+            aria-label="بحث"
+          >
+            <i class="fas" [class.fa-search]="!isSearchLoading" [class.fa-spinner]="isSearchLoading" [class.fa-spin]="isSearchLoading"></i>
+          </button>
+
+          <!-- Toggle to Advanced Search -->
+          <button
+            class="toggle-search-mode filter-toggle-btn"
+            (click)="enableAdvancedSearch()"
+            type="button"
+            title="البحث المتقدم والفلاتر"
+            aria-label="تبديل للبحث المتقدم"
+          >
+            <i class="fas fa-filter"></i>
+          </button>
+
+          <!-- Auto Complete Dropdown -->
+          <div
+            class="autocomplete-dropdown"
+            [class.show]="showSimpleAutocomplete"
+            role="listbox"
+            [attr.aria-hidden]="!showSimpleAutocomplete"
+          >
+
+            <!-- Recent Searches Section -->
+            <div
+              class="autocomplete-section"
+              *ngIf="getFilteredSuggestions('recent').length > 0"
+            >
+              <div class="section-title">
+                <i class="fas fa-history"></i>
+                البحثات الأخيرة
+                <button
+                  class="clear-recent-btn"
+                  (click)="clearSimpleRecentSearches()"
+                  type="button"
+                  aria-label="مسح البحثات الأخيرة"
+                  title="مسح البحثات الأخيرة"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+
+              <div
+                class="autocomplete-item recent"
+                *ngFor="let search of getFilteredSuggestions('recent'); let i = index"
+                (click)="selectSimpleSuggestion(search)"
+                [class.focused]="searchFocusIndex === i"
+                role="option"
+                [attr.aria-selected]="searchFocusIndex === i"
+                tabindex="0"
+              >
+                <i class="fas fa-history item-icon"></i>
+                <span class="item-text" [innerHTML]="highlightMatch(search, simpleSearchTerm)"></span>
+                <i class="fas fa-arrow-left item-arrow"></i>
+              </div>
+            </div>
+
+            <!-- Search Suggestions Section -->
+            <div
+              class="autocomplete-section"
+              *ngIf="getFilteredSuggestions('suggestions').length > 0"
+            >
+              <div class="section-title" *ngIf="getFilteredSuggestions('recent').length > 0">
+                <i class="fas fa-search"></i>
+                اقتراحات البحث
+              </div>
+
+              <div
+                class="autocomplete-item suggestion"
+                *ngFor="let suggestion of getFilteredSuggestions('suggestions'); let i = index"
+                (click)="selectSimpleSuggestion(suggestion)"
+                [class.focused]="searchFocusIndex === (getFilteredSuggestions('recent').length + i)"
+                role="option"
+                [attr.aria-selected]="searchFocusIndex === (getFilteredSuggestions('recent').length + i)"
+                tabindex="0"
+              >
+                <i class="fas fa-search item-icon"></i>
+                <span class="item-text" [innerHTML]="highlightMatch(suggestion, simpleSearchTerm)"></span>
+                <i class="fas fa-arrow-left item-arrow"></i>
+              </div>
+            </div>
+
+            <!-- Popular Searches Section -->
+            <div
+              class="autocomplete-section"
+              *ngIf="getFilteredSuggestions('popular').length > 0"
+            >
+              <div class="section-title">
+                <i class="fas fa-fire"></i>
+                البحثات الشائعة
+              </div>
+
+              <div
+                class="autocomplete-item popular"
+                *ngFor="let popular of getFilteredSuggestions('popular'); let i = index"
+                (click)="selectSimpleSuggestion(popular)"
+                [class.focused]="searchFocusIndex === (getFilteredSuggestions('recent').length + getFilteredSuggestions('suggestions').length + i)"
+                role="option"
+                [attr.aria-selected]="searchFocusIndex === (getFilteredSuggestions('recent').length + getFilteredSuggestions('suggestions').length + i)"
+                tabindex="0"
+              >
+                <i class="fas fa-fire item-icon"></i>
+                <span class="item-text">{{ popular }}</span>
+                <i class="fas fa-arrow-left item-arrow"></i>
+              </div>
+            </div>
+
+            <!-- No Results -->
+            <div
+              class="no-results"
+              *ngIf="simpleSearchTerm.length >= 2 && !hasSimpleSuggestions()"
+            >
+              <i class="fas fa-search"></i>
+              لا توجد نتائج مطابقة لـ "{{ simpleSearchTerm }}"
+            </div>
+
+            <!-- Search Tips for Empty Results -->
+            <div
+              class="search-tips"
+              *ngIf="simpleSearchTerm.length >= 2 && !hasSimpleSuggestions()"
+            >
+              <div class="tips-title">
+                <i class="fas fa-lightbulb"></i>
+                نصائح للبحث:
+              </div>
+              <ul class="tips-list">
+                <li>تأكد من كتابة الكلمات بشكل صحيح</li>
+                <li>جرب استخدام كلمات أكثر عمومية</li>
+                <li>استخدم مرادفات مختلفة للكلمة</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================
+           ENHANCED SEARCH BAR - يظهر في الوضع المتقدم
+           ================================== -->
+      <div class="search-bar" [class.hidden]="!isAdvancedSearchMode()" [class.show]="showSearch && isAdvancedSearchMode()" *ngIf="isAdvancedSearchMode()">
+        <select class="category-select">
+          <option value="">{{ searchCategories.default }}</option>
+          <option *ngFor="let category of searchCategories.options" [value]="category.value">
+            {{ category.label }}
+          </option>
+        </select>
+
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            [placeholder]="searchPlaceholder"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchInput()"
+            (focus)="onSearchFocus()"
+            (blur)="onSearchBlur()"
+            (keydown)="onSearchKeyPress($event)"
+            autocomplete="off"
+          />
+
+          <!-- Clear button -->
+          <button
+            class="clear-search-btn"
+            *ngIf="searchTerm"
+            (click)="clearSearch()"
+            type="button"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <button
+          class="search-button"
+          (click)="search()"
+          type="button"
+        >
+          <i class="fas fa-search"></i>
+        </button>
+
+        <!-- Toggle to Simple Search -->
+        <button
+          class="toggle-search-mode filter-toggle-btn"
+          (click)="enableSimpleSearch()"
+          type="button"
+          title="البحث البسيط"
+          aria-label="تبديل للبحث البسيط"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Search Suggestions Dropdown -->
+        <div class="search-suggestions" [class.show]="showSearchSuggestions">
+          <!-- Recent Searches -->
+          <div class="suggestions-section" *ngIf="recentSearches.length > 0">
+            <div class="suggestions-header">
+              <span class="suggestions-title">
+                <i class="fas fa-history"></i>
+                البحثات الأخيرة
+              </span>
+              <button class="clear-recent-btn" (click)="clearRecentSearches()">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+            <div
+              class="suggestion-item recent-search"
+              *ngFor="let search of recentSearches.slice(0, 5)"
+              (click)="selectSuggestion(search)"
+            >
+              <i class="suggestion-icon fas fa-history"></i>
+              <span class="suggestion-text">{{ search }}</span>
+              <i class="suggestion-arrow fas fa-arrow-left"></i>
+            </div>
+          </div>
+
+          <!-- Search Suggestions -->
+          <div class="suggestions-section" *ngIf="searchSuggestions.length > 0">
+            <div class="suggestions-header" *ngIf="recentSearches.length > 0">
+              <span class="suggestions-title">
+                <i class="fas fa-search"></i>
+                اقتراحات البحث
+              </span>
+            </div>
+            <div
+              class="suggestion-item search-suggestion"
+              *ngFor="let suggestion of searchSuggestions"
+              (click)="selectSuggestion(suggestion)"
+            >
+              <i class="suggestion-icon fas fa-search"></i>
+              <span class="suggestion-text">{{ suggestion }}</span>
+              <i class="suggestion-arrow fas fa-arrow-left"></i>
+            </div>
+          </div>
+
+          <!-- Popular Searches (when no input) -->
+          <div class="suggestions-section" *ngIf="searchTerm.length === 0 && popularSearches.length > 0">
+            <div class="suggestions-header">
+              <span class="suggestions-title">
+                <i class="fas fa-fire"></i>
+                البحثات الشائعة
+              </span>
+            </div>
+            <div
+              class="suggestion-item popular-search"
+              *ngFor="let popular of popularSearches.slice(0, 6)"
+              (click)="selectSuggestion(popular)"
+            >
+              <i class="suggestion-icon fas fa-fire"></i>
+              <span class="suggestion-text">{{ popular }}</span>
+              <i class="suggestion-arrow fas fa-arrow-left"></i>
+            </div>
+          </div>
+
+          <!-- No Suggestions -->
+          <div class="no-suggestions" *ngIf="searchTerm.length >= 2 && searchSuggestions.length === 0">
+            <i class="fas fa-search no-suggestions-icon"></i>
+            <span class="no-suggestions-text">لا توجد اقتراحات مطابقة</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================
+           RIGHT MENU - مع إضافة زر البحث للموبايل
+           ================================== -->
+      <div class="right-menu" [class.show]="showMobileMenu">
+        <!-- اسم الموقع في قائمة الموبايل -->
+        <div class="mobile-menu-header">
+          قطع غيار
+        </div>
+
+        <!-- Mobile Search Toggle - جديد -->
+        <button
+          class="mobile-search-toggle mobile-only"
+          (click)="toggleSimpleSearch()"
+          [class.active]="showSearch"
+          aria-label="فتح البحث"
+          type="button"
+        >
+          <i class="fas" [class.fa-search]="!showSearch" [class.fa-times]="showSearch"></i>
+          <span class="btn-text">بحث</span>
+        </button>
+
+        <!-- زر الفلتر المتقدم - اختياري -->
+        <button
+          class="filter-toggle-btn"
+          [class.active]="isFilterOpen"
+          (click)="onFilterToggle()"
+          [attr.aria-label]="isFilterOpen ? 'إغلاق الفلتر' : 'فتح الفلتر'"
+          *ngIf="false"
+        >
+          <i class="fas" [class.fa-filter]="!isFilterOpen" [class.fa-times]="isFilterOpen"></i>
+          <span class="filter-text">فلتر متقدم</span>
+          <span class="filter-badge" *ngIf="!isFilterOpen">جديد</span>
+        </button>
+
+        <!-- سلة المشتريات -->
+        <a [routerLink]="['/addCart']" class="cart-icon nav-link" (click)="closeMobileMenus()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="menu-text">{{ cartText }}</span>
+          <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </a>
+
+        <!-- تسجيل الدخول / قائمة المستخدم -->
+        <div class="auth-section">
+          <!-- إذا لم يسجل دخول -->
+          <a routerLink="/auth/login" class="nav-link" *ngIf="!isLoggedIn" (click)="closeMobileMenus()">
+            <i class="fas fa-sign-in-alt"></i>
+            <span class="menu-text">دخول</span>
+          </a>
+
+          <!-- إذا سجل دخول -->
+          <div class="user-menu" *ngIf="isLoggedIn">
+            <div class="user-avatar" (click)="toggleUserMenu()">
+              <img [src]="userAvatar" [alt]="userName" *ngIf="userAvatar" class="avatar-image">
+              <div class="avatar-fallback" *ngIf="!userAvatar">{{ getUserInitials() }}</div>
+              <span class="user-name desktop-only">{{ userName }}</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <div class="user-dropdown" [class.show]="showUserMenu">
+              <a routerLink="/profile" class="dropdown-item" (click)="closeMobileMenus()">
+                <i class="fas fa-user"></i>
+                <span>الملف الشخصي</span>
+              </a>
+              <a routerLink="/my-orders" class="dropdown-item" *ngIf="!isMerchant && !isDriver" (click)="closeMobileMenus()">
+                <i class="fas fa-shopping-bag"></i>
+                <span>طلباتي</span>
+              </a>
+              <div class="dropdown-divider" *ngIf="isMerchant || isDriver"></div>
+              <a class="dropdown-item" (click)="switchToCustomerMode()" *ngIf="isMerchant || isDriver">
+                <i class="fas fa-exchange-alt"></i>
+                <span>التسوق كعميل</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item logout" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>تسجيل الخروج</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-toggle mobile-only" (click)="toggleMobileMenu()">
+        <span class="hamburger-line" [class.active]="showMobileMenu"></span>
+        <span class="hamburger-line" [class.active]="showMobileMenu"></span>
+        <span class="hamburger-line" [class.active]="showMobileMenu"></span>
+      </button>
+    </header>
+
+    <!-- ===================================
+         NAVIGATION MENU - نفس الشيء
+         ================================== -->
+    <nav class="main-nav" [class.show]="showMobileNav">
+      <div class="container">
+        <!-- Mobile Nav Toggle -->
+        <button class="nav-toggle mobile-only" (click)="toggleMobileNav()">
+          <i class="fas fa-bars"></i>
+          <span>القائمة</span>
+        </button>
+
+        <ul class="nav-list" [class.show]="showMobileNav">
+          <li *ngFor="let item of navItems">
+            <a (click)="goToNavItem(item)">
+              {{ item.label }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ===================================
+         QUICK SEARCH SHORTCUTS - اختياري
+         ================================== -->
+    <div class="quick-search-shortcuts" *ngIf="false">
+      <div class="shortcuts-container">
+        <span class="shortcuts-label">بحث سريع:</span>
+        <button
+          class="quick-search-btn"
+          *ngFor="let shortcut of popularCarParts.slice(0, 6)"
+          (click)="quickSearch(shortcut)"
+          type="button"
+        >
+          {{ shortcut }}
+        </button>
+      </div>
+    </div>

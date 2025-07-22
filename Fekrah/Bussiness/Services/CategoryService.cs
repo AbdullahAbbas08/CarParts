@@ -1,59 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Bussiness.Helpers;
+using Bussiness.Services;
+using Data;
+using Data.DTOs;
+using Data.Models;
+using Microsoft.EntityFrameworkCore;
 
-public class CategoryService : ICategoryService
+public class CategoryService : _BusinessService<Category, CategoryDto>, ICategoryService
 {
-    private readonly DatabaseContext _context;
-
-    public CategoryService(DatabaseContext context)
+    public CategoryService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
     {
-        _context = context;
+        
     }
 
-    public async Task<IEnumerable<CategoryViewModel>> GetAllAsync()
+    public override DataSourceResult<CategoryDto> GetAll(int pageSize, int page, string? searchTerm = null)
     {
-        return await _context.Categories
-            .Select(c => new CategoryViewModel
-            {
-                Id = c.Id,
-                Name = c.Name
-            }).ToListAsync();
-    }
+        var allCategories = _UnitOfWork.Repository<Category>()
+            .GetAll()
+            .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm))
+            .ToList();
 
-    public async Task<CategoryViewModel> GetByIdAsync(int id)
-    {
-        var category = await _context.Categories.FindAsync(id);
-        if (category == null) return null;
+        List<CategoryDto> result = _Mapper.Map<List<CategoryDto>>(allCategories.Take(((page - 1) * pageSize)..(page * pageSize)));
 
-        return new CategoryViewModel
+        return new DataSourceResult<CategoryDto>
         {
-            Id = category.Id,
-            Name = category.Name
+            Data = result,
+            Count = allCategories.Count
         };
-    }
-
-    public async Task AddAsync(CategoryDto dto)
-    {
-        var category = new Category
-        {
-            Name = dto.Name
-        };
-
-        await _context.Categories.AddAsync(category);
-    }
-
-    public async Task UpdateAsync(int id, CategoryDto dto)
-    {
-        var category = await _context.Categories.FindAsync(id);
-        if (category == null) return;
-
-        category.Name = dto.Name;
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var category = await _context.Categories.FindAsync(id);
-        if (category == null) return;
-
-        _context.Categories.Remove(category);
     }
 }

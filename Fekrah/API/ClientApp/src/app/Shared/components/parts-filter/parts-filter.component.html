@@ -1,0 +1,261 @@
+<!-- Darkened Overlay -->
+<div class="filter-overlay" [class.active]="isOpen" (click)="onClose()"></div>
+
+<!-- Main Filter Container -->
+<aside class="filters-sidebar" [class.open]="isOpen">
+
+  <!-- Filter Header -->
+  <header class="filter-header">
+    <h4><i class="fas fa-search-plus"></i> فلتر البحث المتقدم</h4>
+    <button class="close-button" (click)="onClose()" type="button" aria-label="Close Filter">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+
+  <!-- Filter Form -->
+  <form [formGroup]="filterForm" class="filter-form">
+
+    <!-- Quick Filters - Improved Layout -->
+    <section class="quick-filters">
+      <h5><i class="fas fa-bolt"></i> فلاتر سريعة ومميزة</h5>
+      <div class="quick-filter-buttons">
+        <button type="button" class="quick-filter-btn" (click)="applyQuickFilter('condition', 'جديد')">
+          <i class="fas fa-sparkles"></i> جديد تمامًا
+        </button>
+        <button type="button" class="quick-filter-btn" (click)="applyQuickFilter('inStock', true)">
+          <i class="fas fa-box-open"></i> متوفر الآن
+        </button>
+        <button type="button" class="quick-filter-btn" (click)="applyQuickFilter('priceRange', '0-500')">
+          <i class="fas fa-tags"></i> عروض مميزة
+        </button>
+        <button type="button" class="quick-filter-btn" (click)="applyQuickFilter('grade', 'فرز أول')">
+          <i class="fas fa-star"></i> فرز أول
+        </button>
+        <button type="button" class="quick-filter-btn" (click)="applyQuickFilter('origin', 'اليابان')">
+          <i class="fas fa-flag-usa"></i> ياباني
+        </button>
+      </div>
+    </section>
+
+    <!-- Search Text -->
+    <div class="filter-group">
+      <label for="searchText"><i class="fas fa-search"></i> البحث بكلمة مفتاحية</label>
+      <input
+        id="searchText"
+        type="text"
+        formControlName="searchText"
+        placeholder="ابحث عن قطعة غيار أو وصف..."
+        class="search-input"
+        aria-label="Search for spare part"
+      />
+    </div>
+
+    <!-- Brand -->
+    <div class="filter-group">
+      <label for="brand"><i class="fas fa-car-side"></i> ماركة السيارة</label>
+      <select id="brand" formControlName="brand" class="select-input" aria-label="Car Brand">
+        <option value="">كل الماركات</option>
+        <option *ngFor="let brand of brands" [value]="brand.value">
+          {{ brand.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Model -->
+    <div class="filter-group">
+      <label for="model"><i class="fas fa-tag"></i> الموديل</label>
+      <select id="model" formControlName="model" class="select-input" [disabled]="!models.length" aria-label="Car Model">
+        <option value="">{{ models.length ? 'كل الموديلات' : 'اختر الماركة أولاً' }}</option>
+        <option *ngFor="let model of models" [value]="model">
+          {{ model }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Manufacturing Year -->
+    <div class="filter-group">
+      <label for="year"><i class="fas fa-calendar-alt"></i> سنة الصنع</label>
+      <select id="year" formControlName="year" class="select-input" aria-label="Manufacturing Year">
+        <option value="">كل السنوات</option>
+        <option *ngFor="let year of years" [value]="year">
+          {{ year }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Part Category -->
+    <div class="filter-group">
+      <label for="partCategory"><i class="fas fa-cogs"></i> فئة القطعة</label>
+      <select id="partCategory" formControlName="partCategory" class="select-input" aria-label="Part Category">
+        <option value="">كل الفئات</option>
+        <option *ngFor="let category of partCategories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Part Type -->
+    <div class="filter-group">
+      <label for="partType"><i class="fas fa-screwdriver-wrench"></i> نوع القطعة</label>
+      <select id="partType" formControlName="partType" class="select-input" aria-label="Part Type">
+        <option value="">كل الأنواع</option>
+        <option *ngFor="let type of partTypes" [value]="type">
+          {{ type }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Part Condition -->
+    <div class="filter-group">
+      <label><i class="fas fa-clipboard-check"></i> حالة القطعة</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" formControlName="condition" value="" class="radio-input" aria-label="All Conditions" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">الكل</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" formControlName="condition" value="جديد" class="radio-input" aria-label="New Condition" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">جديد</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" formControlName="condition" value="مستعمل" class="radio-input" aria-label="Used Condition" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">مستعمل</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" formControlName="condition" value="مستورد" class="radio-input" aria-label="Imported Condition" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">مستورد</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Grade -->
+    <div class="filter-group">
+      <label><i class="fas fa-star"></i> جودة القطعة</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" formControlName="grade" value="" class="radio-input" aria-label="All Grades" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">الكل</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" formControlName="grade" value="فرز أول" class="radio-input" aria-label="First Grade" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">فرز أول</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" formControlName="grade" value="فرز تاني" class="radio-input" aria-label="Second Grade" />
+          <span class="radio-custom"></span>
+          <span class="radio-text">فرز ثاني</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Origin -->
+    <div class="filter-group">
+      <label for="origin"><i class="fas fa-globe"></i> بلد المنشأ</label>
+      <select id="origin" formControlName="origin" class="select-input" aria-label="Origin Country">
+        <option value="">كل البلاد</option>
+        <option *ngFor="let origin of origins" [value]="origin">
+          {{ origin }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Price Range -->
+    <div class="filter-group">
+      <label for="priceRange"><i class="fas fa-money-bill-alt"></i> نطاق السعر</label>
+      <select id="priceRange" formControlName="priceRange" class="select-input" aria-label="Price Range">
+        <option value="">أي سعر</option>
+        <option *ngFor="let range of priceRanges" [value]="range.value">
+          {{ range.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- In Stock Only -->
+    <div class="filter-group checkbox-group">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          formControlName="inStock"
+          class="checkbox-input"
+          aria-label="In Stock Only"
+        />
+        <span class="checkbox-custom"></span>
+        <span class="checkbox-text"><i class="fas fa-warehouse"></i> متوفر في المخزون فقط</span>
+      </label>
+    </div>
+
+    <!-- Active Filters Summary -->
+    <section class="active-filters-summary" *ngIf="hasActiveFilters()">
+      <h6><i class="fas fa-filter"></i> الفلاتر المطبقة ({{ getActiveFiltersCount() }}):</h6>
+      <div class="active-filters-list">
+        <span class="active-filter-tag" *ngIf="filterForm.get('searchText')?.value">
+          <i class="fas fa-font"></i> {{ filterForm.get('searchText')?.value }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('brand')?.value">
+          <i class="fas fa-car-side"></i> {{ getActiveFilterText('brand') }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('model')?.value">
+          <i class="fas fa-tag"></i> {{ filterForm.get('model')?.value }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('year')?.value">
+          <i class="fas fa-calendar-alt"></i> {{ filterForm.get('year')?.value }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('partCategory')?.value">
+          <i class="fas fa-cogs"></i> {{ filterForm.get('partCategory')?.value }}
+        </span>
+         <span class="active-filter-tag" *ngIf="filterForm.get('partType')?.value">
+          <i class="fas fa-screwdriver-wrench"></i> {{ filterForm.get('partType')?.value }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('condition')?.value">
+          <i class="fas fa-clipboard-check"></i> {{ getActiveFilterText('condition') }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('grade')?.value">
+          <i class="fas fa-star"></i> {{ getActiveFilterText('grade') }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('origin')?.value">
+          <i class="fas fa-globe"></i> {{ filterForm.get('origin')?.value }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('priceRange')?.value">
+          <i class="fas fa-money-bill-alt"></i> {{ getActiveFilterText('priceRange') }}
+        </span>
+        <span class="active-filter-tag" *ngIf="filterForm.get('inStock')?.value">
+          <i class="fas fa-box-open"></i> متوفر
+        </span>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="filter-actions">
+      <button type="submit" class="apply-button">
+        <i class="fas fa-check-circle"></i> تطبيق الفلاتر
+      </button>
+      <button type="button" class="reset-button" (click)="resetFilters()"
+              [disabled]="!hasActiveFilters()">
+        <i class="fas fa-sync-alt"></i> إعادة تعيين الكل
+      </button>
+    </div>
+
+    <!-- Additional Information -->
+    <section class="filter-info">
+      <div class="filter-stats">
+        <small><i class="fas fa-chart-bar"></i> {{ getFilterSummary() }}</small>
+      </div>
+
+      <div class="help-text">
+        <small>
+          <i class="fas fa-lightbulb"></i> <strong>نصائح للبحث الأمثل:</strong><br>
+          • استخدم كلمات مفتاحية دقيقة (مثال: "مساعد أمامي")<br>
+          • جرب البحث بالماركة والموديل وسنة الصنع معاً<br>
+          • استخدم فلاتر **"جودة القطعة"** و **"بلد المنشأ"** لتضييق النتائج بدقة<br>
+        </small>
+      </div>
+    </section>
+
+  </form>
+</aside>

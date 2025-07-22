@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PartViewModel, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-part-search',
@@ -8,16 +8,16 @@ import { PartViewModel, SwaggerClient } from '../../../../Shared/Services/Swagge
 })
 export class PartSearchComponent implements OnInit {
 
-  allParts: PartViewModel[] = [];
-  filteredParts: PartViewModel[] = [];
+  allParts: any[] = [];
+  filteredParts: any[] = [];
 
   constructor(private apiClient: SwaggerClient) { }
 
   ngOnInit(): void {
-    this.apiClient.apiPartsGet().subscribe(parts => {
-      this.allParts = parts;
-      this.filteredParts = parts; // مبدأياً كل القطع
-    });
+    // this.apiClient.apiPartsGet().subscribe(parts => {
+    //   this.allParts = parts;
+    //   this.filteredParts = parts; // مبدأياً كل القطع
+    // });
   }
 
   applyFilters(filters: any) {

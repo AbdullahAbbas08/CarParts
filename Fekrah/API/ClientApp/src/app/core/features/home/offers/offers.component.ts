@@ -11,6 +11,7 @@ import {
   ChangeDetectorRef,
   NgZone
 } from '@angular/core';
+import { Router } from '@angular/router';
 import Swiper from 'swiper';
 import { Pagination, EffectCoverflow, Autoplay } from 'swiper/modules';
 
@@ -52,16 +53,21 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
   // Animation and interaction states
   isLoading = true;
   activeSlideIndex = 0;
-  router: any;
+
+  // Statistics for view more button
+  totalOffersCount = 1250; // إجمالي العروض في الموقع
+  totalStoresCount = 89;   // إجمالي المتاجر
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
-  ) {}
+    private ngZone: NgZone,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadOffers();
     this.setupIntersectionObserver();
+    this.loadSiteStatistics();
   }
 
   ngAfterViewInit(): void {
@@ -82,6 +88,42 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   trackByOfferId: TrackByFunction<Offer> = (index: number, offer: Offer) => offer.id;
+
+  /**
+   * Navigate to all offers page
+   */
+  navigateToAllOffers(): void {
+    // إضافة تأثير بصري عند الضغط
+    const button = event?.target as HTMLElement;
+    this.createAdvancedRippleEffect(button);
+
+    // الانتقال إلى صفحة جميع العروض
+    this.router.navigate(['/offers']);
+
+    // يمكن إضافة إحصائيات تتبع هنا
+    this.trackUserInteraction('view_all_offers_clicked');
+  }
+
+  /**
+   * Load site statistics
+   */
+  private loadSiteStatistics(): void {
+    // هنا يمكن تحميل الإحصائيات من API
+    // this.offersService.getSiteStatistics().subscribe(stats => {
+    //   this.totalOffersCount = stats.totalOffers;
+    //   this.totalStoresCount = stats.totalStores;
+    //   this.cdr.detectChanges();
+    // });
+  }
+
+  /**
+   * Track user interactions for analytics
+   */
+  private trackUserInteraction(action: string, data?: any): void {
+    // تتبع تفاعلات المستخدم لأغراض التحليل
+    console.log('User interaction:', action, data);
+    // يمكن إرسال البيانات إلى Google Analytics أو خدمة تحليل أخرى
+  }
 
   private loadOffers(): void {
     // Enhanced sample data with more realistic car parts
@@ -132,7 +174,7 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
         sellerName: 'ورشة الجودة المعتمدة',
         sellerId: 4,
         description: 'طرمبة بنزين قوية ومتينة تضمن ضخ الوقود بكفاءة عالية وثبات تام لجميع أنواع السيارات.',
-        imageUrl:'assets/images/image_100_100.png',
+        imageUrl: 'assets/images/image_100_100.png',
         category: 'وقود',
         categoryId: 4,
         rating: 4.5,
@@ -294,74 +336,38 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ... existing code ...
+  private applyCardTransition(card: HTMLElement, distance: number): void {
+    const scale = 1; // ثابت بدون تصغير
+    const opacity = 1; // ثابت بدون شفافية
+    const blur = 0; // إزالة الضبابية
 
-private applyCardTransition(card: HTMLElement, distance: number): void {
-  const scale = 1; // ثابت بدون تصغير
-  const opacity = 1; // ثابت بدون شفافية
-  const blur = 0; // إزالة الضبابية
+    card.style.opacity = opacity.toString();
+    card.style.filter = 'none'; // إزالة جميع الفلاتر
+  }
 
-  // card.style.transform = `scale(${scale})`;
-  card.style.opacity = opacity.toString();
-  card.style.filter = 'none'; // إزالة جميع الفلاتر
-}
+  private updateSlideEffects(): void {
+    if (!this.swiper) return;
 
-private updateSlideEffects(): void {
-  if (!this.swiper) return;
+    const slides = this.swiper.slides;
+    const activeIndex = this.swiper.activeIndex;
 
-  const slides = this.swiper.slides;
-  const activeIndex = this.swiper.activeIndex;
+    slides.forEach((slide: HTMLElement, index: number) => {
+      const card = slide.querySelector('.offer-card') as HTMLElement;
+      if (!card) return;
 
-  slides.forEach((slide: HTMLElement, index: number) => {
-    const card = slide.querySelector('.offer-card') as HTMLElement;
-    if (!card) return;
+      // إزالة جميع الكلاسات السابقة
+      card.classList.remove('slide-active', 'slide-adjacent', 'slide-distant');
 
-    // إزالة جميع الكلاسات السابقة
-    card.classList.remove('slide-active', 'slide-adjacent', 'slide-distant');
+      // إضافة كلاس active فقط للكارد النشط
+      if (index === activeIndex) {
+        card.classList.add('slide-active');
+        this.addCardGlowEffect(card);
+      }
 
-    // إضافة كلاس active فقط للكارد النشط
-    if (index === activeIndex) {
-      card.classList.add('slide-active');
-      this.addCardGlowEffect(card);
-    }
-
-    // تطبيق التأثيرات بدون ضبابية أو بهتان
-    this.applyCardTransition(card, 0);
-  });
-}
-
-// ... existing code ...
-
-  // private updateSlideEffects(): void {
-  //   if (!this.swiper) return;
-
-  //   const slides = this.swiper.slides;
-  //   const activeIndex = this.swiper.activeIndex;
-  //   const slidesPerView = this.swiper.params.slidesPerView as number;
-
-  //   slides.forEach((slide: HTMLElement, index: number) => {
-  //     const card = slide.querySelector('.offer-card') as HTMLElement;
-  //     if (!card) return;
-
-  //     // Remove all effect classes
-  //     card.classList.remove('slide-active', 'slide-adjacent', 'slide-distant');
-
-  //     // Calculate distance from active slide
-  //     const distance = Math.abs(index - activeIndex);
-
-  //     if (distance === 0) {
-  //       card.classList.add('slide-active');
-  //       this.addCardGlowEffect(card);
-  //     } else if (distance === 1) {
-  //       card.classList.add('slide-adjacent');
-  //     } else {
-  //       card.classList.add('slide-distant');
-  //     }
-
-  //     // Apply smooth transitions
-  //     this.applyCardTransition(card, distance);
-  //   });
-  // }
+      // تطبيق التأثيرات بدون ضبابية أو بهتان
+      this.applyCardTransition(card, 0);
+    });
+  }
 
   private addCardGlowEffect(card: HTMLElement): void {
     card.style.boxShadow = '0 25px 50px rgba(255, 107, 53, 0.3), 0 0 30px rgba(255, 107, 53, 0.2)';
@@ -369,16 +375,6 @@ private updateSlideEffects(): void {
       card.style.boxShadow = '';
     }, 2000);
   }
-
-  // private applyCardTransition(card: HTMLElement, distance: number): void {
-  //   const scale = Math.max(0.85, 1 - (distance * 0.05));
-  //   const opacity = Math.max(0.6, 1 - (distance * 0.1));
-  //   const blur = Math.min(2, distance * 0.5);
-
-  //   card.style.transform = `scale(${scale})`;
-  //   card.style.opacity = opacity.toString();
-  //   card.style.filter = `blur(${blur}px)`;
-  // }
 
   private triggerSlideChangeEffects(): void {
     // Add subtle animation to active card
@@ -461,9 +457,6 @@ private updateSlideEffects(): void {
 
       this.animationFrameId = requestAnimationFrame(animateParallax);
     };
-
-    // Start animation
-    // animateParallax();
   }
 
   private setupIntersectionObserver(): void {
@@ -520,13 +513,11 @@ private updateSlideEffects(): void {
     // Add success feedback
     this.showSuccessFeedback(button);
 
-    // Simulate navigation or modal opening
-    console.log('Viewing offer details:', offer);
+    // Track user interaction
+    this.trackUserInteraction('offer_details_clicked', { offerId: offer.id });
 
-    // Example implementations:
-    this.router.navigate(['/offers', offer.id]);
-    // this.modalService.open(OfferDetailsComponent, { data: offer });
-    // this.dialog.open(OfferModalComponent, { data: offer });
+    // Navigate to offer details
+    this.router.navigate(['/parts', offer.id]);
   }
 
   onImageError(event: Event): void {

@@ -1,3 +1,4 @@
+// part-types.component.ts - Updated with View More functionality
 import {
   Component,
   OnInit,
@@ -50,12 +51,10 @@ export class PartTypesComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 29, name: 'بيضة', imageUrl: 'assets/images/image100_100.png' },
     { id: 30, name: 'مساعد خلفي', imageUrl: 'assets/images/image100_100.png' }
   ];
-  
-  
 
   private swiper: Swiper | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit() {
     Swiper.use([Navigation, Pagination, Autoplay]);
@@ -77,7 +76,7 @@ export class PartTypesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!swiperElement) return;
 
     this.swiper = new Swiper(swiperElement, {
-      slidesPerView: 5, // ← عدد ثابت لمنع الهزة
+      slidesPerView: 5,
       spaceBetween: 15,
       loop: true,
       centeredSlides: false,
@@ -103,6 +102,15 @@ export class PartTypesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Navigate to specific category
+  navigateToCategory(partId: number) {
+    this.router.navigate(['/category', partId]);
+  }
+
+  // Navigate to all parts page
+  viewAllParts() {
+    this.router.navigate(['/parts']);
+  }
 
   trackByPartName(index: number, part: { name: string }): string {
     return part.name;

@@ -2,9 +2,10 @@
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   padding: 30px 20px;
   border-radius: 12px;
-  margin: 20px 0;
+  margin: 20px;
   color: #fff;
   overflow: hidden;
+
   .section-title {
     text-align: center;
     font-size: 50px;
@@ -44,7 +45,7 @@
 
   .seller-card {
     position: relative;
-    width: 160px;
+    min-width: 250px;
     background: #fff;
     color: #333;
     border-radius: 16px;
@@ -58,9 +59,42 @@
     cursor: pointer;
     min-height: 220px;
 
+    /* فقط للكاردات الموثوقة */
+    &.trusted-border {
+      border: 2px solid gold;
+      box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+
+      &:hover {
+        border-color: #ffc107;
+        box-shadow: 0 12px 28px rgba(255, 215, 0, 0.6);
+      }
+    }
+
     &:hover {
       transform: translateY(-6px);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .trusted-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background-color: gold;
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      font-size: 16px;
+
+      i {
+        color: #fff;
+        font-size: 16px;
+      }
     }
 
     .seller-image {
@@ -82,6 +116,7 @@
       font-weight: 700;
       margin-bottom: 6px;
       color: #333;
+      width: fit-content;
     }
 
     .seller-location {
@@ -125,12 +160,22 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background 0.3s;
 
-    transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
-
     &:hover {
       background: #1da851;
       transform: translateX(-50%) scale(1.1);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
     }
+  }
+}
+
+.section-title {
+  font-size: 50px; /* الحجم الافتراضي للكبير */
+
+  @media (max-width: 768px) {
+    font-size: 35px !important; /* حجم أصغر للشاشات المتوسطة */
+  }
+
+  @media (max-width: 480px) {
+    font-size: 30px !important; /* حجم أصغر جداً للشاشات الصغيرة */
   }
 }

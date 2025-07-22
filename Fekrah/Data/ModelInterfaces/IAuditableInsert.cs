@@ -8,7 +8,7 @@ namespace Data.ModelInterfaces
 {
     public interface IAuditableInsert
     {
-        int? CreatedBy { get; set; }
+        int? CreatedByUserId { get; set; }
         DateTimeOffset? CreatedOn { get; set; }
     }
 }

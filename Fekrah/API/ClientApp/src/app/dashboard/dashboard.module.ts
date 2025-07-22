@@ -6,11 +6,12 @@ import { DashboardComponent } from './dashboar-main/dashboard.component';
 import { QuickAddFormComponent } from './quick-add-form/quick-add-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { StatisticsComponent } from './statistics/statistics.component';
+import { MerchantComponent } from './merchant/merchant.component';
 
 
 
 @NgModule({
-  declarations: [DashboardComponent, QuickAddFormComponent, StatisticsComponent],
+  declarations: [DashboardComponent, QuickAddFormComponent,MerchantComponent, StatisticsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

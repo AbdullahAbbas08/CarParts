@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { PartCardComponent } from './components/part-card/part-card.component';
@@ -9,6 +9,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { CardComponent } from './components/card/card.component';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import { OfferCardComponent } from './components/offer-card/offer-card.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   imports: [
@@ -17,8 +18,7 @@ import { OfferCardComponent } from './components/offer-card/offer-card.component
     HttpClientModule,
     RouterModule,
     NgxPaginationModule,
-
-
+    ReactiveFormsModule
   ],
   exports: [
     CommonModule,
@@ -31,8 +31,7 @@ import { OfferCardComponent } from './components/offer-card/offer-card.component
     CardComponent,
     OfferCardComponent,
     BreadcrumbComponent,
-
-
+  
   ],
   declarations: [
     PartCardComponent,
@@ -40,8 +39,7 @@ import { OfferCardComponent } from './components/offer-card/offer-card.component
     CardComponent,
     BreadcrumbComponent,
     OfferCardComponent,
-
-
+    
   ]
 })
 export class SharedModule { }

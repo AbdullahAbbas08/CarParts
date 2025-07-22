@@ -9,7 +9,7 @@ namespace API.Middlewares.Middlewares
 {
     public static partial class _Pipeline
     {
-        public static void SinglePageApp(this WebApplication app, Microsoft.Extensions.Hosting.IHostingEnvironment env, IConfiguration Configuration)
+        public static void SinglePageApp(this WebApplication app, IWebHostEnvironment env, IConfiguration Configuration)
         {
             try
             {

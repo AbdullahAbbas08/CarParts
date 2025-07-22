@@ -37,26 +37,26 @@
   /* بدّل الحجم مع الانتقال */
 }
 
-.step-item:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 54%;
-  left: 100%;
-  transform: translateY(-50%);
-  width: 44px;
-  height: 4.5px;
-  background: linear-gradient(90deg, #ffe382 10%, #ffd200 100%);
-  opacity: 0.34;
-  border-radius: 6px;
-  z-index: 0;
-  transition: background 0.23s, opacity 0.23s, width 0.2s;
-}
+// .step-item:not(:last-child)::after {
+//   content: "";
+//   position: absolute;
+//   top: 54%;
+//   left: 100%;
+//   transform: translateY(-50%);
+//   width: 44px;
+//   height: 4.5px;
+//   background: linear-gradient(90deg, #ffe382 10%, #ffd200 100%);
+//   opacity: 0.34;
+//   border-radius: 6px;
+//   z-index: 0;
+//   transition: background 0.23s, opacity 0.23s, width 0.2s;
+// }
 
-.step-item.completed:not(:last-child)::after {
-  background: linear-gradient(90deg, #34d399 0%, #38a9ff 100%);
-  opacity: 0.86;
-  width: 52px;
-}
+// .step-item.completed:not(:last-child)::after {
+//   background: linear-gradient(90deg, #34d399 0%, #38a9ff 100%);
+//   opacity: 0.86;
+//   width: 52px;
+// }
 
 /* الدائرة */
 .step-circle {

@@ -8,7 +8,10 @@ namespace Api.Services
         public static void RegisterAppReuiredServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddHttpContextAccessor();
+            builder.Services.RegisterRepositoriesConfiguration();
             builder.Services.RegisterServicesConfiguration();
+
+            // Session and TempData
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(opt =>
             {
@@ -20,23 +23,35 @@ namespace Api.Services
             });
 
             builder.Services.AddMvc();
-            //builder.Services.AddRotativa();
 
-
-
+            // Swagger
             builder.Services.ConfigureSwagger();
-            builder.Services.AddDatabaseContext(builder.Configuration.GetConnectionString("DefaultConnection"));
-            //builder.Services.Configure<AppSettings>(options => builder.Configuration.Bind(options));
-            //builder.Services.ConfigureHangfire(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+            // Database Connection
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDatabaseContext(connectionString);
             builder.Services.DatabaseMigration();
             builder.Services.DatabaseInitialData();
+
+            // Caching
             builder.Services.AddMemoryCache();
             builder.Services.AddHttpClient();
-            //builder.Services.AddHangfireServer(options =>{ options.Queues = HangfireHelper.GetQueues(); });
+
+            // Authentication
             builder.Services.ConfigureAuthentication(builder.Configuration);
             builder.Services.AddAuthorizationPolicies();
+
+            // CORS
             builder.Services.AddCorsFromConfiguration(builder.Configuration);
-            builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "wwwroot"; });
+
+            // ONLY if you still want to serve Angular from backend
+            if (!builder.Environment.IsEnvironment("Docker"))
+            {
+                builder.Services.AddSpaStaticFiles(configuration =>
+                {
+                    configuration.RootPath = "wwwroot";
+                });
+            }
         }
     }
 }

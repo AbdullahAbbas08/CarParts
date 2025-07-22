@@ -1,0 +1,130 @@
+<!-- featured-stores.component.html - Optimized -->
+<div class="featured-sellers-section">
+  <!-- Header Section -->
+  <div class="section-header">
+    <h2 class="section-title py-5">المتاجر المميزة</h2>
+    <p class="section-subtitle">اكتشف أفضل المتاجر الموثوقة لقطع غيار السيارات</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading$ | async" class="loading-container">
+    <div class="loading-spinner">
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">جاري التحميل...</span>
+      </div>
+      <p class="loading-text">جاري تحميل المتاجر المميزة...</p>
+    </div>
+  </div>
+
+  <!-- Stores Swiper -->
+  <ng-container *ngIf="sellers$ | async as sellers">
+    <div *ngIf="sellers.length > 0" class="swiper-container featured-sellers-swiper"
+         #swiperContainer dir="ltr">
+      <div class="swiper-wrapper">
+        <!-- Store Cards -->
+        <div class="swiper-slide" *ngFor="let seller of sellers; trackBy: trackBySellerId">
+          <div class="seller-card"
+               [class.trusted-border]="seller.isTrusted"
+               [attr.aria-label]="'عرض متجر ' + seller.name">
+
+            <!-- Trusted Badge -->
+            <div *ngIf="seller.isTrusted" class="trusted-badge" title="متجر موثوق">
+              <i class="fas fa-star" aria-hidden="true"></i>
+            </div>
+
+            <!-- Store Image -->
+            <div class="seller-image">
+              <img
+                [src]="seller.imageUrl"
+                [alt]="seller.name"
+                (error)="onImageError($event)"
+                loading="lazy"
+                decoding="async" />
+            </div>
+
+            <!-- Store Name -->
+            <h3 class="seller-name" [title]="seller.name">{{ seller.name }}</h3>
+
+            <!-- Location -->
+            <p class="seller-location">
+              <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+              {{ seller.location }}
+            </p>
+
+            <!-- Category -->
+            <span *ngFor="let cat of seller.sellerCategories" class="seller-category"
+                  (click)="viewStoresByCategory(cat.name); $event.stopPropagation()">
+              {{ cat.name}}
+            </span>
+
+            <!-- Rating (if available) -->
+            <div *ngIf="seller.rating" class="seller-rating">
+              <div class="stars" [attr.aria-label]="'تقييم ' + seller.rating + ' من 5 نجوم'">
+                <i *ngFor="let star of starArray; trackBy: trackByIndex"
+                   [class]="getStarClass(star, seller.rating!)"
+                  ></i>
+              </div>
+              <span class="rating-text">{{ seller.rating }} ({{ seller.reviewsCount }})</span>
+            </div>
+          </div>
+
+          <!-- View Store Button -->
+          <button class="view-store-button"
+                  [routerLink]="['/seller', seller.id]"
+                  [attr.title]="'عرض متجر ' + seller.name"
+                  [attr.aria-label]="'عرض متجر ' + seller.name">
+            <i class="fas fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- View More Card -->
+        <div *ngIf="showViewMore" class="swiper-slide">
+          <div class="view-more-card" (click)="viewAllStores()">
+            <div class="view-more-content">
+              <div class="view-more-icon">
+                <i class="fas fa-plus-circle" aria-hidden="true"></i>
+              </div>
+              <h3 class="view-more-title">عرض المزيد</h3>
+              <p class="view-more-subtitle">استكشف جميع المتاجر المتاحة</p>
+              <div class="view-more-arrow">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="swiper-button-next" aria-label="الشريحة التالية">
+        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+      </div>
+      <div class="swiper-button-prev" aria-label="الشريحة السابقة">
+        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+      </div>
+
+      <!-- Pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="sellers.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-store-slash" aria-hidden="true"></i>
+      </div>
+      <h3 class="empty-title">لا توجد متاجر مميزة حالياً</h3>
+      <p class="empty-subtitle">يمكنك تصفح جميع المتاجر المتاحة</p>
+      <button class="btn btn-primary" (click)="viewAllStores()">
+        <i class="fas fa-store" aria-hidden="true"></i>
+        عرض جميع المتاجر
+      </button>
+    </div>
+
+    <!-- View All Button -->
+    <div *ngIf="sellers.length > 0" class="view-all-section">
+      <button class="btn-view-all" (click)="viewAllStores()">
+        <span class="btn-text">عرض جميع المتاجر</span>
+        <i class="fas fa-arrow-left btn-icon" aria-hidden="true"></i>
+      </button>
+    </div>
+  </ng-container>
+</div>

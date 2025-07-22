@@ -1,8 +1,7 @@
-﻿public interface ICategoryService
+﻿using Bussiness.Interfaces;
+using Data.DTOs;
+
+public interface ICategoryService : _IBusinessService<Category, CategoryDto>
 {
-    Task<IEnumerable<CategoryViewModel>> GetAllAsync();
-    Task<CategoryViewModel> GetByIdAsync(int id);
-    Task AddAsync(CategoryDto dto);
-    Task UpdateAsync(int id, CategoryDto dto);
-    Task DeleteAsync(int id);
+    
 }

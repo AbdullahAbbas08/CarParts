@@ -4,3 +4,20 @@
 
 /.vs
 /Fekrah/API/ClientApp/package-lock.json
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.AssemblyInfo.cs
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.AssemblyInfoInputs.cache
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.assets.cache
+/Fekrah/Data/obj/Debug/net8.0/Data.AssemblyInfo.cs
+/Fekrah/Data/obj/Debug/net8.0/Data.AssemblyInfoInputs.cache
+/Fekrah/Data/obj/Debug/net8.0/Data.assets.cache
+/Fekrah/Bussiness/obj/Bussiness.csproj.nuget.dgspec.json
+/Fekrah/Bussiness/obj/Bussiness.csproj.nuget.g.props
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.csproj.AssemblyReference.cache
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.GeneratedMSBuildEditorConfig.editorconfig
+/Fekrah/Bussiness/obj/project.assets.json
+/Fekrah/Bussiness/obj/project.nuget.cache
+/Fekrah/Data/obj/Debug/net8.0/Data.csproj.AssemblyReference.cache
+/Fekrah/Data/obj/Debug/net8.0
+/Fekrah/Data/obj
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.csproj.CoreCompileInputs.cache
+/Fekrah/Bussiness/obj/Debug/net8.0/Bussiness.sourcelink.json

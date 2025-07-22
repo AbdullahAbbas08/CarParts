@@ -1,9 +1,10 @@
-﻿public interface ISellerService
+﻿using Bussiness.Helpers;
+using Bussiness.Interfaces;
+using Data.DTOs;
+using Data.ViewModels;
+
+public interface ISellerService : _IBusinessService<Seller, SellerDto>
 {
-    Task<IEnumerable<SellerViewModel>> GetAllAsync();
-    Task<SellerViewModel> GetByIdAsync(int id);
-    Task AddAsync(SellerDto dto);
-    Task UpdateAsync(int id, SellerDto dto);
-    Task DeleteAsync(int id);
+    DataSourceResult<SellerDto> GetAllFilteredSeller(SellerFilterViewModel sellerFilterViewModel);
 }
 

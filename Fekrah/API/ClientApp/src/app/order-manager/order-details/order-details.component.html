@@ -1,0 +1,384 @@
+<!-- Order Details Modal/Component -->
+<div class="order-details-overlay" *ngIf="showOrderDetails" (click)="closeOrderDetails()">
+  <div class="order-details-modal" (click)="$event.stopPropagation()" [@slideInUp]>
+
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-info">
+        <h2>
+          <i class="fas fa-receipt"></i>
+          تفاصيل الطلب {{ selectedOrder?.orderNumber }}
+        </h2>
+        <div class="order-meta">
+          <span class="order-date">
+            <i class="fas fa-calendar-alt"></i>
+            {{ selectedOrder?.orderDate | date: 'dd MMMM yyyy - h:mm a' : 'ar-EG' }}
+          </span>
+          <span class="status-badge" [ngStyle]="{'background': getStatusColor(selectedOrder?.status)}">
+            <i [class]="getStatusIcon(selectedOrder?.status)"></i>
+            {{ getStatusLabel(selectedOrder?.status) }}
+          </span>
+        </div>
+      </div>
+      <button class="close-btn" (click)="closeOrderDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="modal-content">
+
+      <!-- Customer Information Section -->
+      <div class="details-section customer-section">
+        <div class="section-header" (click)="toggleSection('customer')">
+          <h3>
+            <i class="fas fa-user-circle"></i>
+            بيانات العميل
+            <i class="fas" [ngClass]="sectionStates.customer ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+          <button class="btn btn-sm btn-outline" (click)="contactCustomer(); $event.stopPropagation()">
+            <i class="fas fa-phone"></i>
+            اتصال
+          </button>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.customer">
+          <div class="customer-details-grid">
+            <div class="detail-item">
+              <div class="detail-icon">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="detail-content">
+                <label>اسم العميل</label>
+                <span>{{ selectedOrder?.customerName }}</span>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="detail-content">
+                <label>رقم الهاتف</label>
+                <span>{{ selectedOrder?.customerPhone }}</span>
+              </div>
+            </div>
+
+            <div class="detail-item full-width">
+              <div class="detail-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="detail-content">
+                <label>عنوان التوصيل</label>
+                <span>{{ selectedOrder?.customerAddress }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Items Section -->
+      <div class="details-section items-section">
+        <div class="section-header" (click)="toggleSection('items')">
+          <h3>
+            <i class="fas fa-shopping-cart"></i>
+            عناصر الطلب ({{ selectedOrder?.items?.length }} عنصر)
+            <i class="fas" [ngClass]="sectionStates.items ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+          <div class="items-summary">
+            <span class="total-items">{{ getTotalQuantity() }} قطعة</span>
+          </div>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.items">
+          <div class="items-list">
+            <div class="item-card" *ngFor="let item of selectedOrder?.items; trackBy: trackByItemId">
+              <div class="item-image-container">
+                <img [src]="item.image" [alt]="item.productName" class="item-image" (error)="onImageError($event)">
+                <div class="quantity-badge">{{ item.quantity }}</div>
+              </div>
+
+              <div class="item-details">
+                <h4 class="item-name">{{ item.productName }}</h4>
+                <div class="item-specs">
+                  <span class="item-price">{{ item.price | currency:'EGP':'symbol':'1.0-0' }}</span>
+                  <span class="item-total">
+                    المجموع: {{ (item.price * item.quantity) | currency:'EGP':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="item-actions">
+                <button class="btn btn-sm btn-outline" (click)="viewProductDetails(item)">
+                  <i class="fas fa-eye"></i>
+                  عرض
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment & Delivery Section -->
+      <div class="details-section payment-section">
+        <div class="section-header" (click)="toggleSection('payment')">
+          <h3>
+            <i class="fas fa-credit-card"></i>
+            بيانات الدفع والتوصيل
+            <i class="fas" [ngClass]="sectionStates.payment ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.payment">
+          <div class="payment-delivery-grid">
+            <div class="payment-info">
+              <h4>
+                <i class="fas fa-money-bill-wave"></i>
+                طريقة الدفع
+              </h4>
+              <div class="payment-method">
+                <span class="payment-badge" [ngClass]="getPaymentMethodClass(selectedOrder?.paymentMethod)">
+                  <i [class]="getPaymentMethodIcon(selectedOrder?.paymentMethod)"></i>
+                  {{ getPaymentMethodLabel(selectedOrder?.paymentMethod) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="delivery-info">
+              <h4>
+                <i class="fas fa-truck"></i>
+                معلومات التوصيل
+              </h4>
+              <div class="delivery-details">
+                <div class="delivery-item">
+                  <span class="label">رسوم التوصيل:</span>
+                  <span class="value">{{ selectedOrder?.deliveryFee | currency:'EGP':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="delivery-item" *ngIf="selectedOrder?.estimatedDelivery">
+                  <span class="label">التوصيل المتوقع:</span>
+                  <span class="value">{{ selectedOrder?.estimatedDelivery | date: 'dd MMMM yyyy' : 'ar-EG' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary Section -->
+      <div class="details-section summary-section">
+        <div class="section-header" (click)="toggleSection('summary')">
+          <h3>
+            <i class="fas fa-calculator"></i>
+            ملخص الطلب
+            <i class="fas" [ngClass]="sectionStates.summary ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.summary">
+          <div class="order-summary">
+            <div class="summary-item">
+              <span class="label">المجموع الفرعي:</span>
+              <span class="value">{{ getSubtotal() | currency:'EGP':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">رسوم التوصيل:</span>
+              <span class="value">{{ selectedOrder?.deliveryFee | currency:'EGP':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="summary-item discount" *ngIf="getDiscount() > 0">
+              <span class="label">خصم:</span>
+              <span class="value">-{{ getDiscount() | currency:'EGP':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item total">
+              <span class="label">المجموع الإجمالي:</span>
+              <span class="value">{{ selectedOrder?.totalAmount | currency:'EGP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Notes Section -->
+      <div class="details-section notes-section" *ngIf="selectedOrder?.notes">
+        <div class="section-header" (click)="toggleSection('notes')">
+          <h3>
+            <i class="fas fa-sticky-note"></i>
+            ملاحظات الطلب
+            <i class="fas" [ngClass]="sectionStates.notes ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.notes">
+          <div class="notes-content">
+            <p>{{ selectedOrder?.notes }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Timeline Section -->
+      <div class="details-section timeline-section">
+        <div class="section-header" (click)="toggleSection('timeline')">
+          <h3>
+            <i class="fas fa-history"></i>
+            تاريخ الطلب
+            <i class="fas" [ngClass]="sectionStates.timeline ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.timeline">
+          <div class="order-timeline">
+            <div class="timeline-item" *ngFor="let event of getOrderTimeline()"
+              [ngClass]="{'active': event.active, 'completed': event.completed}">
+              <div class="timeline-icon">
+                <i [class]="event.icon"></i>
+              </div>
+              <div class="timeline-content">
+                <h5>{{ event.title }}</h5>
+                <p>{{ event.description }}</p>
+                <span class="timeline-time" *ngIf="event.time">{{ event.time | date: 'dd/MM/yyyy - h:mm a' : 'ar-EG' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Section -->
+      <div class="details-section quick-actions-section">
+        <div class="section-header" (click)="toggleSection('quickActions')">
+          <h3>
+            <i class="fas fa-bolt"></i>
+            إجراءات سريعة
+            <i class="fas" [ngClass]="sectionStates.quickActions ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.quickActions">
+          <div class="quick-actions-grid">
+            <button class="quick-action-btn"
+                    *ngFor="let action of quickActions"
+                    (click)="executeQuickAction(action.action)"
+                    [style.border-color]="action.color">
+              <i [class]="action.icon" [style.color]="action.color"></i>
+              <span>{{ action.label }}</span>
+            </button>
+          </div>
+
+          <!-- Message Templates -->
+          <div class="message-templates" *ngIf="selectedOrder">
+            <h5><i class="fas fa-comments"></i> قوالب الرسائل</h5>
+            <div class="templates-grid">
+              <button class="template-btn"
+                      *ngFor="let template of getMessageTemplates()"
+                      (click)="sendTemplate(template)">
+                <i class="fas fa-paper-plane"></i>
+                {{ template.title }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Order Priority -->
+          <div class="order-priority">
+            <h5><i class="fas fa-flag"></i> أولوية الطلب</h5>
+            <div class="priority-indicator" [style.color]="getPriorityColor()">
+              <i class="fas fa-flag"></i>
+              {{ getPriorityLabel() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Insights Section -->
+      <div class="details-section insights-section">
+        <div class="section-header" (click)="toggleSection('insights')">
+          <h3>
+            <i class="fas fa-chart-line"></i>
+            إحصائيات الطلب
+            <i class="fas" [ngClass]="sectionStates.insights ? 'fa-chevron-up' : 'fa-chevron-down'" class="toggle-icon"></i>
+          </h3>
+        </div>
+
+        <div class="section-content" [@expandCollapse] *ngIf="sectionStates.insights">
+          <div class="insights-grid">
+            <div class="insight-card" *ngFor="let insight of getOrderInsightsArray()">
+              <div class="insight-icon">
+                <i [class]="insight.icon"></i>
+              </div>
+              <div class="insight-content">
+                <div class="insight-value">{{ insight.value }}</div>
+                <div class="insight-label">{{ insight.label }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <div class="footer-actions">
+        <div class="primary-actions">
+          <button class="btn btn-success" *ngIf="canConfirm()" (click)="confirmOrder()">
+            <i class="fas fa-check"></i>
+            تأكيد الطلب
+          </button>
+          <button class="btn btn-warning" *ngIf="canPrepare()" (click)="updateStatus('preparing')">
+            <i class="fas fa-cog"></i>
+            بدء التحضير
+          </button>
+          <button class="btn btn-info" *ngIf="canMarkReady()" (click)="updateStatus('ready')">
+            <i class="fas fa-box"></i>
+            جاهز للتسليم
+          </button>
+          <button class="btn btn-primary" *ngIf="canStartDelivery()" (click)="updateStatus('delivering')">
+            <i class="fas fa-truck"></i>
+            بدء التوصيل
+          </button>
+          <button class="btn btn-success" *ngIf="canComplete()" (click)="updateStatus('delivered')">
+            <i class="fas fa-check-circle"></i>
+            تم التسليم
+          </button>
+        </div>
+
+        <div class="secondary-actions">
+          <button class="btn btn-outline" (click)="printOrder()">
+            <i class="fas fa-print"></i>
+            طباعة
+          </button>
+          <button class="btn btn-outline" (click)="exportOrderPDF()">
+            <i class="fas fa-file-pdf"></i>
+            تصدير PDF
+          </button>
+          <button class="btn btn-outline" (click)="generateOrderReport()">
+            <i class="fas fa-chart-bar"></i>
+            تقرير مفصل
+          </button>
+          <button class="btn btn-danger" *ngIf="canCancel()" (click)="cancelOrder()">
+            <i class="fas fa-times"></i>
+            إلغاء الطلب
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Contact Modal -->
+<div class="contact-modal" *ngIf="showContactModal" [@fadeIn]>
+  <div class="contact-content">
+    <h3>التواصل مع العميل</h3>
+    <div class="contact-options">
+      <a [href]="'tel:' + selectedOrder?.customerPhone" class="contact-option phone">
+        <i class="fas fa-phone"></i>
+        <span>اتصال مباشر</span>
+      </a>
+      <a [href]="'sms:' + selectedOrder?.customerPhone" class="contact-option sms">
+        <i class="fas fa-sms"></i>
+        <span>إرسال رسالة</span>
+      </a>
+      <a [href]="'https://wa.me/' + selectedOrder?.customerPhone" class="contact-option whatsapp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        <span>واتساب</span>
+      </a>
+    </div>
+    <button class="btn btn-outline" (click)="closeContactModal()">إغلاق</button>
+  </div>
+</div>

@@ -1,22 +1,24 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["WebApplication1.csproj", "."]
-RUN dotnet restore "./WebApplication1.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "WebApplication1.csproj" -c Release -o /app/build
+COPY *.sln ./
+COPY API/*.csproj ./API/
+COPY Bussiness/*.csproj ./Bussiness/
+COPY Data/*.csproj ./Data/
 
-FROM build AS publish
-RUN dotnet publish "WebApplication1.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet restore FokkerahSolution.sln
 
-FROM base AS final
+COPY . ./
+
+RUN dotnet publish API/API.csproj -c Release -o /out
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApplication1.dll"]
+
+COPY --from=build /out ./
+
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "API.dll"]

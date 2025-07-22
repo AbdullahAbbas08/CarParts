@@ -1,0 +1,577 @@
+<div class="container">
+  <!-- Enhanced Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-car"></i>
+        إدارة طلبات قطع الغيار
+      </h1>
+      <div class="header-actions">
+        <button class="btn btn-outline" (click)="exportOrders()">
+          <i class="fas fa-download"></i>
+          تصدير البيانات
+        </button>
+        <button class="btn btn-primary" (click)="addNewOrder()">
+          <i class="fas fa-plus"></i>
+          إضافة طلب جديد
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Statistics -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.total }}</h3>
+          <p>إجمالي الطلبات</p>
+        </div>
+      </div>
+
+      <div class="stat-card pending">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.pending }}</h3>
+          <p>في الانتظار</p>
+        </div>
+      </div>
+
+      <div class="stat-card confirmed">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.confirmed }}</h3>
+          <p>مؤكد</p>
+        </div>
+      </div>
+
+      <div class="stat-card revenue">
+        <div class="stat-icon">
+          <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.todayRevenue | currency:'EGP':'symbol':'1.0-0' }}</h3>
+          <p>إيرادات اليوم</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Enhanced Filters - تم تحديث قسم البحث -->
+<div class="filters-section">
+  <div class="filters-title">
+    <i class="fas fa-filter"></i>
+    تصفية وبحث الطلبات
+  </div>
+  <div class="filters-grid">
+    <div class="filter-group">
+      <label>البحث في الطلبات</label>
+      <!-- تم تغيير search-wrapper إلى search-container -->
+      <div class="search-container">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          placeholder="ابحث عن رقم الطلب، اسم العميل، أو نوع القطعة..."
+          class="search-input">
+        <div class="search-icon">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>حالة الطلب</label>
+      <select [(ngModel)]="selectedStatus" (ngModelChange)="applyFilters()">
+        <option value="all">جميع الحالات</option>
+        <option *ngFor="let status of orderStatuses.slice(1)" [value]="status.value">
+          {{ status.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>التاريخ</label>
+      <input
+        type="date"
+        [(ngModel)]="selectedDate"
+        (ngModelChange)="applyFilters()">
+    </div>
+
+    <div class="filter-group">
+      <label>&nbsp;</label>
+      <button class="btn btn-outline" (click)="resetFilters()">
+        <i class="fas fa-undo"></i>
+        إعادة تعيين
+      </button>
+    </div>
+  </div>
+</div>
+
+  <!-- Enhanced Orders Section -->
+  <div class="orders-section">
+    <div class="orders-header">
+      <h3>
+        <i class="fas fa-list-alt"></i>
+        قائمة الطلبات ({{ paginatedOrders.length }} طلب)
+      </h3>
+    </div>
+
+    <!-- Enhanced Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>جاري تحميل الطلبات...</p>
+    </div>
+
+    <!-- Enhanced Empty State -->
+    <div *ngIf="!isLoading && paginatedOrders.length === 0" class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <h3>لا توجد طلبات</h3>
+      <p>لم يتم العثور على طلبات تطابق معايير البحث</p>
+    </div>
+
+    <!-- Enhanced Orders List -->
+    <div class="orders-list" *ngIf="!isLoading && paginatedOrders.length > 0">
+      <div class="order-card" *ngFor="let order of paginatedOrders; trackBy: trackByOrderId">
+
+        <!-- Enhanced Order Header -->
+        <div class="order-header">
+          <div class="order-info">
+            <div class="order-number">#{{ order.orderNumber }}</div>
+            <div class="order-date">
+              <i class="fas fa-calendar-alt"></i>
+              {{ order.orderDate | date:'dd MMMM yyyy - h:mm a':'ar-EG' }}
+            </div>
+          </div>
+          <div class="status-badge" [style.background]="getStatusColor(order.status)">
+            <i [class]="getStatusIcon(order.status)"></i>
+            {{ getStatusLabel(order.status) }}
+          </div>
+        </div>
+
+        <!-- Enhanced Customer Section -->
+        <div class="customer-section">
+          <div class="customer-title">
+            <i class="fas fa-user-circle"></i>
+            بيانات العميل
+          </div>
+          <div class="customer-grid">
+            <div class="customer-item">
+              <i class="fas fa-user"></i>
+              <span>{{ order.customerName }}</span>
+            </div>
+            <div class="customer-item">
+              <i class="fas fa-phone"></i>
+              <span>{{ order.customerPhone }}</span>
+            </div>
+            <div class="customer-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ order.customerAddress }}</span>
+            </div>
+            <div class="customer-item">
+              <i class="fas fa-envelope"></i>
+              <span>{{ order.customerEmail || 'غير محدد' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Products Section -->
+        <div class="products-section">
+          <div class="products-header">
+            <div class="products-title">
+              <i class="fas fa-shopping-cart"></i>
+              عناصر الطلب
+            </div>
+            <div>
+              <span class="products-count">
+                <i class="fas fa-cubes"></i>
+                {{ order.items.length }} قطع غيار
+              </span>
+              <span class="products-total">
+                <i class="fas fa-coins"></i>
+                {{ calculateOrderTotal(order) | currency:'EGP':'symbol':'1.0-0' }}
+              </span>
+            </div>
+          </div>
+          <div class="products-list">
+            <div class="product-item" *ngFor="let item of order.items; trackBy: trackByItemId">
+              <img [src]="item.image" class="product-image" [alt]="item.productName" (error)="onImageError($event)">
+              <div class="product-details">
+                <div class="product-name">
+                  <i class="fas fa-tag"></i>
+                  {{ item.productName }}
+                </div>
+                <div class="product-specs">
+                  <i class="fas fa-calculator"></i>
+                  الكمية: {{ item.quantity }} × {{ item.price | currency:'EGP':'symbol':'1.0-0' }}
+                </div>
+                <div class="product-total">
+                  <i class="fas fa-equals"></i>
+                  المجموع: {{ (item.quantity * item.price) | currency:'EGP':'symbol':'1.0-0' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Actions Section -->
+        <div class="actions-section">
+          <div class="actions-title">
+            <i class="fas fa-cogs"></i>
+            إجراءات الطلب
+          </div>
+          <div class="actions-container">
+            <div class="action-group">
+              <button class="btn btn-info" (click)="viewOrderDetails(order)">
+                <i class="fas fa-eye"></i>
+                عرض التفاصيل
+              </button>
+              <button class="btn btn-outline" (click)="printOrder(order)">
+                <i class="fas fa-print"></i>
+                طباعة
+              </button>
+              <button class="btn btn-outline" (click)="contactCustomer(order.customerPhone)">
+                <i class="fas fa-phone"></i>
+                اتصال
+              </button>
+              <button class="btn btn-outline" (click)="sendWhatsApp(order.customerPhone)">
+                <i class="fab fa-whatsapp"></i>
+                واتساب
+              </button>
+            </div>
+
+            <div class="action-group">
+              <!-- Enhanced Status-based action buttons -->
+              <button
+                *ngIf="order.status === 'pending'"
+                class="btn btn-success"
+                (click)="updateOrderStatus(order.id, 'confirmed')">
+                <i class="fas fa-check"></i>
+                تأكيد الطلب
+              </button>
+
+              <button
+                *ngIf="order.status === 'confirmed'"
+                class="btn btn-primary"
+                (click)="updateOrderStatus(order.id, 'preparing')">
+                <i class="fas fa-cog"></i>
+                بدء التحضير
+              </button>
+
+              <button
+                *ngIf="order.status === 'preparing'"
+                class="btn btn-success"
+                (click)="updateOrderStatus(order.id, 'ready')">
+                <i class="fas fa-box"></i>
+                جاهز للتسليم
+              </button>
+
+              <button
+                *ngIf="order.status === 'ready'"
+                class="btn btn-primary"
+                (click)="updateOrderStatus(order.id, 'delivering')">
+                <i class="fas fa-truck"></i>
+                بدء التوصيل
+              </button>
+
+              <button
+                *ngIf="order.status === 'delivering'"
+                class="btn btn-success"
+                (click)="updateOrderStatus(order.id, 'delivered')">
+                <i class="fas fa-check-circle"></i>
+                تم التسليم
+              </button>
+
+              <button
+                *ngIf="canCancelOrder(order)"
+                class="btn btn-danger"
+                (click)="cancelOrder(order)"
+                [attr.data-confirm]="'هل أنت متأكد من إلغاء هذا الطلب؟'">
+                <i class="fas fa-times"></i>
+                إلغاء الطلب
+              </button>
+
+              <!-- Enhanced Completed/Cancelled states -->
+              <span
+                *ngIf="order.status === 'delivered'"
+                class="btn btn-outline status-indicator completed">
+                <i class="fas fa-check-double"></i>
+                مكتمل
+                <small class="completion-date">{{ order.completedDate | date:'dd/MM' }}</small>
+              </span>
+
+              <span
+                *ngIf="order.status === 'cancelled'"
+                class="btn btn-outline status-indicator cancelled">
+                <i class="fas fa-ban"></i>
+                ملغي
+                <small class="cancellation-reason">{{ order.cancellationReason || 'غير محدد' }}</small>
+              </span>
+            </div>
+          </div>
+
+          <!-- Enhanced Order Timeline (New Feature) -->
+          <div class="order-timeline" *ngIf="order.timeline && order.timeline.length > 0">
+            <div class="timeline-title">
+              <i class="fas fa-history"></i>
+              تتبع الطلب
+            </div>
+            <div class="timeline-items">
+              <div class="timeline-item"
+                   *ngFor="let timelineItem of order.timeline; let last = last"
+                   [class.active]="timelineItem.status === order.status"
+                   [class.completed]="isTimelineStepCompleted(timelineItem.status, order.status)">
+                <div class="timeline-icon">
+                  <i [class]="getTimelineIcon(timelineItem.status)"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-status">{{ getStatusLabel(timelineItem.status) }}</div>
+                  <div class="timeline-date">{{ timelineItem.date | date:'dd MMMM yyyy - h:mm a':'ar-EG' }}</div>
+                  <div class="timeline-note" *ngIf="timelineItem.note">{{ timelineItem.note }}</div>
+                </div>
+                <div class="timeline-line" *ngIf="!last"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Order Notes Section (New Feature) -->
+          <div class="order-notes" *ngIf="order.notes || order.specialInstructions">
+            <div class="notes-title">
+              <i class="fas fa-sticky-note"></i>
+              ملاحظات الطلب
+            </div>
+            <div class="notes-content">
+              <div class="note-item" *ngIf="order.specialInstructions">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="note-label">تعليمات خاصة:</span>
+                <span class="note-text">{{ order.specialInstructions }}</span>
+              </div>
+              <div class="note-item" *ngIf="order.notes">
+                <i class="fas fa-comment"></i>
+                <span class="note-label">ملاحظات:</span>
+                <span class="note-text">{{ order.notes }}</span>
+              </div>
+              <div class="note-item" *ngIf="order.deliveryNotes">
+                <i class="fas fa-truck"></i>
+                <span class="note-label">ملاحظات التوصيل:</span>
+                <span class="note-text">{{ order.deliveryNotes }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Payment Information (New Feature) -->
+          <div class="payment-info" *ngIf="order.paymentMethod || order.paymentStatus">
+            <div class="payment-title">
+              <i class="fas fa-credit-card"></i>
+              معلومات الدفع
+            </div>
+            <div class="payment-details">
+              <div class="payment-item" *ngIf="order.paymentMethod">
+                <i class="fas fa-money-check-alt"></i>
+                <span class="payment-label">طريقة الدفع:</span>
+                <span class="payment-value" [class]="'payment-' + order.paymentMethod">
+                  {{ getPaymentMethodLabel(order.paymentMethod) }}
+                </span>
+              </div>
+              <div class="payment-item" *ngIf="order.paymentStatus">
+                <i class="fas fa-receipt"></i>
+                <span class="payment-label">حالة الدفع:</span>
+                <span class="payment-value" [class]="'status-' + order.paymentStatus">
+                  {{ getPaymentStatusLabel(order.paymentStatus) }}
+                </span>
+              </div>
+              <div class="payment-item" *ngIf="order.paidAmount">
+                <i class="fas fa-dollar-sign"></i>
+                <span class="payment-label">المبلغ المدفوع:</span>
+                <span class="payment-value">{{ order.paidAmount | currency:'EGP':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="payment-item" *ngIf="order.remainingAmount && order.remainingAmount > 0">
+                <i class="fas fa-exclamation-circle"></i>
+                <span class="payment-label">المبلغ المتبقي:</span>
+                <span class="payment-value remaining">{{ order.remainingAmount | currency:'EGP':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Pagination -->
+    <div class="pagination-section" *ngIf="!isLoading && totalPages > 1">
+      <div class="pagination-info">
+        <i class="fas fa-info-circle"></i>
+        عرض {{ getStartIndex() + 1 }}-{{ getEndIndex() }} من {{ filteredOrders.length }} طلب
+      </div>
+      <div class="pagination-controls">
+        <button
+          class="page-btn"
+          [disabled]="currentPage === 1"
+          (click)="goToFirstPage()"
+          title="الصفحة الأولى">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+
+        <button
+          class="page-btn"
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          title="الصفحة السابقة">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <button
+          *ngFor="let page of getPageNumbers()"
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+          [title]="'الصفحة ' + page">
+          {{ page }}
+        </button>
+
+        <button
+          class="page-btn"
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          title="الصفحة التالية">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <button
+          class="page-btn"
+          [disabled]="currentPage === totalPages"
+          (click)="goToLastPage()"
+          title="الصفحة الأخيرة">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Floating Action Button (New Feature) -->
+  <div class="floating-actions">
+    <div class="fab-container">
+      <button class="fab main-fab" (click)="toggleFabMenu()" [class.active]="fabMenuOpen">
+        <i class="fas fa-plus" [class.fa-times]="fabMenuOpen"></i>
+      </button>
+
+      <div class="fab-menu" [class.open]="fabMenuOpen">
+        <button class="fab secondary-fab" (click)="addNewOrder()" title="إضافة طلب جديد">
+          <i class="fas fa-shopping-cart"></i>
+        </button>
+        <button class="fab secondary-fab" (click)="exportOrders()" title="تصدير البيانات">
+          <i class="fas fa-download"></i>
+        </button>
+        <button class="fab secondary-fab" (click)="refreshOrders()" title="تحديث القائمة">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <button class="fab secondary-fab" (click)="showStatistics()" title="عرض الإحصائيات">
+          <i class="fas fa-chart-bar"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Success/Error Messages -->
+<div
+  *ngIf="notificationMessage"
+  class="notification"
+  [class]="notificationType"
+  [@slideInOut]>
+  <div class="notification-content">
+    <i [class]="getNotificationIcon()"></i>
+    <span>{{ notificationMessage }}</span>
+    <button class="close-notification" (click)="dismissNotification()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="notification-progress" *ngIf="autoHideNotification"></div>
+</div>
+
+<!-- Order Details Component -->
+<app-order-details
+  [selectedOrder]="selectedOrderForDetails"
+  [showOrderDetails]="showOrderDetailsModal"
+  (closeDetails)="closeOrderDetails()"
+  (statusUpdate)="onStatusUpdate($event)"
+  (orderPrint)="printOrder($event)">
+</app-order-details>
+
+<!-- Enhanced Loading Overlay (New Feature) -->
+<div class="loading-overlay" *ngIf="isProcessing" [@fadeInOut]>
+  <div class="loading-content">
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+    </div>
+    <h3>{{ processingMessage || 'جاري المعالجة...' }}</h3>
+    <p>يرجى الانتظار قليلاً</p>
+  </div>
+</div>
+
+<!-- Enhanced Quick Filters (New Feature) -->
+<!-- Toggle Button for Quick Filters -->
+<div class="quick-filters-toggle-btn"
+     [class.active]="showQuickFilters"
+     (click)="toggleQuickFilters()"
+     title="تصفية سريعة">
+  <i class="fas fa-filter"></i>
+  <span class="toggle-text">تصفية سريعة</span>
+</div>
+
+<!-- Quick Filters Panel -->
+<div class="quick-filters"
+     [class.show]="showQuickFilters"
+     [class.hide]="!showQuickFilters">
+  <div class="quick-filters-header">
+    <div class="quick-filters-title">
+      <i class="fas fa-filter"></i>
+      تصفية سريعة
+    </div>
+    <button class="close-quick-filters"
+            (click)="hideQuickFilters()"
+            title="إغلاق">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="quick-filter-buttons">
+    <button class="quick-filter-btn"
+            [class.active]="quickFilter === 'all'"
+            (click)="applyQuickFilter('all')">
+      <i class="fas fa-list"></i>
+      الكل
+    </button>
+    <button class="quick-filter-btn"
+            [class.active]="quickFilter === 'today'"
+            (click)="applyQuickFilter('today')">
+      <i class="fas fa-calendar-day"></i>
+      اليوم
+    </button>
+    <button class="quick-filter-btn"
+            [class.active]="quickFilter === 'pending'"
+            (click)="applyQuickFilter('pending')">
+      <i class="fas fa-clock"></i>
+      معلق
+    </button>
+    <button class="quick-filter-btn"
+            [class.active]="quickFilter === 'urgent'"
+            (click)="applyQuickFilter('urgent')">
+      <i class="fas fa-exclamation-triangle"></i>
+      عاجل
+    </button>
+  </div>
+</div>
+
+<!-- Overlay to close filters when clicking outside -->
+<div class="quick-filters-overlay"
+     *ngIf="showQuickFilters"
+     (click)="hideQuickFilters()"></div>

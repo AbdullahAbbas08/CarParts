@@ -1,3 +1,4 @@
+<!-- part-types.component.html - Updated with View More Button -->
 <section class="part-types-section">
   <div class="section-header">
     <h2>تصفح حسب نوع القطعة</h2>
@@ -7,7 +8,7 @@
   <div #swiperRef class="swiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide" *ngFor="let part of partTypes; trackBy: trackByPartName">
-        <div class="part-card"  [routerLink]="['/parts/brand', part.id]">
+        <div class="part-card" (click)="navigateToCategory(part.id)">
           <div class="icon-wrapper">
             <img [src]="part.imageUrl" [alt]="part.name" class="part-icon" />
           </div>
@@ -16,8 +17,22 @@
       </div>
     </div>
 
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-prev"></div>
+    <!-- Navigation buttons -->
     <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+
+    <!-- Pagination -->
+    <!-- <div class="swiper-pagination"></div> -->
+  </div>
+
+  <!-- View More Button -->
+  <div class="view-more-container">
+    <button class="view-more-btn" (click)="viewAllParts()">
+      <span class="btn-text">عرض جميع القطع</span>
+      <div class="btn-icon">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <div class="btn-background"></div>
+    </button>
   </div>
 </section>

@@ -21,7 +21,7 @@
     <!-- سلايدر Swiper -->
     <div class="swiper-container part-swiper">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let part of latestParts">
+        <div class="swiper-slide" *ngFor="let part of latestParts; trackBy: trackByPartId">
           <div class="part-card">
             <!-- شارات الخصومات والعلامات -->
             <!-- شارة خصم مائلة فقط -->
@@ -34,26 +34,28 @@
               <span class="badge new">جديد</span>
             </div>
 
-
-
             <div class="image-container">
               <img [src]="part.image" [alt]="part.name" loading="lazy" />
             </div>
-
 
             <h3 class="part-name">
               {{ part.name }}
               <span class="origin" *ngIf="part.origin">بلد المنشأ: {{ part.origin }}</span>
             </h3>
 
-            <a class="category-link" [routerLink]="['/category', part.category]" title="عرض قطع {{ part.category }}">
+            <a class="category-link"
+               [routerLink]="['/category', part.category]"
+               title="عرض قطع {{ part.category }}"
+               (click)="$event.stopPropagation()">
               <i class="fas fa-layer-group"></i>
               {{ part.category }} - {{ part.brand }}
             </a>
 
             <p class="part-description">{{ part.description }}</p>
 
-            <a class="seller-name" [routerLink]="['/seller', part.sellerId]">
+            <a class="seller-name"
+               [routerLink]="['/seller', part.sellerId]"
+               (click)="$event.stopPropagation()">
               <i class="fas fa-store"></i> {{ part.sellerName }}
             </a>
 
@@ -67,24 +69,41 @@
             </div>
 
             <div class="card-actions">
-              <button class="icon-btn cart" title="إضافة إلى السلة" (click)="addToCart(part, $event)">
+              <button class="icon-btn cart"
+                      title="إضافة إلى السلة"
+                      (click)="addToCart(part, $event)"
+                      [attr.aria-label]="'إضافة ' + part.name + ' إلى السلة'">
                 <i class="fas fa-shopping-cart"></i>
               </button>
-              <button class="icon-btn view" title="عرض التفاصيل" [routerLink]="['/parts', part.id]">
+
+              <button class="icon-btn view"
+                      title="عرض التفاصيل"
+                      [routerLink]="['/parts', part.id]"
+                      (click)="$event.stopPropagation()"
+                      [attr.aria-label]="'عرض تفاصيل ' + part.name">
                 <i class="fas fa-eye"></i>
               </button>
-              <a class="icon-btn whatsapp" [href]="getWhatsappLink(part.name)" target="_blank" title="تواصل واتساب">
-                <i class="fab fa-whatsapp"></i>
-              </a>
-            </div>
 
+              <!-- <a class="icon-btn whatsapp"
+                 [href]="getWhatsappLink(part.name)"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 title="تواصل واتساب"
+                 (click)="$event.stopPropagation()"
+                 [attr.aria-label]="'تواصل عبر واتساب حول ' + part.name">
+                <i class="fab fa-whatsapp"></i>
+              </a> -->
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-pagination"></div>
+      <!-- Navigation arrows - Hidden on mobile via CSS -->
+      <!-- <div class="swiper-button-next" aria-label="الشريحة التالية"></div>
+      <div class="swiper-button-prev" aria-label="الشريحة السابقة"></div> -->
+
+      <!-- Pagination dots -->
+      <div class="swiper-pagination" aria-label="مؤشر الشرائح"></div>
     </div>
   </div>
 </section>

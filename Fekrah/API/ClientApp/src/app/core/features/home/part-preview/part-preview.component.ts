@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay, EffectCoverflow } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 
-Swiper.use([Navigation, Pagination, Autoplay, EffectCoverflow]);
+Swiper.use([Navigation, Pagination, Autoplay]);
 
 interface CarPart {
   id: number;
@@ -118,13 +118,12 @@ export class PartPreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-
-
-
   ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-    this.initializeSwiper();
+    setTimeout(() => {
+      this.initializeSwiper();
+    }, 100);
   }
 
   ngOnDestroy(): void {
@@ -133,50 +132,73 @@ export class PartPreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // part-preview.component.ts
-  // تحديث لضمان عرض الشرائح بترتيب صحيح عبر تعطيل centeredSlides
   getWhatsappLink(partName: string): string {
     const message = `استفسار عن المنتج: ${partName}`;
     return `https://wa.me/?text=${encodeURIComponent(message)}`;
   }
 
-
   private initializeSwiper(): void {
     const swiperElement = document.querySelector('.part-swiper');
     if (swiperElement) {
       this.swiper = new Swiper(swiperElement as HTMLElement, {
-        slidesPerView: 3, // عدد الكروت الظاهرة على الشاشة
-        spaceBetween: 30,
+        slidesPerView: 1,
+        spaceBetween: 2,
         loop: true,
         centeredSlides: false,
         speed: 500,
+
         autoplay: {
           delay: 4000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true
         },
+
         pagination: {
           el: '.swiper-pagination',
           clickable: true,
           dynamicBullets: true
         },
+
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev'
         },
+
         breakpoints: {
-          320: { slidesPerView: 1, spaceBetween: 15 },
-          768: { slidesPerView: 2, spaceBetween: 20 },
-          1024: { slidesPerView: 3, spaceBetween: 30 },
-          1400: { slidesPerView: 4, spaceBetween: 30 }
-        }
+          // Mobile
+          576: {
+            slidesPerView: 1,
+            spaceBetween: 15
+          },
+          // Tablet
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 20
+          },
+          // Desktop
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 25
+          },
+          // Large Desktop
+          1400: {
+            slidesPerView: 4,
+            spaceBetween: 30
+          }
+        },
+
+        // Touch settings
+        touchRatio: 1,
+        touchAngle: 45,
+        grabCursor: true,
+
+        // Better performance
+        watchOverflow: true,
+        observer: true,
+        observeParents: true
       });
     }
   }
-
-
-
-
 
   onPartClick(part: CarPart): void {
     console.log('Part clicked:', part);

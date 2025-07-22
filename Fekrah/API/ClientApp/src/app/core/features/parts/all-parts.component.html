@@ -1,0 +1,137 @@
+<!-- all-parts.component.html -->
+<div class="all-parts-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">جميع قطع الغيار</h1>
+      <p class="page-subtitle">تصفح مجموعتنا الكاملة من قطع غيار السيارات</p>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <!-- Search Bar -->
+      <div class="search-wrapper">
+        <div class="search-input-container">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            placeholder="البحث عن قطعة غيار..."
+            class="search-input"
+          />
+          <i class="search-icon fas fa-search"></i>
+        </div>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="category-filter">
+        <select
+          [(ngModel)]="selectedCategory"
+          (change)="filterByCategory(selectedCategory)"
+          class="category-select"
+        >
+          <option value="">جميع الفئات</option>
+          <option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Clear Filters Button -->
+      <button
+        *ngIf="selectedCategory || searchTerm"
+        (click)="clearFilters()"
+        class="clear-filters-btn"
+      >
+        <i class="fas fa-times"></i>
+        مسح الفلاتر
+      </button>
+    </div>
+
+    <!-- Results Counter -->
+    <div class="results-info">
+      <span class="results-count">
+        عرض {{ paginatedParts.length }} من أصل {{ filteredParts.length }} منتج
+      </span>
+    </div>
+  </div>
+
+  <!-- Parts Grid -->
+  <div class="parts-grid-container">
+    <div class="parts-grid" *ngIf="paginatedParts.length > 0">
+      <div
+        class="part-card"
+        *ngFor="let part of paginatedParts; trackBy: trackByPartId"
+        (click)="navigateToCategory(part.id)"
+      >
+        <div class="card-image-wrapper">
+          <img [src]="part.imageUrl" [alt]="part.name" class="part-image" />
+          <div class="category-badge">{{ part.category }}</div>
+        </div>
+        <div class="card-content">
+          <h3 class="part-name">{{ part.name }}</h3>
+          <button class="view-details-btn">
+            <span>عرض التفاصيل</span>
+            <i class="fas fa-arrow-left"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div class="no-results" *ngIf="paginatedParts.length === 0">
+      <div class="no-results-content">
+        <i class="fas fa-search no-results-icon"></i>
+        <h3>لم يتم العثور على نتائج</h3>
+        <p>جرب تعديل البحث أو إزالة بعض الفلاتر</p>
+        <button (click)="clearFilters()" class="reset-btn">
+          إعادة تعيين البحث
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 1">
+    <div class="pagination">
+      <!-- Previous Button -->
+      <button
+        class="pagination-btn prev-btn"
+        [disabled]="currentPage === 1"
+        (click)="previousPage()"
+      >
+        <i class="fas fa-chevron-right"></i>
+        السابق
+      </button>
+
+      <!-- Page Numbers -->
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of pageNumbers"
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <!-- Next Button -->
+      <button
+        class="pagination-btn next-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()"
+      >
+        التالي
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+
+    <!-- Page Info -->
+    <div class="page-info">
+      صفحة {{ currentPage }} من {{ totalPages }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,499 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header minimalist-header">
+    <div class="header-content">
+      <h1 class="header-title">لوحة تحكم قطع الغيار</h1>
+      <div class="header-actions">
+        <button class="btn btn-icon-text" (click)="openQuickAddModal()" title="إضافة قطعة غيار بسرعة">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+          <span>إضافة سريعة</span>
+        </button>
+        <button class="btn btn-icon-text" (click)="openBulkImport()" title="استيراد عدة قطع غيار دفعة واحدة">
+          <i class="fas fa-upload" aria-hidden="true"></i>
+          <span>استيراد مجمع</span>
+        </button>
+        <button class="btn btn-icon-text" routerLink="/dashboard/statistics" title="عرض صفحة الإحصائيات">
+          <i class="fas fa-chart-bar" aria-hidden="true"></i>
+          <span>الإحصائيات</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-container">
+    <div class="search-header">
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="ابحث عن قطعة غيار... (اسم، كود، ماركة)" id="searchInput">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+
+      <div class="controls-section">
+        <div class="view-toggle">
+          <button class="btn-toggle" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+            <i class="fas fa-th-large"></i>
+            البطاقات
+          </button>
+          <button class="btn-toggle" [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
+            <i class="fas fa-list"></i>
+            الجدول
+          </button>
+        </div>
+
+        <button class="advanced-search-btn" [class.active]="isAdvancedOpen" (click)="toggleAdvancedSearch()">
+          <i class="fas" [class.fa-filter]="!isAdvancedOpen" [class.fa-times]="isAdvancedOpen"></i>
+          {{ isAdvancedOpen ? 'إغلاق البحث المتقدم' : 'البحث المتقدم' }}
+        </button>
+
+        <div class="results-info">
+          <i class="fas fa-list-ol"></i>
+          <span id="resultsCount">120 قطعة غيار</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Filter Panel (Hidden by default) -->
+  <div class="filter-container" id="advancedFilterPanel">
+    <div class="filter-header">
+      <h2 class="filter-title">
+        <i class="fas fa-filter"></i>
+        خيارات البحث والتصفية المتقدمة
+      </h2>
+    </div>
+
+    <div class="filters-content">
+      <div class="filters-grid">
+        <!-- Brand Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-car"></i>
+            ماركة السيارة
+          </label>
+          <select class="filter-select" id="brandSelect">
+            <option value="">جميع الماركات</option>
+            <option value="تويوتا">تويوتا</option>
+            <option value="هيونداي">هيونداي</option>
+            <option value="شيفروليه">شيفروليه</option>
+            <option value="نيسان">نيسان</option>
+            <option value="كيا">كيا</option>
+            <option value="فورد">فورد</option>
+          </select>
+        </div>
+
+        <!-- Model Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-cog"></i>
+            موديل السيارة
+          </label>
+          <select class="filter-select" id="modelSelect">
+            <option value="">جميع الموديلات</option>
+            <option value="كورولا">كورولا</option>
+            <option value="كامري">كامري</option>
+            <option value="لانسر">لانسر</option>
+            <option value="أوبترا">أوبترا</option>
+          </select>
+        </div>
+
+        <!-- Year Range -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-calendar-alt"></i>
+            سنة الصنع
+          </label>
+          <div class="range-container">
+            <input type="number" class="range-input" placeholder="من" min="1990" max="2024">
+            <span class="range-separator">—</span>
+            <input type="number" class="range-input" placeholder="إلى" min="1990" max="2024">
+          </div>
+        </div>
+
+        <!-- Condition Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-star"></i>
+            حالة القطعة
+          </label>
+          <select class="filter-select">
+            <option value="">جميع الحالات</option>
+            <option value="جديد">جديد</option>
+            <option value="مستعمل">مستعمل</option>
+          </select>
+        </div>
+
+        <!-- Grade Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-medal"></i>
+            درجة الجودة
+          </label>
+          <select class="filter-select">
+            <option value="">جميع الدرجات</option>
+            <option value="فرز أول">فرز أول</option>
+            <option value="فرز تاني">فرز تاني</option>
+          </select>
+        </div>
+
+        <!-- Part Type Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-wrench"></i>
+            نوع القطعة
+          </label>
+          <select class="filter-select">
+            <option value="">جميع الأنواع</option>
+            <option value="محرك">محرك</option>
+            <option value="فرامل">فرامل</option>
+            <option value="كهرباء">كهرباء</option>
+            <option value="بودي">بودي</option>
+            <option value="تكييف">تكييف</option>
+          </select>
+        </div>
+
+        <!-- Price Range -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-tag"></i>
+            نطاق السعر (جنيه)
+          </label>
+          <div class="range-container">
+            <input type="number" class="range-input" placeholder="أقل سعر" min="0">
+            <span class="range-separator">—</span>
+            <input type="number" class="range-input" placeholder="أعلى سعر" min="0">
+          </div>
+        </div>
+
+        <!-- Origin Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-globe"></i>
+            بلد المنشأ
+          </label>
+          <select class="filter-select">
+            <option value="">جميع البلدان</option>
+            <option value="أصلي">أصلي</option>
+            <option value="تايواني">تايواني</option>
+            <option value="كوري">كوري</option>
+            <option value="صيني">صيني</option>
+            <option value="تركي">تركي</option>
+          </select>
+        </div>
+
+        <!-- Store Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-store"></i>
+            المتجر/المورد
+          </label>
+          <select class="filter-select">
+            <option value="">جميع المتاجر</option>
+            <option value="متجر الأصلي">متجر الأصلي</option>
+            <option value="قطع غيار محمد">قطع غيار محمد</option>
+            <option value="الشركة المصرية">الشركة المصرية</option>
+          </select>
+        </div>
+
+        <!-- Location Filter
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-map-marker-alt"></i>
+            الموقع/المحافظة
+          </label>
+          <select class="filter-select">
+            <option value="">جميع المحافظات</option>
+            <option value="القاهرة">القاهرة</option>
+            <option value="الجيزة">الجيزة</option>
+            <option value="الإسكندرية">الإسكندرية</option>
+            <option value="الدقهلية">الدقهلية</option>
+          </select>
+        </div> -->
+
+        <!-- Quantity Range -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-boxes"></i>
+            الكمية المتاحة
+          </label>
+          <div class="range-container">
+            <input type="number" class="range-input" placeholder="أقل كمية" min="0">
+            <span class="range-separator">—</span>
+            <input type="number" class="range-input" placeholder="أعلى كمية" min="0">
+          </div>
+        </div>
+
+        <!-- Date Added Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-calendar-plus"></i>
+            تاريخ الإضافة
+          </label>
+          <select class="filter-select">
+            <option value="">كل الأوقات</option>
+            <option value="today">اليوم</option>
+            <option value="week">هذا الأسبوع</option>
+            <option value="month">هذا الشهر</option>
+            <option value="3months">آخر 3 شهور</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Toggle Options -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <i class="fas fa-toggle-on"></i>
+          خيارات إضافية
+        </label>
+        <div class="toggle-switches">
+          <div class="toggle-option" (click)="toggleDelivery()">
+            <label class="toggle-switch">
+              <input type="checkbox" [checked]="hasDelivery" (change)="hasDelivery = !hasDelivery; onFilterChange()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>يوجد توصيل</span>
+          </div>
+
+          <div class="toggle-option" (click)="toggleWarranty()">
+            <label class="toggle-switch">
+              <input type="checkbox" [checked]="hasWarranty" (change)="hasWarranty = !hasWarranty; onFilterChange()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>يوجد ضمان</span>
+          </div>
+
+          <div class="toggle-option" (click)="toggleDiscount()">
+            <label class="toggle-switch">
+              <input type="checkbox" [checked]="hasDiscount" (change)="hasDiscount = !hasDiscount; onFilterChange()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>يوجد خصم</span>
+          </div>
+
+          <div class="toggle-option" (click)="toggleFavoritesOnly()">
+            <label class="toggle-switch">
+              <input type="checkbox" [checked]="favoritesOnly"
+                (change)="favoritesOnly = !favoritesOnly; onFilterChange()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>المفضلة فقط</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filters -->
+      <div class="active-filters" id="activeFilters" style="display: none;">
+        <!-- Dynamic filter chips will be added here -->
+      </div>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="actions-section ">
+      <div class="filter-actions ">
+        <button class="btn btn-clear">
+          <i class="fas fa-eraser"></i>
+          مسح الفلاتر
+        </button>
+        <button class="btn btn-reset">
+          <i class="fas fa-undo"></i>
+          إعادة تعيين
+        </button>
+        <button class="btn btn-apply">
+          <i class="fas fa-check"></i>
+          تطبيق الفلاتر
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Parts Grid -->
+  <div class="parts-grid" *ngIf="!isLoading && viewMode === 'grid'; else listViewTemplate">
+    <div *ngFor="let part of filteredParts; trackBy: trackByPartId" class="part-card"
+      [class.favorite]="part.isFavorite">
+
+      <!-- Part Image -->
+      <div class="part-image">
+        <img [src]="part.image || 'assets/images/no-image.jpg'" [alt]="part.name">
+        <div class="image-overlay">
+          <button class="btn-icon" (click)="toggleFavorite(part)">
+            <i [class]="part.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+          </button>
+          <button class="btn-icon" (click)="openImageGallery(part)">
+            <i class="fas fa-images"></i>
+          </button>
+        </div>
+        <div class="badges">
+          <span class="badge condition" [class]="part.condition">{{ part.condition }}</span>
+          <span class="badge grade">{{ part.grade }}</span>
+          <span class="badge type">{{ part.partType }}</span>
+        </div>
+      </div>
+
+      <!-- Part Info -->
+      <div class="part-info">
+        <h3 class="part-name">{{ part.name }}</h3>
+        <p class="part-subtitle" *ngIf="part.subtitle">{{ part.subtitle }}</p>
+
+        <div class="car-info">
+          <i class="fas fa-car"></i>
+          <span>{{ part.car.brand }} {{ part.car.model }} - {{ part.car.year }}</span>
+        </div>
+
+        <div class="store-info">
+          <i class="fas fa-store"></i>
+          <span>{{ part.store.name }}</span>
+          <a href="tel:{{ part.store.phone }}" class="phone-link">
+            <i class="fas fa-phone"></i>
+            {{ part.store.phone }}
+          </a>
+        </div>
+
+        <div class="price-section">
+          <div class="price-main">
+            <span class="current-price">{{ part.priceAfterDiscount | currency:'EGP' }}</span>
+            <span class="original-price" *ngIf="part.discount > 0">{{ part.price | currency:'EGP' }}</span>
+          </div>
+          <span class="discount-badge" *ngIf="part.discount > 0">
+            خصم {{ part.discount }}%
+          </span>
+        </div>
+
+        <div class="part-features">
+          <span class="feature" *ngIf="part.hasDelivery">
+            <i class="fas fa-truck"></i>
+            توصيل متاح
+          </span>
+          <span class="feature origin">
+            <i class="fas fa-globe"></i>
+            {{ part.origin }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="part-actions">
+        <button class="btn btn-primary btn-sm" (click)="editPart(part)">
+          <i class="fas fa-edit"></i>
+          تعديل
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="deletePart(part)">
+          <i class="fas fa-trash"></i>
+          حذف
+        </button>
+        <button class="btn btn-secondary btn-sm" (click)="duplicatePart(part)">
+          <i class="fas fa-copy"></i>
+          نسخ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- List/Grid View Template -->
+  <ng-template #listViewTemplate>
+    <div class="parts-table-responsive">
+      <table class="parts-table">
+        <thead>
+          <tr>
+            <th>اسم القطعة</th>
+            <th>الماركة</th>
+            <th>الموديل</th>
+            <th>السنة</th>
+            <th>الحالة</th>
+            <th>الدرجة</th>
+            <th>السعر</th>
+            <th>خصم</th>
+            <th>توصيل</th>
+            <th>منشأ</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let part of filteredParts; trackBy: trackByPartId" [class.favorite]="part.isFavorite">
+            <td>
+              <span class="part-name">{{ part.name }}</span>
+              <span *ngIf="part.isFavorite" class="fav-badge" title="مفضلة">
+                <i class="fas fa-heart"></i>
+              </span>
+            </td>
+            <td>{{ part.car.brand }}</td>
+            <td>{{ part.car.model }}</td>
+            <td>{{ part.car.year }}</td>
+            <td>
+              <span class="badge badge-condition"
+                [ngClass]="{'new': part.condition === 'جديد', 'used': part.condition === 'مستعمل'}">{{ part.condition
+                }}</span>
+            </td>
+            <td>
+              <span class="badge badge-grade">{{ part.grade }}</span>
+            </td>
+            <td>
+              <span class="current-price">{{ part.priceAfterDiscount | currency:'EGP' }}</span>
+            </td>
+            <td>
+              <span class="discount-badge" *ngIf="part.discount > 0">-{{ part.discount }}%</span>
+            </td>
+            <td>
+              <span class="badge badge-delivery" *ngIf="part.hasDelivery">✔️</span>
+              <span class="badge badge-nodelivery" *ngIf="!part.hasDelivery">✗</span>
+            </td>
+            <td>
+              <span class="badge badge-origin">{{ part.origin }}</span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-primary btn-sm" (click)="editPart(part)" title="تعديل"><i
+                    class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" (click)="deletePart(part)" title="حذف"><i
+                    class="fas fa-trash"></i></button>
+                <button class="btn btn-secondary btn-sm" (click)="duplicatePart(part)" title="نسخ"><i
+                    class="fas fa-copy"></i></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-template>
+
+  <!-- Loading Template -->
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>جاري تحميل البيانات...</p>
+    </div>
+  </ng-template>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredParts.length === 0 && !isLoading">
+    <i class="fas fa-search"></i>
+    <h3>لا توجد نتائج</h3>
+    <p>لم يتم العثور على قطع تطابق معايير البحث</p>
+    <button class="btn btn-primary" (click)="clearFilters()">مسح الفلاتر</button>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 1">
+    <button class="btn btn-outline" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      السابق
+    </button>
+
+    <div class="page-numbers">
+      <button *ngFor="let page of getPageNumbers()" class="btn" [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+    </div>
+
+    <button class="btn btn-outline" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+      التالي
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showQuickAddModal" (click)="closeQuickAddModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-quick-add-form (formSubmitted)="onPartAdded($event)" (formCancelled)="closeQuickAddModal()">
+    </app-quick-add-form>
+  </div>
+</div>

@@ -12,6 +12,7 @@ import { FeaturedSellersComponent } from './featured-sellers/featured-sellers.co
 import { SharedModule } from '../../../Shared/shared.module';
 import { CarBrandsComponent } from './car-brands/car-brands.component';
 import { PartTypesComponent } from './part-types/part-types.component';
+import { FeaturedStoresComponent } from './featured-stores/featured-stores.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { PartTypesComponent } from './part-types/part-types.component';
     SuggestedOffersComponent,
     FeaturedSellersComponent,
     CarBrandsComponent,
-    PartTypesComponent
+    PartTypesComponent,
+    FeaturedStoresComponent
   ],
   imports: [
     SharedModule,

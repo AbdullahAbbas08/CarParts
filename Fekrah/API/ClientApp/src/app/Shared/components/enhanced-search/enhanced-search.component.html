@@ -1,0 +1,197 @@
+ <div class="demo-container">
+        <div class="demo-header">
+            <h1><i class="fas fa-car-side"></i> Enhanced Search Demo</h1>
+            <p>البحث المتقدم لقطع غيار السيارات</p>
+        </div>
+
+        <div class="demo-content">
+            <div class="instruction">
+                <i class="fas fa-hand-pointer"></i>
+                انقر على حقل البحث لرؤية البحث المتقدم مع اللمسات الجمالية!
+            </div>
+
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <div class="search-bar">
+                        <select class="category-select" id="categorySelect">
+                            <option value="">جميع الفئات</option>
+                            <option value="automotive">قطع السيارات</option>
+                            <option value="electronics">الإلكترونيات</option>
+                            <option value="tools">الأدوات</option>
+                        </select>
+
+                        <input 
+                            type="text" 
+                            class="search-input"
+                            id="searchInput"
+                            placeholder="ابحث عن المنتجات، قطع الغيار، أو الخدمات..."
+                            autocomplete="off">
+
+                        <button class="voice-search-btn" id="voiceBtn" title="البحث الصوتي">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+
+                        <button class="search-button" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                            <span>بحث</span>
+                        </button>
+                    </div>
+
+                    <div class="advanced-search-dropdown" id="advancedDropdown">
+                        <div class="advanced-content">
+                            <div class="advanced-header">
+                                <div class="advanced-title">
+                                    <i class="fas fa-car-side"></i>
+                                    <span>البحث المتقدم لقطع غيار السيارات</span>
+                                </div>
+                                <button class="close-advanced-btn" id="closeAdvanced" title="إغلاق">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="quick-car-searches-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-bolt"></i>
+                                    عمليات بحث سريعة
+                                </h4>
+                                <div class="quick-searches-grid">
+                                    <button class="quick-search-btn" data-search="فلتر زيت تويوتا كامري">
+                                        <i class="fas fa-filter"></i>
+                                        <span>فلتر زيت تويوتا كامري</span>
+                                    </button>
+                                    <button class="quick-search-btn" data-search="فحمات فرامل هوندا سيفيك">
+                                        <i class="fas fa-stop-circle"></i>
+                                        <span>فحمات فرامل هوندا سيفيك</span>
+                                    </button>
+                                    <button class="quick-search-btn" data-search="شمعات إشعال نيسان التيما">
+                                        <i class="fas fa-bolt"></i>
+                                        <span>شمعات إشعال نيسان التيما</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="car-filters-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-filter"></i>
+                                    حدد مواصفات سيارتك
+                                </h4>
+                                <div class="filters-grid">
+                                    <div class="filter-group">
+                                        <label class="filter-label">
+                                            <i class="fas fa-car"></i>
+                                            ماركة السيارة
+                                        </label>
+                                        <select class="filter-select" id="brandSelect">
+                                            <option value="">اختر الماركة</option>
+                                            <option value="toyota">تويوتا</option>
+                                            <option value="honda">هوندا</option>
+                                            <option value="nissan">نيسان</option>
+                                            <option value="mazda">مازدا</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="filter-group">
+                                        <label class="filter-label">
+                                            <i class="fas fa-cogs"></i>
+                                            الموديل
+                                        </label>
+                                        <select class="filter-select" id="modelSelect" disabled>
+                                            <option value="">اختر الموديل</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="filter-group">
+                                        <label class="filter-label">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            سنة الصنع
+                                        </label>
+                                        <select class="filter-select" id="yearSelect">
+                                            <option value="">اختر السنة</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="car-categories-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-th-large"></i>
+                                    فئات قطع الغيار
+                                </h4>
+                                <div class="categories-grid">
+                                    <div class="category-card" data-category="محرك وناقل الحركة">
+                                        <div class="category-icon">
+                                            <i class="fas fa-cog"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h5 class="category-name">محرك وناقل الحركة</h5>
+                                            <span class="category-count">6 أنواع</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="category-card" data-category="نظام الفرامل">
+                                        <div class="category-icon">
+                                            <i class="fas fa-stop-circle"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h5 class="category-name">نظام الفرامل</h5>
+                                            <span class="category-count">5 أنواع</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="category-card" data-category="الإضاءة والكهرباء">
+                                        <div class="category-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h5 class="category-name">الإضاءة والكهرباء</h5>
+                                            <span class="category-count">5 أنواع</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="category-card" data-category="الإطارات والجنوط">
+                                        <div class="category-icon">
+                                            <i class="fas fa-circle"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h5 class="category-name">الإطارات والجنوط</h5>
+                                            <span class="category-count">5 أنواع</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="subcategories-section" id="subcategoriesSection" style="display: none;">
+                                <h4 class="section-title">
+                                    <i class="fas fa-list"></i>
+                                    أنواع <span id="selectedCategoryName"></span>
+                                </h4>
+                                <div class="subcategories-grid" id="subcategoriesGrid">
+                                    <!-- الفئات الفرعية ستظهر هنا -->
+                                </div>
+                            </div>
+
+                            <div class="advanced-search-actions">
+                                <button class="perform-advanced-search-btn" id="performAdvancedSearch">
+                                    <i class="fas fa-search-plus"></i>
+                                    <span>بحث متقدم</span>
+                                </button>
+                                <button class="clear-filters-btn" id="clearFilters">
+                                    <i class="fas fa-eraser"></i>
+                                    <span>مسح الفلاتر</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-result" id="demoResult">
+                <!-- نتائج البحث ستظهر هنا -->
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,92 @@
+<div class="all-brands-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1 class="page-title">جميع ماركات السيارات</h1>
+    <p class="page-subtitle">اختر ماركة سيارتك للحصول على أفضل قطع الغيار الأصلية</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="search-container">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          placeholder="ابحث عن ماركة السيارة..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="search-input"
+        />
+      </div>
+    </div>
+
+    <div class="country-filter">
+      <select
+        [(ngModel)]="selectedCountry"
+        (change)="onCountryChange()"
+        class="country-select"
+      >
+        <option *ngFor="let country of countries" [value]="country === 'الكل' ? '' : country">
+          {{ country }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-info">
+    <span class="results-count">
+      {{ filteredBrands.length }} ماركة متاحة
+    </span>
+  </div>
+
+  <!-- Brands Grid -->
+  <div class="brands-grid">
+    <div
+      *ngFor="let brand of filteredBrands; trackBy: trackByBrandId"
+      class="brand-card"
+      [routerLink]="['/parts/brand', brand.id]"
+      (click)="onBrandClick(brand)"
+    >
+      <div class="brand-image-container">
+        <img
+          src="../../../../assets/images/image100_100.png"
+          [alt]="brand.name"
+          class="brand-logo"
+          loading="lazy"
+          onerror="this.src='assets/images/default-brand.png'"
+        />
+      </div>
+
+      <div class="brand-info">
+        <h3 class="brand-name">{{ brand.name }}</h3>
+        <span class="brand-country">{{ brand.country }}</span>
+      </div>
+
+      <div class="brand-overlay">
+        <i class="fas fa-arrow-left"></i>
+        <span>عرض قطع الغيار</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="filteredBrands.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-search"></i>
+    </div>
+    <h3>لم يتم العثور على نتائج</h3>
+    <p>جرب البحث بكلمات مختلفة أو اختر بلد آخر</p>
+    <button class="reset-btn" (click)="searchTerm = ''; selectedCountry = ''; filterBrands()">
+      إعادة تعيين البحث
+    </button>
+  </div>
+
+  <!-- Back to Home -->
+  <div class="back-section">
+    <button class="back-btn" routerLink="/">
+      <i class="fas fa-home"></i>
+      العودة للرئيسية
+    </button>
+  </div>
+</div>

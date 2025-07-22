@@ -1,100 +1,0 @@
-<div class="brand-parts-wrapper">
-  <div class="brand-header">
-    <div class="brand-logo">
-      <img
-        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2L3 7v10c0 5.55 3.84 9.74 9 9 5.16.74 9-3.45 9-9V7l-9-5z'/%3E%3C/svg%3E"
-        [alt]="brandName">
-    </div>
-    <h2>قطع غيار {{ brandName }}</h2>
-    <p class="brand-subtitle">{{ brandDescription }}</p>
-  </div>
-
-  <div class="filters-section">
-    <h3 class="filters-title">فلترة النتائج</h3>
-    <div class="filters-bar">
-      <div class="filter-group condition-filter">
-        <label for="conditionFilter">حالة القطعة</label>
-        <select id="conditionFilter" [(ngModel)]="selectedCondition" (change)="applyFilters()"
-          (focus)="onSelectFocus($event)" (blur)="onSelectBlur($event)">
-          <option value="all">جميع الحالات</option>
-          <option value="جديد">جديد</option>
-          <option value="استيراد">استيراد</option>
-          <option value="مستعمل">مستعمل</option>
-        </select>
-      </div>
-
-      <div class="filter-group model-filter">
-        <label for="modelFilter">موديل السيارة</label>
-        <select id="modelFilter" [(ngModel)]="selectedCarModel" (change)="applyFilters()"
-          (focus)="onSelectFocus($event)" (blur)="onSelectBlur($event)">
-          <option value="all">جميع الموديلات</option>
-          <option *ngFor="let model of carModels" [value]="model">{{ model }}</option>
-        </select>
-      </div>
-
-      <div class="filter-group year-filter">
-        <label for="yearFilter">سنة الموديل</label>
-        <select id="yearFilter" [(ngModel)]="selectedYear" (change)="applyFilters()" (focus)="onSelectFocus($event)"
-          (blur)="onSelectBlur($event)">
-          <option value="all">جميع السنوات</option>
-          <option *ngFor="let year of modelYears" [value]="year">{{ year }}</option>
-        </select>
-      </div>
-
-      <div class="filter-group category-filter">
-        <label for="categoryFilter">فئة القطعة</label>
-        <select id="categoryFilter" [(ngModel)]="selectedCategory" (change)="applyFilters()"
-          (focus)="onSelectFocus($event)" (blur)="onSelectBlur($event)">
-          <option value="all">جميع الفئات</option>
-          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="loading-container" *ngIf="isLoading">
-    <div class="loading-animation"></div>
-    <p>جاري تحميل قطع الغيار...</p>
-  </div>
-
-  <div class="parts-grid" *ngIf="pagedParts.length > 0 && !isLoading">
-    <!-- <app-card *ngFor="let part of pagedParts; trackBy: trackByPartId" [part]="part" (partClick)="onPartClick($event)">
-    </app-card> -->
-
-    <app-card
-  *ngFor="let part of pagedParts; trackBy: trackByPartId"
-  [part]="part"
-  (addToCart)="onAddToCart($event)"
-  (favoriteToggled)="onFavoriteToggled($event)">
-</app-card>
-
-  </div>
-
-  <div class="no-results" *ngIf="displayParts.length === 0 && !isLoading">
-    <div class="no-results-icon">🔍</div>
-    <h3>لا توجد نتائج</h3>
-    <p>لم نجد قطع غيار تطابق الفلاتر المحددة. جرب تغيير خيارات البحث.</p>
-    <button class="reset-filters-btn" (click)="resetFilters()">
-      إعادة تعيين الفلاتر
-    </button>
-  </div>
-
-  <div class="pagination" *ngIf="displayParts.length > 0">
-    <div class="items-per-page-selector">
-      <span>عرض:</span>
-      <button *ngFor="let option of itemsPerPageOptions"
-        (click)="itemsPerPage = option; currentPage = 1; updatePagedParts()" [class.active]="itemsPerPage === option">
-        {{ option }}
-      </button>
-    </div>
-    <button class="pagination-button prev" [disabled]="currentPage === 1" (click)="prevPage()">السابق</button>
-    <div class="pagination-numbers">
-      <button class="pagination-number" *ngFor="let page of getPagesArray()"
-        (click)="page === -1 ? null : goToPage(page)" [class.active]="page === currentPage" [disabled]="page === -1">
-        {{ page === -1 ? '...' : page }}
-      </button>
-    </div>
-    <button class="pagination-button next" [disabled]="currentPage === getTotalPages()"
-      (click)="nextPage()">التالي</button>
-  </div>
-</div>

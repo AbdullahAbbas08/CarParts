@@ -30,3 +30,35 @@ C:\Users\tafeel-pc4\source\repos\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Buss
 C:\Users\tafeel-pc4\source\repos\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\refint\Bussiness.dll
 C:\Users\tafeel-pc4\source\repos\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.pdb
 C:\Users\tafeel-pc4\source\repos\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\ref\Bussiness.dll
+C:\Users\carpart\Fekrah\Bussiness\bin\Debug\net8.0\Bussiness.deps.json
+C:\Users\carpart\Fekrah\Bussiness\bin\Debug\net8.0\Bussiness.dll
+C:\Users\carpart\Fekrah\Bussiness\bin\Debug\net8.0\Bussiness.pdb
+C:\Users\carpart\Fekrah\Bussiness\bin\Debug\net8.0\Data.dll
+C:\Users\carpart\Fekrah\Bussiness\bin\Debug\net8.0\Data.pdb
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.csproj.AssemblyReference.cache
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.AssemblyInfoInputs.cache
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.AssemblyInfo.cs
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.csproj.CoreCompileInputs.cache
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.sourcelink.json
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.csproj.Up2Date
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.dll
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\refint\Bussiness.dll
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.pdb
+C:\Users\carpart\Fekrah\Bussiness\obj\Debug\net8.0\ref\Bussiness.dll
+E:\New folder\CarParts\Fekrah\Bussiness\bin\Debug\net8.0\Bussiness.deps.json
+E:\New folder\CarParts\Fekrah\Bussiness\bin\Debug\net8.0\Bussiness.dll
+E:\New folder\CarParts\Fekrah\Bussiness\bin\Debug\net8.0\Bussiness.pdb
+E:\New folder\CarParts\Fekrah\Bussiness\bin\Debug\net8.0\Data.dll
+E:\New folder\CarParts\Fekrah\Bussiness\bin\Debug\net8.0\Data.pdb
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.csproj.AssemblyReference.cache
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.GeneratedMSBuildEditorConfig.editorconfig
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.AssemblyInfoInputs.cache
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.AssemblyInfo.cs
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.csproj.CoreCompileInputs.cache
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.sourcelink.json
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.csproj.Up2Date
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.dll
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\refint\Bussiness.dll
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\Bussiness.pdb
+E:\New folder\CarParts\Fekrah\Bussiness\obj\Debug\net8.0\ref\Bussiness.dll

@@ -1,14 +1,20 @@
 <div class="featured-sellers-section">
-  <h2 class="section-title">المتاجر المميزة</h2>
+  <h2 class="section-title py-5">المتاجر المميزة</h2>
 
   <div class="swiper-container featured-sellers-swiper" dir="ltr">
     <div class="swiper-wrapper">
       <div class="swiper-slide" *ngFor="let seller of sellers">
-        <div class="seller-card" [routerLink]="['/seller', seller.id]">
+        <div class="seller-card"  [ngClass]="{'trusted-border': seller.isTrusted}" [routerLink]="['/seller', seller.id]">
+
+          <!-- badge التاجر الموثوق -->
+          <div *ngIf="seller.isTrusted" class="trusted-badge" title="معتمد">
+            <i class="fas fa-star"></i>
+          </div>
+
 
           <!-- صورة المتجر -->
           <div class="seller-image">
-            <img [src]="seller.imageUrl" [alt]="seller.name" />
+            <img [src]="seller.imageUrl" [alt]="seller.name" (error)="onImageError($event)" />
           </div>
 
           <!-- الاسم -->
@@ -25,15 +31,17 @@
 
         </div>
 
-        <!-- زرّ واتساب -->
-        <a class="whatsapp-button" [href]="'https://wa.me/' + seller.whatsapp" target="_blank">
-          <i class="fab fa-whatsapp"></i>
+        <!-- زرّ العين للعرض -->
+        <a class="whatsapp-button" [routerLink]="['/seller', seller.id]" title="عرض المتجر">
+          <i class="fas fa-eye"></i>
         </a>
       </div>
     </div>
 
+    <!-- إذا أردت أزرار تنقل يمكن تفعيلها -->
     <!-- <div class="swiper-button-prev"></div>
     <div class="swiper-button-next"></div> -->
+
     <div class="swiper-pagination"></div>
   </div>
 </div>

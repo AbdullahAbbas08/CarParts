@@ -1,5 +1,8 @@
-﻿public class CategoryDto
+﻿namespace Data.DTOs
 {
-     public int Id { get; set; }
-    public string Name { get; set; }
+    public class CategoryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

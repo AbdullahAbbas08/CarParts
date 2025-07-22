@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { PartViewModel } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-part-list',
@@ -7,5 +6,5 @@ import { PartViewModel } from '../../../../Shared/Services/Swagger/SwaggerClient
   styleUrls: ['./part-list.component.scss']
 })
 export class PartListComponent {
-  @Input() parts: PartViewModel[] = [];
+  @Input() parts: any[] = [];
 }

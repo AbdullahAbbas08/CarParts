@@ -15,10 +15,10 @@ namespace Data.Models
         public string NameAr { get; set; }
         public string NameEn { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
 
-        [ForeignKey(nameof(CreatedBy))]
+        [ForeignKey(nameof(CreatedByUserId))]
         public User? CreatedByUser { get; set; }
 
         public int? UpdatedBy { get; set; }

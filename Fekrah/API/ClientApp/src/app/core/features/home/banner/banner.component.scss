@@ -39,15 +39,19 @@
       border-radius: 10px;
       backdrop-filter: blur(3px);
       animation: fadeInUp 1s ease;
+      max-width: calc(100% - 60px);
+      box-sizing: border-box;
 
       h2 {
         font-size: 22px;
         margin: 0 0 5px;
+        line-height: 1.2;
       }
 
       p {
         font-size: 14px;
         margin: 0;
+        line-height: 1.4;
       }
     }
   }
@@ -88,6 +92,10 @@
     &:hover {
       background-color: rgba(0, 0, 0, 0.8);
     }
+
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
   }
 
   .prev-button {
@@ -124,6 +132,170 @@
   }
 }
 
+// Tablet styles
+@media (max-width: 768px) {
+  .slider-container {
+    width: 98vw;
+    height: 60vh;
+    margin-top: 5px;
+
+    .slide {
+      .slide-caption {
+        bottom: 20px;
+        left: 20px;
+        padding: 12px 16px;
+        max-width: calc(100% - 40px);
+
+        h2 {
+          font-size: 20px;
+        }
+
+        p {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .prev-button,
+    .next-button {
+      padding: 8px 10px;
+      font-size: 18px;
+    }
+
+    .prev-button {
+      right: 8px;
+    }
+
+    .next-button {
+      left: 8px;
+    }
+
+    .indicators {
+      bottom: 12px;
+      gap: 8px;
+
+      span {
+        width: 10px;
+        height: 10px;
+      }
+    }
+  }
+}
+
+// Mobile styles
+@media (max-width: 480px) {
+  .slider-container {
+    width: 100vw;
+    height: 50vh;
+    margin-top: 0;
+    border-radius: 0;
+
+    .slide {
+      .slide-caption {
+        bottom: 15px;
+        left: 15px;
+        right: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 14px;
+        max-width: calc(100% - 30px);
+        text-align: center;
+
+        h2 {
+          font-size: 18px;
+          margin: 0 0 4px;
+        }
+
+        p {
+          font-size: 12px;
+          margin: 0;
+        }
+      }
+    }
+
+    .no-image-frame {
+      font-size: 16px;
+      padding: 20px;
+      text-align: center;
+
+      svg {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    .prev-button,
+    .next-button {
+      padding: 6px 8px;
+      font-size: 16px;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prev-button {
+      right: 5px;
+    }
+
+    .next-button {
+      left: 5px;
+    }
+
+    .indicators {
+      bottom: 8px;
+      gap: 6px;
+
+      span {
+        width: 8px;
+        height: 8px;
+        border: 1px solid #fff;
+      }
+    }
+  }
+}
+
+// Very small mobile screens
+@media (max-width: 320px) {
+  .slider-container {
+    height: 45vh;
+
+    .slide {
+      .slide-caption {
+        bottom: 10px;
+        padding: 8px 12px;
+
+        h2 {
+          font-size: 16px;
+        }
+
+        p {
+          font-size: 11px;
+        }
+      }
+    }
+
+    .prev-button,
+    .next-button {
+      width: 30px;
+      height: 30px;
+      padding: 5px;
+      font-size: 14px;
+    }
+
+    .indicators {
+      bottom: 5px;
+      gap: 4px;
+
+      span {
+        width: 6px;
+        height: 6px;
+      }
+    }
+  }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -132,5 +304,28 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// Touch-friendly improvements
+@media (hover: none) and (pointer: coarse) {
+  .slider-container {
+    .prev-button,
+    .next-button {
+      background-color: rgba(0, 0, 0, 0.6);
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.9);
+      }
+    }
+
+    .indicators span {
+      width: 14px;
+      height: 14px;
+
+      &:active {
+        transform: scale(1.2);
+      }
+    }
   }
 }

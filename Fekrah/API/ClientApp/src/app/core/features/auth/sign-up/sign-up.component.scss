@@ -1,0 +1,96 @@
+.signup-wrapper {
+  min-height: 100vh;
+  background: #f7f7f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  direction: rtl;
+
+  .signup-card {
+    background: #1d1d1d;
+    padding: 40px 30px;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 430px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    color: white;
+    text-align: center;
+
+    .signup-logo {
+      margin-bottom: 20px;
+
+      fa-icon {
+        color: #ffa500;
+        font-size: 38px;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-size: 22px;
+        color: #ffa500;
+        margin-bottom: 0;
+      }
+    }
+
+    form {
+      .form-group {
+        margin-bottom: 15px;
+
+        input {
+          width: 100%;
+          padding: 12px;
+          border-radius: 8px;
+          border: none;
+          background-color: #2b2b2b;
+          color: white;
+          font-size: 14px;
+
+          &::placeholder {
+            color: #aaa;
+          }
+        }
+
+        &.user-type {
+          display: flex;
+          justify-content: space-around;
+          color: #ccc;
+
+          label {
+            font-size: 14px;
+
+            input {
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+
+      .btn-signup {
+        width: 100%;
+        padding: 12px;
+        background: #ffa500;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s ease;
+
+        &:hover {
+          background: #e69300;
+        }
+      }
+    }
+
+    .login-text {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ddd;
+
+      a {
+        color: #ffa500;
+        text-decoration: underline;
+      }
+    }
+  }
+}

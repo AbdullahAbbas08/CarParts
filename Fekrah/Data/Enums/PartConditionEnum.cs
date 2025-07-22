@@ -1,6 +1,6 @@
 ﻿public enum PartConditionEnum
 {
-    New,
-    Used,
-    Refurbished
+    New = 1,
+    Used = 2,
+    Refurbished = 3
 }

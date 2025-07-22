@@ -1,10 +1,50 @@
-<app-header></app-header>
-<!-- <app-promo-ticker></app-promo-ticker> -->
+<!-- الحاوي الرئيسي للموقع مع إمكانية النقر للإغلاق -->
+<div class="app-container " [class.filter-active]="filtersOpened" (click)="onSiteClick($event)">
 
+  <!-- ✅ Pre-Navbar مع بيانات المستخدم -->
+  <app-pre-navbar
+    [isMerchant]="userData.isMerchant"
+    [isDriver]="userData.isDriver"
+    [pendingOrdersCount]="userData.pendingOrdersCount"
+    [deliveryOrdersCount]="userData.deliveryOrdersCount"
+    [userName]="userData.userName">
+  </app-pre-navbar>
 
-<main class="main-content">
+  <!-- ✅ الهيدر مع زر الفلتر -->
+  <app-header
+    [isFilterOpen]="filtersOpened"
+    (toggleFilter)="toggleFilters()">
+  </app-header>
+  <app-loader></app-loader>
+  <!-- ✅ محتوى الصفحة الرئيسية -->
+<main class="main-content position-relative">
+
   <router-outlet></router-outlet>
 </main>
 
-<!-- الفوتر -->
-<app-footer></app-footer>
+  <!-- ✅ الفوتر -->
+  <app-footer></app-footer>
+
+</div>
+
+<!-- ✅ Sidebar الفلتر - خارج الحاوي الرئيسي -->
+<div class="filters-sidebar" [class.open]="filtersOpened" (click)="$event.stopPropagation()">
+  <app-parts-filter
+    [isOpen]="filtersOpened"
+    (filtersChanged)="handleFilters($event)"
+    (closeFilter)="closeFilters()">
+  </app-parts-filter>
+</div>
+
+<!-- Overlay للشاشات الصغيرة -->
+<div
+  class="filter-overlay"
+  [class.active]="filtersOpened"
+  (click)="closeFilters()"
+  *ngIf="filtersOpened">
+</div>
+
+<!-- تلميح النقر للإغلاق (يظهر في الشاشات الكبيرة) -->
+<div class="click-to-close-hint" *ngIf="filtersOpened">
+  انقر في أي مكان لإغلاق الفلتر
+</div>

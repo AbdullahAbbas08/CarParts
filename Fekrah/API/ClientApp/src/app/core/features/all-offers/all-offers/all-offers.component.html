@@ -1,0 +1,346 @@
+<!-- all-offers.component.html -->
+<div class="all-offers-page" [class.shifted]="showSidebar">
+  <!-- Header Section -->
+  <header class="header">
+    <!-- Right Side: Page Title -->
+    <div class="header-right">
+      <h1 class="page-title">
+        <i class="fas fa-tags"></i>
+        جميع العروض المتاحة
+      </h1>
+    </div>
+
+    <!-- Center: Search Container -->
+    <div class="search-container">
+      <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" placeholder="ابحث عن قطعة غيار..." [(ngModel)]="searchText"
+          (input)="onSearch($event)" (focus)="searchFocused = true" (blur)="searchFocused = false"
+          (keydown)="onSearchKeydown($event)">
+        <button class="clear-search" *ngIf="searchText" (click)="clearSearch()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Suggestions Dropdown -->
+      <ul class="suggestions" *ngIf="suggestions.length && searchFocused">
+        <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+          <img src="assets/images/icon-parts.png" alt="icon" width="24" height="24" />
+          <span>{{ suggestion }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Left Side: Actions -->
+    <div class="header-left">
+      <!-- Sort Options -->
+      <div class="header-actions">
+        <select class="sort-select" (change)="onSortChange($event)">
+          <option value="latest">الأحدث</option>
+          <option value="price-low">السعر: الأقل أولاً</option>
+          <option value="price-high">السعر: الأعلى أولاً</option>
+          <option value="discount">أعلى خصم</option>
+          <option value="rating">الأعلى تقييماً</option>
+        </select>
+      </div>
+
+      <!-- Filter Icon -->
+      <button class="filter-icon-btn" [class.active]="showSidebar" [class.has-filters]="getActiveFiltersCount() > 0"
+        [attr.data-count]="getActiveFiltersCount()" (click)="toggleSidebar()">
+        <i class="fas fa-filter"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Products Section -->
+  <section class="products-section">
+    <!-- Loading State -->
+    <div class="loading-section text-center py-5" *ngIf="isLoading$ | async">
+      <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">جاري التحميل...</span>
+      </div>
+      <p class="text-muted">جاري تحميل العروض...</p>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="displayOffers.length > 0; else noResults" class="products-grid">
+      <div class="product-card" *ngFor="let offer of displayOffers; trackBy: trackByOfferIdFn"
+        [class.animate__animated]="true" [class.animate__fadeInUp]="true">
+
+        <!-- Product Image Section -->
+        <div class="image-container" (click)="viewOfferDetails(offer)">
+          <img [src]="offer.imageUrl" [alt]="offer.name" class="product-image" loading="lazy"
+            (error)="onImageError($event)">
+
+          <!-- Badges -->
+          <div class="product-badges">
+            <span class="badge badge-featured" *ngIf="offer.featured">
+              <i class="fas fa-star me-1"></i>مميز
+            </span>
+            <span class="badge badge-discount" *ngIf="hasDiscount(offer)">
+              خصم {{ offer.discount }}%
+            </span>
+            <span class="badge badge-new" *ngIf="isOfferNew(offer)">
+              <i class="fas fa-certificate me-1"></i>جديد
+            </span>
+          </div>
+
+          <!-- Quick Actions Overlay -->
+          <div class="quick-actions-overlay">
+            <button class="btn btn-sm btn-light rounded-circle" (click)="addToWishlist(offer, $event)"
+              title="إضافة للمفضلة">
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="btn btn-sm btn-light rounded-circle" (click)="viewOfferDetails(offer)" title="عرض سريع">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="card-content">
+          <!-- Product Title -->
+          <h3 class="product-title" (click)="viewOfferDetails(offer)">
+            {{ offer.name }}
+          </h3>
+
+          <!-- Product Description -->
+          <p class="product-description">
+            {{ offer.description }}
+          </p>
+
+          <!-- Store Information -->
+          <div class="store-info">
+            <div class="store-details">
+              <i class="fas fa-store"></i>
+              <span class="store-name">{{ offer.sellerName }}</span>
+            </div>
+            <div *ngIf="offer.location" class="location">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ offer.location }}</span>
+            </div>
+          </div>
+
+          <!-- Rating -->
+          <div class="rating" *ngIf="offer.rating">
+            <div class="stars">
+              <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]; let i = index"
+                [class.text-warning]="i < Math.floor(offer.rating || 0)"
+                [class.text-muted]="i >= Math.floor(offer.rating || 0)"></i>
+            </div>
+            <span class="rating-count">({{ offer.reviewsCount }})</span>
+          </div>
+
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-row">
+              <span class="current-price">
+                {{ offer.price | currency:'ج.م':'symbol':'1.0-0' }}
+              </span>
+              <span class="old-price" *ngIf="offer.oldPrice">
+                {{ offer.oldPrice | currency:'ج.م':'symbol':'1.0-0' }}
+              </span>
+            </div>
+
+            <!-- Savings Amount -->
+            <div *ngIf="hasDiscount(offer)" class="savings-info">
+              <div class="discount-badge">
+                <i class="fas fa-fire"></i>
+                خصم {{ offer.discount }}%
+              </div>
+              <div class="savings-amount">
+                <i class="fas fa-piggy-bank"></i>
+                وفّر {{ getDiscountAmount(offer) | currency:'ج.م':'symbol':'1.0-0' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Status -->
+          <div class="product-status">
+            <span class="status-badge" [class.in-stock]="offer.inStock" [class.out-of-stock]="!offer.inStock">
+              <i class="fas" [class.fa-check-circle]="offer.inStock" [class.fa-times-circle]="!offer.inStock"></i>
+              {{ offer.inStock ? 'متوفر' : 'غير متوفر' }}
+            </span>
+
+            <span class="status-badge fast-delivery" *ngIf="offer.fastDelivery">
+              <i class="fas fa-shipping-fast"></i>توصيل سريع
+            </span>
+
+            <span class="status-badge condition" [class.new]="isOfferNew(offer)"
+              [class.used]="offer.condition === 'Used'" [class.refurbished]="offer.condition === 'Refurbished'">
+              {{ getConditionInArabic(offer.condition) }}
+            </span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <div class="button-row">
+              <!-- Add to Cart Button -->
+              <button class="btn btn-primary" (click)="addToCart(offer, $event)" [disabled]="!offer.inStock">
+                <i class="fas" [class.fa-shopping-cart]="offer.inStock" [class.fa-ban]="!offer.inStock"></i>
+                <span>{{ offer.inStock ? 'أضف للسلة' : 'غير متوفر' }}</span>
+              </button>
+
+              <!-- Details Button -->
+              <button class="btn btn-outline-primary" (click)="viewOfferDetails(offer)">
+                <i class="fas fa-eye"></i>
+                <span>التفاصيل</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <ng-template #noResults>
+      <div class="no-results-message">
+        <div class="no-results-icon">
+          <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="160" height="160" rx="20" fill="#F4F6FA" />
+            <path
+              d="M45 55H115C117.761 55 120 57.2386 120 60V100C120 102.761 117.761 105 115 105H45C42.2386 105 40 102.761 40 100V60C40 57.2386 42.2386 55 45 55Z"
+              fill="#E0E7FF" />
+            <path d="M50 60H110V100H50V60Z" fill="white" />
+            <path d="M65 75H95V78H65V75Z" fill="#A0AEC0" />
+            <path d="M65 83H95V86H65V83Z" fill="#CBD5E0" />
+            <path d="M65 91H95V94H65V91Z" fill="#E2E8F0" />
+            <circle cx="80" cy="40" r="10" fill="#667EEA" />
+            <path d="M80 48C72.268 48 66 54.268 66 62H94C94 54.268 87.732 48 80 48Z" fill="#A3BFFA" />
+          </svg>
+        </div>
+
+        <h2>لم نعثر على أي منتجات مطابقة</h2>
+        <p>جرب تعديل الفلاتر أو البحث بكلمات مختلفة.</p>
+        <button (click)="clearAllFilters()" class="retry-button">
+          <i class="fas fa-redo-alt"></i>
+          إعادة المحاولة بدون فلاتر
+        </button>
+      </div>
+    </ng-template>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="displayOffers.length > 0">
+      <div class="items-per-page-selector">
+        <span>عرض:</span>
+        <button *ngFor="let option of itemsPerPageOptions" (click)="changeItemsPerPage(option)"
+          [class.active]="itemsPerPage === option">
+          {{ option }}
+        </button>
+      </div>
+
+      <button class="pagination-button prev" [disabled]="currentPage === 1" (click)="prevPage()">السابق</button>
+
+      <div class="pagination-numbers">
+        <button class="pagination-number" *ngFor="let page of getPagesArray()"
+          (click)="page === -1 ? null : goToPage(page)" [class.active]="page === currentPage" [disabled]="page === -1">
+          {{ page === -1 ? '...' : page }}
+        </button>
+      </div>
+
+      <button class="pagination-button next" [disabled]="currentPage === getTotalPages()"
+        (click)="nextPage()">التالي</button>
+    </div>
+  </section>
+</div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" [class.show]="showSidebar" (click)="closeSidebar()"></div>
+
+<!-- Filters Sidebar -->
+<div class="filters-sidebar" [class.open]="showSidebar">
+  <div class="filter-header">
+    <div class="header-content">
+      <div class="filter-title">
+        <i class="fas fa-filter"></i>
+        فلترة النتائج
+      </div>
+      <button class="close-filters" (click)="closeSidebar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-content">
+    <!-- Filter Sections -->
+    <div class="filter-group" *ngFor="let section of filterSections">
+      <div class="filter-group-title" [class.expanded]="activeFilterSection === section.key"
+        (click)="toggleFilterSection(section.key)">
+        <div class="title-content">
+          <i class="fas" [class]="section.icon"></i>
+          <span>{{ section.title }}</span>
+        </div>
+        <i class="fas chevron-icon" [class.fa-chevron-down]="activeFilterSection !== section.key"
+          [class.fa-chevron-up]="activeFilterSection === section.key"></i>
+      </div>
+
+      <div class="filter-options" [class.expanded]="activeFilterSection === section.key">
+        <ng-container [ngSwitch]="section.key">
+
+          <!-- Brands -->
+          <ng-container *ngSwitchCase="'brands'">
+            <div class="filter-option" *ngFor="let brand of availableBrands"
+              [class.active]="selectedFilters.brands.includes(brand)" (click)="toggleFilter('brands', brand)">
+              <input type="checkbox" class="filter-checkbox" [checked]="selectedFilters.brands.includes(brand)">
+              <label class="filter-label">{{ brand }}</label>
+            </div>
+          </ng-container>
+
+          <!-- Categories -->
+          <ng-container *ngSwitchCase="'categories'">
+            <div class="filter-option" *ngFor="let category of availableCategories"
+              [class.active]="selectedFilters.categories.includes(category)"
+              (click)="toggleFilter('categories', category)">
+              <input type="checkbox" class="filter-checkbox" [checked]="selectedFilters.categories.includes(category)">
+              <label class="filter-label">{{ category }}</label>
+            </div>
+          </ng-container>
+
+          <!-- Conditions -->
+          <ng-container *ngSwitchCase="'conditions'">
+            <div class="filter-option" *ngFor="let condition of availableConditions"
+              [class.active]="selectedFilters.conditions.includes(condition)"
+              (click)="toggleFilter('conditions', condition)">
+              <input type="checkbox" class="filter-checkbox" [checked]="selectedFilters.conditions.includes(condition)">
+              <label class="filter-label">{{ condition }}</label>
+            </div>
+          </ng-container>
+
+          <!-- Locations -->
+          <ng-container *ngSwitchCase="'locations'">
+            <div class="filter-option" *ngFor="let location of availableLocations"
+              [class.active]="selectedFilters.locations.includes(location)"
+              (click)="toggleFilter('locations', location)">
+              <input type="checkbox" class="filter-checkbox" [checked]="selectedFilters.locations.includes(location)">
+              <label class="filter-label">{{ location }}</label>
+            </div>
+          </ng-container>
+
+          <!-- Price Range -->
+          <ng-container *ngSwitchCase="'price'">
+            <div class="price-slider-wrapper">
+              <input type="range" min="0" max="5000" step="50" [(ngModel)]="selectedFilters.priceRange.min"
+                class="range-slider" />
+              <input type="range" min="0" max="5000" step="50" [(ngModel)]="selectedFilters.priceRange.max"
+                class="range-slider" />
+            </div>
+
+            <div class="price-range-inputs">
+              <input type="number" class="price-input" placeholder="من" [(ngModel)]="selectedFilters.priceRange.min"
+                (change)="applyFilters()">
+              <span class="dash">-</span>
+              <input type="number" class="price-input" placeholder="إلى" [(ngModel)]="selectedFilters.priceRange.max"
+                (change)="applyFilters()">
+            </div>
+          </ng-container>
+
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <button class="clear-filters" (click)="clearAllFilters()">
+    <i class="fas fa-times"></i>
+    مسح جميع الفلاتر
+  </button>
+</div>
