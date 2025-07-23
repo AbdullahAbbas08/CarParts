@@ -219,6 +219,41 @@
     }
   }
 
+  .manage-dashboard-btn {
+    background: linear-gradient(45deg, #8e44ad, #9b59b6);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(142, 68, 173, 0.3);
+
+    i {
+      font-size: 13px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      background: linear-gradient(45deg, #7d3c98, #8e44ad);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(142, 68, 173, 0.4);
+
+      i {
+        transform: scale(1.1);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
   .activity-indicator {
     position: absolute;
     bottom: -15px;
@@ -347,6 +382,15 @@
         display: none;
       }
     }
+
+    .manage-dashboard-btn {
+      padding: 8px 15px;
+      font-size: 12px;
+
+      span {
+        display: none;
+      }
+    }
   }
 }
 
@@ -411,6 +455,15 @@
       }
     }
 
+    .manage-dashboard-btn {
+      padding: 10px 24px;
+      font-size: 13px;
+
+      span {
+        display: inline;
+      }
+    }
+
     .quick-stats {
       display: none;
     }
@@ -434,6 +487,11 @@
     }
 
     .customer-mode-btn {
+      padding: 8px 20px;
+      font-size: 12px;
+    }
+
+    .manage-dashboard-btn {
       padding: 8px 20px;
       font-size: 12px;
     }

@@ -159,6 +159,11 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/driver/earnings']);
   }
 
+  // Navigate to manage dashboard
+  navigateToManageDashboard(): void {
+    this.router.navigate(['/dashboard/manage']);
+  }
+
   // Get display name based on user type
   getDisplayName(): string {
     if (this.isMerchant) {
