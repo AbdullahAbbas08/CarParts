@@ -5,6 +5,5 @@ using Data.ViewModels;
 
 public interface ISellerService : _IBusinessService<Merchant, MerchantDTO>
 {
-    DataSourceResult<MerchantDTO> GetAllFilteredSeller(SellerFilterViewModel sellerFilterViewModel);
 }
 
