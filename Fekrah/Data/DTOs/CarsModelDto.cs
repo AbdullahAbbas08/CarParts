@@ -10,7 +10,7 @@ namespace Data.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        List<PartDto> Parts { get; set; }
+        List<PartDTO> Parts { get; set; }
         List<ModelTypeDTO> ModelTypes { get; set; }
     }
 }
