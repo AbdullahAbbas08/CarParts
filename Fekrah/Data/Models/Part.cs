@@ -16,6 +16,10 @@
     [ForeignKey(nameof(CarsModelId))]
     public CarsModel CarsModel { get; set; }
 
+    public int ModelTypeId { get; set; }
+    [ForeignKey(nameof(ModelTypeId))]
+    public ModelType ModelType { get; set; }
+
     public virtual ICollection<Offer> Offers { get; set; }
 
     // Add Category relation

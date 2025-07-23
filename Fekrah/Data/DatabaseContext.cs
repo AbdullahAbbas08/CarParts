@@ -16,6 +16,7 @@ public class DatabaseContext : DbContext
     public DbSet<SellerCategory> SellerCategories { get; set; } 
     public DbSet<Localization> Localizations { get; set; }
     public DbSet<CarsModel> CarsModels { get; set; }
+    public DbSet<ModelType> ModelTypes { get; set; }
     public DbSet<Offer> Offers { get; set; }
     public DbSet<VisitorRegister> VisitorRegisters { get; set; }
 
