@@ -1,8 +1,7 @@
 <!-- Pre-Navbar للتجار والمراسلين -->
-<div class="pre-navbar" >
+<div class="pre-navbar">
   <div class="pre-navbar-container">
-    <!-- للتجار -->
-    <div class="merchant-pre-nav" >
+    <div class="pre-nav-content" [ngClass]="{ 'merchant-mode': isMerchant, 'driver-mode': isDriver }">
       <div class="pre-nav-brand">
         <i [class]="getBrandIcon()"></i>
         <span class="brand-text">{{ getBrandText() }}</span>
@@ -10,91 +9,75 @@
       </div>
 
       <div class="pre-nav-links">
-        <a routerLink="/dashboard/super" [class.active]="isActiveRoute('/dashboard/super')" class="pre-nav-link">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>لوحة التحكم</span>
-        </a>
+        <!-- Merchant Links -->
+        <ng-container *ngIf="isMerchant">
+          <a routerLink="/dashboard/super" [class.active]="isActiveRoute('/dashboard/super')" class="pre-nav-link">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>لوحة التحكم</span>
+          </a>
 
-        <a routerLink="/order-mgr/merchant-orders" [class.active]="isActiveRoute('/order-mgr/merchant-orders')"
-          class="pre-nav-link">
-          <i class="fas fa-clipboard-list"></i>
-          <span>الطلبات</span>
-          <span class="pre-nav-badge animate__animated animate__pulse" *ngIf="pendingOrdersCount > 0">
-            {{ pendingOrdersCount }}
-          </span>
-        </a>
+          <a routerLink="/order-mgr/merchant-orders" [class.active]="isActiveRoute('/order-mgr/merchant-orders')" class="pre-nav-link">
+            <i class="fas fa-clipboard-list"></i>
+            <span>الطلبات</span>
+            <span class="pre-nav-badge animate__animated animate__pulse" *ngIf="pendingOrdersCount > 0">
+              {{ pendingOrdersCount }}
+            </span>
+          </a>
 
-        <a routerLink="/dashboard/merchant" [class.active]="isActiveRoute('/dashboard/merchant')" class="pre-nav-link">
-          <i class="fas fa-box"></i>
-          <span>المنتجات</span>
-        </a>
+          <a routerLink="/dashboard/merchant" [class.active]="isActiveRoute('/dashboard/merchant')" class="pre-nav-link">
+            <i class="fas fa-box"></i>
+            <span>المنتجات</span>
+          </a>
 
-        <a routerLink="/merchant/analytics" [class.active]="isActiveRoute('/merchant/analytics')" class="pre-nav-link"
-          (click)="navigateToMerchantAnalytics()">
-          <i class="fas fa-chart-bar"></i>
-          <span>التقارير</span>
-        </a>
+          <a routerLink="/merchant/analytics" [class.active]="isActiveRoute('/merchant/analytics')" class="pre-nav-link" (click)="navigateToMerchantAnalytics()">
+            <i class="fas fa-chart-bar"></i>
+            <span>التقارير</span>
+          </a>
+        </ng-container>
+
+        <!-- Driver Links -->
+        <ng-container *ngIf="isDriver">
+          <a routerLink="/driver/dashboard" [class.active]="isActiveRoute('/driver/dashboard')" class="pre-nav-link" (click)="navigateToDriverDashboard()">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>لوحة التحكم</span>
+          </a>
+
+          <a routerLink="/driver/deliveries" [class.active]="isActiveRoute('/driver/deliveries')" class="pre-nav-link" (click)="navigateToDriverDeliveries()">
+            <i class="fas fa-truck"></i>
+            <span>طلبات التوصيل</span>
+            <span class="pre-nav-badge animate__animated animate__pulse" *ngIf="deliveryOrdersCount > 0">
+              {{ deliveryOrdersCount }}
+            </span>
+          </a>
+
+          <a routerLink="/driver/schedule" [class.active]="isActiveRoute('/driver/schedule')" class="pre-nav-link" (click)="navigateToDriverSchedule()">
+            <i class="fas fa-calendar-alt"></i>
+            <span>الجدولة</span>
+          </a>
+
+          <a routerLink="/driver/earnings" [class.active]="isActiveRoute('/driver/earnings')" class="pre-nav-link" (click)="navigateToDriverEarnings()">
+            <i class="fas fa-dollar-sign"></i>
+            <span>الأرباح</span>
+          </a>
+        </ng-container>
       </div>
 
       <div class="pre-nav-actions">
-        <div class="quick-stats desktop-only">
-          <div class="stat-item">
+        <div class="quick-stats desktop-only" *ngIf="isMerchant || isDriver">
+          <div class="stat-item" *ngIf="isMerchant">
             <i class="fas fa-shopping-bag"></i>
             <span>{{ pendingOrdersCount }} طلب جديد</span>
           </div>
-        </div>
-
-        <button class="customer-mode-btn" (click)="switchToCustomerMode()" title="التبديل لوضع العميل">
-          <i class="fas fa-shopping-cart"></i>
-          <span>وضع العميل</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- للمراسلين -->
-    <div class="driver-pre-nav">
-      <div class="pre-nav-brand">
-        <i [class]="getBrandIcon()"></i>
-        <span class="brand-text">{{ getBrandText() }}</span>
-        <span class="welcome-text desktop-only">{{ getDisplayName() }}</span>
-      </div>
-
-      <div class="pre-nav-links">
-        <a routerLink="/driver/dashboard" [class.active]="isActiveRoute('/driver/dashboard')" class="pre-nav-link"
-          (click)="navigateToDriverDashboard()">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>لوحة التحكم</span>
-        </a>
-
-        <a routerLink="/driver/deliveries" [class.active]="isActiveRoute('/driver/deliveries')" class="pre-nav-link"
-          (click)="navigateToDriverDeliveries()">
-          <i class="fas fa-truck"></i>
-          <span>طلبات التوصيل</span>
-          <span class="pre-nav-badge animate__animated animate__pulse" *ngIf="deliveryOrdersCount > 0">
-            {{ deliveryOrdersCount }}
-          </span>
-        </a>
-
-        <a routerLink="/driver/schedule" [class.active]="isActiveRoute('/driver/schedule')" class="pre-nav-link"
-          (click)="navigateToDriverSchedule()">
-          <i class="fas fa-calendar-alt"></i>
-          <span>الجدولة</span>
-        </a>
-
-        <a routerLink="/driver/earnings" [class.active]="isActiveRoute('/driver/earnings')" class="pre-nav-link"
-          (click)="navigateToDriverEarnings()">
-          <i class="fas fa-dollar-sign"></i>
-          <span>الأرباح</span>
-        </a>
-      </div>
-
-      <div class="pre-nav-actions">
-        <div class="quick-stats desktop-only">
-          <div class="stat-item">
+          <div class="stat-item" *ngIf="isDriver">
             <i class="fas fa-truck"></i>
             <span>{{ deliveryOrdersCount }} طلب توصيل</span>
           </div>
         </div>
+
+        <button class="manage-dashboard-btn" (click)="navigateToManageDashboard()" title="إدارة لوحة التحكم">
+          <i class="fas fa-cog"></i>
+          <span>إدارة اللوحة</span>
+        </button>
 
         <button class="customer-mode-btn" (click)="switchToCustomerMode()" title="التبديل لوضع العميل">
           <i class="fas fa-shopping-cart"></i>
