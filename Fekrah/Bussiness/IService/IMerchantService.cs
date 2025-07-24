@@ -3,7 +3,7 @@ using Bussiness.Interfaces;
 using Data.DTOs;
 using Data.ViewModels;
 
-public interface ISellerService : _IBusinessService<Merchant, MerchantDTO>
+public interface IMerchantService : _IBusinessService<Merchant, MerchantDTO>
 {
 }
 

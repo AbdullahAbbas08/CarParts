@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.ViewModels;
 using Azure;
 
-public class MerchantService : _BusinessService<Merchant, MerchantDTO>, ISellerService
+public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchantService
 {
     public MerchantService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
     {

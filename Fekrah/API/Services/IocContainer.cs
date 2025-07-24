@@ -14,7 +14,7 @@ namespace Api.Services
         {
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IPartService, PartService>();
-            services.AddScoped<ISellerService, MerchantService>();
+            services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILookupService, LookupService>();
             services.AddScoped<ICarsModelService, CarsModelService>();
@@ -27,7 +27,7 @@ namespace Api.Services
             services.AddScoped<IPartRepository, PartRepository>();
             services.AddScoped<ISellerRepository, SellerRepository>();
             services.AddScoped<ICarsModelRepository, CarsModelRepository>();
-            services.AddScoped<ISellerCategoryService, SellerCategoryService>();
+            services.AddScoped<IMerchantCategoryService, SellerCategoryService>();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace API.Controllers
     [ApiController]
     public class SellerCategoryController : _BaseController<SellerCategory, SellerCategoryDTO>
     {
-        public SellerCategoryController(ISellerCategoryService sellerCategoryService) : base(sellerCategoryService)
+        public SellerCategoryController(IMerchantCategoryService sellerCategoryService) : base(sellerCategoryService)
         {
             
         }

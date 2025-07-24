@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 public class MerchantController : _BaseController<Merchant, MerchantDTO>
 {
-    private readonly ISellerService _sellerService;
+    private readonly IMerchantService _sellerService;
 
-    public MerchantController(ISellerService sellerService) : base(sellerService)
+    public MerchantController(IMerchantService sellerService) : base(sellerService)
     {
         _sellerService = sellerService;
     }
