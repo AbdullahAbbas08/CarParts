@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
   { path: 'order-mgr', loadChildren: () => import('./order-manager/order-manager.module').then(m => m.OrderManagerModule) },
   { path: 'category/:name', component: CategoryPageComponent },
+  { path: 'merchant-profile', loadChildren: () => import('./merchant-profile/merchant-profile.module').then(m => m.MerchantProfileModule) },
 
   { path: 'seller', loadChildren: () => import('./core/features/seller/seller-page.module').then(m => m.SellerModule) },
   { path: 'NotFound', component: NotFoundComponent },

@@ -16,7 +16,6 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
     {
         var allParts = _UnitOfWork.Repository<Part>()
             .GetAll()
-            .Include(p => p.CarsModel)
             .Where(p => string.IsNullOrEmpty(searchTerm) || p.Name.Contains(searchTerm))
             .ToList();
 
@@ -32,8 +31,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 Description = p.Description,
                 Name = p.Name,
                 Price = p.Price,
-                CarModelId = p.CarsModelId,
-                CarModelName = p.CarsModel?.Name
+                //CarModelId = p.CarsModelId,
+                //CarModelName = p.CarsModel?.Name
             })
             .ToList();
 

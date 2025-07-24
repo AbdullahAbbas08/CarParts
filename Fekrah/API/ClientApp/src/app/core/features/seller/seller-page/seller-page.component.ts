@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CarPart } from '../../../../Shared/Models/car-card';
 import { ActivatedRoute } from '@angular/router';
-import { SellerDto, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import {  MerchantDTO, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 type FilterKey = 'brands' | 'models' | 'years' | 'types' | 'categories' | 'condition';
 
@@ -222,7 +222,7 @@ export class SellerPageComponent implements OnInit {
     { key: 'condition', title: 'الحالة', icon: 'fa-check-circle' }
   ];
   sellerId: number | undefined = undefined;
-  sellerDetails:SellerDto = new SellerDto();
+  sellerDetails:MerchantDTO = new MerchantDTO();
   constructor(private route: ActivatedRoute,private swagger:SwaggerClient) {}
   ngOnInit(): void {
     this.sellerId = Number(this.route.snapshot.paramMap.get('id'));
@@ -231,7 +231,7 @@ export class SellerPageComponent implements OnInit {
     this.filteredProducts = [...this.sellerProducts];
   }
   getsellerById(){
-    this.swagger.apiSellersGetDetailsGet(this.sellerId).subscribe((res) => {
+    this.swagger.apiMerchantGetDetailsGet(this.sellerId).subscribe((res) => {
       if(res) {
         this.sellerDetails = res;
         this.updateRatingStars(this.sellerDetails.rating);

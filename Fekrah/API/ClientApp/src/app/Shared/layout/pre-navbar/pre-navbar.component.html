@@ -6,7 +6,7 @@
       <div class="brand-logo">
         <i [class]="getBrandIcon()"></i>
       </div>
-      <div class="brand-info">
+      <div class="brand-info" (click)="navigateToRoute('/merchant-profile')">
         <h2>{{ getBrandText() }}</h2>
         <div class="user-role">{{ getDisplayName() }}</div>
       </div>

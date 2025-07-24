@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, delay } from 'rxjs/operators';
-import { DataSourceResultOfSellerDto, SwaggerClient } from './Swagger/SwaggerClient.service';
+import {  DataSourceResultOfMerchantDTO, SwaggerClient } from './Swagger/SwaggerClient.service';
 
 export interface Store {
   id: number;
@@ -78,12 +78,12 @@ getAllStores(params?: StoreSearchParams): Observable<StoreSearchResponse> {
   //   return this.getMockStores(params);
   // }
 
-  return this.sellersSwagger.apiSellersGetAllGet(
+  return this.sellersSwagger.apiMerchantGetAllGet(
     params?.pageSize || 10,
     params?.page || 1,
     params?.searchTerm || ''
   ).pipe(
-    map((response: DataSourceResultOfSellerDto): StoreSearchResponse => {
+    map((response: DataSourceResultOfMerchantDTO): StoreSearchResponse => {
       const total = response.count || 0;
       const pageSize = params?.pageSize || 10;
       const currentPage = params?.page || 1;

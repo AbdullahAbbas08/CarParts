@@ -292,7 +292,273 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiPartsGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfPartDto> {
+    apiMerchantGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfMerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/GetAll?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantGetAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantGetAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfMerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfMerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfMerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfMerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantGetDetailsGet(id: number | undefined): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/GetDetails?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantGetDetailsGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantGetDetailsGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantGetDetailsGet(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantInsertPost(entity: MerchantDTO): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantInsertPost(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantUpdatePost(entity: MerchantDTO): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantUpdatePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantUpdatePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantUpdatePost(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantDeletePost(id: number | undefined): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantDeletePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantDeletePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantDeletePost(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiPartsGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfPartDTO> {
         let url_ = this.baseUrl + "/api/Parts/GetAll?";
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
@@ -321,14 +587,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiPartsGetAllGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfPartDto>;
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfPartDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfPartDto>;
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfPartDTO>;
         }));
     }
 
-    protected processApiPartsGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfPartDto> {
+    protected processApiPartsGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfPartDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -339,7 +605,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfPartDto.fromJS(resultData200);
+            result200 = DataSourceResultOfPartDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -350,7 +616,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiPartsGetDetailsGet(id: number | undefined): Observable<PartDto> {
+    apiPartsGetDetailsGet(id: number | undefined): Observable<PartDTO> {
         let url_ = this.baseUrl + "/api/Parts/GetDetails?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -373,14 +639,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiPartsGetDetailsGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PartDto>;
+                    return _observableThrow(e) as any as Observable<PartDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PartDto>;
+                return _observableThrow(response_) as any as Observable<PartDTO>;
         }));
     }
 
-    protected processApiPartsGetDetailsGet(response: HttpResponseBase): Observable<PartDto> {
+    protected processApiPartsGetDetailsGet(response: HttpResponseBase): Observable<PartDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -391,7 +657,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PartDto.fromJS(resultData200);
+            result200 = PartDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -402,7 +668,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiPartsInsertPost(entity: PartDto): Observable<PartDto> {
+    apiPartsInsertPost(entity: PartDTO): Observable<PartDTO> {
         let url_ = this.baseUrl + "/api/Parts/Insert";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -425,14 +691,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiPartsInsertPost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PartDto>;
+                    return _observableThrow(e) as any as Observable<PartDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PartDto>;
+                return _observableThrow(response_) as any as Observable<PartDTO>;
         }));
     }
 
-    protected processApiPartsInsertPost(response: HttpResponseBase): Observable<PartDto> {
+    protected processApiPartsInsertPost(response: HttpResponseBase): Observable<PartDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -443,7 +709,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PartDto.fromJS(resultData200);
+            result200 = PartDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -454,7 +720,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiPartsUpdatePost(entity: PartDto): Observable<PartDto> {
+    apiPartsUpdatePost(entity: PartDTO): Observable<PartDTO> {
         let url_ = this.baseUrl + "/api/Parts/Update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -477,14 +743,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiPartsUpdatePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PartDto>;
+                    return _observableThrow(e) as any as Observable<PartDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PartDto>;
+                return _observableThrow(response_) as any as Observable<PartDTO>;
         }));
     }
 
-    protected processApiPartsUpdatePost(response: HttpResponseBase): Observable<PartDto> {
+    protected processApiPartsUpdatePost(response: HttpResponseBase): Observable<PartDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -495,7 +761,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PartDto.fromJS(resultData200);
+            result200 = PartDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -506,7 +772,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiPartsDeletePost(id: number | undefined): Observable<PartDto> {
+    apiPartsDeletePost(id: number | undefined): Observable<PartDTO> {
         let url_ = this.baseUrl + "/api/Parts/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -529,14 +795,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiPartsDeletePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PartDto>;
+                    return _observableThrow(e) as any as Observable<PartDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PartDto>;
+                return _observableThrow(response_) as any as Observable<PartDTO>;
         }));
     }
 
-    protected processApiPartsDeletePost(response: HttpResponseBase): Observable<PartDto> {
+    protected processApiPartsDeletePost(response: HttpResponseBase): Observable<PartDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -547,345 +813,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PartDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellersGetAllFilteredSellerGet(sellerId: number | null | undefined, rating: number | null | undefined, cityId: number | null | undefined, isFavoritSeller: boolean | undefined, orderType: number | null | undefined, isDescendingOrder: boolean | undefined, page: number | undefined, pageSize: number | undefined): Observable<DataSourceResultOfSellerDto> {
-        let url_ = this.baseUrl + "/api/Sellers/GetAllFilteredSeller?";
-        if (sellerId !== undefined && sellerId !== null)
-            url_ += "SellerId=" + encodeURIComponent("" + sellerId) + "&";
-        if (rating !== undefined && rating !== null)
-            url_ += "Rating=" + encodeURIComponent("" + rating) + "&";
-        if (cityId !== undefined && cityId !== null)
-            url_ += "CityId=" + encodeURIComponent("" + cityId) + "&";
-        if (isFavoritSeller === null)
-            throw new Error("The parameter 'isFavoritSeller' cannot be null.");
-        else if (isFavoritSeller !== undefined)
-            url_ += "IsFavoritSeller=" + encodeURIComponent("" + isFavoritSeller) + "&";
-        if (orderType !== undefined && orderType !== null)
-            url_ += "OrderType=" + encodeURIComponent("" + orderType) + "&";
-        if (isDescendingOrder === null)
-            throw new Error("The parameter 'isDescendingOrder' cannot be null.");
-        else if (isDescendingOrder !== undefined)
-            url_ += "IsDescendingOrder=" + encodeURIComponent("" + isDescendingOrder) + "&";
-        if (page === null)
-            throw new Error("The parameter 'page' cannot be null.");
-        else if (page !== undefined)
-            url_ += "Page=" + encodeURIComponent("" + page) + "&";
-        if (pageSize === null)
-            throw new Error("The parameter 'pageSize' cannot be null.");
-        else if (pageSize !== undefined)
-            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellersGetAllFilteredSellerGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellersGetAllFilteredSellerGet(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfSellerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfSellerDto>;
-        }));
-    }
-
-    protected processApiSellersGetAllFilteredSellerGet(response: HttpResponseBase): Observable<DataSourceResultOfSellerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfSellerDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellersGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfSellerDto> {
-        let url_ = this.baseUrl + "/api/Sellers/GetAll?";
-        if (pageSize === null)
-            throw new Error("The parameter 'pageSize' cannot be null.");
-        else if (pageSize !== undefined)
-            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (page === null)
-            throw new Error("The parameter 'page' cannot be null.");
-        else if (page !== undefined)
-            url_ += "page=" + encodeURIComponent("" + page) + "&";
-        if (searchTerm !== undefined && searchTerm !== null)
-            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellersGetAllGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellersGetAllGet(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfSellerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfSellerDto>;
-        }));
-    }
-
-    protected processApiSellersGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfSellerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfSellerDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellersGetDetailsGet(id: number | undefined): Observable<SellerDto> {
-        let url_ = this.baseUrl + "/api/Sellers/GetDetails?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellersGetDetailsGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellersGetDetailsGet(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerDto>;
-        }));
-    }
-
-    protected processApiSellersGetDetailsGet(response: HttpResponseBase): Observable<SellerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellersInsertPost(entity: SellerDto): Observable<SellerDto> {
-        let url_ = this.baseUrl + "/api/Sellers/Insert";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(entity);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellersInsertPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellersInsertPost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerDto>;
-        }));
-    }
-
-    protected processApiSellersInsertPost(response: HttpResponseBase): Observable<SellerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellersUpdatePost(entity: SellerDto): Observable<SellerDto> {
-        let url_ = this.baseUrl + "/api/Sellers/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(entity);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellersUpdatePost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellersUpdatePost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerDto>;
-        }));
-    }
-
-    protected processApiSellersUpdatePost(response: HttpResponseBase): Observable<SellerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellersDeletePost(id: number | undefined): Observable<SellerDto> {
-        let url_ = this.baseUrl + "/api/Sellers/Delete?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellersDeletePost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellersDeletePost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerDto>;
-        }));
-    }
-
-    protected processApiSellersDeletePost(response: HttpResponseBase): Observable<SellerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerDto.fromJS(resultData200);
+            result200 = PartDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1052,7 +980,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiAccountGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfUserDto> {
+    apiAccountGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfUserDTO> {
         let url_ = this.baseUrl + "/api/Account/GetAll?";
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
@@ -1081,14 +1009,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiAccountGetAllGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfUserDto>;
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfUserDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfUserDto>;
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfUserDTO>;
         }));
     }
 
-    protected processApiAccountGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfUserDto> {
+    protected processApiAccountGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfUserDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1099,7 +1027,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfUserDto.fromJS(resultData200);
+            result200 = DataSourceResultOfUserDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1110,7 +1038,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiAccountGetDetailsGet(id: number | undefined): Observable<UserDto> {
+    apiAccountGetDetailsGet(id: number | undefined): Observable<UserDTO> {
         let url_ = this.baseUrl + "/api/Account/GetDetails?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1133,14 +1061,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiAccountGetDetailsGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<UserDto>;
+                    return _observableThrow(e) as any as Observable<UserDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<UserDto>;
+                return _observableThrow(response_) as any as Observable<UserDTO>;
         }));
     }
 
-    protected processApiAccountGetDetailsGet(response: HttpResponseBase): Observable<UserDto> {
+    protected processApiAccountGetDetailsGet(response: HttpResponseBase): Observable<UserDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1151,7 +1079,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserDto.fromJS(resultData200);
+            result200 = UserDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1162,7 +1090,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiAccountInsertPost(entity: UserDto): Observable<UserDto> {
+    apiAccountInsertPost(entity: UserDTO): Observable<UserDTO> {
         let url_ = this.baseUrl + "/api/Account/Insert";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1185,14 +1113,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiAccountInsertPost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<UserDto>;
+                    return _observableThrow(e) as any as Observable<UserDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<UserDto>;
+                return _observableThrow(response_) as any as Observable<UserDTO>;
         }));
     }
 
-    protected processApiAccountInsertPost(response: HttpResponseBase): Observable<UserDto> {
+    protected processApiAccountInsertPost(response: HttpResponseBase): Observable<UserDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1203,7 +1131,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserDto.fromJS(resultData200);
+            result200 = UserDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1214,7 +1142,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiAccountUpdatePost(entity: UserDto): Observable<UserDto> {
+    apiAccountUpdatePost(entity: UserDTO): Observable<UserDTO> {
         let url_ = this.baseUrl + "/api/Account/Update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1237,14 +1165,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiAccountUpdatePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<UserDto>;
+                    return _observableThrow(e) as any as Observable<UserDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<UserDto>;
+                return _observableThrow(response_) as any as Observable<UserDTO>;
         }));
     }
 
-    protected processApiAccountUpdatePost(response: HttpResponseBase): Observable<UserDto> {
+    protected processApiAccountUpdatePost(response: HttpResponseBase): Observable<UserDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1255,7 +1183,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserDto.fromJS(resultData200);
+            result200 = UserDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1266,7 +1194,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiAccountDeletePost(id: number | undefined): Observable<UserDto> {
+    apiAccountDeletePost(id: number | undefined): Observable<UserDTO> {
         let url_ = this.baseUrl + "/api/Account/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1289,14 +1217,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiAccountDeletePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<UserDto>;
+                    return _observableThrow(e) as any as Observable<UserDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<UserDto>;
+                return _observableThrow(response_) as any as Observable<UserDTO>;
         }));
     }
 
-    protected processApiAccountDeletePost(response: HttpResponseBase): Observable<UserDto> {
+    protected processApiAccountDeletePost(response: HttpResponseBase): Observable<UserDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1307,7 +1235,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserDto.fromJS(resultData200);
+            result200 = UserDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1584,7 +1512,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCityGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCityDto> {
+    apiCityGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCityDTO> {
         let url_ = this.baseUrl + "/api/City/GetAll?";
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
@@ -1613,14 +1541,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCityGetAllGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfCityDto>;
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfCityDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfCityDto>;
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfCityDTO>;
         }));
     }
 
-    protected processApiCityGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfCityDto> {
+    protected processApiCityGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfCityDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1631,7 +1559,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfCityDto.fromJS(resultData200);
+            result200 = DataSourceResultOfCityDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1642,7 +1570,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCityGetDetailsGet(id: number | undefined): Observable<CityDto> {
+    apiCityGetDetailsGet(id: number | undefined): Observable<CityDTO> {
         let url_ = this.baseUrl + "/api/City/GetDetails?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1665,14 +1593,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCityGetDetailsGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CityDto>;
+                    return _observableThrow(e) as any as Observable<CityDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CityDto>;
+                return _observableThrow(response_) as any as Observable<CityDTO>;
         }));
     }
 
-    protected processApiCityGetDetailsGet(response: HttpResponseBase): Observable<CityDto> {
+    protected processApiCityGetDetailsGet(response: HttpResponseBase): Observable<CityDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1683,7 +1611,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CityDto.fromJS(resultData200);
+            result200 = CityDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1694,7 +1622,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCityInsertPost(entity: CityDto): Observable<CityDto> {
+    apiCityInsertPost(entity: CityDTO): Observable<CityDTO> {
         let url_ = this.baseUrl + "/api/City/Insert";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1717,14 +1645,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCityInsertPost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CityDto>;
+                    return _observableThrow(e) as any as Observable<CityDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CityDto>;
+                return _observableThrow(response_) as any as Observable<CityDTO>;
         }));
     }
 
-    protected processApiCityInsertPost(response: HttpResponseBase): Observable<CityDto> {
+    protected processApiCityInsertPost(response: HttpResponseBase): Observable<CityDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1735,7 +1663,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CityDto.fromJS(resultData200);
+            result200 = CityDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1746,7 +1674,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCityUpdatePost(entity: CityDto): Observable<CityDto> {
+    apiCityUpdatePost(entity: CityDTO): Observable<CityDTO> {
         let url_ = this.baseUrl + "/api/City/Update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1769,14 +1697,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCityUpdatePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CityDto>;
+                    return _observableThrow(e) as any as Observable<CityDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CityDto>;
+                return _observableThrow(response_) as any as Observable<CityDTO>;
         }));
     }
 
-    protected processApiCityUpdatePost(response: HttpResponseBase): Observable<CityDto> {
+    protected processApiCityUpdatePost(response: HttpResponseBase): Observable<CityDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1787,7 +1715,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CityDto.fromJS(resultData200);
+            result200 = CityDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1798,7 +1726,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCityDeletePost(id: number | undefined): Observable<CityDto> {
+    apiCityDeletePost(id: number | undefined): Observable<CityDTO> {
         let url_ = this.baseUrl + "/api/City/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1821,14 +1749,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCityDeletePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CityDto>;
+                    return _observableThrow(e) as any as Observable<CityDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CityDto>;
+                return _observableThrow(response_) as any as Observable<CityDTO>;
         }));
     }
 
-    protected processApiCityDeletePost(response: HttpResponseBase): Observable<CityDto> {
+    protected processApiCityDeletePost(response: HttpResponseBase): Observable<CityDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1839,7 +1767,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CityDto.fromJS(resultData200);
+            result200 = CityDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1911,7 +1839,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfSellerCategoryDto> {
+    apiSellerCategoryGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfSellerCategoryDTO> {
         let url_ = this.baseUrl + "/api/SellerCategory/GetAll?";
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
@@ -1940,14 +1868,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiSellerCategoryGetAllGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfSellerCategoryDto>;
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfSellerCategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfSellerCategoryDto>;
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfSellerCategoryDTO>;
         }));
     }
 
-    protected processApiSellerCategoryGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfSellerCategoryDto> {
+    protected processApiSellerCategoryGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfSellerCategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1958,7 +1886,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfSellerCategoryDto.fromJS(resultData200);
+            result200 = DataSourceResultOfSellerCategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1969,7 +1897,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryGetDetailsGet(id: number | undefined): Observable<SellerCategoryDto> {
+    apiSellerCategoryGetDetailsGet(id: number | undefined): Observable<SellerCategoryDTO> {
         let url_ = this.baseUrl + "/api/SellerCategory/GetDetails?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1992,14 +1920,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiSellerCategoryGetDetailsGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDto>;
+                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDto>;
+                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
         }));
     }
 
-    protected processApiSellerCategoryGetDetailsGet(response: HttpResponseBase): Observable<SellerCategoryDto> {
+    protected processApiSellerCategoryGetDetailsGet(response: HttpResponseBase): Observable<SellerCategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2010,7 +1938,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDto.fromJS(resultData200);
+            result200 = SellerCategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2021,7 +1949,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryInsertPost(entity: SellerCategoryDto): Observable<SellerCategoryDto> {
+    apiSellerCategoryInsertPost(entity: SellerCategoryDTO): Observable<SellerCategoryDTO> {
         let url_ = this.baseUrl + "/api/SellerCategory/Insert";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2044,14 +1972,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiSellerCategoryInsertPost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDto>;
+                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDto>;
+                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
         }));
     }
 
-    protected processApiSellerCategoryInsertPost(response: HttpResponseBase): Observable<SellerCategoryDto> {
+    protected processApiSellerCategoryInsertPost(response: HttpResponseBase): Observable<SellerCategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2062,7 +1990,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDto.fromJS(resultData200);
+            result200 = SellerCategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2073,7 +2001,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryUpdatePost(entity: SellerCategoryDto): Observable<SellerCategoryDto> {
+    apiSellerCategoryUpdatePost(entity: SellerCategoryDTO): Observable<SellerCategoryDTO> {
         let url_ = this.baseUrl + "/api/SellerCategory/Update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2096,14 +2024,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiSellerCategoryUpdatePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDto>;
+                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDto>;
+                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
         }));
     }
 
-    protected processApiSellerCategoryUpdatePost(response: HttpResponseBase): Observable<SellerCategoryDto> {
+    protected processApiSellerCategoryUpdatePost(response: HttpResponseBase): Observable<SellerCategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2114,7 +2042,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDto.fromJS(resultData200);
+            result200 = SellerCategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2125,7 +2053,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryDeletePost(id: number | undefined): Observable<SellerCategoryDto> {
+    apiSellerCategoryDeletePost(id: number | undefined): Observable<SellerCategoryDTO> {
         let url_ = this.baseUrl + "/api/SellerCategory/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -2148,14 +2076,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiSellerCategoryDeletePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDto>;
+                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDto>;
+                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
         }));
     }
 
-    protected processApiSellerCategoryDeletePost(response: HttpResponseBase): Observable<SellerCategoryDto> {
+    protected processApiSellerCategoryDeletePost(response: HttpResponseBase): Observable<SellerCategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2166,7 +2094,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDto.fromJS(resultData200);
+            result200 = SellerCategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2273,12 +2201,12 @@ export interface ICategoryDto {
     name: string;
 }
 
-export class DataSourceResultOfPartDto implements IDataSourceResultOfPartDto {
-    data!: PartDto[];
+export class DataSourceResultOfMerchantDTO implements IDataSourceResultOfMerchantDTO {
+    data!: MerchantDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfPartDto) {
+    constructor(data?: IDataSourceResultOfMerchantDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2295,16 +2223,16 @@ export class DataSourceResultOfPartDto implements IDataSourceResultOfPartDto {
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(PartDto.fromJS(item));
+                    this.data!.push(MerchantDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfPartDto {
+    static fromJS(data: any): DataSourceResultOfMerchantDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfPartDto();
+        let result = new DataSourceResultOfMerchantDTO();
         result.init(data);
         return result;
     }
@@ -2322,13 +2250,392 @@ export class DataSourceResultOfPartDto implements IDataSourceResultOfPartDto {
     }
 }
 
-export interface IDataSourceResultOfPartDto {
-    data: PartDto[];
+export interface IDataSourceResultOfMerchantDTO {
+    data: MerchantDTO[];
     count: number;
     additionalValue: number;
 }
 
-export class PartDto implements IPartDto {
+export class MerchantDTO implements IMerchantDTO {
+    id!: number;
+    shopName!: string;
+    logo!: string;
+    slug!: string;
+    description!: string;
+    shortDescription!: string;
+    address!: string;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    rating!: number;
+    ratingCount!: number;
+    cityId?: number | undefined;
+    isFavoriteMerchant!: boolean;
+    commercialRegistrationNumber!: string;
+    commercialRegistrationImageForm!: any;
+    commercialRegistrationImage!: string;
+    nationalIdNumber!: string;
+    nationalIdImageForm!: any;
+    nationalIdImage!: string;
+    members!: UserDTO[];
+    city!: CityDTO;
+    governorate!: GovernorateDTO;
+    parts!: PartDTO[];
+    sellerCategories!: SellerCategoryDTO[];
+    deletedBy?: number | undefined;
+    deletedOn?: Date | undefined;
+    updatedBy?: number | undefined;
+    updatedOn?: Date | undefined;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+
+    constructor(data?: IMerchantDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.members = [];
+            this.city = new CityDTO();
+            this.governorate = new GovernorateDTO();
+            this.parts = [];
+            this.sellerCategories = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.shopName = _data["shopName"];
+            this.logo = _data["logo"];
+            this.slug = _data["slug"];
+            this.description = _data["description"];
+            this.shortDescription = _data["shortDescription"];
+            this.address = _data["address"];
+            this.latitude = _data["latitude"];
+            this.longitude = _data["longitude"];
+            this.rating = _data["rating"];
+            this.ratingCount = _data["ratingCount"];
+            this.cityId = _data["cityId"];
+            this.isFavoriteMerchant = _data["isFavoriteMerchant"];
+            this.commercialRegistrationNumber = _data["commercialRegistrationNumber"];
+            this.commercialRegistrationImageForm = _data["commercialRegistrationImageForm"];
+            this.commercialRegistrationImage = _data["commercialRegistrationImage"];
+            this.nationalIdNumber = _data["nationalIdNumber"];
+            this.nationalIdImageForm = _data["nationalIdImageForm"];
+            this.nationalIdImage = _data["nationalIdImage"];
+            if (Array.isArray(_data["members"])) {
+                this.members = [] as any;
+                for (let item of _data["members"])
+                    this.members!.push(UserDTO.fromJS(item));
+            }
+            this.city = _data["city"] ? CityDTO.fromJS(_data["city"]) : new CityDTO();
+            this.governorate = _data["governorate"] ? GovernorateDTO.fromJS(_data["governorate"]) : new GovernorateDTO();
+            if (Array.isArray(_data["parts"])) {
+                this.parts = [] as any;
+                for (let item of _data["parts"])
+                    this.parts!.push(PartDTO.fromJS(item));
+            }
+            if (Array.isArray(_data["sellerCategories"])) {
+                this.sellerCategories = [] as any;
+                for (let item of _data["sellerCategories"])
+                    this.sellerCategories!.push(SellerCategoryDTO.fromJS(item));
+            }
+            this.deletedBy = _data["deletedBy"];
+            this.deletedOn = _data["deletedOn"] ? new Date(_data["deletedOn"].toString()) : <any>undefined;
+            this.updatedBy = _data["updatedBy"];
+            this.updatedOn = _data["updatedOn"] ? new Date(_data["updatedOn"].toString()) : <any>undefined;
+            this.createdByUserId = _data["createdByUserId"];
+            this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MerchantDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new MerchantDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["shopName"] = this.shopName;
+        data["logo"] = this.logo;
+        data["slug"] = this.slug;
+        data["description"] = this.description;
+        data["shortDescription"] = this.shortDescription;
+        data["address"] = this.address;
+        data["latitude"] = this.latitude;
+        data["longitude"] = this.longitude;
+        data["rating"] = this.rating;
+        data["ratingCount"] = this.ratingCount;
+        data["cityId"] = this.cityId;
+        data["isFavoriteMerchant"] = this.isFavoriteMerchant;
+        data["commercialRegistrationNumber"] = this.commercialRegistrationNumber;
+        data["commercialRegistrationImageForm"] = this.commercialRegistrationImageForm;
+        data["commercialRegistrationImage"] = this.commercialRegistrationImage;
+        data["nationalIdNumber"] = this.nationalIdNumber;
+        data["nationalIdImageForm"] = this.nationalIdImageForm;
+        data["nationalIdImage"] = this.nationalIdImage;
+        if (Array.isArray(this.members)) {
+            data["members"] = [];
+            for (let item of this.members)
+                data["members"].push(item.toJSON());
+        }
+        data["city"] = this.city ? this.city.toJSON() : <any>undefined;
+        data["governorate"] = this.governorate ? this.governorate.toJSON() : <any>undefined;
+        if (Array.isArray(this.parts)) {
+            data["parts"] = [];
+            for (let item of this.parts)
+                data["parts"].push(item.toJSON());
+        }
+        if (Array.isArray(this.sellerCategories)) {
+            data["sellerCategories"] = [];
+            for (let item of this.sellerCategories)
+                data["sellerCategories"].push(item.toJSON());
+        }
+        data["deletedBy"] = this.deletedBy;
+        data["deletedOn"] = this.deletedOn ? this.deletedOn.toISOString() : <any>undefined;
+        data["updatedBy"] = this.updatedBy;
+        data["updatedOn"] = this.updatedOn ? this.updatedOn.toISOString() : <any>undefined;
+        data["createdByUserId"] = this.createdByUserId;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMerchantDTO {
+    id: number;
+    shopName: string;
+    logo: string;
+    slug: string;
+    description: string;
+    shortDescription: string;
+    address: string;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    rating: number;
+    ratingCount: number;
+    cityId?: number | undefined;
+    isFavoriteMerchant: boolean;
+    commercialRegistrationNumber: string;
+    commercialRegistrationImageForm: any;
+    commercialRegistrationImage: string;
+    nationalIdNumber: string;
+    nationalIdImageForm: any;
+    nationalIdImage: string;
+    members: UserDTO[];
+    city: CityDTO;
+    governorate: GovernorateDTO;
+    parts: PartDTO[];
+    sellerCategories: SellerCategoryDTO[];
+    deletedBy?: number | undefined;
+    deletedOn?: Date | undefined;
+    updatedBy?: number | undefined;
+    updatedOn?: Date | undefined;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+}
+
+export class UserDTO implements IUserDTO {
+    id!: number;
+    userName?: string | undefined;
+    fullName?: string | undefined;
+    email?: string | undefined;
+    userType!: UserTypeEnum;
+    userTypeName?: string | undefined;
+    phoneNumber?: string | undefined;
+    address?: string | undefined;
+
+    constructor(data?: IUserDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.userName = _data["userName"];
+            this.fullName = _data["fullName"];
+            this.email = _data["email"];
+            this.userType = _data["userType"];
+            this.userTypeName = _data["userTypeName"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.address = _data["address"];
+        }
+    }
+
+    static fromJS(data: any): UserDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["userType"] = this.userType;
+        data["userTypeName"] = this.userTypeName;
+        data["phoneNumber"] = this.phoneNumber;
+        data["address"] = this.address;
+        return data;
+    }
+}
+
+export interface IUserDTO {
+    id: number;
+    userName?: string | undefined;
+    fullName?: string | undefined;
+    email?: string | undefined;
+    userType: UserTypeEnum;
+    userTypeName?: string | undefined;
+    phoneNumber?: string | undefined;
+    address?: string | undefined;
+}
+
+export enum UserTypeEnum {
+    Admin = 1,
+    Client = 2,
+    Seller = 3,
+    ShippingCompany = 4,
+}
+
+export class CityDTO implements ICityDTO {
+    id!: number;
+    nameAr!: string;
+    nameEn!: string;
+
+    constructor(data?: ICityDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.nameAr = _data["nameAr"];
+            this.nameEn = _data["nameEn"];
+        }
+    }
+
+    static fromJS(data: any): CityDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new CityDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["nameAr"] = this.nameAr;
+        data["nameEn"] = this.nameEn;
+        return data;
+    }
+}
+
+export interface ICityDTO {
+    id: number;
+    nameAr: string;
+    nameEn: string;
+}
+
+export class GovernorateDTO implements IGovernorateDTO {
+    id!: number;
+    name!: string;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+    createdByUser!: UserDTO;
+    updatedBy?: number | undefined;
+    updatedOn?: Date | undefined;
+    updatedByUser!: UserDTO;
+    cities!: CityDTO[];
+
+    constructor(data?: IGovernorateDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.createdByUser = new UserDTO();
+            this.updatedByUser = new UserDTO();
+            this.cities = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.createdByUserId = _data["createdByUserId"];
+            this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
+            this.createdByUser = _data["createdByUser"] ? UserDTO.fromJS(_data["createdByUser"]) : new UserDTO();
+            this.updatedBy = _data["updatedBy"];
+            this.updatedOn = _data["updatedOn"] ? new Date(_data["updatedOn"].toString()) : <any>undefined;
+            this.updatedByUser = _data["updatedByUser"] ? UserDTO.fromJS(_data["updatedByUser"]) : new UserDTO();
+            if (Array.isArray(_data["cities"])) {
+                this.cities = [] as any;
+                for (let item of _data["cities"])
+                    this.cities!.push(CityDTO.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GovernorateDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new GovernorateDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["createdByUserId"] = this.createdByUserId;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        data["createdByUser"] = this.createdByUser ? this.createdByUser.toJSON() : <any>undefined;
+        data["updatedBy"] = this.updatedBy;
+        data["updatedOn"] = this.updatedOn ? this.updatedOn.toISOString() : <any>undefined;
+        data["updatedByUser"] = this.updatedByUser ? this.updatedByUser.toJSON() : <any>undefined;
+        if (Array.isArray(this.cities)) {
+            data["cities"] = [];
+            for (let item of this.cities)
+                data["cities"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IGovernorateDTO {
+    id: number;
+    name: string;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+    createdByUser: UserDTO;
+    updatedBy?: number | undefined;
+    updatedOn?: Date | undefined;
+    updatedByUser: UserDTO;
+    cities: CityDTO[];
+}
+
+export class PartDTO implements IPartDTO {
     id!: number;
     name!: string;
     description!: string;
@@ -2343,7 +2650,7 @@ export class PartDto implements IPartDto {
     carModelId?: number | undefined;
     carModelName?: string | undefined;
 
-    constructor(data?: IPartDto) {
+    constructor(data?: IPartDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2370,9 +2677,9 @@ export class PartDto implements IPartDto {
         }
     }
 
-    static fromJS(data: any): PartDto {
+    static fromJS(data: any): PartDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new PartDto();
+        let result = new PartDTO();
         result.init(data);
         return result;
     }
@@ -2396,7 +2703,7 @@ export class PartDto implements IPartDto {
     }
 }
 
-export interface IPartDto {
+export interface IPartDTO {
     id: number;
     name: string;
     description: string;
@@ -2418,12 +2725,52 @@ export enum PartConditionEnum {
     Refurbished = 3,
 }
 
-export class DataSourceResultOfSellerDto implements IDataSourceResultOfSellerDto {
-    data!: SellerDto[];
+export class SellerCategoryDTO implements ISellerCategoryDTO {
+    id!: number;
+    name!: string;
+
+    constructor(data?: ISellerCategoryDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): SellerCategoryDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new SellerCategoryDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ISellerCategoryDTO {
+    id: number;
+    name: string;
+}
+
+export class DataSourceResultOfPartDTO implements IDataSourceResultOfPartDTO {
+    data!: PartDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfSellerDto) {
+    constructor(data?: IDataSourceResultOfPartDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2440,16 +2787,16 @@ export class DataSourceResultOfSellerDto implements IDataSourceResultOfSellerDto
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(SellerDto.fromJS(item));
+                    this.data!.push(PartDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfSellerDto {
+    static fromJS(data: any): DataSourceResultOfPartDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfSellerDto();
+        let result = new DataSourceResultOfPartDTO();
         result.init(data);
         return result;
     }
@@ -2467,158 +2814,10 @@ export class DataSourceResultOfSellerDto implements IDataSourceResultOfSellerDto
     }
 }
 
-export interface IDataSourceResultOfSellerDto {
-    data: SellerDto[];
+export interface IDataSourceResultOfPartDTO {
+    data: PartDTO[];
     count: number;
     additionalValue: number;
-}
-
-export class SellerDto implements ISellerDto {
-    sellerId!: number;
-    userId!: number;
-    shopName!: string;
-    phoneNumber!: string;
-    imageUrl!: string;
-    location!: string;
-    rating!: number;
-    isActive!: boolean;
-    description!: string;
-    cityId?: number | undefined;
-    cityName!: string;
-    isFavoritSeller!: boolean;
-    sellerCategories!: SellerCategoryDto[];
-    parts!: PartDto[];
-
-    constructor(data?: ISellerDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.sellerCategories = [];
-            this.parts = [];
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.sellerId = _data["sellerId"];
-            this.userId = _data["userId"];
-            this.shopName = _data["shopName"];
-            this.phoneNumber = _data["phoneNumber"];
-            this.imageUrl = _data["imageUrl"];
-            this.location = _data["location"];
-            this.rating = _data["rating"];
-            this.isActive = _data["isActive"];
-            this.description = _data["description"];
-            this.cityId = _data["cityId"];
-            this.cityName = _data["cityName"];
-            this.isFavoritSeller = _data["isFavoritSeller"];
-            if (Array.isArray(_data["sellerCategories"])) {
-                this.sellerCategories = [] as any;
-                for (let item of _data["sellerCategories"])
-                    this.sellerCategories!.push(SellerCategoryDto.fromJS(item));
-            }
-            if (Array.isArray(_data["parts"])) {
-                this.parts = [] as any;
-                for (let item of _data["parts"])
-                    this.parts!.push(PartDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): SellerDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SellerDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["sellerId"] = this.sellerId;
-        data["userId"] = this.userId;
-        data["shopName"] = this.shopName;
-        data["phoneNumber"] = this.phoneNumber;
-        data["imageUrl"] = this.imageUrl;
-        data["location"] = this.location;
-        data["rating"] = this.rating;
-        data["isActive"] = this.isActive;
-        data["description"] = this.description;
-        data["cityId"] = this.cityId;
-        data["cityName"] = this.cityName;
-        data["isFavoritSeller"] = this.isFavoritSeller;
-        if (Array.isArray(this.sellerCategories)) {
-            data["sellerCategories"] = [];
-            for (let item of this.sellerCategories)
-                data["sellerCategories"].push(item.toJSON());
-        }
-        if (Array.isArray(this.parts)) {
-            data["parts"] = [];
-            for (let item of this.parts)
-                data["parts"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface ISellerDto {
-    sellerId: number;
-    userId: number;
-    shopName: string;
-    phoneNumber: string;
-    imageUrl: string;
-    location: string;
-    rating: number;
-    isActive: boolean;
-    description: string;
-    cityId?: number | undefined;
-    cityName: string;
-    isFavoritSeller: boolean;
-    sellerCategories: SellerCategoryDto[];
-    parts: PartDto[];
-}
-
-export class SellerCategoryDto implements ISellerCategoryDto {
-    id!: number;
-    name!: string;
-
-    constructor(data?: ISellerCategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-        }
-    }
-
-    static fromJS(data: any): SellerCategoryDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SellerCategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data;
-    }
-}
-
-export interface ISellerCategoryDto {
-    id: number;
-    name: string;
 }
 
 export class AuthDto implements IAuthDto {
@@ -2695,13 +2894,6 @@ export interface IAuthDto {
     isAuthenticated: boolean;
     isAdmin: boolean;
     userType: UserTypeEnum;
-}
-
-export enum UserTypeEnum {
-    Admin = 1,
-    Client = 2,
-    Seller = 3,
-    ShippingCompany = 4,
 }
 
 export class LoginViewModel implements ILoginViewModel {
@@ -2860,12 +3052,12 @@ export interface IVisitorViewModel {
     address: string;
 }
 
-export class DataSourceResultOfUserDto implements IDataSourceResultOfUserDto {
-    data!: UserDto[];
+export class DataSourceResultOfUserDTO implements IDataSourceResultOfUserDTO {
+    data!: UserDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfUserDto) {
+    constructor(data?: IDataSourceResultOfUserDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2882,16 +3074,16 @@ export class DataSourceResultOfUserDto implements IDataSourceResultOfUserDto {
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(UserDto.fromJS(item));
+                    this.data!.push(UserDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfUserDto {
+    static fromJS(data: any): DataSourceResultOfUserDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfUserDto();
+        let result = new DataSourceResultOfUserDTO();
         result.init(data);
         return result;
     }
@@ -2909,74 +3101,10 @@ export class DataSourceResultOfUserDto implements IDataSourceResultOfUserDto {
     }
 }
 
-export interface IDataSourceResultOfUserDto {
-    data: UserDto[];
+export interface IDataSourceResultOfUserDTO {
+    data: UserDTO[];
     count: number;
     additionalValue: number;
-}
-
-export class UserDto implements IUserDto {
-    id!: number;
-    userName?: string | undefined;
-    fullName?: string | undefined;
-    email?: string | undefined;
-    userType!: UserTypeEnum;
-    userTypeName?: string | undefined;
-    phoneNumber?: string | undefined;
-    address?: string | undefined;
-
-    constructor(data?: IUserDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.userName = _data["userName"];
-            this.fullName = _data["fullName"];
-            this.email = _data["email"];
-            this.userType = _data["userType"];
-            this.userTypeName = _data["userTypeName"];
-            this.phoneNumber = _data["phoneNumber"];
-            this.address = _data["address"];
-        }
-    }
-
-    static fromJS(data: any): UserDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["fullName"] = this.fullName;
-        data["email"] = this.email;
-        data["userType"] = this.userType;
-        data["userTypeName"] = this.userTypeName;
-        data["phoneNumber"] = this.phoneNumber;
-        data["address"] = this.address;
-        return data;
-    }
-}
-
-export interface IUserDto {
-    id: number;
-    userName?: string | undefined;
-    fullName?: string | undefined;
-    email?: string | undefined;
-    userType: UserTypeEnum;
-    userTypeName?: string | undefined;
-    phoneNumber?: string | undefined;
-    address?: string | undefined;
 }
 
 export class DataSourceResultOfCarsModelDto implements IDataSourceResultOfCarsModelDto {
@@ -3074,12 +3202,12 @@ export interface ICarsModelDto {
     name: string;
 }
 
-export class DataSourceResultOfCityDto implements IDataSourceResultOfCityDto {
-    data!: CityDto[];
+export class DataSourceResultOfCityDTO implements IDataSourceResultOfCityDTO {
+    data!: CityDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfCityDto) {
+    constructor(data?: IDataSourceResultOfCityDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3096,16 +3224,16 @@ export class DataSourceResultOfCityDto implements IDataSourceResultOfCityDto {
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(CityDto.fromJS(item));
+                    this.data!.push(CityDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfCityDto {
+    static fromJS(data: any): DataSourceResultOfCityDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfCityDto();
+        let result = new DataSourceResultOfCityDTO();
         result.init(data);
         return result;
     }
@@ -3123,54 +3251,10 @@ export class DataSourceResultOfCityDto implements IDataSourceResultOfCityDto {
     }
 }
 
-export interface IDataSourceResultOfCityDto {
-    data: CityDto[];
+export interface IDataSourceResultOfCityDTO {
+    data: CityDTO[];
     count: number;
     additionalValue: number;
-}
-
-export class CityDto implements ICityDto {
-    id!: number;
-    nameAr!: string;
-    nameEn!: string;
-
-    constructor(data?: ICityDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.nameAr = _data["nameAr"];
-            this.nameEn = _data["nameEn"];
-        }
-    }
-
-    static fromJS(data: any): CityDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CityDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["nameAr"] = this.nameAr;
-        data["nameEn"] = this.nameEn;
-        return data;
-    }
-}
-
-export interface ICityDto {
-    id: number;
-    nameAr: string;
-    nameEn: string;
 }
 
 export class LookupDTO implements ILookupDTO {
@@ -3213,12 +3297,12 @@ export interface ILookupDTO {
     text: string;
 }
 
-export class DataSourceResultOfSellerCategoryDto implements IDataSourceResultOfSellerCategoryDto {
-    data!: SellerCategoryDto[];
+export class DataSourceResultOfSellerCategoryDTO implements IDataSourceResultOfSellerCategoryDTO {
+    data!: SellerCategoryDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfSellerCategoryDto) {
+    constructor(data?: IDataSourceResultOfSellerCategoryDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3235,16 +3319,16 @@ export class DataSourceResultOfSellerCategoryDto implements IDataSourceResultOfS
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(SellerCategoryDto.fromJS(item));
+                    this.data!.push(SellerCategoryDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfSellerCategoryDto {
+    static fromJS(data: any): DataSourceResultOfSellerCategoryDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfSellerCategoryDto();
+        let result = new DataSourceResultOfSellerCategoryDTO();
         result.init(data);
         return result;
     }
@@ -3262,8 +3346,8 @@ export class DataSourceResultOfSellerCategoryDto implements IDataSourceResultOfS
     }
 }
 
-export interface IDataSourceResultOfSellerCategoryDto {
-    data: SellerCategoryDto[];
+export interface IDataSourceResultOfSellerCategoryDTO {
+    data: SellerCategoryDTO[];
     count: number;
     additionalValue: number;
 }

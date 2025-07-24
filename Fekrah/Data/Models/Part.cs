@@ -12,9 +12,9 @@
     [ForeignKey(nameof(SellerId))]
     public Merchant Seller { get; set; }
 
-    public int CarsModelId { get; set; }
-    [ForeignKey(nameof(CarsModelId))]
-    public CarsModel CarsModel { get; set; }
+    //public int CarsModelId { get; set; }
+    //[ForeignKey(nameof(CarsModelId))]
+    //public CarsModel CarsModel { get; set; }
 
     public int ModelTypeId { get; set; }
     [ForeignKey(nameof(ModelTypeId))]

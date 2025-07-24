@@ -1,0 +1,286 @@
+<div class="edit-profile-container" dir="rtl">
+    <!-- Header -->
+    <div class="edit-header">
+        <button class="back-btn" (click)="goBack()">
+            <i class="fas fa-arrow-right"></i>
+            العودة
+        </button>
+        <h1>تعديل الملف الشخصي</h1>
+    </div>
+
+    <!-- Error Messages -->
+    <div class="error-alert" *ngIf="updateErrors.length > 0">
+        <h4>يرجى تصحيح الأخطاء التالية:</h4>
+        <ul>
+            <li *ngFor="let error of updateErrors">{{ error }}</li>
+        </ul>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
+        <!-- Profile Images Section -->
+        <div class="images-section">
+            <h3>الصور الشخصية</h3>
+
+            <!-- Cover Image -->
+            <div class="cover-image-upload">
+                <label>صورة الغلاف</label>
+                <div class="cover-preview">
+                    <img [src]="previewCoverImage || 'assets/images/default-cover.jpg'" alt="صورة الغلاف">
+                    <div class="cover-overlay">
+                        <input type="file" #coverImageUpload (change)="onCoverImageSelected($event)" accept="image/*"
+                            style="display: none;">
+                        <button type="button" class="upload-btn" (click)="coverImageUpload.click()">
+                            <i class="fas fa-camera"></i>
+                            تغيير صورة الغلاف
+                        </button>
+                        <button type="button" class="remove-btn" *ngIf="previewCoverImage"
+                            (click)="removeSelectedCoverImage()">
+                            <i class="fas fa-trash"></i>
+                            إزالة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Image -->
+            <div class="profile-image-upload">
+                <label>الصورة الشخصية</label>
+                <div class="image-upload">
+                    <div class="current-image">
+                        <img [src]="previewImage || 'assets/images/merchant-avatar.jpg'" alt="صورة الملف الشخصي">
+                    </div>
+                    <div class="upload-controls">
+                        <input type="file" #imageUpload (change)="onImageSelected($event)" accept="image/*"
+                            style="display: none;">
+                        <button type="button" class="upload-btn" (click)="imageUpload.click()">
+                            <i class="fas fa-camera"></i>
+                            تغيير الصورة
+                        </button>
+                        <button type="button" class="remove-btn" *ngIf="previewImage" (click)="removeSelectedImage()">
+                            <i class="fas fa-trash"></i>
+                            إزالة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3>المعلومات الأساسية</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">اسم التاجر *</label>
+                    <input type="text" id="name" formControlName="name" [class.error]="isFieldInvalid('name')">
+                    <span class="error-message" *ngIf="isFieldInvalid('name')">
+                        {{ getFieldError('name') }}
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني *</label>
+                    <input type="email" id="email" formControlName="email" [class.error]="isFieldInvalid('email')">
+                    <span class="error-message" *ngIf="isFieldInvalid('email')">
+                        {{ getFieldError('email') }}
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">رقم الهاتف *</label>
+                    <input type="tel" id="phone" formControlName="phone" [class.error]="isFieldInvalid('phone')">
+                    <span class="error-message" *ngIf="isFieldInvalid('phone')">
+                        {{ getFieldError('phone') }}
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp">رقم الواتساب</label>
+                    <input type="tel" id="whatsapp" formControlName="whatsapp" placeholder="+966 50 123 4567">
+                </div>
+
+                <div class="form-group">
+                    <label for="location">الموقع *</label>
+                    <input type="text" id="location" formControlName="location"
+                        [class.error]="isFieldInvalid('location')">
+                    <span class="error-message" *ngIf="isFieldInvalid('location')">
+                        {{ getFieldError('location') }}
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="website">الموقع الإلكتروني</label>
+                    <input type="url" id="website" formControlName="website" placeholder="www.example.com">
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Preferences -->
+        <div class="form-section">
+            <h3>تفضيلات التواصل</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="preferredContactMethod">طريقة التواصل المفضلة</label>
+                    <select id="preferredContactMethod" formControlName="preferredContactMethod">
+                        <option value="phone">الهاتف</option>
+                        <option value="whatsapp">الواتساب</option>
+                        <option value="email">البريد الإلكتروني</option>
+                    </select>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" formControlName="availableForContact">
+                        متاح للتواصل
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="form-section">
+            <h3>إعدادات الخصوصية</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="profileVisibility">مستوى ظهور الملف الشخصي</label>
+                    <select id="profileVisibility" formControlName="profileVisibility">
+                        <option value="public">عام - يمكن للجميع رؤيته</option>
+                        <option value="contacts-only">للمتصلين فقط</option>
+                        <option value="private">خاص - مخفي</option>
+                    </select>
+                </div>
+
+                <div class="privacy-checkboxes">
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" formControlName="showPhone">
+                            إظهار رقم الهاتف
+                        </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" formControlName="showEmail">
+                            إظهار البريد الإلكتروني
+                        </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" formControlName="showLocation">
+                            إظهار الموقع
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Business Hours -->
+        <div class="form-section">
+            <h3>ساعات العمل</h3>
+            <div class="business-hours-list">
+                <div class="business-hour-item" *ngFor="let _ of businessHoursArray.controls; let i = index"
+                    [formGroup]="getDayControl(i)">
+
+                    <div class="day-toggle">
+                        <label>
+                            <input type="checkbox" formControlName="isOpen" (change)="toggleBusinessDay(i)">
+                            {{ getDayControl(i).get('day')?.value }}
+                        </label>
+                    </div>
+                    <div class="hours-input" [class.disabled]="!getDayControl(i).get('isOpen')?.value">
+                        <input type="text" formControlName="hours" [disabled]="!getDayControl(i).get('isOpen')?.value"
+                            placeholder="9:00 ص - 9:00 م">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="form-section">
+            <h3>وسائل التواصل الاجتماعي</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="socialMediaFacebook">
+                        <i class="fab fa-facebook"></i>
+                        فيسبوك
+                    </label>
+                    <input type="text" id="socialMediaFacebook" formControlName="socialMediaFacebook"
+                        placeholder="اسم المستخدم أو الرابط">
+                </div>
+
+                <div class="form-group">
+                    <label for="socialMediaInstagram">
+                        <i class="fab fa-instagram"></i>
+                        انستغرام
+                    </label>
+                    <input type="text" id="socialMediaInstagram" formControlName="socialMediaInstagram"
+                        placeholder="@username">
+                </div>
+
+                <div class="form-group">
+                    <label for="socialMediaTwitter">
+                        <i class="fab fa-twitter"></i>
+                        تويتر
+                    </label>
+                    <input type="text" id="socialMediaTwitter" formControlName="socialMediaTwitter"
+                        placeholder="@username">
+                </div>
+
+                <div class="form-group">
+                    <label for="socialMediaLinkedin">
+                        <i class="fab fa-linkedin"></i>
+                        لينكد إن
+                    </label>
+                    <input type="text" id="socialMediaLinkedin" formControlName="socialMediaLinkedin"
+                        placeholder="رابط الملف الشخصي">
+                </div>
+
+                <div class="form-group">
+                    <label for="socialMediaTiktok">
+                        <i class="fab fa-tiktok"></i>
+                        تيك توك
+                    </label>
+                    <input type="text" id="socialMediaTiktok" formControlName="socialMediaTiktok"
+                        placeholder="@username">
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-section">
+            <h3>الوصف</h3>
+            <div class="form-group">
+                <label for="description">وصف التاجر وخدماته</label>
+                <textarea id="description" formControlName="description" rows="4"
+                    placeholder="اكتب وصفاً موجزاً عن خدماتك ومنتجاتك..."></textarea>
+            </div>
+        </div>
+
+        <!-- Specialties -->
+        <div class="form-section">
+            <h3>التخصصات</h3>
+            <div class="specialties-list">
+                <div class="specialty-item" *ngFor="let specialty of specialtiesArray.controls; let i = index">
+                    <input type="text" [formControl]="$any(specialty)" placeholder="أدخل التخصص">
+                    <button type="button" class="remove-specialty-btn" (click)="removeSpecialty(i)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <button type="button" class="add-specialty-btn" (click)="addSpecialty()">
+                    <i class="fas fa-plus"></i>
+                    إضافة تخصص
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+            <button type="button" class="btn btn-cancel" (click)="goBack()">
+                إلغاء
+            </button>
+            <button type="submit" class="btn btn-save" [disabled]="!editForm.valid || isLoading">
+                <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+                <i class="fas fa-save" *ngIf="!isLoading"></i>
+                <!-- {{ isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات' }} -->123
+            </button>
+        </div>
+    </form>
+</div>

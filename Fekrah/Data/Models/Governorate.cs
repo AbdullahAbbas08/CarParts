@@ -1,4 +1,5 @@
-﻿using Data.ModelInterfaces;
+﻿using Data.DTOs;
+using Data.ModelInterfaces;
 
 namespace Data.Models
 {
@@ -27,6 +28,4 @@ namespace Data.Models
         // Navigation property to Cities
         public ICollection<City> Cities { get; set; } = new List<City>();
     }
-
-
 }

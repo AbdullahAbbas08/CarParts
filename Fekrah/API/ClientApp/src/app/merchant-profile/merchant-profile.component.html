@@ -1,0 +1,322 @@
+<div class="merchant-profile-wrapper" dir="rtl">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>جاري تحميل البيانات...</p>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section d-flex align-items-center justify-content-center">
+        <!-- <div class="hero-background">
+            <img [src]="merchantData.coverImage" alt="غلاف">
+            <div class="hero-overlay"></div>
+        </div> -->
+
+        <!-- Navigation Header -->
+        <!-- <div class="nav-header">
+            <button class="back-btn glass-effect" (click)="goBack()">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="nav-actions">
+                <button class="action-btn glass-effect" (click)="shareProfile()">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="action-btn glass-effect" (click)="addToFavorites()">
+                    <i class="far fa-heart"></i>
+                </button>
+                <button class="action-btn glass-effect" (click)="reportMerchant()">
+                    <i class="fas fa-flag"></i>
+                </button>
+            </div>
+        </div> -->
+
+        <!-- Merchant Info -->
+        <div class="merchant-hero-info">
+            <div class="w-100 h-100">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="merchant-avatar-container ">
+                        <div class="merchant-avatar">
+                            <img [src]="merchantData.profileImage" [alt]="merchantData.name">
+                            <div class="avatar-border"></div>
+                        </div>
+                        <div class="status-indicator online"></div>
+                    </div>
+                </div>
+
+                <div class="merchant-details">
+                    <h1 class="merchant-name">{{ merchantData.name }}</h1>
+                    <div class="merchant-rating">
+                        <div class="stars">
+                            <i *ngFor="let star of getRatingStars(merchantData.rating)" [class]="star"></i>
+                        </div>
+                        <span class="rating-value">{{ merchantData.rating }}</span>
+                        <span class="reviews-count">({{ merchantData.reviews.length }} تقييم)</span>
+                    </div>
+                    <p class="merchant-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ merchantData.location }}
+                    </p>
+                    <div class="merchant-badges">
+                        <span class="badge verified pulse" *ngIf="merchantData.isVerified">
+                            <i class="fas fa-check-circle"></i>
+                            موثق
+                        </span>
+                        <span class="badge premium shine" *ngIf="merchantData.isPremium">
+                            <i class="fas fa-crown"></i>
+                            بريميوم
+                        </span>
+                        <span class="badge featured glow" *ngIf="merchantData.isFeatured">
+                            <i class="fas fa-star"></i>
+                            مميز
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card hover-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number counter">{{ merchantData.totalSales }}</span>
+                        <span class="stat-label">إجمالي المبيعات</span>
+                    </div>
+                </div>
+
+                <div class="stat-card hover-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number counter">{{ merchantData.productsCount }}</span>
+                        <span class="stat-label">المنتجات</span>
+                    </div>
+                </div>
+
+                <div class="stat-card hover-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number counter">{{ merchantData.totalCustomers }}</span>
+                        <span class="stat-label">العملاء</span>
+                    </div>
+                </div>
+
+                <div class="stat-card hover-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{ merchantData.responseTime }}</span>
+                        <span class="stat-label">وقت الاستجابة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+                    <i class="fas fa-info-circle"></i>
+                    <span>المعلومات</span>
+                </button>
+                <button class="tab-btn" [class.active]="activeTab === 'contact'" (click)="setActiveTab('contact')">
+                    <i class="fas fa-phone"></i>
+                    <span>التواصل</span>
+                </button>
+                <button class="tab-btn" [class.active]="activeTab === 'specialties'"
+                    (click)="setActiveTab('specialties')">
+                    <i class="fas fa-tools"></i>
+                    <span>التخصصات</span>
+                </button>
+                <button class="tab-btn" [class.active]="activeTab === 'reviews'" (click)="setActiveTab('reviews')">
+                    <i class="fas fa-star"></i>
+                    <span>التقييمات</span>
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content-wrapper">
+                <!-- Info Tab -->
+                <div class="tab-pane fade-in" *ngIf="activeTab === 'info'">
+                    <div class="info-grid">
+                        <div class="info-card slide-up">
+                            <h3>نبذة عن التاجر</h3>
+                            <p>{{ merchantData.description }}</p>
+                        </div>
+
+                        <div class="info-card slide-up">
+                            <h3>ساعات العمل</h3>
+                            <div class="business-hours">
+                                <div class="day-row" *ngFor="let day of merchantData.businessHours">
+                                    <span class="day">{{ day.day }}</span>
+                                    <span class="hours" [class.closed]="!day.isOpen">{{ day.hours }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-card slide-up">
+                            <h3>الإنجازات</h3>
+                            <div class="achievements">
+                                <div class="achievement" *ngFor="let achievement of merchantData.achievements">
+                                    <i [class]="achievement.icon"></i>
+                                    <div>
+                                        <h4>{{ achievement.title }}</h4>
+                                        <span>{{ achievement.year }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Tab -->
+                <div class="tab-pane fade-in" *ngIf="activeTab === 'contact'">
+                    <div class="contact-grid">
+                        <div class="contact-card hover-lift">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>الهاتف</h4>
+                                <p>{{ merchantData.phone }}</p>
+                                <button class="contact-btn primary" (click)="callPhone()">
+                                    <i class="fas fa-phone"></i>
+                                    اتصال
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-card hover-lift">
+                            <div class="contact-icon whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>واتساب</h4>
+                                <p>{{ merchantData.whatsapp }}</p>
+                                <button class="contact-btn whatsapp" (click)="sendWhatsApp()">
+                                    <i class="fab fa-whatsapp"></i>
+                                    مراسلة
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-card hover-lift">
+                            <div class="contact-icon email">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>البريد الإلكتروني</h4>
+                                <p>{{ merchantData.email }}</p>
+                                <button class="contact-btn email" (click)="sendEmail()">
+                                    <i class="fas fa-envelope"></i>
+                                    إرسال
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-card hover-lift" *ngIf="merchantData.website">
+                            <div class="contact-icon website">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>الموقع الإلكتروني</h4>
+                                <p>{{ merchantData.website }}</p>
+                                <button class="contact-btn website" (click)="visitWebsite()">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    زيارة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="social-media-section">
+                        <h3>تابعنا على</h3>
+                        <div class="social-buttons">
+                            <button class="social-btn facebook" (click)="openSocialMedia('facebook')">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>Facebook</span>
+                            </button>
+                            <button class="social-btn instagram" (click)="openSocialMedia('instagram')">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </button>
+                            <button class="social-btn twitter" (click)="openSocialMedia('twitter')">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specialties Tab -->
+                <div class="tab-pane fade-in" *ngIf="activeTab === 'specialties'">
+                    <div class="specialties-grid">
+                        <div class="specialty-card bounce-in"
+                            *ngFor="let specialty of merchantData.arabicSpecialties; let i = index"
+                            [style.animation-delay]="i * 0.1 + 's'">
+                            <div class="specialty-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <h4>{{ specialty }}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade-in" *ngIf="activeTab === 'reviews'">
+                    <div class="reviews-section">
+                        <div class="review-card" *ngFor="let review of merchantData.reviews">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <h4>{{ review.customerName }}</h4>
+                                        <div class="review-meta">
+                                            <span class="review-date">{{ review.date | date:'dd/MM/yyyy' }}</span>
+                                            <span class="verified" *ngIf="review.verified">
+                                                <i class="fas fa-check-circle"></i>
+                                                عميل موثق
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review-rating">
+                                    <i *ngFor="let star of getRatingStars(review.rating)" [class]="star"></i>
+                                </div>
+                            </div>
+                            <p class="review-comment">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Buttons -->
+    <div class="floating-actions">
+        <button class="fab primary pulse" (click)="navigateToEditProfile()">
+            <i class="fas fa-edit"></i>123
+        </button>
+        <button class="fab secondary" (click)="viewSalesHistory()">
+            <i class="fas fa-chart-line"></i>456
+        </button>
+    </div>
+</div>

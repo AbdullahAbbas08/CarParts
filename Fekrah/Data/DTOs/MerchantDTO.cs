@@ -8,7 +8,7 @@ namespace Data.DTOs
         [Required, StringLength(100)]
         public string ShopName { get; set; }
 
-        public string LogoUrl { get; set; }
+        public string Logo { get; set; }
         public string Slug { get; set; }
 
         [StringLength(500)]
@@ -22,10 +22,25 @@ namespace Data.DTOs
         public int RatingCount { get; set; }
         public int? CityId { get; set; }
         public bool IsFavoriteMerchant { get; set; }
+        [StringLength(20)]
+        public string CommercialRegistrationNumber { get; set; }
 
+        [NotMapped]
+        public IFormFile CommercialRegistrationImageForm { get; set; }
+
+        public string CommercialRegistrationImage { get; set; }
+
+        [StringLength(20)]
+        public string NationalIdNumber { get; set; }
+
+        [NotMapped]
+        public IFormFile NationalIdImageForm { get; set; }
+
+        public string NationalIdImage { get; set; }
         public virtual ICollection<UserDTO > Members { get; set; } = new List<UserDTO>();
 
         public virtual CityDTO City { get; set; }
+        public virtual GovernorateDTO Governorate { get; set; }
 
         public ICollection<PartDTO> Parts { get; set; } = new List<PartDTO>();
         public ICollection<SellerCategoryDTO> SellerCategories { get; set; } = new List<SellerCategoryDTO>();
