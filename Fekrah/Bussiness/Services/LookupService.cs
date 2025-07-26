@@ -1,6 +1,7 @@
 ﻿using Bussiness.Interfaces;
 using Data;
 using Data.DTOs;
+using Data.Enums;
 using Data.Models;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,72 @@ namespace Bussiness.Services
                             Id = c.Id,
                             Text = c.NameAr,
                         }).ToList();
+                    break;
+                case "countryofmanufacture":
+                    result = _unitOfWork.Repository<CountryOfManufacture>()
+                        .GetAll()
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.Name.Contains(searchTerm))
+                        .Select(c => new LookupDTO
+                        {
+                            Id = c.Id,
+                            Text = c.Name,
+                        }).ToList();
+                    break;
+                case "carsmodel":
+                    result = _unitOfWork.Repository<CarsModel>()
+                        .GetAll()
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.Name.Contains(searchTerm))
+                        .Select(c => new LookupDTO
+                        {
+                            Id = c.Id,
+                            Text = c.Name,
+                        }).ToList();
+                    break;
+                case "modeltype":
+                    result = _unitOfWork.Repository<ModelType>()
+                        .GetAll()
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.Name.Contains(searchTerm))
+                        .Select(c => new LookupDTO
+                        {
+                            Id = c.Id,
+                            Text = c.Name,
+                        }).ToList();
+                    break;
+                case "parttype":
+                    foreach (PartTypeEnum partType in Enum.GetValues(typeof(PartTypeEnum)))
+                    {
+                        var newlookUp = new LookupDTO()
+                        {
+                            Id = (int)partType,
+                            Text = partType.ToString()
+                        };
+
+                        result.Add(newlookUp);
+                    }
+                    break;
+                case "partcondition":
+                    foreach (PartConditionEnum partCondition in Enum.GetValues(typeof(PartConditionEnum)))
+                    {
+                        var newlookUp = new LookupDTO()
+                        {
+                            Id = (int)partCondition,
+                            Text = partCondition.ToString()
+                        };
+
+                        result.Add(newlookUp);
+                    }
+                    break;
+                case "partquality":
+                    foreach (PartQualityEnum partQualityEnum in Enum.GetValues(typeof(PartQualityEnum)))
+                    {
+                        var newlookUp = new LookupDTO()
+                        {
+                            Id = (int)partQualityEnum,
+                            Text = partQualityEnum.ToString()
+                        };
+
+                        result.Add(newlookUp);
+                    }
                     break;
                 default:
                     break;

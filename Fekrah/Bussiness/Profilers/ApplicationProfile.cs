@@ -19,6 +19,8 @@ namespace Bussiness.Profilers
             CreateMap<SellerCategory, SellerCategoryDTO>().ReverseMap();
             CreateMap<CarsModel, CarsModelDto>().ReverseMap();
             CreateMap<City, CityDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Governorate, GovernorateDTO>().ReverseMap();
         }
     }
 }

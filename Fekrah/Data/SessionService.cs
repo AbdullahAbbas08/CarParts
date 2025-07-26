@@ -34,6 +34,21 @@ namespace Data.Services
             }
         }
 
+        public int? MerchantId
+        {
+            get
+            {
+                if (HttpContext.User is null)
+                    return null;
+
+                var claim = HttpContext.User.FindFirst("MerchantId");
+                if (claim is null)
+                    return null;
+
+                return int.Parse(claim.Value);
+            }
+        }
+
         public string? UserName
         {
             get

@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Services
 {
-    public class SellerCategoryService : _BusinessService<SellerCategory, SellerCategoryDTO>, IMerchantCategoryService
+    public class MerchantCategoryService : _BusinessService<SellerCategory, SellerCategoryDTO>, IMerchantCategoryService
     {
-        public SellerCategoryService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public MerchantCategoryService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
             
         }

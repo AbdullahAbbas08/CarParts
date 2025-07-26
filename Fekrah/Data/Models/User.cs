@@ -15,9 +15,9 @@ namespace Data.Models
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
         public bool IsActive { get; set; } = true;
-        public int? SellerId { get; set; }
+        public int? MerchantId { get; set; }
 
-        [ForeignKey(nameof(SellerId))]
+        [ForeignKey(nameof(MerchantId))]
         public virtual Merchant? Seller { get; set; }
 
         public int? CreatedByUserId { get; set; }

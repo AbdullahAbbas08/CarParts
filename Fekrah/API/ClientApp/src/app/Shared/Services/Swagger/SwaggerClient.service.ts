@@ -558,6 +558,66 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
+    apiPartsAdvancedSearchPartPost(part: PartFilterViewModel, page: number | undefined, pageSize: number | undefined): Observable<DataSourceResultOfPartDTO> {
+        let url_ = this.baseUrl + "/api/Parts/AdvancedSearchPart?";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(part);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPartsAdvancedSearchPartPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPartsAdvancedSearchPartPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfPartDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfPartDTO>;
+        }));
+    }
+
+    protected processApiPartsAdvancedSearchPartPost(response: HttpResponseBase): Observable<DataSourceResultOfPartDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfPartDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     apiPartsGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfPartDTO> {
         let url_ = this.baseUrl + "/api/Parts/GetAll?";
         if (pageSize === null)
@@ -2506,7 +2566,7 @@ export interface IUserDTO {
 export enum UserTypeEnum {
     Admin = 1,
     Client = 2,
-    Seller = 3,
+    Merchant = 3,
     ShippingCompany = 4,
 }
 
@@ -2640,15 +2700,27 @@ export class PartDTO implements IPartDTO {
     name!: string;
     description!: string;
     price!: number;
+    finalPrice!: number;
     condition!: PartConditionEnum;
     conditionName!: string;
     imageUrl!: string;
-    sellerId!: number;
-    sellerName!: string;
+    isSold!: boolean;
+    isFavorit!: boolean;
+    isDelivery!: boolean;
+    discount!: number;
+    quality!: PartQualityEnum;
+    qualityName!: string;
+    partType!: PartTypeEnum;
+    partTypeName!: string;
+    yearOfManufacture!: number;
+    merchantId!: number;
+    merchantName!: string;
     categoryId!: number;
     categoryName!: string;
     carModelId?: number | undefined;
     carModelName?: string | undefined;
+    carModelTypeId?: number | undefined;
+    carModelTypeName?: string | undefined;
 
     constructor(data?: IPartDTO) {
         if (data) {
@@ -2665,15 +2737,27 @@ export class PartDTO implements IPartDTO {
             this.name = _data["name"];
             this.description = _data["description"];
             this.price = _data["price"];
+            this.finalPrice = _data["finalPrice"];
             this.condition = _data["condition"];
             this.conditionName = _data["conditionName"];
             this.imageUrl = _data["imageUrl"];
-            this.sellerId = _data["sellerId"];
-            this.sellerName = _data["sellerName"];
+            this.isSold = _data["isSold"];
+            this.isFavorit = _data["isFavorit"];
+            this.isDelivery = _data["isDelivery"];
+            this.discount = _data["discount"];
+            this.quality = _data["quality"];
+            this.qualityName = _data["qualityName"];
+            this.partType = _data["partType"];
+            this.partTypeName = _data["partTypeName"];
+            this.yearOfManufacture = _data["yearOfManufacture"];
+            this.merchantId = _data["merchantId"];
+            this.merchantName = _data["merchantName"];
             this.categoryId = _data["categoryId"];
             this.categoryName = _data["categoryName"];
             this.carModelId = _data["carModelId"];
             this.carModelName = _data["carModelName"];
+            this.carModelTypeId = _data["carModelTypeId"];
+            this.carModelTypeName = _data["carModelTypeName"];
         }
     }
 
@@ -2690,15 +2774,27 @@ export class PartDTO implements IPartDTO {
         data["name"] = this.name;
         data["description"] = this.description;
         data["price"] = this.price;
+        data["finalPrice"] = this.finalPrice;
         data["condition"] = this.condition;
         data["conditionName"] = this.conditionName;
         data["imageUrl"] = this.imageUrl;
-        data["sellerId"] = this.sellerId;
-        data["sellerName"] = this.sellerName;
+        data["isSold"] = this.isSold;
+        data["isFavorit"] = this.isFavorit;
+        data["isDelivery"] = this.isDelivery;
+        data["discount"] = this.discount;
+        data["quality"] = this.quality;
+        data["qualityName"] = this.qualityName;
+        data["partType"] = this.partType;
+        data["partTypeName"] = this.partTypeName;
+        data["yearOfManufacture"] = this.yearOfManufacture;
+        data["merchantId"] = this.merchantId;
+        data["merchantName"] = this.merchantName;
         data["categoryId"] = this.categoryId;
         data["categoryName"] = this.categoryName;
         data["carModelId"] = this.carModelId;
         data["carModelName"] = this.carModelName;
+        data["carModelTypeId"] = this.carModelTypeId;
+        data["carModelTypeName"] = this.carModelTypeName;
         return data;
     }
 }
@@ -2708,21 +2804,44 @@ export interface IPartDTO {
     name: string;
     description: string;
     price: number;
+    finalPrice: number;
     condition: PartConditionEnum;
     conditionName: string;
     imageUrl: string;
-    sellerId: number;
-    sellerName: string;
+    isSold: boolean;
+    isFavorit: boolean;
+    isDelivery: boolean;
+    discount: number;
+    quality: PartQualityEnum;
+    qualityName: string;
+    partType: PartTypeEnum;
+    partTypeName: string;
+    yearOfManufacture: number;
+    merchantId: number;
+    merchantName: string;
     categoryId: number;
     categoryName: string;
     carModelId?: number | undefined;
     carModelName?: string | undefined;
+    carModelTypeId?: number | undefined;
+    carModelTypeName?: string | undefined;
 }
 
 export enum PartConditionEnum {
     New = 1,
     Used = 2,
     Refurbished = 3,
+}
+
+export enum PartQualityEnum {
+    FirstSort = 1,
+    SecondSort = 2,
+}
+
+export enum PartTypeEnum {
+    Original = 1,
+    HighCopy = 2,
+    Imitation = 3,
 }
 
 export class SellerCategoryDTO implements ISellerCategoryDTO {
@@ -2818,6 +2937,102 @@ export interface IDataSourceResultOfPartDTO {
     data: PartDTO[];
     count: number;
     additionalValue: number;
+}
+
+export class PartFilterViewModel implements IPartFilterViewModel {
+    carModel!: number;
+    carModelType!: number;
+    yearOfManufactureFrom!: number;
+    yearOfManufactureTo!: number;
+    partCondition!: number;
+    partQuality!: number;
+    partType!: number;
+    priceFrom!: number;
+    priceTo!: number;
+    countryOfManufacture!: number;
+    quantityFrom!: number;
+    quantityTo!: number;
+    createdOn?: Date | undefined;
+    isSold!: boolean;
+    isFavorit!: boolean;
+    isDelivery!: boolean;
+
+    constructor(data?: IPartFilterViewModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.carModel = _data["carModel"];
+            this.carModelType = _data["carModelType"];
+            this.yearOfManufactureFrom = _data["yearOfManufactureFrom"];
+            this.yearOfManufactureTo = _data["yearOfManufactureTo"];
+            this.partCondition = _data["partCondition"];
+            this.partQuality = _data["partQuality"];
+            this.partType = _data["partType"];
+            this.priceFrom = _data["priceFrom"];
+            this.priceTo = _data["priceTo"];
+            this.countryOfManufacture = _data["countryOfManufacture"];
+            this.quantityFrom = _data["quantityFrom"];
+            this.quantityTo = _data["quantityTo"];
+            this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
+            this.isSold = _data["isSold"];
+            this.isFavorit = _data["isFavorit"];
+            this.isDelivery = _data["isDelivery"];
+        }
+    }
+
+    static fromJS(data: any): PartFilterViewModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new PartFilterViewModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["carModel"] = this.carModel;
+        data["carModelType"] = this.carModelType;
+        data["yearOfManufactureFrom"] = this.yearOfManufactureFrom;
+        data["yearOfManufactureTo"] = this.yearOfManufactureTo;
+        data["partCondition"] = this.partCondition;
+        data["partQuality"] = this.partQuality;
+        data["partType"] = this.partType;
+        data["priceFrom"] = this.priceFrom;
+        data["priceTo"] = this.priceTo;
+        data["countryOfManufacture"] = this.countryOfManufacture;
+        data["quantityFrom"] = this.quantityFrom;
+        data["quantityTo"] = this.quantityTo;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        data["isSold"] = this.isSold;
+        data["isFavorit"] = this.isFavorit;
+        data["isDelivery"] = this.isDelivery;
+        return data;
+    }
+}
+
+export interface IPartFilterViewModel {
+    carModel: number;
+    carModelType: number;
+    yearOfManufactureFrom: number;
+    yearOfManufactureTo: number;
+    partCondition: number;
+    partQuality: number;
+    partType: number;
+    priceFrom: number;
+    priceTo: number;
+    countryOfManufacture: number;
+    quantityFrom: number;
+    quantityTo: number;
+    createdOn?: Date | undefined;
+    isSold: boolean;
+    isFavorit: boolean;
+    isDelivery: boolean;
 }
 
 export class AuthDto implements IAuthDto {

@@ -19,6 +19,8 @@ namespace Api.Services
             services.AddScoped<ILookupService, LookupService>();
             services.AddScoped<ICarsModelService, CarsModelService>();
             services.AddScoped<ICityService, CityService>();
+            services.AddScoped<IMerchantCategoryService, MerchantCategoryService>();
+            services.AddScoped<IModelTypeService, ModelTypeService>();
         }
 
         public static void RegisterRepositoriesConfiguration(this IServiceCollection services)
@@ -27,7 +29,6 @@ namespace Api.Services
             services.AddScoped<IPartRepository, PartRepository>();
             services.AddScoped<ISellerRepository, SellerRepository>();
             services.AddScoped<ICarsModelRepository, CarsModelRepository>();
-            services.AddScoped<IMerchantCategoryService, SellerCategoryService>();
         }
     }
 }
