@@ -15,34 +15,36 @@ public class MerchantController : _BaseController<Merchant, MerchantDTO>
         _merchantService = merchantService;
     }
 
-    //[HttpPost]
-    //public  ActionResult<MerchantDTO> Insert([FromBody] MerchantDTO dto)
-    //{
-    //    var result =  _merchantService.Insert(dto);
-    //    return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-    //}
+    [HttpGet("GetDataById/{id}")]
+    public ActionResult<MerchantDTO> GetDataById(int id)
+    {
+        var result = _merchantService.GetById(id);
+        if (result == null) return NoContent();
+        return Ok(result);
+    }
 
-    //[HttpPut("{id}")]
-    //public  ActionResult<MerchantDTO> Update(int id, [FromBody] MerchantDTO dto)
-    //{
-    //    var result =  _merchantService.Update(id, dto);
-    //    if (result == null) return NotFound();
-    //    return Ok(result);
-    //}
+    [HttpPost("InsertMerchant")]
+    public ActionResult<MerchantDTO> InsertMerchant([FromForm] MerchantDTO dto)
+    {
+        var result = _merchantService.Insert(dto); 
+        return result;
+    }
+
+    [HttpPut("{id}")]
+    public ActionResult<MerchantDTO> Update(int id, [FromForm] MerchantDTO dto)
+    {
+        var result = _merchantService.Update(id, dto);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
 
     //[HttpDelete("{id}")]
     //public  ActionResult Delete(int id)
     //{
     //    var success =  _merchantService.Delete(id);
     //    if (!success) return NotFound();
-    //    return NoContent();
+    //    return NoContent(); 
     //}
 
-    //[HttpGet("{id}")]
-    //public  ActionResult<MerchantDTO> GetById(int id)
-    //{
-    //    var result =  _merchantService.GetById(id);
-    //    if (result == null) return NotFound();
-    //    return Ok(result);
-    //}
+  
 }

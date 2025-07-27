@@ -31,7 +31,6 @@ namespace Api.Services
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDatabaseContext(connectionString);
             builder.Services.DatabaseMigration();
-            builder.Services.DatabaseInitialData();
 
             // Caching
             builder.Services.AddMemoryCache();

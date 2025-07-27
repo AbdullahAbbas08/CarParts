@@ -1,286 +1,893 @@
-<div class="edit-profile-container" dir="rtl">
-    <!-- Header -->
-    <div class="edit-header">
-        <button class="back-btn" (click)="goBack()">
-            <i class="fas fa-arrow-right"></i>
-            العودة
-        </button>
-        <h1>تعديل الملف الشخصي</h1>
-    </div>
+<div class="modern-edit-container" dir="rtl">
+    <!-- Hero Header Section -->
+    <div class="hero-header">
+        <div class="hero-content">
+            <div class="header-navigation  d-flex justify-content-between align-items-center">
 
-    <!-- Error Messages -->
-    <div class="error-alert" *ngIf="updateErrors.length > 0">
-        <h4>يرجى تصحيح الأخطاء التالية:</h4>
-        <ul>
-            <li *ngFor="let error of updateErrors">{{ error }}</li>
-        </ul>
-    </div>
+                <div class="header-breadcrumb">
+                    <span class="breadcrumb-item">الملف الشخصي</span>
+                    <i class="fas fa-chevron-left"></i>
+                    <span class="breadcrumb-item active">تعديل</span>
+                </div>
 
-    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
-        <!-- Profile Images Section -->
-        <div class="images-section">
-            <h3>الصور الشخصية</h3>
+                <button class="modern-back-btn" (click)="goBack()">
+                    <span>العودة</span>
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
 
-            <!-- Cover Image -->
-            <div class="cover-image-upload">
-                <label>صورة الغلاف</label>
-                <div class="cover-preview">
-                    <img [src]="previewCoverImage || 'assets/images/default-cover.jpg'" alt="صورة الغلاف">
-                    <div class="cover-overlay">
-                        <input type="file" #coverImageUpload (change)="onCoverImageSelected($event)" accept="image/*"
-                            style="display: none;">
-                        <button type="button" class="upload-btn" (click)="coverImageUpload.click()">
-                            <i class="fas fa-camera"></i>
-                            تغيير صورة الغلاف
-                        </button>
-                        <button type="button" class="remove-btn" *ngIf="previewCoverImage"
-                            (click)="removeSelectedCoverImage()">
-                            <i class="fas fa-trash"></i>
-                            إزالة
-                        </button>
+            <div class="hero-title-section">
+                <div class="title-content">
+                    <h1 class="hero-title">{{ getMerchantTitle() }}</h1>
+                    <p class="hero-subtitle">{{ isUpdateMode() ? 'قم بتحديث معلوماتك لتحسين تجربة العملاء وزيادة الثقة في متجرك' : 'أنشئ ملفك التجاري واستعرض منتجاتك للعملاء' }}</p>
+                </div>
+                <div class="hero-illustration">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Progress Indicator -->
+        <div class="progress-container mx-5">
+            <!-- Progress Header -->
+            <div class="progress-header">
+                <h3 class="progress-title">تقدم إنشاء الملف التجاري</h3>
+                <div class="progress-percentage">{{progressPercentage}}</div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar">
+                    <div class="progress-fill" 
+                         [style.width.%]="progressPercentage"
+                         [style.animation]="progressPercentage > 0 ? 'progressGlow 2s infinite' : 'none'">
+                    </div>
+                </div>
+                
+                <!-- Progress Stats -->
+                <div class="progress-stats">
+                    <div class="completed-steps">
+                        {{completedSteps}} خطوات مكتملة
+                    </div>
+                    <div class="remaining-steps">
+                        {{totalSteps - completedSteps}} خطوات متبقية
                     </div>
                 </div>
             </div>
-
-            <!-- Profile Image -->
-            <div class="profile-image-upload">
-                <label>الصورة الشخصية</label>
-                <div class="image-upload">
-                    <div class="current-image">
-                        <img [src]="previewImage || 'assets/images/merchant-avatar.jpg'" alt="صورة الملف الشخصي">
+            
+            <!-- Enhanced Progress Steps -->
+            <div class="progress-steps">
+                <div class="step-item" 
+                     *ngFor="let step of getProgressSteps()" 
+                     [class.completed]="step.completed">
+                    <div class="step-icon">
+                        <i [class]="step.icon" *ngIf="!step.completed"></i>
+                        <i class="fas fa-check check-icon" *ngIf="step.completed"></i>
                     </div>
-                    <div class="upload-controls">
-                        <input type="file" #imageUpload (change)="onImageSelected($event)" accept="image/*"
-                            style="display: none;">
-                        <button type="button" class="upload-btn" (click)="imageUpload.click()">
-                            <i class="fas fa-camera"></i>
-                            تغيير الصورة
-                        </button>
-                        <button type="button" class="remove-btn" *ngIf="previewImage" (click)="removeSelectedImage()">
-                            <i class="fas fa-trash"></i>
-                            إزالة
-                        </button>
+                    <span class="step-name">{{step.name}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Messages -->
+    <div class="modern-error-alert" *ngIf="updateErrors.length > 0">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-content">
+            <h4>يرجى تصحيح الأخطاء التالية:</h4>
+            <ul>
+                <li *ngFor="let error of updateErrors">{{ error }}</li>
+            </ul>
+        </div>
+    </div>
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="modern-edit-form">
+        <!-- Image Upload Section with Modern Design -->
+        <div class="form-section images-section" [class.error-section]="hasLogoError()">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-images section-icon"></i>
+                    <h3>شعار المتجر الرئيسي</h3>
+                    <span class="required-badge" *ngIf="hasLogoError()">مطلوب</span>
+                </div>
+                <p class="section-description">اختر شعاراً مميزاً يمثل هوية متجرك ويظهر في جميع صفحاتك</p>
+                <div class="error-message" *ngIf="hasLogoError()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>يرجى رفع شعار المتجر - هذا الحقل إجباري</span>
+                </div>
+            </div>
+
+            <!-- Main Logo Upload - Full Width -->
+            <div class="cover-upload-full-width">
+                <div class="upload-header">
+                    <h4>شعار المتجر الرئيسي (Logo)</h4>
+                    <span class="upload-hint">1200 × 400 بكسل مُفضل - سيظهر كصورة غلاف رئيسية لمتجرك</span>
+                </div>
+                <div class="cover-preview-container-fullwidth">
+                    <img [src]="previewLogo || './assets/images/default-logo.png'"
+                        (error)="$any($event.target).src='./assets/images/banner.jpg'" alt="شعار المتجر"
+                        class="cover-preview-fullwidth">
+                    <div class="cover-overlay-fullwidth">
+                        <input type="file" #logoUpload (change)="onLogoSelected($event)"
+                            accept="image/*" style="display: none;">
+                        <div class="upload-actions-center">
+                            <button type="button" class="modern-upload-btn-large" (click)="logoUpload.click()">
+                                <i class="fas fa-image"></i>
+                                <span>اختر شعار المتجر</span>
+                            </button>
+                            <button type="button" class="remove-image-btn-large" *ngIf="previewLogo"
+                                (click)="removeSelectedLogo()">
+                                <i class="fas fa-trash"></i>
+                                <span>حذف الشعار</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Basic Information -->
-        <div class="form-section">
-            <h3>المعلومات الأساسية</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="name">اسم التاجر *</label>
-                    <input type="text" id="name" formControlName="name" [class.error]="isFieldInvalid('name')">
-                    <span class="error-message" *ngIf="isFieldInvalid('name')">
-                        {{ getFieldError('name') }}
+        <!-- Basic Information with Enhanced Design -->
+        <div class="form-section basic-info-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-user-tie section-icon"></i>
+                    <h3>المعلومات الأساسية</h3>
+                </div>
+                <p class="section-description">البيانات الأساسية التي تظهر للعملاء</p>
+            </div>
+
+            <div class="modern-form-grid">
+                <div class="input-group">
+                    <label for="name" class="modern-label">
+                        <i class="fas fa-store"></i>
+                        <span>اسم المتجر <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <input type="text" id="name" formControlName="shopName" class="modern-input"
+                        [class.error]="isFieldInvalid('shopName')" placeholder="أدخل اسم المتجر">
+                    <span class="error-message" *ngIf="isFieldInvalid('shopName')">
+                        {{ getFieldError('shopName') }}
                     </span>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">البريد الإلكتروني *</label>
-                    <input type="email" id="email" formControlName="email" [class.error]="isFieldInvalid('email')">
-                    <span class="error-message" *ngIf="isFieldInvalid('email')">
-                        {{ getFieldError('email') }}
-                    </span>
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">رقم الهاتف *</label>
-                    <input type="tel" id="phone" formControlName="phone" [class.error]="isFieldInvalid('phone')">
+                <div class="input-group">
+                    <label for="phone" class="modern-label">
+                        <i class="fas fa-phone"></i>
+                        <span>رقم الهاتف <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <input type="text" id="phone" formControlName="phone" class="modern-input"
+                        [class.error]="isFieldInvalid('phone')" placeholder="+966 50 123 4567">
                     <span class="error-message" *ngIf="isFieldInvalid('phone')">
                         {{ getFieldError('phone') }}
                     </span>
                 </div>
 
-                <div class="form-group">
-                    <label for="whatsapp">رقم الواتساب</label>
-                    <input type="tel" id="whatsapp" formControlName="whatsapp" placeholder="+966 50 123 4567">
+                <div class="input-group">
+                    <label for="whatsapp" class="modern-label">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>رقم الواتساب</span>
+                    </label>
+                    <input type="text" id="whatsapp" formControlName="whatsapp" class="modern-input"
+                        placeholder="+966 50 123 4567">
                 </div>
 
-                <div class="form-group">
-                    <label for="location">الموقع *</label>
-                    <input type="text" id="location" formControlName="location"
-                        [class.error]="isFieldInvalid('location')">
-                    <span class="error-message" *ngIf="isFieldInvalid('location')">
-                        {{ getFieldError('location') }}
+                <div class="input-group">
+                    <label for="email" class="modern-label">
+                        <i class="fas fa-envelope"></i>
+                        <span>البريد الإلكتروني <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <input type="email" id="email" formControlName="email" class="modern-input"
+                        [class.error]="isFieldInvalid('email')" placeholder="example@domain.com">
+                    <span class="error-message" *ngIf="isFieldInvalid('email')">
+                        {{ getFieldError('email') }}
                     </span>
                 </div>
 
-                <div class="form-group">
-                    <label for="website">الموقع الإلكتروني</label>
-                    <input type="url" id="website" formControlName="website" placeholder="www.example.com">
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact Preferences -->
-        <div class="form-section">
-            <h3>تفضيلات التواصل</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="preferredContactMethod">طريقة التواصل المفضلة</label>
-                    <select id="preferredContactMethod" formControlName="preferredContactMethod">
-                        <option value="phone">الهاتف</option>
-                        <option value="whatsapp">الواتساب</option>
-                        <option value="email">البريد الإلكتروني</option>
-                    </select>
-                </div>
-
-                <div class="form-group checkbox-group">
-                    <label>
-                        <input type="checkbox" formControlName="availableForContact">
-                        متاح للتواصل
+                <div class="input-group ">
+                    <label for="slug" class="modern-label">
+                        <i class="fas fa-globe"></i>
+                        <span>لينك الصفحة </span>
                     </label>
+                    <input type="url" id="slug" formControlName="slug" class="modern-input"
+                        placeholder="www.example.com">
                 </div>
             </div>
         </div>
 
-        <!-- Privacy Settings -->
-        <div class="form-section">
-            <h3>إعدادات الخصوصية</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="profileVisibility">مستوى ظهور الملف الشخصي</label>
-                    <select id="profileVisibility" formControlName="profileVisibility">
-                        <option value="public">عام - يمكن للجميع رؤيته</option>
-                        <option value="contacts-only">للمتصلين فقط</option>
-                        <option value="private">خاص - مخفي</option>
-                    </select>
+        <!-- Location and Address Section -->
+        <div class="form-section location-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-map-marker-alt section-icon"></i>
+                    <h3>الموقع والعنوان</h3>
+                </div>
+                <p class="section-description">حدد موقع متجرك بدقة لتسهيل وصول العملاء إليك</p>
+            </div>
+
+            <div class="modern-form-grid">
+                <div class="input-group">
+                    <label for="governorate" class="modern-label">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>المحافظة <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <div class="dropdown-container" [class.dropdown-loading]="isLoadingGovernorates">
+                        <select id="governorate" formControlName="governorateId" class="modern-input"
+                            [class.error]="isFieldInvalid('governorateId')" 
+                            [disabled]="isLoadingGovernorates"
+                            (change)="onGovernorateChange($event)">
+                            <option value="">{{ isLoadingGovernorates ? 'جاري التحميل...' : 'اختر المحافظة' }}</option>
+                            <option *ngFor="let governorate of governorates" [value]="governorate.id">
+                                {{ governorate.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <span class="error-message" *ngIf="isFieldInvalid('governorateId')">
+                        {{ getFieldError('governorateId') }}
+                    </span>
                 </div>
 
-                <div class="privacy-checkboxes">
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" formControlName="showPhone">
-                            إظهار رقم الهاتف
+                <div class="input-group">
+                    <label for="city" class="modern-label">
+                        <i class="fas fa-city"></i>
+                        <span>المدينة <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <div class="dropdown-container" [class.dropdown-loading]="isLoadingCities">
+                        <select id="city" formControlName="cityId" class="modern-input"
+                            [class.error]="isFieldInvalid('cityId')" 
+                            [disabled]="!cities.length || isLoadingCities">
+                            <option value="">
+                                {{ isLoadingCities ? 'جاري التحميل...' : 
+                                   (!editForm.get('governorateId')?.value ? 'اختر المحافظة أولاً' : 'اختر المدينة') }}
+                            </option>
+                            <option *ngFor="let city of cities" [value]="city.id">
+                                {{ city.nameAr }}
+                            </option>
+                        </select>
+                    </div>
+                    <span class="error-message" *ngIf="isFieldInvalid('cityId')">
+                        {{ getFieldError('cityId') }}
+                    </span>
+                    <small class="field-hint" *ngIf="!cities.length && editForm.get('governorateId')?.value && !isLoadingCities">
+                        <i class="fas fa-info-circle"></i>
+                        لا توجد مدن متاحة لهذه المحافظة
+                    </small>
+                </div>
+
+                <div class="input-group full-width">
+                    <label for="address" class="modern-label">
+                        <i class="fas fa-map-pin"></i>
+                        <span>العنوان بالتفصيل <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <textarea id="address" formControlName="address" class="modern-input" rows="3"
+                        [class.error]="isFieldInvalid('address')" 
+                        placeholder="الشارع، رقم المبنى، الحي، معالم مميزة قريبة"></textarea>
+                    <span class="error-message" *ngIf="isFieldInvalid('address')">
+                        {{ getFieldError('address') }}
+                    </span>
+                </div>
+
+                <div class="input-group full-width">
+                    <label for="locationOnMap" class="modern-label">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>رابط الموقع على الخريطة <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></span>
+                    </label>
+                    <input type="url" id="locationOnMap" formControlName="locationOnMap" 
+                        class="modern-input" [class.error]="isFieldInvalid('locationOnMap')"
+                        placeholder="أدخل رابط موقع متجرك على Google Maps أو أي خريطة أخرى">
+                    <small class="field-hint">
+                        <i class="fas fa-info-circle"></i>
+                        مثال: https://goo.gl/maps/xyz أو https://maps.google.com/...
+                    </small>
+                    <span class="error-message" *ngIf="isFieldInvalid('locationOnMap')">
+                        {{ getFieldError('locationOnMap') }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Documents Section with Enhanced Design -->
+        <div class="form-section documents-section-enhanced">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-file-shield section-icon"></i>
+                    <h3>الوثائق الرسمية</h3>
+                </div>
+                <p class="section-description">أضف الوثائق المطلوبة لتوثيق متجرك وضمان المصداقية</p>
+            </div>
+            
+            <div class="documents-grid-enhanced">
+                <!-- Commercial Registration -->
+                <div class="document-card-enhanced commercial-reg-card">
+                    <div class="document-header-enhanced">
+                        <div class="document-icon-wrapper">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h4>السجل التجاري</h4>
+                        <span class="document-description">وثيقة تثبت شرعية النشاط التجاري</span>
+                    </div>
+                    
+                    <div class="input-group-enhanced">
+                        <label for="commercialRegNumber" class="modern-label-enhanced">
+                            <i class="fas fa-hashtag"></i>
+                            <span>رقم السجل التجاري <span class="required-star">*</span></span>
                         </label>
+                        <input type="text" id="commercialRegNumber" formControlName="commercialRegistrationNumber" 
+                               class="modern-input-enhanced" [class.error]="isFieldInvalid('commercialRegistrationNumber')" 
+                               placeholder="أدخل رقم السجل التجاري">
+                        <span class="error-message" *ngIf="isFieldInvalid('commercialRegistrationNumber')">
+                            {{ getFieldError('commercialRegistrationNumber') }}
+                        </span>
                     </div>
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" formControlName="showEmail">
-                            إظهار البريد الإلكتروني
+                    
+                    <div class="document-upload-enhanced">
+                        <div class="upload-area" [class.has-image]="previewCommercialReg">
+                            <input type="file" #commercialRegUpload (change)="onCommercialRegSelected($event)" 
+                                   accept="image/*" style="display: none;">
+                            
+                            <div class="upload-placeholder" *ngIf="!previewCommercialReg" (click)="commercialRegUpload.click()">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h5>ارفع صورة السجل التجاري</h5>
+                                <p>PNG, JPG أو GIF (الحد الأقصى 5MB)</p>
+                                <button type="button" class="upload-btn-enhanced">
+                                    <i class="fas fa-camera"></i>
+                                    اختر الملف
+                                </button>
+                            </div>
+                            
+                            <div class="preview-container-enhanced" *ngIf="previewCommercialReg">
+                                <div class="image-wrapper">
+                                    <img [src]="previewCommercialReg" alt="السجل التجاري" class="preview-image-enhanced">
+                                    <div class="image-overlay">
+                                        <button type="button" class="change-btn" (click)="commercialRegUpload.click()">
+                                            <i class="fas fa-edit"></i>
+                                            تغيير
+                                        </button>
+                                        <button type="button" class="remove-btn-enhanced" (click)="removeCommercialReg()">
+                                            <i class="fas fa-trash"></i>
+                                            حذف
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="image-info">
+                                    <i class="fas fa-check-circle success-icon"></i>
+                                    <span>تم رفع السجل التجاري بنجاح</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="validation-message error" *ngIf="!selectedCommercialReg">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            صورة السجل التجاري مطلوبة
+                        </div>
+                    </div>
+                </div>
+
+                <!-- National ID -->
+                <div class="document-card-enhanced national-id-card">
+                    <div class="document-header-enhanced">
+                        <div class="document-icon-wrapper">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <h4>بطاقة الهوية</h4>
+                        <span class="document-description">وثيقة إثبات الهوية الشخصية</span>
+                    </div>
+                    
+                    <div class="input-group-enhanced">
+                        <label for="nationalIdNumber" class="modern-label-enhanced">
+                            <i class="fas fa-hashtag"></i>
+                            <span>رقم بطاقة الهوية <span class="required-star">*</span></span>
                         </label>
+                        <input type="text" id="nationalIdNumber" formControlName="nationalIdNumber" 
+                               class="modern-input-enhanced" [class.error]="isFieldInvalid('nationalIdNumber')" 
+                               placeholder="أدخل رقم بطاقة الهوية">
+                        <span class="error-message" *ngIf="isFieldInvalid('nationalIdNumber')">
+                            {{ getFieldError('nationalIdNumber') }}
+                        </span>
                     </div>
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" formControlName="showLocation">
-                            إظهار الموقع
-                        </label>
+                    
+                    <div class="document-upload-enhanced">
+                        <div class="upload-area" [class.has-image]="previewNationalId">
+                            <input type="file" #nationalIdUpload (change)="onNationalIdSelected($event)" 
+                                   accept="image/*" style="display: none;">
+                            
+                            <div class="upload-placeholder" *ngIf="!previewNationalId" (click)="nationalIdUpload.click()">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h5>ارفع صورة بطاقة الهوية</h5>
+                                <p>PNG, JPG أو GIF (الحد الأقصى 5MB)</p>
+                                <button type="button" class="upload-btn-enhanced">
+                                    <i class="fas fa-camera"></i>
+                                    اختر الملف
+                                </button>
+                            </div>
+                            
+                            <div class="preview-container-enhanced" *ngIf="previewNationalId">
+                                <div class="image-wrapper">
+                                    <img [src]="previewNationalId" alt="بطاقة الهوية" class="preview-image-enhanced">
+                                    <div class="image-overlay">
+                                        <button type="button" class="change-btn" (click)="nationalIdUpload.click()">
+                                            <i class="fas fa-edit"></i>
+                                            تغيير
+                                        </button>
+                                        <button type="button" class="remove-btn-enhanced" (click)="removeNationalId()">
+                                            <i class="fas fa-trash"></i>
+                                            حذف
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="image-info">
+                                    <i class="fas fa-check-circle success-icon"></i>
+                                    <span>تم رفع بطاقة الهوية بنجاح</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="validation-message error" *ngIf="!selectedNationalId">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            صورة بطاقة الهوية مطلوبة
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Business Hours -->
-        <div class="form-section">
-            <h3>ساعات العمل</h3>
-            <div class="business-hours-list">
-                <div class="business-hour-item" *ngFor="let _ of businessHoursArray.controls; let i = index"
-                    [formGroup]="getDayControl(i)">
-
-                    <div class="day-toggle">
-                        <label>
-                            <input type="checkbox" formControlName="isOpen" (change)="toggleBusinessDay(i)">
-                            {{ getDayControl(i).get('day')?.value }}
-                        </label>
+        <!-- Team Members Section -->
+        <div class="form-section members-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-users section-icon"></i>
+                    <h3>فريق العمل</h3>
+                </div>
+                <p class="section-description">أضف الأعضاء العاملين في متجرك</p>
+            </div>
+            
+            <div class="members-container">
+                <div class="members-list">
+                    <div class="member-card" *ngFor="let member of membersArray.controls; let i = index" [formGroup]="getMemberControl(i)">
+                        <div class="member-header">
+                            <i class="fas fa-user"></i>
+                            <span>عضو {{ i + 1 }}</span>
+                            <button type="button" class="remove-member-btn" (click)="removeMember(i)" *ngIf="membersArray.length > 1">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="member-fields">
+                            <div class="input-group">
+                                <label class="field-label">الاسم الكامل <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
+                                <input type="text" formControlName="name" class="modern-input" placeholder="اسم العضو">
+                            </div>
+                            <div class="input-group">
+                                <label class="field-label">رقم الهاتف <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
+                                <input type="text" formControlName="phone" class="modern-input" placeholder="رقم الهاتف">
+                            </div>
+                            <div class="input-group">
+                                <label class="field-label">البريد الإلكتروني</label>
+                                <input type="email" formControlName="email" class="modern-input" 
+                                       [class.error]="getMemberControl(i).get('email')?.invalid && getMemberControl(i).get('email')?.touched"
+                                       placeholder="البريد الإلكتروني (اختياري)">
+                                <span class="error-message" *ngIf="getMemberControl(i).get('email')?.invalid && getMemberControl(i).get('email')?.touched">
+                                    البريد الإلكتروني غير صحيح
+                                </span>
+                            </div>
+                           
+                            <div class="input-group">
+                                <label class="field-label">اسم المستخدم <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
+                                <input type="text" formControlName="username" class="modern-input" placeholder="اسم المستخدم للدخول">
+                            </div>
+                            <div class="input-group">
+                                <label class="field-label">كلمة المرور <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
+                                <input [type]="showPassword ? 'text' : 'password'" formControlName="password" 
+                                       class="modern-input" [class.error]="getMemberControl(i).get('password')?.invalid && getMemberControl(i).get('password')?.touched"
+                                       placeholder="كلمة المرور">
+                                <div class="password-errors" *ngIf="getMemberControl(i).get('password')?.invalid && getMemberControl(i).get('password')?.touched">
+                                    <small class="error-message" *ngFor="let error of getPasswordErrors(i)">{{ error }}</small>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label class="field-label">تأكيد كلمة المرور <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
+                                <input [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" 
+                                       class="modern-input" [class.error]="hasPasswordMismatch(i)"
+                                       placeholder="أعد إدخال كلمة المرور">
+                                <small class="error-message" *ngIf="hasPasswordMismatch(i)">
+                                    كلمات المرور غير متطابقة
+                                </small>
+                            </div>
+                             <div class="input-group full-width">
+                                <label class="field-label">الدور/المنصب <span style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
+                                <select formControlName="position" class="modern-input">
+                                    <option value="">اختر الدور</option>
+                                    <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+                                </select>
+                            </div>
+                            <!-- Password visibility controls -->
+                            <div class="input-group full-width">
+                                <div class="password-controls">
+                                    <label class="password-visibility-toggle">
+                                        <input type="checkbox" [checked]="showPassword" (change)="togglePasswordVisibility()">
+                                        <span class="checkmark"></span>
+                                        <span class="toggle-text">إظهار كلمات المرور</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="hours-input" [class.disabled]="!getDayControl(i).get('isOpen')?.value">
-                        <input type="text" formControlName="hours" [disabled]="!getDayControl(i).get('isOpen')?.value"
-                            placeholder="9:00 ص - 9:00 م">
-                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Social Media -->
-        <div class="form-section">
-            <h3>وسائل التواصل الاجتماعي</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="socialMediaFacebook">
-                        <i class="fab fa-facebook"></i>
-                        فيسبوك
-                    </label>
-                    <input type="text" id="socialMediaFacebook" formControlName="socialMediaFacebook"
-                        placeholder="اسم المستخدم أو الرابط">
-                </div>
-
-                <div class="form-group">
-                    <label for="socialMediaInstagram">
-                        <i class="fab fa-instagram"></i>
-                        انستغرام
-                    </label>
-                    <input type="text" id="socialMediaInstagram" formControlName="socialMediaInstagram"
-                        placeholder="@username">
-                </div>
-
-                <div class="form-group">
-                    <label for="socialMediaTwitter">
-                        <i class="fab fa-twitter"></i>
-                        تويتر
-                    </label>
-                    <input type="text" id="socialMediaTwitter" formControlName="socialMediaTwitter"
-                        placeholder="@username">
-                </div>
-
-                <div class="form-group">
-                    <label for="socialMediaLinkedin">
-                        <i class="fab fa-linkedin"></i>
-                        لينكد إن
-                    </label>
-                    <input type="text" id="socialMediaLinkedin" formControlName="socialMediaLinkedin"
-                        placeholder="رابط الملف الشخصي">
-                </div>
-
-                <div class="form-group">
-                    <label for="socialMediaTiktok">
-                        <i class="fab fa-tiktok"></i>
-                        تيك توك
-                    </label>
-                    <input type="text" id="socialMediaTiktok" formControlName="socialMediaTiktok"
-                        placeholder="@username">
-                </div>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="form-section">
-            <h3>الوصف</h3>
-            <div class="form-group">
-                <label for="description">وصف التاجر وخدماته</label>
-                <textarea id="description" formControlName="description" rows="4"
-                    placeholder="اكتب وصفاً موجزاً عن خدماتك ومنتجاتك..."></textarea>
-            </div>
-        </div>
-
-        <!-- Specialties -->
-        <div class="form-section">
-            <h3>التخصصات</h3>
-            <div class="specialties-list">
-                <div class="specialty-item" *ngFor="let specialty of specialtiesArray.controls; let i = index">
-                    <input type="text" [formControl]="$any(specialty)" placeholder="أدخل التخصص">
-                    <button type="button" class="remove-specialty-btn" (click)="removeSpecialty(i)">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <button type="button" class="add-specialty-btn" (click)="addSpecialty()">
+                
+                <button type="button" class="add-member-btn" (click)="addMember()">
                     <i class="fas fa-plus"></i>
-                    إضافة تخصص
+                    <span>إضافة عضو جديد</span>
                 </button>
             </div>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Business Hours - Compact Design -->
+        <div class="form-section hours-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-clock section-icon"></i>
+                    <h3>ساعات العمل</h3>
+                </div>
+                <p class="section-description">حدد ساعات عمل متجرك بشكل واضح ومباشر</p>
+            </div>
+
+            <div class="business-hours-container">
+                <!-- Compact Days Grid -->
+                <div class="compact-hours-grid">
+                    <div class="day-card" *ngFor="let _ of businessHoursArray.controls; let i = index"
+                        [formGroup]="getDayControl(i)" [class.active]="getDayControl(i).get('isOpen')?.value">
+
+                        <!-- Day Header -->
+                        <div class="day-header">
+                            <div class="day-info">
+                                <h5 class="day-name">{{ getDayControl(i).get('day')?.value }}</h5>
+                                <span class="day-status" [class.open]="getDayControl(i).get('isOpen')?.value"
+                                    [class.closed]="!getDayControl(i).get('isOpen')?.value">
+                                    {{ getDayControl(i).get('isOpen')?.value ? 'مفتوح' : 'مغلق' }}
+                                </span>
+                            </div>
+
+                            <!-- Simple Toggle -->
+                            <label class="simple-toggle" [class.active]="getDayControl(i).get('isOpen')?.value"
+                                (click)="toggleBusinessDay(i)">
+                                <input type="checkbox" [checked]="getDayControl(i).get('isOpen')?.value"
+                                    (click)="$event.stopPropagation()">
+                                <span class="toggle-slider">
+                                    <span class="slider-track"></span>
+                                    <span class="slider-thumb"></span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Time Inputs - Only when open -->
+                        <div class="time-section" *ngIf="getDayControl(i).get('isOpen')?.value">
+                            <div class="time-inputs-row">
+                                <div class="time-input-group">
+                                    <label class="time-label">
+                                        <i class="fas fa-sun"></i>
+                                        من
+                                    </label>
+                                    <input type="time" formControlName="openTime" class="time-input">
+                                </div>
+
+                                <div class="time-separator">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+
+                                <div class="time-input-group">
+                                    <label class="time-label">
+                                        <i class="fas fa-moon"></i>
+                                        إلى
+                                    </label>
+                                    <input type="time" formControlName="closeTime" class="time-input">
+                                </div>
+                            </div>
+
+                            <!-- Text Input Alternative -->
+                            <!-- <div class="text-hours-input">
+                                <label class="text-label">
+                                    <i class="fas fa-edit"></i>
+                                    أو اكتب نصياً
+                                </label>
+                                <input type="text" formControlName="hours" 
+                                       class="hours-text-field"
+                                       placeholder="9:00 ص - 9:00 م">
+                            </div> -->
+                        </div>
+
+                        <!-- Closed Message -->
+                        <div class="closed-message" *ngIf="!getDayControl(i).get('isOpen')?.value">
+                            <i class="fas fa-store-slash"></i>
+                            <span>مغلق</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simple Tips -->
+                <div class="hours-tips">
+                    <div class="tip">
+                        <i class="fas fa-info-circle"></i>
+                        <span>حدد ساعات واقعية وكن متاحاً للعملاء في الأوقات المناسبة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description with Rich Text Design -->
+        <div class="form-section description-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-file-alt section-icon"></i>
+                    <h3>وصف المتجر</h3>
+                </div>
+                <p class="section-description">اكتب وصفاً جذاباً عن متجرك وخدماتك لجذب المزيد من العملاء</p>
+            </div>
+
+            <div class="description-container">
+                <!-- Short Description -->
+                <div class="input-group">
+                    <label for="shortDescription" class="modern-label">
+                        <i class="fas fa-comment-alt"></i>
+                        <span>وصف قصير للمتجر</span>
+                    </label>
+                    <input type="text" id="shortDescription" formControlName="shortDescription" class="modern-input"
+                        placeholder="وصف مختصر في سطر واحد يظهر في البحث">
+                    <small class="field-hint">هذا الوصف سيظهر في نتائج البحث وعلى البطاقة الخاصة بمتجرك</small>
+                </div>
+
+                <!-- Long Description -->
+                <div class="textarea-wrapper">
+                    <label for="description" class="modern-label">
+                        <i class="fas fa-align-left"></i>
+                        <span>وصف مفصل للمتجر</span>
+                    </label>
+                    <textarea id="description" formControlName="description" class="modern-textarea" rows="6"
+                        placeholder="اكتب وصفاً موجزاً وجذاباً عن متجرك وخدماتك...
+مثال: متخصصون في قطع غيار السيارات الأصلية والبديلة بجودة عالية وأسعار منافسة. نوفر قطع غيار لجميع أنواع السيارات مع ضمان الجودة وخدمة التوصيل السريع."></textarea>
+                    <div class="textarea-footer">
+                        <span class="char-count">{{ editForm.get('description')?.value?.length || 0 }}/500</span>
+                        <div class="writing-tips">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>نصيحة: اذكر تخصصاتك وما يميزك عن المنافسين</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revolutionary Categories Design with Advanced Animation -->
+        <div class="form-section categories-section-revolutionary">
+            <div class="section-header-artistic">
+                <div class="section-title-container">
+                    <div class="title-icon-animated">
+                        <i class="fas fa-layer-group"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="title-content">
+                        <h3 class="gradient-title">🎯 تصنيفات المتجر المتقدمة</h3>
+                        <p class="title-subtitle">اختر التصنيفات التي تمثل تخصص متجرك بدقة</p>
+                    </div>
+                </div>
+                <div class="categories-stats" *ngIf="!isLoadingCategories">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ categories.length }}</span>
+                        <span class="stat-label">تصنيف متاح</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ (editForm.get('categoriesIds')?.value?.length || 0) }}</span>
+                        <span class="stat-label">مختار</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State with Advanced Animation -->
+            <div class="loading-state-advanced" *ngIf="isLoadingCategories">
+                <div class="loading-spinner-container">
+                    <div class="spinner-advanced">
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring"></div>
+                    </div>
+                    <div class="loading-text">
+                        <h4>جاري تحميل التصنيفات...</h4>
+                        <p>الرجاء الانتظار قليلاً</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Categories Grid -->
+            <div class="categories-grid-advanced" *ngIf="!isLoadingCategories && categories.length > 0">
+                <div class="grid-header">
+                    <h4>🛍️ اختر التصنيفات المناسبة لمتجرك</h4>
+                    <div class="selection-actions">
+                        <button type="button" class="btn-select-all" (click)="selectAllCategories()" *ngIf="(editForm.get('categoriesIds')?.value?.length || 0) < categories.length">
+                            <i class="fas fa-check-double"></i>
+                            اختيار الكل
+                        </button>
+                        <button type="button" class="btn-clear-all" (click)="clearAllCategories()" *ngIf="(editForm.get('categoriesIds')?.value?.length || 0) > 0">
+                            <i class="fas fa-times-circle"></i>
+                            إلغاء الكل
+                        </button>
+                    </div>
+                </div>
+
+                <div class="categories-masonry-grid">
+                    <div 
+                        class="category-card-compact" 
+                        *ngFor="let category of categories; let i = index"
+                        [class.selected]="isCategorySelected(category.id!)"
+                        (click)="toggleCategory(category.id!)"
+                        [style.animation-delay]="i * 30 + 'ms'">
+                        
+                        <div class="card-background-effect"></div>
+                        
+                        <div class="category-content-compact">
+                            <div class="category-icon-small">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <span class="category-name-compact">{{ category.name }}</span>
+                        </div>
+
+                        <div class="selection-indicator-ring"></div>
+                    </div>
+
+                    <!-- Add New Category Card -->
+                    <div class="category-card-compact add-new-category" (click)="showAddCategoryModal()">
+                        <div class="category-content-compact">
+                            <div class="category-icon-small add-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <span class="category-name-compact">إضافة تصنيف جديد</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Categories State -->
+            <div class="no-categories-state" *ngIf="!isLoadingCategories && categories.length === 0">
+                <div class="empty-state-container">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h4>لا توجد تصنيفات متاحة</h4>
+                    <p>يرجى المحاولة مرة أخرى أو الاتصال بالدعم الفني</p>
+                    <button type="button" class="btn-retry" (click)="loadCategories()">
+                        <i class="fas fa-redo"></i>
+                        إعادة المحاولة
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selected Categories Showcase -->
+            <div class="selected-categories-showcase" *ngIf="(editForm.get('categoriesIds')?.value?.length || 0) > 0">
+                <div class="showcase-header">
+                    <h4>✨ التصنيفات المختارة ({{ editForm.get('categoriesIds')?.value?.length }})</h4>
+                    <div class="showcase-actions">
+                        <button type="button" class="btn-minimize">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="selected-categories-flow">
+                    <div 
+                        class="selected-category-chip" 
+                        *ngFor="let categoryId of editForm.get('categoriesIds')?.value; let i = index"
+                        [style.animation-delay]="i * 100 + 'ms'">
+                        
+                        <div class="chip-content">
+                            <i class="fas fa-tag chip-icon"></i>
+                            <span class="chip-text">{{ getCategoryName(categoryId) }}</span>
+                            <button type="button" class="chip-remove" (click)="toggleCategory(categoryId)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="chip-glow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+
+        <!-- Action Buttons with Modern Design -->
         <div class="form-actions">
-            <button type="button" class="btn btn-cancel" (click)="goBack()">
-                إلغاء
-            </button>
-            <button type="submit" class="btn btn-save" [disabled]="!editForm.valid || isLoading">
-                <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
-                <i class="fas fa-save" *ngIf="!isLoading"></i>
-                <!-- {{ isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات' }} -->123
-            </button>
+            <!-- Debug Section (temporary) -->
+            <div class="debug-section" style="margin-bottom: 2rem; text-align: center; background: #f8f9fa; padding: 1rem; border-radius: 8px; border: 2px dashed #dee2e6;">
+                <h5 style="margin-bottom: 1rem; color: #495057;">🔧 أدوات التشخيص</h5>
+                <div style="margin-bottom: 1rem;">
+                    <button type="button" class="btn btn-info" (click)="debugFormStatus()" style="margin: 0.5rem;">
+                        🔍 تشخيص النموذج
+                    </button>
+                    <button type="button" class="btn btn-success" (click)="autoFillForm()" style="margin: 0.5rem;">
+                        📝 تعبئة تلقائية
+                    </button>
+                    <button type="button" class="btn btn-warning" (click)="forceSubmit()" style="margin: 0.5rem;">
+                        🚀 إجبار الإرسال
+                    </button>
+                </div>
+                <div style="font-size: 14px;">
+                    <div>حالة النموذج: <strong [style.color]="editForm.valid ? 'green' : 'red'">{{ editForm.valid ? '✅ صالح' : '❌ غير صالح' }}</strong></div>
+                    <div>الحالة: <strong>{{ editForm.status }}</strong></div>
+                </div>
+            </div>
+           
+            <div class="actions-container d-flex justify-content-center align-items-center gap-3">
+                <button type="button" class="modern-btn cancel-btn m-0" (click)="goBack()">
+                    <i class="fas fa-times"></i>
+                    <span>إلغاء</span>
+                </button>
+                
+                <button type="submit" class="modern-btn save-btn m-0" [disabled]="!isFormReadyForSubmit() || isLoading">
+                    <div class="btn-content" *ngIf="!isLoading">
+                        <i class="fas fa-save"></i>
+                        <span>{{ isUpdateMode() ? 'حفظ التغييرات' : 'إنشاء الملف التجاري' }}</span>
+                    </div>
+                    <div class="btn-content loading" *ngIf="isLoading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>{{ isUpdateMode() ? 'جاري الحفظ...' : 'جاري الإنشاء...' }}</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="save-info">
+                <i class="fas fa-info-circle"></i>
+                <span>ستظهر التغييرات فوراً في ملفك التجاري</span>
+            </div>
         </div>
     </form>
 </div>
+
+
+ <!-- Add Category Modal -->
+        <div class="add-category-modal" *ngIf="showAddCategoryForm" (click)="hideAddCategoryModal()"
+             style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+            <div class="modal-content" (click)="$event.stopPropagation()"
+                 style="background: white; border-radius: 1rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; position: relative; box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3); overflow-y: auto;">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e9ecef;">
+                    <h4 style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0; display: flex; align-items: center; gap: 0.5rem;">🏷️ إضافة تصنيف جديد</h4>
+                    <button type="button" class="close-modal" (click)="hideAddCategoryModal()"
+                            style="background: #dc3545; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; font-size: 1rem; transition: all 0.2s ease; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="newCategoryForm" (ngSubmit)="addNewCategory()">
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 600; color: #212529; margin-bottom: 0.5rem; font-size: 0.9rem;">اسم التصنيف</label>
+                            <input type="text" 
+                                   formControlName="name" 
+                                   class="form-control"
+                                   placeholder="أدخل اسم التصنيف الجديد"
+                                   style="width: 100%; padding: 0.75rem; border: 1px solid #dee2e6; border-radius: 0.375rem; font-size: 1rem; transition: all 0.2s ease; direction: rtl;">
+                            <div class="error-message" *ngIf="newCategoryForm.get('name')?.invalid && newCategoryForm.get('name')?.touched"
+                                 style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                اسم التصنيف مطلوب
+                            </div>
+                        </div>
+                        <div class="modal-actions" style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 2rem;">
+                            <button type="button" class="btn-cancel" (click)="hideAddCategoryModal()"
+                                    style="background: #6c757d; border: none; border-radius: 0.375rem; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-times"></i>
+                                إلغاء
+                            </button>
+                            <button type="submit" 
+                                    class="btn-add" 
+                                    [disabled]="newCategoryForm.invalid || isAddingCategory"
+                                    style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; border-radius: 0.375rem; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; opacity: 1;"
+                                    [style.opacity]="(newCategoryForm.invalid || isAddingCategory) ? '0.6' : '1'"
+                                    [style.cursor]="(newCategoryForm.invalid || isAddingCategory) ? 'not-allowed' : 'pointer'">
+                                <i class="fas fa-spinner fa-spin" *ngIf="isAddingCategory"></i>
+                                <i class="fas fa-plus" *ngIf="!isAddingCategory"></i>
+                                {{ isAddingCategory ? 'جاري الإضافة...' : 'إضافة التصنيف' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>

@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
@@ -25,12 +26,330 @@ namespace API.Services
             //IServiceProvider serviceProvider = services.BuildServiceProvider();
         }
 
-        public static async void DatabaseInitialData(this IServiceCollection services)
+        public static async Task SeedGovernorates(DatabaseContext dbContext)
         {
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-            IUnitOfWork uow = serviceProvider.GetService<IUnitOfWork>();
+            if (dbContext == null) return;
+            if (await dbContext.Set<Governorate>().AnyAsync()) return;
 
-          
+            var governorates = new List<Governorate>
+            {
+                new Governorate { Name = "القاهرة" },
+                new Governorate { Name = "الجيزة" },
+                new Governorate { Name = "الأسكندرية" },
+                new Governorate { Name = "الدقهلية" },
+                new Governorate { Name = "البحر الأحمر" },
+                new Governorate { Name = "البحيرة" },
+                new Governorate { Name = "الفيوم" },
+                new Governorate { Name = "الغربية" },
+                new Governorate { Name = "الإسماعيلية" },
+                new Governorate { Name = "المنوفية" },
+                new Governorate { Name = "المنيا" },
+                new Governorate { Name = "القليوبية" },
+                new Governorate { Name = "الوادي الجديد" },
+                new Governorate { Name = "السويس" },
+                new Governorate { Name = "اسوان" },
+                new Governorate { Name = "اسيوط" },
+                new Governorate { Name = "بني سويف" },
+                new Governorate { Name = "بورسعيد" },
+                new Governorate { Name = "دمياط" },
+                new Governorate { Name = "الشرقية" },
+                new Governorate { Name = "جنوب سيناء" },
+                new Governorate { Name = "كفر الشيخ" },
+                new Governorate { Name = "مطروح" },
+                new Governorate { Name = "الأقصر" },
+                new Governorate { Name = "قنا" },
+                new Governorate { Name = "شمال سيناء" },
+                new Governorate { Name = "سوهاج" }
+            };
+            dbContext.Set<Governorate>().AddRange(governorates);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public static async Task SeedCities(DatabaseContext dbContext)
+        {
+            if (dbContext == null) return;
+            if (await dbContext.Set<Data.Models.City>().AnyAsync()) return;
+
+            var cities = new List<Data.Models.City>
+            {
+                // القاهرة
+                new Data.Models.City { NameAr = "القاهرة", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "حلوان", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "مدينة نصر", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "مصر الجديدة", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "المعادي", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "شبرا", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "عين شمس", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "الزيتون", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "المرج", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "المطرية", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "الساحل", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "الشرابية", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "الزمالك", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "وسط البلد", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "مدينة بدر", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "مدينة الشروق", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "مدينة 15 مايو", GovernorateId = 1 },
+                new Data.Models.City { NameAr = "التجمع الخامس", GovernorateId = 1 },
+                // الجيزة
+                new Data.Models.City { NameAr = "الجيزة", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "6 أكتوبر", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "الشيخ زايد", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "العجوزة", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "الدقي", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "الهرم", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "إمبابة", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "البدرشين", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "العياط", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "أوسيم", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "كرداسة", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "الحوامدية", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "أبو النمرس", GovernorateId = 2 },
+                new Data.Models.City { NameAr = "منشأة القناطر", GovernorateId = 2 },
+                // الإسكندرية
+                new Data.Models.City { NameAr = "الإسكندرية", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "برج العرب", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "العجمي", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "سيدي جابر", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "سيدي بشر", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "محرم بك", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "المنتزه", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "الجمرك", GovernorateId = 3 },
+                new Data.Models.City { NameAr = "المعمورة", GovernorateId = 3 },
+                // الدقهلية
+                new Data.Models.City { NameAr = "المنصورة", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "طلخا", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "ميت غمر", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "دكرنس", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "أجا", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "منية النصر", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "السنبلاوين", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "بني عبيد", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "الجمالية", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "شربين", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "المطرية", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "بلقاس", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "تمي الأمديد", GovernorateId = 4 },
+                new Data.Models.City { NameAr = "نبروه", GovernorateId = 4 },
+                // البحر الأحمر
+                new Data.Models.City { NameAr = "الغردقة", GovernorateId = 5 },
+                new Data.Models.City { NameAr = "رأس غارب", GovernorateId = 5 },
+                new Data.Models.City { NameAr = "سفاجا", GovernorateId = 5 },
+                new Data.Models.City { NameAr = "القصير", GovernorateId = 5 },
+                new Data.Models.City { NameAr = "مرسى علم", GovernorateId = 5 },
+                new Data.Models.City { NameAr = "الشلاتين", GovernorateId = 5 },
+                new Data.Models.City { NameAr = "حلايب", GovernorateId = 5 },
+                // البحيرة
+                new Data.Models.City { NameAr = "دمنهور", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "كفر الدوار", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "رشيد", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "إيتاي البارود", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "أبو حمص", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "الدلنجات", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "المحمودية", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "شبراخيت", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "كوم حمادة", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "بدر", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "وادي النطرون", GovernorateId = 6 },
+                new Data.Models.City { NameAr = "النوبارية الجديدة", GovernorateId = 6 },
+                // الفيوم
+                new Data.Models.City { NameAr = "الفيوم", GovernorateId = 7 },
+                new Data.Models.City { NameAr = "سنورس", GovernorateId = 7 },
+                new Data.Models.City { NameAr = "إطسا", GovernorateId = 7 },
+                new Data.Models.City { NameAr = "طامية", GovernorateId = 7 },
+                new Data.Models.City { NameAr = "يوسف الصديق", GovernorateId = 7 },
+                new Data.Models.City { NameAr = "أبشواي", GovernorateId = 7 },
+                // الغربية
+                new Data.Models.City { NameAr = "طنطا", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "المحلة الكبرى", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "كفر الزيات", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "زفتى", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "السنطة", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "بسيون", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "سمنود", GovernorateId = 8 },
+                new Data.Models.City { NameAr = "قطور", GovernorateId = 8 },
+                // الإسماعيلية
+                new Data.Models.City { NameAr = "الإسماعيلية", GovernorateId = 9 },
+                new Data.Models.City { NameAr = "فايد", GovernorateId = 9 },
+                new Data.Models.City { NameAr = "القنطرة شرق", GovernorateId = 9 },
+                new Data.Models.City { NameAr = "القنطرة غرب", GovernorateId = 9 },
+                new Data.Models.City { NameAr = "التل الكبير", GovernorateId = 9 },
+                new Data.Models.City { NameAr = "أبو صوير", GovernorateId = 9 },
+                new Data.Models.City { NameAr = "القصاصين الجديدة", GovernorateId = 9 },
+                // المنوفية
+                new Data.Models.City { NameAr = "شبين الكوم", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "منوف", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "سرس الليان", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "أشمون", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "الباجور", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "بركة السبع", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "تلا", GovernorateId = 10 },
+                new Data.Models.City { NameAr = "الشهداء", GovernorateId = 10 },
+                // المنيا
+                new Data.Models.City { NameAr = "المنيا", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "ملوي", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "مطاي", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "بني مزار", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "سمالوط", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "دير مواس", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "مغاغة", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "العدوة", GovernorateId = 11 },
+                new Data.Models.City { NameAr = "أبو قرقاص", GovernorateId = 11 },
+                // القليوبية
+                new Data.Models.City { NameAr = "بنها", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "شبرا الخيمة", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "قليوب", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "القناطر الخيرية", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "الخانكة", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "كفر شكر", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "طوخ", GovernorateId = 12 },
+                new Data.Models.City { NameAr = "شبين القناطر", GovernorateId = 12 },
+                // الوادي الجديد
+                new Data.Models.City { NameAr = "الخارجة", GovernorateId = 13 },
+                new Data.Models.City { NameAr = "الداخلة", GovernorateId = 13 },
+                new Data.Models.City { NameAr = "الفرافرة", GovernorateId = 13 },
+                new Data.Models.City { NameAr = "باريس", GovernorateId = 13 },
+                new Data.Models.City { NameAr = "بلاط", GovernorateId = 13 },
+                // السويس
+                new Data.Models.City { NameAr = "السويس", GovernorateId = 14 },
+                new Data.Models.City { NameAr = "عتاقة", GovernorateId = 14 },
+                new Data.Models.City { NameAr = "الجناين", GovernorateId = 14 },
+                new Data.Models.City { NameAr = "الأربعين", GovernorateId = 14 },
+                // اسوان
+                new Data.Models.City { NameAr = "أسوان", GovernorateId = 15 },
+                new Data.Models.City { NameAr = "دراو", GovernorateId = 15 },
+                new Data.Models.City { NameAr = "كوم أمبو", GovernorateId = 15 },
+                new Data.Models.City { NameAr = "نصر النوبة", GovernorateId = 15 },
+                new Data.Models.City { NameAr = "إدفو", GovernorateId = 15 },
+                new Data.Models.City { NameAr = "كلابشة", GovernorateId = 15 },
+                // اسيوط
+                new Data.Models.City { NameAr = "أسيوط", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "ديروط", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "منفلوط", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "القوصية", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "أبنوب", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "أبو تيج", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "الغنايم", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "ساحل سليم", GovernorateId = 16 },
+                new Data.Models.City { NameAr = "البداري", GovernorateId = 16 },
+                // بني سويف
+                new Data.Models.City { NameAr = "بني سويف", GovernorateId = 17 },
+                new Data.Models.City { NameAr = "الواسطى", GovernorateId = 17 },
+                new Data.Models.City { NameAr = "ناصر", GovernorateId = 17 },
+                new Data.Models.City { NameAr = "إهناسيا", GovernorateId = 17 },
+                new Data.Models.City { NameAr = "ببا", GovernorateId = 17 },
+                new Data.Models.City { NameAr = "سمسطا", GovernorateId = 17 },
+                new Data.Models.City { NameAr = "الفشن", GovernorateId = 17 },
+                // بورسعيد
+                new Data.Models.City { NameAr = "بورسعيد", GovernorateId = 18 },
+                new Data.Models.City { NameAr = "بورفؤاد", GovernorateId = 18 },
+                // دمياط
+                new Data.Models.City { NameAr = "دمياط", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "رأس البر", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "فارسكور", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "الزرقا", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "السرو", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "كفر سعد", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "كفر البطيخ", GovernorateId = 19 },
+                new Data.Models.City { NameAr = "ميت أبو غالب", GovernorateId = 19 },
+                // الشرقية (مكتملة أعلاه)
+                // جنوب سيناء
+                new Data.Models.City { NameAr = "طور سيناء", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "شرم الشيخ", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "دهب", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "نويبع", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "طابا", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "سانت كاترين", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "أبو رديس", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "أبو زنيمة", GovernorateId = 21 },
+                new Data.Models.City { NameAr = "رأس سدر", GovernorateId = 21 },
+                // كفر الشيخ
+                new Data.Models.City { NameAr = "كفر الشيخ", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "دسوق", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "فوه", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "مطوبس", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "سيدي سالم", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "قلين", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "الحامول", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "بلطيم", GovernorateId = 22 },
+                new Data.Models.City { NameAr = "الرياض", GovernorateId = 22 },
+                // مطروح
+                new Data.Models.City { NameAr = "مرسى مطروح", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "الحمام", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "العلمين", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "سيدي براني", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "النجيلة", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "سيوة", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "السلوم", GovernorateId = 23 },
+                new Data.Models.City { NameAr = "الضبعة", GovernorateId = 23 },
+                // الأقصر
+                new Data.Models.City { NameAr = "الأقصر", GovernorateId = 24 },
+                new Data.Models.City { NameAr = "إسنا", GovernorateId = 24 },
+                new Data.Models.City { NameAr = "أرمنت", GovernorateId = 24 },
+                new Data.Models.City { NameAr = "الزينية", GovernorateId = 24 },
+                new Data.Models.City { NameAr = "الطود", GovernorateId = 24 },
+                new Data.Models.City { NameAr = "البياضية", GovernorateId = 24 },
+                new Data.Models.City { NameAr = "القرنة", GovernorateId = 24 },
+                // قنا
+                new Data.Models.City { NameAr = "قنا", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "نجع حمادي", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "دشنا", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "قفط", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "قوص", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "أبوتشت", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "فرشوط", GovernorateId = 25 },
+                new Data.Models.City { NameAr = "نقادة", GovernorateId = 25 },
+                // شمال سيناء
+                new Data.Models.City { NameAr = "العريش", GovernorateId = 26 },
+                new Data.Models.City { NameAr = "رفح", GovernorateId = 26 },
+                new Data.Models.City { NameAr = "الشيخ زويد", GovernorateId = 26 },
+                new Data.Models.City { NameAr = "بئر العبد", GovernorateId = 26 },
+                new Data.Models.City { NameAr = "الحسنة", GovernorateId = 26 },
+                new Data.Models.City { NameAr = "نخل", GovernorateId = 26 },
+                // سوهاج
+                new Data.Models.City { NameAr = "سوهاج", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "طهطا", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "طما", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "المراغة", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "جهينة", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "ساقلتة", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "أخميم", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "البلينا", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "دار السلام", GovernorateId = 27 },
+                new Data.Models.City { NameAr = "منشأة القناطر", GovernorateId = 27 },
+            };
+            dbContext.Set<Data.Models.City>().AddRange(cities);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public static async Task SeedCategories(DatabaseContext dbContext)
+        {
+            if (dbContext == null) return;
+            if (await dbContext.Set<Category>().AnyAsync()) return;
+
+            var categories = new List<Category>
+            {
+                new Category { Name = "موتور وعفشة" },
+                new Category { Name = "فرامل" },
+                new Category { Name = "كهربا" },
+                new Category { Name = "كاوتش وجنط" },
+                new Category { Name = "تكييف" },
+                new Category { Name = "زيوت وسوائل" },
+                new Category { Name = "مساعدين ودركسيون" },
+                new Category { Name = "صاج وكماليات" },
+                new Category { Name = "زجاج ومرايات" },
+                new Category { Name = "إكسسوارات" },
+                new Category { Name = "طرمبة" },
+                new Category { Name = "شكمان" },
+                new Category { Name = "ريداتير وتبريد" },
+                new Category { Name = "دبرياج" },
+                new Category { Name = "رشاشات" },
+                new Category { Name = "أمان وسيفتي" },
+                new Category { Name = "كراسي وأحزمة" },
+                new Category { Name = "أبواب وشبابيك" }
+            };
+            dbContext.Set<Category>().AddRange(categories);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

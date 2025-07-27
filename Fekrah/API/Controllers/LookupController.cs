@@ -2,6 +2,7 @@
 using Data.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace API.Controllers
 {
@@ -18,5 +19,13 @@ namespace API.Controllers
 
         [HttpGet("GetLookup")]
         public List<LookupDTO> GetLookupData(string lookupName, string? searchTerm = null) => _lookupService.GetLookUpDetails(lookupName, searchTerm);
+
+        [HttpGet("Governorates")]
+        public ActionResult<List<GovernorateLookupDto>> GetGovernorates()
+            => _lookupService.GetGovernorates();
+
+        [HttpGet("Cities")]
+        public ActionResult<List<CityLookupDto>> GetCities([FromQuery] int? governorateId = null)
+            => _lookupService.GetCities(governorateId);
     }
 }

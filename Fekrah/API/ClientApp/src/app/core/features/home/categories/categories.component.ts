@@ -4,7 +4,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { CategoryDto, SwaggerClient } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
+import {  CategoryDTO, SwaggerClient } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-categories',
@@ -15,7 +15,7 @@ export class CategoriesComponent implements OnInit {
   @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
 
   @ViewChild('brandsSection') brandsSection!: ElementRef;
- categories:CategoryDto[] = [];
+ categories:CategoryDTO[] = [];
 
 
  constructor(private swagger:SwaggerClient) {

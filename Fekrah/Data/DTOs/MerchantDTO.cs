@@ -8,52 +8,60 @@ namespace Data.DTOs
         [Required, StringLength(100)]
         public string ShopName { get; set; }
 
-        public string Logo { get; set; }
         public string Slug { get; set; }
 
         [StringLength(500)]
         public string Description { get; set; }
         public string ShortDescription { get; set; }
-
+        public string LocationOnMap { get; set; }
         public string Address { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public double Rating { get; set; }
         public int RatingCount { get; set; }
+        public string MobileNo { get; set; }
+        public string WhatsAppMobileNo { get; set; }
+        public string? Email { get; set; }
+
+        public int? GovernorateId { get; set; }
         public int? CityId { get; set; }
         public bool IsFavoriteMerchant { get; set; }
         [StringLength(20)]
         public string CommercialRegistrationNumber { get; set; }
 
-        [NotMapped]
-        public IFormFile CommercialRegistrationImageForm { get; set; }
-
-        public string CommercialRegistrationImage { get; set; }
-
         [StringLength(20)]
         public string NationalIdNumber { get; set; }
+
+        [StringLength(2000)]
+        public string BusinessHours { get; set; }
+
+
+        public byte[]? Logo { get; set; }
+        public byte[]? CommercialRegistrationImage { get; set; }
+        public byte[]? NationalIdImage { get; set; }
 
         [NotMapped]
         public IFormFile NationalIdImageForm { get; set; }
 
-        public string NationalIdImage { get; set; }
-        public virtual ICollection<UserDTO > Members { get; set; } = new List<UserDTO>();
+        [NotMapped]
+        public IFormFile LogoForm { get; set; }
 
-        public virtual CityDTO City { get; set; }
-        public virtual GovernorateDTO Governorate { get; set; }
+        [NotMapped]
+        public IFormFile CommercialRegistrationImageForm { get; set; }
 
-        public ICollection<PartDTO> Parts { get; set; } = new List<PartDTO>();
-        public ICollection<SellerCategoryDTO> SellerCategories { get; set; } = new List<SellerCategoryDTO>();
+        [NotMapped]
+        public string? MembersJson { get; set; }
 
+        public  ICollection<MemberDTO>? Members { get; set; }
 
-
-        public int? DeletedBy { get; set; }
-        public DateTimeOffset? DeletedOn { get; set; }
-
-        public int? UpdatedBy { get; set; }
-        public DateTimeOffset? UpdatedOn { get; set; }
-
-        public int? CreatedByUserId { get; set; }
+        public CityDTO? City { get; set; }
+        public GovernorateDTO? Governorate { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
+        //public ICollection<PartDTO> Parts { get; set; } 
+
+        [NotMapped]
+        public string? CategoriesJson { get; set; } 
+        public List<CategoryDTO>? CategoriesDTO { get; set; }
+
     }
 }

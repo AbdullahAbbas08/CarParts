@@ -1,322 +1,610 @@
-<div class="merchant-profile-wrapper" dir="rtl">
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" *ngIf="isLoading">
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>جاري تحميل البيانات...</p>
-        </div>
+<!-- Enhanced Merchant Profile -->
+<div class="enhanced-profile" *ngIf="!isLoading && !errorMessage && merchant" 
+     style="font-family: 'Cairo', sans-serif; background: #f8f9fc; min-height: 100vh; direction: rtl; width: 100%; display: block;">
+  
+  <!-- Header Section with Merchant Logo -->
+  <div class="profile-header" 
+       style="position: relative; background: linear-gradient(135deg, #4a90e2, #357abd); min-height: 400px; overflow: hidden; margin-bottom: 2rem;">
+    <div class="header-background" 
+         style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;">
+      <img src="assets/images/banner3.png" alt="Background" class="header-bg-image"
+           style="width: 100%; height: 100%; object-fit: cover; opacity: 0.3;">
+      <div class="header-overlay" 
+           style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #4a90e2, #357abd); opacity: 0.9;"></div>
     </div>
+    
+    <div class="header-content" 
+         style="position: relative; z-index: 2; padding: 2rem; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; gap: 2rem; align-items: center; min-height: 400px;">
+      <!-- Merchant Logo Section -->
+      <div class="merchant-logo-section" 
+           style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 400px;">
+        <div class="logo-container" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%;">
+          <img [src]="merchant.logo ? ('data:image/jpeg;base64,' + merchant.logo) : 'assets/images/image_100_100.png'" 
+               alt="{{ merchant.shopName }} Logo" 
+               class="merchant-logo"
+               style="width: 280px; height: 200px; border-radius: 1rem; border: 6px solid rgba(255, 255, 255, 0.3); box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175); object-fit: cover; background: #ffffff; padding: 0.5rem; display: block; margin: 0 auto;">
+          <div class="status-badge" [class.online]="isOpenToday()" [class.offline]="!isOpenToday()"
+               style="position: absolute; bottom: 15px; right: 15px; background: #ffffff; border-radius: 25px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);"
+               [style.color]="isOpenToday() ? '#28a745' : '#dc3545'">
+            <i class="fas fa-circle" [style.color]="isOpenToday() ? '#28a745' : '#dc3545'"></i>
+            <span>{{ isOpenToday() ? 'مفتوح' : 'مغلق' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Merchant Information -->
+      <div class="merchant-details" style="color: white;">
+        <div class="merchant-title" style="margin-bottom: 1rem;">
+          <h1 class="shop-name" 
+              style="font-size: 2.5rem; font-weight: 700; margin: 0 0 0.5rem 0; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+            {{ merchant.shopName || 'اسم المتجر' }}
+          </h1>
+          <p class="shop-description" 
+             style="font-size: 1.1rem; opacity: 0.9; margin: 0; line-height: 1.5;">
+            {{ merchant.shortDescription || merchant.description || 'متجر قطع غيار السيارات المتخصص' }}
+          </p>
+        </div>
+        
+        <!-- Profile Link -->
+        <div class="profile-link" 
+             style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 0.75rem; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">
+          <i class="fas fa-link"></i>
+          <span class="link-text" style="flex: 1; font-family: 'Courier New', monospace;">
+            fekrah.com/merchant/{{ merchant.id }}
+          </span>
+          <button class="copy-link-btn" (click)="copyProfileLink()" title="نسخ الرابط"
+                  style="background: rgba(255, 255, 255, 0.2); border: none; border-radius: 0.375rem; padding: 0.25rem 0.5rem; color: white; cursor: pointer; transition: all 0.2s ease;">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="stats-row" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <div class="stat-card" 
+               style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; min-width: 120px; flex: 1;">
+            <i class="fas fa-star stat-icon" style="font-size: 1.5rem; opacity: 0.8;"></i>
+            <div class="stat-info" style="display: flex; flex-direction: column;">
+              <span class="stat-value" style="font-size: 1.25rem; font-weight: 700;">{{ getDisplayRating() || '0.0' }}</span>
+              <span class="stat-label" style="font-size: 0.875rem; opacity: 0.8;">التقييم</span>
+            </div>
+          </div>
+          <div class="stat-card" 
+               style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; min-width: 120px; flex: 1;">
+            <i class="fas fa-tags stat-icon" style="font-size: 1.5rem; opacity: 0.8;"></i>
+            <div class="stat-info" style="display: flex; flex-direction: column;">
+              <span class="stat-value" style="font-size: 1.25rem; font-weight: 700;">{{ (merchant.categoriesDTO?.length || 0) }}</span>
+              <span class="stat-label" style="font-size: 0.875rem; opacity: 0.8;">التصنيفات</span>
+            </div>
+          </div>
+          <div class="stat-card" 
+               style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; min-width: 120px; flex: 1;">
+            <i class="fas fa-users stat-icon" style="font-size: 1.5rem; opacity: 0.8;"></i>
+            <div class="stat-info" style="display: flex; flex-direction: column;">
+              <span class="stat-value" style="font-size: 1.25rem; font-weight: 700;">{{ getTeamMembersCount() }}</span>
+              <span class="stat-label" style="font-size: 0.875rem; opacity: 0.8;">الفريق</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="header-actions" style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px;">
+        <button class="action-btn primary" (click)="navigateToEdit()"
+                style="background: linear-gradient(135deg, #4a90e2, #357abd); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); width: 100%; min-height: 50px;">
+          <i class="fas fa-edit" style="font-size: 1rem;"></i>
+          <span>تعديل الملف</span>
+        </button>
+        <button class="action-btn secondary" (click)="addProduct()"
+                style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); width: 100%; min-height: 50px;">
+          <i class="fas fa-plus" style="font-size: 1rem;"></i>
+          <span>إضافة منتج</span>
+        </button>
+        <button class="action-btn attachment" (click)="addAttachment()"
+                style="background: linear-gradient(135deg, #fd7e14, #f39c12); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); width: 100%; min-height: 50px;">
+          <i class="fas fa-paperclip" style="font-size: 1rem;"></i>
+          <span>إضافة مرفق</span>
+        </button>
+        <button class="action-btn info" (click)="shareProfile()"
+                style="background: linear-gradient(135deg, #17a2b8, #20c997); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); width: 100%; min-height: 50px;">
+          <i class="fas fa-share" style="font-size: 1rem;"></i>
+          <span>مشاركة</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <!-- Hero Section -->
-    <div class="hero-section d-flex align-items-center justify-content-center">
-        <!-- <div class="hero-background">
-            <img [src]="merchantData.coverImage" alt="غلاف">
-            <div class="hero-overlay"></div>
-        </div> -->
-
-        <!-- Navigation Header -->
-        <!-- <div class="nav-header">
-            <button class="back-btn glass-effect" (click)="goBack()">
-                <i class="fas fa-arrow-right"></i>
+  <!-- Main Content Area -->
+  <div class="content-area" style="padding: 0 2rem 2rem;">
+    <div class="content-container" style="max-width: 1200px; margin: 0 auto;">
+      
+      <!-- Categories Section - Always Visible -->
+      <div class="section categories-section"
+           style="background: #ffffff; border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef;">
+        <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h2 class="section-title" 
+              style="font-size: 1.5rem; font-weight: 700; color: #212529; margin: 0; display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fas fa-tags" style="color: #4a90e2; font-size: 1.25rem;"></i>
+            تصنيفات وخدمات المتجر
+          </h2>
+          <span class="section-count" 
+                style="background: linear-gradient(135deg, #4a90e2, #357abd); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">
+            {{ (merchant.categoriesDTO?.length || 0) }} تصنيف
+          </span>
+        </div>
+        
+        <!-- Categories Display -->
+        <div class="categories-display" *ngIf="merchant.categoriesDTO && merchant.categoriesDTO.length > 0; else noCategories" 
+             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <div class="category-card" *ngFor="let category of merchant.categoriesDTO; let i = index"
+               style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 0.75rem; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border: 2px solid transparent; transition: all 0.3s ease;">
+            <div class="category-icon" 
+                 style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2, #357abd); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i class="fas fa-cog" [style.color]="getCategoryColor(i)" style="font-size: 1.5rem; color: white;"></i>
+            </div>
+            <div class="category-content" style="flex: 1;">
+              <h3 class="category-name" style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0 0 0.5rem 0;">{{ category.name }}</h3>
+              <p class="category-desc" style="color: #6c757d; margin: 0; font-size: 0.9rem; line-height: 1.4;">خدمات متخصصة في هذا المجال</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- No Categories Template -->
+        <ng-template #noCategories>
+          <div class="no-categories" style="text-align: center; padding: 3rem; color: #6c757d;">
+            <i class="fas fa-tags" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #495057;">لا توجد تصنيفات محددة</h4>
+            <p style="margin: 0; font-size: 0.9rem;">يمكنك إضافة تصنيفات لمتجرك من خلال تعديل الملف الشخصي</p>
+            <button class="add-categories-btn" (click)="navigateToEdit()" 
+                    style="background: linear-gradient(135deg, #4a90e2, #357abd); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; margin-top: 1rem; cursor: pointer; transition: all 0.2s ease;">
+              <i class="fas fa-plus" style="margin-left: 0.5rem;"></i>
+              إضافة تصنيفات
             </button>
-            <div class="nav-actions">
-                <button class="action-btn glass-effect" (click)="shareProfile()">
-                    <i class="fas fa-share-alt"></i>
-                </button>
-                <button class="action-btn glass-effect" (click)="addToFavorites()">
-                    <i class="far fa-heart"></i>
-                </button>
-                <button class="action-btn glass-effect" (click)="reportMerchant()">
-                    <i class="fas fa-flag"></i>
-                </button>
-            </div>
-        </div> -->
+          </div>
+        </ng-template>
+      </div>
 
-        <!-- Merchant Info -->
-        <div class="merchant-hero-info">
-            <div class="w-100 h-100">
-                <div class="d-flex align-items-center justify-content-center">
-                    <div class="merchant-avatar-container ">
-                        <div class="merchant-avatar">
-                            <img [src]="merchantData.profileImage" [alt]="merchantData.name">
-                            <div class="avatar-border"></div>
-                        </div>
-                        <div class="status-indicator online"></div>
-                    </div>
-                </div>
-
-                <div class="merchant-details">
-                    <h1 class="merchant-name">{{ merchantData.name }}</h1>
-                    <div class="merchant-rating">
-                        <div class="stars">
-                            <i *ngFor="let star of getRatingStars(merchantData.rating)" [class]="star"></i>
-                        </div>
-                        <span class="rating-value">{{ merchantData.rating }}</span>
-                        <span class="reviews-count">({{ merchantData.reviews.length }} تقييم)</span>
-                    </div>
-                    <p class="merchant-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        {{ merchantData.location }}
-                    </p>
-                    <div class="merchant-badges">
-                        <span class="badge verified pulse" *ngIf="merchantData.isVerified">
-                            <i class="fas fa-check-circle"></i>
-                            موثق
-                        </span>
-                        <span class="badge premium shine" *ngIf="merchantData.isPremium">
-                            <i class="fas fa-crown"></i>
-                            بريميوم
-                        </span>
-                        <span class="badge featured glow" *ngIf="merchantData.isFeatured">
-                            <i class="fas fa-star"></i>
-                            مميز
-                        </span>
-                    </div>
-                </div>
+      <!-- Team Members Section - Always Visible -->
+      <div class="section team-section"
+           style="background: #ffffff; border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef;">
+        <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h2 class="section-title" 
+              style="font-size: 1.5rem; font-weight: 700; color: #212529; margin: 0; display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fas fa-users" style="color: #4a90e2; font-size: 1.25rem;"></i>
+            فريق العمل
+          </h2>
+          <span class="section-count" 
+                style="background: linear-gradient(135deg, #4a90e2, #357abd); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">
+            {{ getTeamMembersCount() }} عضو
+          </span>
+        </div>
+        
+        <!-- Team Display -->
+        <div class="team-display" *ngIf="hasTeamMembers(); else noTeamMembers" 
+             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div class="team-member-card" *ngFor="let member of merchant.members"
+               style="background: linear-gradient(135deg, #fff, #f8f9fa); border-radius: 0.75rem; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border: 1px solid #e9ecef; transition: all 0.3s ease;">
+            <div class="member-avatar" style="position: relative; flex-shrink: 0;">
+              <img src="assets/images/image100_100.png" alt="{{ member?.userDTO?.fullName }}" class="member-image"
+                   style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #e9ecef; object-fit: cover;">
+              <div class="member-status online" 
+                   style="position: absolute; bottom: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; background: #28a745;"></div>
             </div>
+            <div class="member-info" style="flex: 1;">
+              <h3 class="member-name" style="font-size: 1.1rem; font-weight: 600; color: #212529; margin: 0 0 0.25rem 0;">{{ member?.userDTO?.fullName || 'عضو الفريق' }}</h3>
+              <p class="member-role" style="color: #6c757d; font-size: 0.9rem; margin: 0;">{{ member?.userDTO?.address || 'موظف' }}</p>
+            </div>
+            <div class="member-actions">
+              <button class="contact-btn" (click)="showToast('معلومات الاتصال غير متوفرة', 'info')"
+                      style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; transition: all 0.2s ease;">
+                <i class="fas fa-phone" style="font-size: 1rem;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- No Team Members Template -->
+        <ng-template #noTeamMembers>
+          <div class="no-team-members" style="text-align: center; padding: 3rem; color: #6c757d;">
+            <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #495057;">لا يوجد أعضاء فريق مسجلين</h4>
+            <p style="margin: 0; font-size: 0.9rem;">يمكنك إضافة أعضاء فريق العمل من خلال تعديل الملف الشخصي</p>
+            <button class="add-team-btn" (click)="navigateToEdit()" 
+                    style="background: linear-gradient(135deg, #4a90e2, #357abd); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; margin-top: 1rem; cursor: pointer; transition: all 0.2s ease;">
+              <i class="fas fa-user-plus" style="margin-left: 0.5rem;"></i>
+              إضافة أعضاء الفريق
+            </button>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="content-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+        
+        <!-- Left Column -->
+        <div class="left-column">
+          
+          <!-- Quick Contact Card -->
+          <div class="card contact-card" 
+               style="background: #ffffff; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef; transition: all 0.3s ease;">
+            <h3 class="card-title" 
+                style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-phone" style="color: #4a90e2;"></i>
+              تواصل سريع
+            </h3>
+            <div class="contact-methods" style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
+              <button class="contact-method phone" (click)="callPhone()" [disabled]="!merchant.mobileNo"
+                      style="background: none; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s ease; text-align: right; width: 100%;">
+                <i class="fas fa-phone" style="color: #4a90e2; font-size: 1.25rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                <div class="method-info" style="flex: 1; display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                  <span class="method-name" style="font-weight: 600; color: #212529; width: 100%;">اتصال</span>
+                  <span class="method-value" style="font-size: 0.9rem; color: #6c757d; width: 100%;">{{ merchant.mobileNo || 'غير متوفر' }}</span>
+                </div>
+              </button>
+              
+              <button class="contact-method whatsapp" (click)="openWhatsApp()" [disabled]="!merchant.whatsAppMobileNo"
+                      style="background: none; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s ease; text-align: right; width: 100%;">
+                <i class="fab fa-whatsapp" style="color: #25d366; font-size: 1.25rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                <div class="method-info" style="flex: 1; display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                  <span class="method-name" style="font-weight: 600; color: #212529; width: 100%;">واتساب</span>
+                  <span class="method-value" style="font-size: 0.9rem; color: #6c757d; width: 100%;">{{ merchant.whatsAppMobileNo || 'غير متوفر' }}</span>
+                </div>
+              </button>
+              
+              <button class="contact-method email" (click)="sendEmail()" [disabled]="!merchant.email"
+                      style="background: none; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s ease; text-align: right; width: 100%;">
+                <i class="fas fa-envelope" style="color: #fd7e14; font-size: 1.25rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                <div class="method-info" style="flex: 1; display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                  <span class="method-name" style="font-weight: 600; color: #212529; width: 100%;">بريد إلكتروني</span>
+                  <span class="method-value" style="font-size: 0.9rem; color: #6c757d; width: 100%;">{{ merchant.email || 'غير متوفر' }}</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Business Hours Card -->
+          <div class="card hours-card" 
+               style="background: #ffffff; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef; transition: all 0.3s ease;">
+            <h3 class="card-title" 
+                style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-clock" style="color: #4a90e2;"></i>
+              ساعات العمل
+            </h3>
+            <div class="business-hours" *ngIf="getBusinessHours().length > 0">
+              <div class="day-schedule" *ngFor="let day of getBusinessHours()" [class.today]="day.day === 'اليوم'"
+                   style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e9ecef;"
+                   [style.background]="day.day === 'اليوم' ? 'rgba(74, 144, 226, 0.1)' : 'transparent'"
+                   [style.border-radius]="day.day === 'اليوم' ? '0.375rem' : '0'"
+                   [style.padding]="day.day === 'اليوم' ? '0.75rem' : '0.75rem 0'"
+                   [style.font-weight]="day.day === 'اليوم' ? '600' : 'normal'">
+                <div class="day-info" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="day-name" style="font-weight: 500;">{{ day.day }}</span>
+                  <div class="day-status" [class.open]="day.isOpen" [class.closed]="!day.isOpen"
+                       style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;"
+                       [style.color]="day.isOpen ? '#28a745' : '#dc3545'">
+                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                    <span>{{ day.isOpen ? 'مفتوح' : 'مغلق' }}</span>
+                  </div>
+                </div>
+                <div class="day-hours" *ngIf="day.isOpen" style="font-size: 0.9rem; color: #6c757d;">
+                  {{ day.hours || (day.openTime + ' - ' + day.closeTime) }}
+                </div>
+              </div>
+            </div>
+            <div class="no-hours" *ngIf="getBusinessHours().length === 0" 
+                 style="text-align: center; color: #868e96; padding: 2rem;">
+              <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+              <span>لم يتم تحديد ساعات العمل</span>
+            </div>
+          </div>
 
         </div>
-    </div>
 
-    <!-- Stats Section -->
-    <div class="stats-section">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-card hover-effect">
-                    <div class="stat-icon">
-                        <i class="fas fa-shopping-bag"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number counter">{{ merchantData.totalSales }}</span>
-                        <span class="stat-label">إجمالي المبيعات</span>
-                    </div>
+        <!-- Right Column -->
+        <div class="right-column">
+          
+          <!-- About Card -->
+          <div class="card about-card" 
+               style="background: #ffffff; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef; transition: all 0.3s ease;">
+            <h3 class="card-title" 
+                style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-info-circle" style="color: #4a90e2;"></i>
+              نبذة عن المتجر
+            </h3>
+            <div class="about-content">
+              <p class="about-text" style="line-height: 1.7; color: #6c757d; margin-bottom: 1.5rem;">
+                {{ merchant.description || merchant.shortDescription || 'متجر متخصص في قطع غيار السيارات يقدم أفضل الخدمات والمنتجات عالية الجودة لعملائنا الكرام.' }}
+              </p>
+              <div class="merchant-details-grid" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="detail-item" *ngIf="merchant.commercialRegistrationNumber" 
+                     style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #f8f9fa; border-radius: 0.375rem;">
+                  <i class="fas fa-certificate" style="color: #4a90e2; width: 20px; text-align: center;"></i>
+                  <span style="font-size: 0.9rem; color: #6c757d;">رقم السجل التجاري: {{ merchant.commercialRegistrationNumber }}</span>
                 </div>
-
-                <div class="stat-card hover-effect">
-                    <div class="stat-icon">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number counter">{{ merchantData.productsCount }}</span>
-                        <span class="stat-label">المنتجات</span>
-                    </div>
-                </div>
-
-                <div class="stat-card hover-effect">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number counter">{{ merchantData.totalCustomers }}</span>
-                        <span class="stat-label">العملاء</span>
-                    </div>
-                </div>
-
-                <div class="stat-card hover-effect">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ merchantData.responseTime }}</span>
-                        <span class="stat-label">وقت الاستجابة</span>
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
+
+          <!-- Location Card -->
+          <div class="card location-card" 
+               style="background: #ffffff; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef; transition: all 0.3s ease;">
+            <h3 class="card-title" 
+                style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-map-marker-alt" style="color: #4a90e2;"></i>
+              الموقع والعنوان
+            </h3>
+            <div class="location-content">
+              <div class="address-details" style="margin-bottom: 1.5rem;">
+                <div class="address-item" *ngIf="merchant.address" 
+                     style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #e9ecef;">
+                  <i class="fas fa-home" style="color: #4a90e2; width: 20px; text-align: center; margin-top: 0.25rem;"></i>
+                  <div class="address-text" style="flex: 1;">
+                    <strong style="display: block; font-weight: 600; color: #212529; margin-bottom: 0.25rem;">العنوان:</strong>
+                    <span style="color: #6c757d;">{{ merchant.address }}</span>
+                  </div>
+                </div>
+                <div class="address-item" *ngIf="merchant.city?.nameAr" 
+                     style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #e9ecef;">
+                  <i class="fas fa-city" style="color: #4a90e2; width: 20px; text-align: center; margin-top: 0.25rem;"></i>
+                  <div class="address-text" style="flex: 1;">
+                    <strong style="display: block; font-weight: 600; color: #212529; margin-bottom: 0.25rem;">المدينة:</strong>
+                    <span style="color: #6c757d;">{{ merchant.city?.nameAr }}</span>
+                  </div>
+                </div>
+                <div class="address-item" *ngIf="merchant.governorate?.name" 
+                     style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0;">
+                  <i class="fas fa-flag" style="color: #4a90e2; width: 20px; text-align: center; margin-top: 0.25rem;"></i>
+                  <div class="address-text" style="flex: 1;">
+                    <strong style="display: block; font-weight: 600; color: #212529; margin-bottom: 0.25rem;">المحافظة:</strong>
+                    <span style="color: #6c757d;">{{ merchant.governorate?.name }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <button class="map-button" *ngIf="merchant.locationOnMap" (click)="openLocation()"
+                      style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;">
+                <i class="fas fa-map"></i>
+                <span>عرض على الخريطة</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Documents Card -->
+          <div class="card documents-card" *ngIf="hasDocuments()" 
+               style="background: #ffffff; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: 1px solid #e9ecef; transition: all 0.3s ease;">
+            <h3 class="card-title" 
+                style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-certificate" style="color: #4a90e2;"></i>
+              الوثائق الرسمية
+            </h3>
+            <div class="documents-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+              <div class="document-card" *ngIf="merchant.commercialRegistrationImage" 
+                   style="background: #f8f9fa; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                <div class="doc-icon commercial" 
+                     style="width: 50px; height: 50px; border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: linear-gradient(135deg, #28a745, #20c997);">
+                  <i class="fas fa-file-contract" style="font-size: 1.25rem; color: white;"></i>
+                </div>
+                <div class="doc-details" style="flex: 1;">
+                  <h4 class="doc-name" style="font-size: 1rem; font-weight: 600; color: #212529; margin: 0 0 0.25rem 0;">السجل التجاري</h4>
+                  <p class="doc-number" *ngIf="merchant.commercialRegistrationNumber" 
+                     style="font-size: 0.875rem; color: #6c757d; margin: 0 0 0.5rem 0;">
+                    رقم: {{ merchant.commercialRegistrationNumber }}
+                  </p>
+                  <button class="view-doc-btn" (click)="viewDocument('data:image/jpeg;base64,' + merchant.commercialRegistrationImage!); currentDocumentTitle = 'السجل التجاري'"
+                          style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; border-radius: 0.375rem; padding: 0.375rem 0.75rem; color: white; font-size: 0.875rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.25rem;">
+                    <i class="fas fa-eye"></i>
+                    عرض
+                  </button>
+                </div>
+              </div>
+              
+              <div class="document-card" *ngIf="merchant.nationalIdImage" 
+                   style="background: #f8f9fa; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                <div class="doc-icon identity" 
+                     style="width: 50px; height: 50px; border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: linear-gradient(135deg, #17a2b8, #20c997);">
+                  <i class="fas fa-id-card" style="font-size: 1.25rem; color: white;"></i>
+                </div>
+                <div class="doc-details" style="flex: 1;">
+                  <h4 class="doc-name" style="font-size: 1rem; font-weight: 600; color: #212529; margin: 0 0 0.25rem 0;">بطاقة الهوية</h4>
+                  <p class="doc-number" *ngIf="merchant.nationalIdNumber" 
+                     style="font-size: 0.875rem; color: #6c757d; margin: 0 0 0.5rem 0;">
+                    رقم: {{ merchant.nationalIdNumber }}
+                  </p>
+                  <button class="view-doc-btn" (click)="viewDocument('data:image/jpeg;base64,' + merchant.nationalIdImage!); currentDocumentTitle = 'بطاقة الهوية الوطنية'"
+                          style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; border-radius: 0.375rem; padding: 0.375rem 0.75rem; color: white; font-size: 0.875rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.25rem;">
+                    <i class="fas fa-eye"></i>
+                    عرض
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
     </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container">
-            <!-- Tab Navigation -->
-            <div class="tab-navigation">
-                <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
-                    <i class="fas fa-info-circle"></i>
-                    <span>المعلومات</span>
-                </button>
-                <button class="tab-btn" [class.active]="activeTab === 'contact'" (click)="setActiveTab('contact')">
-                    <i class="fas fa-phone"></i>
-                    <span>التواصل</span>
-                </button>
-                <button class="tab-btn" [class.active]="activeTab === 'specialties'"
-                    (click)="setActiveTab('specialties')">
-                    <i class="fas fa-tools"></i>
-                    <span>التخصصات</span>
-                </button>
-                <button class="tab-btn" [class.active]="activeTab === 'reviews'" (click)="setActiveTab('reviews')">
-                    <i class="fas fa-star"></i>
-                    <span>التقييمات</span>
-                </button>
-            </div>
-
-            <!-- Tab Content -->
-            <div class="tab-content-wrapper">
-                <!-- Info Tab -->
-                <div class="tab-pane fade-in" *ngIf="activeTab === 'info'">
-                    <div class="info-grid">
-                        <div class="info-card slide-up">
-                            <h3>نبذة عن التاجر</h3>
-                            <p>{{ merchantData.description }}</p>
-                        </div>
-
-                        <div class="info-card slide-up">
-                            <h3>ساعات العمل</h3>
-                            <div class="business-hours">
-                                <div class="day-row" *ngFor="let day of merchantData.businessHours">
-                                    <span class="day">{{ day.day }}</span>
-                                    <span class="hours" [class.closed]="!day.isOpen">{{ day.hours }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="info-card slide-up">
-                            <h3>الإنجازات</h3>
-                            <div class="achievements">
-                                <div class="achievement" *ngFor="let achievement of merchantData.achievements">
-                                    <i [class]="achievement.icon"></i>
-                                    <div>
-                                        <h4>{{ achievement.title }}</h4>
-                                        <span>{{ achievement.year }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contact Tab -->
-                <div class="tab-pane fade-in" *ngIf="activeTab === 'contact'">
-                    <div class="contact-grid">
-                        <div class="contact-card hover-lift">
-                            <div class="contact-icon">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>الهاتف</h4>
-                                <p>{{ merchantData.phone }}</p>
-                                <button class="contact-btn primary" (click)="callPhone()">
-                                    <i class="fas fa-phone"></i>
-                                    اتصال
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="contact-card hover-lift">
-                            <div class="contact-icon whatsapp">
-                                <i class="fab fa-whatsapp"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>واتساب</h4>
-                                <p>{{ merchantData.whatsapp }}</p>
-                                <button class="contact-btn whatsapp" (click)="sendWhatsApp()">
-                                    <i class="fab fa-whatsapp"></i>
-                                    مراسلة
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="contact-card hover-lift">
-                            <div class="contact-icon email">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>البريد الإلكتروني</h4>
-                                <p>{{ merchantData.email }}</p>
-                                <button class="contact-btn email" (click)="sendEmail()">
-                                    <i class="fas fa-envelope"></i>
-                                    إرسال
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="contact-card hover-lift" *ngIf="merchantData.website">
-                            <div class="contact-icon website">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>الموقع الإلكتروني</h4>
-                                <p>{{ merchantData.website }}</p>
-                                <button class="contact-btn website" (click)="visitWebsite()">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    زيارة
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Social Media -->
-                    <div class="social-media-section">
-                        <h3>تابعنا على</h3>
-                        <div class="social-buttons">
-                            <button class="social-btn facebook" (click)="openSocialMedia('facebook')">
-                                <i class="fab fa-facebook-f"></i>
-                                <span>Facebook</span>
-                            </button>
-                            <button class="social-btn instagram" (click)="openSocialMedia('instagram')">
-                                <i class="fab fa-instagram"></i>
-                                <span>Instagram</span>
-                            </button>
-                            <button class="social-btn twitter" (click)="openSocialMedia('twitter')">
-                                <i class="fab fa-twitter"></i>
-                                <span>Twitter</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Specialties Tab -->
-                <div class="tab-pane fade-in" *ngIf="activeTab === 'specialties'">
-                    <div class="specialties-grid">
-                        <div class="specialty-card bounce-in"
-                            *ngFor="let specialty of merchantData.arabicSpecialties; let i = index"
-                            [style.animation-delay]="i * 0.1 + 's'">
-                            <div class="specialty-icon">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <h4>{{ specialty }}</h4>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews Tab -->
-                <div class="tab-pane fade-in" *ngIf="activeTab === 'reviews'">
-                    <div class="reviews-section">
-                        <div class="review-card" *ngFor="let review of merchantData.reviews">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <div>
-                                        <h4>{{ review.customerName }}</h4>
-                                        <div class="review-meta">
-                                            <span class="review-date">{{ review.date | date:'dd/MM/yyyy' }}</span>
-                                            <span class="verified" *ngIf="review.verified">
-                                                <i class="fas fa-check-circle"></i>
-                                                عميل موثق
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="review-rating">
-                                    <i *ngFor="let star of getRatingStars(review.rating)" [class]="star"></i>
-                                </div>
-                            </div>
-                            <p class="review-comment">{{ review.comment }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Floating Action Buttons -->
-    <div class="floating-actions">
-        <button class="fab primary pulse" (click)="navigateToEditProfile()">
-            <i class="fas fa-edit"></i>123
-        </button>
-        <button class="fab secondary" (click)="viewSalesHistory()">
-            <i class="fas fa-chart-line"></i>456
-        </button>
-    </div>
+  </div>
 </div>
+
+<!-- Document Image Modal -->
+<div class="document-modal" *ngIf="showDocumentModal" 
+     style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 2rem;"
+     (click)="closeDocumentModal()">
+  <div class="modal-content" 
+       style="background: white; border-radius: 1rem; padding: 2rem; max-width: 90vw; max-height: 90vh; position: relative; box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);"
+       (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeDocumentModal()"
+            style="position: absolute; top: 1rem; right: 1rem; background: #dc3545; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; font-size: 1.25rem; z-index: 10; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-header" style="margin-bottom: 1.5rem; text-align: center;">
+      <h3 style="font-size: 1.5rem; font-weight: 600; color: #212529; margin: 0;">{{ currentDocumentTitle }}</h3>
+    </div>
+    <div class="modal-body" style="text-align: center; overflow: auto; max-height: 70vh;">
+      <img [src]="currentDocumentImage" [alt]="currentDocumentTitle"
+           style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);">
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="isLoading" 
+     style="display: flex; justify-content: center; align-items: center; min-height: 60vh; background: #f8f9fc;">
+  <div class="loading-spinner" style="text-align: center;">
+    <div class="spinner" 
+         style="width: 50px; height: 50px; border: 4px solid #e9ecef; border-top: 4px solid #4a90e2; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+    <p style="color: #6c757d; font-size: 1.1rem;">جاري تحميل بيانات المتجر...</p>
+  </div>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="errorMessage" 
+     style="display: flex; justify-content: center; align-items: center; min-height: 60vh; background: #f8f9fc;">
+  <div class="error-content" 
+       style="text-align: center; background: #ffffff; border-radius: 1rem; padding: 3rem 2rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); max-width: 500px;">
+    <i class="fas fa-exclamation-triangle" 
+       style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;"></i>
+    <h3 style="font-size: 1.5rem; color: #212529; margin-bottom: 1rem;">حدث خطأ في تحميل البيانات</h3>
+    <p style="color: #6c757d; margin-bottom: 2rem; line-height: 1.6;">{{ errorMessage }}</p>
+    <button class="retry-btn" (click)="loadMerchantData()" 
+            style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; border-radius: 0.5rem; padding: 0.75rem 2rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem;">
+      <i class="fas fa-redo"></i>
+      إعادة المحاولة
+    </button>
+  </div>
+</div>
+
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design for grid */
+@media (max-width: 992px) {
+  .content-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+    gap: 1.5rem !important;
+  }
+  
+  .categories-display {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .team-display {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .header-actions {
+    flex-direction: row !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .content-area {
+    padding: 0 1rem 1rem !important;
+  }
+  
+  .section, .card {
+    padding: 1.25rem !important;
+  }
+}
+
+/* Hover effects */
+.action-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.add-categories-btn:hover, .add-team-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.category-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  border-color: #4a90e2 !important;
+}
+
+.team-member-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.contact-method:not(:disabled):hover {
+  background: #f8f9fa !important;
+  border-color: #4a90e2 !important;
+  transform: translateY(-1px) !important;
+}
+
+.contact-method:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.copy-link-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.05) !important;
+}
+
+.contact-btn:hover {
+  transform: scale(1.1) !important;
+}
+
+.map-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.view-doc-btn:hover {
+  transform: scale(1.05) !important;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Document Modal Styles */
+.document-modal {
+  backdrop-filter: blur(5px) !important;
+  animation: modalFadeIn 0.3s ease-out !important;
+}
+
+.modal-content {
+  animation: modalSlideIn 0.3s ease-out !important;
+  transform-origin: center !important;
+}
+
+.close-btn:hover {
+  background: #c82333 !important;
+  transform: scale(1.1) !important;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.9) translateY(-20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+</style>

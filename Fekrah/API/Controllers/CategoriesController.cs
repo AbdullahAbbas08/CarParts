@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CategoriesController : _BaseController<Category, CategoryDto>
+public class CategoriesController : _BaseController<Category, CategoryDTO>
 {
     private readonly ICategoryService _categoryService;
 

@@ -29,13 +29,40 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("CategoryMerchant", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MerchantsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesId", "MerchantsId");
+
+                    b.HasIndex("MerchantsId");
+
+                    b.ToTable("CategoryMerchant");
                 });
 
             modelBuilder.Entity("Data.Models.CarsModel", b =>
@@ -85,6 +112,9 @@ namespace Data.Migrations
                     b.Property<DateTimeOffset?>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("GovernorateId")
+                        .HasColumnType("int");
+
                     b.Property<string>("NameAr")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -99,9 +129,45 @@ namespace Data.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
+                    b.HasIndex("GovernorateId");
+
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("City");
+                });
+
+            modelBuilder.Entity("Data.Models.Governorate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("UpdatedBy");
+
+                    b.ToTable("Governorate");
                 });
 
             modelBuilder.Entity("Data.Models.Localization", b =>
@@ -143,6 +209,33 @@ namespace Data.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Localizations");
+                });
+
+            modelBuilder.Entity("Data.Models.Member", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MerchantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MerchantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Data.Models.ModelType", b =>
@@ -223,44 +316,6 @@ namespace Data.Migrations
                     b.ToTable("Offers");
                 });
 
-            modelBuilder.Entity("Data.Models.SellerCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("UpdatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("SellerId");
-
-                    b.HasIndex("UpdatedBy");
-
-                    b.ToTable("SellerCategories");
-                });
-
             modelBuilder.Entity("Data.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -287,6 +342,10 @@ namespace Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("NationalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -295,9 +354,6 @@ namespace Data.Migrations
 
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SellerId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("UpdatedBy")
                         .HasColumnType("int");
@@ -314,8 +370,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("SellerId");
 
                     b.HasIndex("UpdatedBy");
 
@@ -362,13 +416,18 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BusinessHours")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<int?>("CityId")
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("CommercialRegistrationImage")
+                    b.Property<byte[]>("CommercialRegistrationImage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("CommercialRegistrationNumber")
                         .IsRequired()
@@ -392,22 +451,37 @@ namespace Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("GovernorateId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsFavoriteMerchant")
                         .HasColumnType("bit");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<string>("Logo")
+                    b.Property<string>("LocationOnMap")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Logo")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
-                    b.Property<string>("NationalIdImage")
+                    b.Property<string>("MobileNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("NationalIdImage")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("NationalIdNumber")
                         .IsRequired()
@@ -439,11 +513,17 @@ namespace Data.Migrations
                     b.Property<DateTimeOffset?>("UpdatedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("WhatsAppMobileNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("Sellers");
+                    b.HasIndex("GovernorateId");
+
+                    b.ToTable("Merchants");
                 });
 
             modelBuilder.Entity("Part", b =>
@@ -500,6 +580,21 @@ namespace Data.Migrations
                     b.ToTable("Parts");
                 });
 
+            modelBuilder.Entity("CategoryMerchant", b =>
+                {
+                    b.HasOne("Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Merchant", null)
+                        .WithMany()
+                        .HasForeignKey("MerchantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Data.Models.CarsModel", b =>
                 {
                     b.HasOne("Data.Models.User", "CreatedByUser")
@@ -516,6 +611,29 @@ namespace Data.Migrations
                 });
 
             modelBuilder.Entity("Data.Models.City", b =>
+                {
+                    b.HasOne("Data.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.HasOne("Data.Models.Governorate", "Governorate")
+                        .WithMany("Cities")
+                        .HasForeignKey("GovernorateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Governorate");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
+            modelBuilder.Entity("Data.Models.Governorate", b =>
                 {
                     b.HasOne("Data.Models.User", "CreatedByUser")
                         .WithMany()
@@ -543,6 +661,25 @@ namespace Data.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("UpdatedByUser");
+                });
+
+            modelBuilder.Entity("Data.Models.Member", b =>
+                {
+                    b.HasOne("Merchant", "Merchant")
+                        .WithMany("Members")
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.User", "MerchantMember")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("MerchantMember");
                 });
 
             modelBuilder.Entity("Data.Models.ModelType", b =>
@@ -591,46 +728,17 @@ namespace Data.Migrations
                     b.Navigation("UpdatedByUser");
                 });
 
-            modelBuilder.Entity("Data.Models.SellerCategory", b =>
-                {
-                    b.HasOne("Data.Models.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
-
-                    b.HasOne("Merchant", "Seller")
-                        .WithMany("SellerCategories")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.User", "UpdatedByUser")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("Seller");
-
-                    b.Navigation("UpdatedByUser");
-                });
-
             modelBuilder.Entity("Data.Models.User", b =>
                 {
                     b.HasOne("Data.Models.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
-                    b.HasOne("Merchant", "Seller")
-                        .WithMany("Members")
-                        .HasForeignKey("SellerId");
-
                     b.HasOne("Data.Models.User", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedBy");
 
                     b.Navigation("CreatedByUser");
-
-                    b.Navigation("Seller");
 
                     b.Navigation("UpdatedByUser");
                 });
@@ -643,7 +751,15 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Data.Models.Governorate", "Governorate")
+                        .WithMany()
+                        .HasForeignKey("GovernorateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("City");
+
+                    b.Navigation("Governorate");
                 });
 
             modelBuilder.Entity("Part", b =>
@@ -689,13 +805,16 @@ namespace Data.Migrations
                     b.Navigation("Parts");
                 });
 
+            modelBuilder.Entity("Data.Models.Governorate", b =>
+                {
+                    b.Navigation("Cities");
+                });
+
             modelBuilder.Entity("Merchant", b =>
                 {
                     b.Navigation("Members");
 
                     b.Navigation("Parts");
-
-                    b.Navigation("SellerCategories");
                 });
 
             modelBuilder.Entity("Part", b =>

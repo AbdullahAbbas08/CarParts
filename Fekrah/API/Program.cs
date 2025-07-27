@@ -47,6 +47,7 @@ builder.Services.AddSwaggerGen();
 // Build app
 var app = builder.Build();
 
+
 // Middleware pipeline (استخدم app.Environment مباشرة)
 app.ConfigureHTTPRequestPipeline( app.Configuration);
 

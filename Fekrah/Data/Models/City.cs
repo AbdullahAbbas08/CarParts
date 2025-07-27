@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models
 {
@@ -12,8 +13,9 @@ namespace Data.Models
         public int Id { get; set; }
         public string NameAr { get; set; }
 
-
-
+        public int GovernorateId { get; set; }
+        [ForeignKey(nameof(GovernorateId))]
+        public Governorate Governorate { get; set; }
 
         public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
@@ -26,6 +28,4 @@ namespace Data.Models
         [ForeignKey(nameof(UpdatedBy))]
         public User? UpdatedByUser { get; set; }
     }
-
-
 }

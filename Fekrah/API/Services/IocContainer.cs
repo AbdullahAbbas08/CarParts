@@ -27,7 +27,6 @@ namespace Api.Services
             services.AddScoped<IPartRepository, PartRepository>();
             services.AddScoped<ISellerRepository, SellerRepository>();
             services.AddScoped<ICarsModelRepository, CarsModelRepository>();
-            services.AddScoped<IMerchantCategoryService, SellerCategoryService>();
         }
     }
 }

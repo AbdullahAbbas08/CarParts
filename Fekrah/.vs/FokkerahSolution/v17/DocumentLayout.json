@@ -1,12 +1,213 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\New folder\\CarParts\\Fekrah\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DF813AD3-86A4-4281-ABE3-B5910DEBC7C3}|Bussiness\\Bussiness.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\bussiness\\services\\merchantservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF813AD3-86A4-4281-ABE3-B5910DEBC7C3}|Bussiness\\Bussiness.csproj|solutionrelative:bussiness\\services\\merchantservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\models\\merchant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\models\\merchant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\dtos\\merchantdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\dtos\\merchantdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\dtos\\memberdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\dtos\\memberdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7EDA9ABB-79A3-4F26-8753-55906C06309F}|API\\API.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\api\\controllers\\merchantcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7EDA9ABB-79A3-4F26-8753-55906C06309F}|API\\API.csproj|solutionrelative:api\\controllers\\merchantcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\dtos\\citydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\dtos\\citydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF813AD3-86A4-4281-ABE3-B5910DEBC7C3}|Bussiness\\Bussiness.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\bussiness\\profilers\\applicationprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF813AD3-86A4-4281-ABE3-B5910DEBC7C3}|Bussiness\\Bussiness.csproj|solutionrelative:bussiness\\profilers\\applicationprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7EDA9ABB-79A3-4F26-8753-55906C06309F}|API\\API.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\api\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7EDA9ABB-79A3-4F26-8753-55906C06309F}|API\\API.csproj|solutionrelative:api\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7EDA9ABB-79A3-4F26-8753-55906C06309F}|API\\API.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\api\\services\\ioccontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7EDA9ABB-79A3-4F26-8753-55906C06309F}|API\\API.csproj|solutionrelative:api\\services\\ioccontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|c:\\users\\abdullah_abbas\\source\\repos\\abdullahabbas08\\carparts\\fekrah\\data\\migrations\\20250727171330_cahngerelationbetweenmemberandmerchant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B07C414-DE7B-4D95-BFC5-333D270F69B1}|Data\\Data.csproj|solutionrelative:data\\migrations\\20250727171330_cahngerelationbetweenmemberandmerchant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "20250727171330_cahngeRelationBetweenMemberAndMerchant.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\Migrations\\20250727171330_cahngeRelationBetweenMemberAndMerchant.cs",
+              "RelativeDocumentMoniker": "Data\\Migrations\\20250727171330_cahngeRelationBetweenMemberAndMerchant.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\Migrations\\20250727171330_cahngeRelationBetweenMemberAndMerchant.cs",
+              "RelativeToolTip": "Data\\Migrations\\20250727171330_cahngeRelationBetweenMemberAndMerchant.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T17:13:30.684Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MemberDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DTOs\\MemberDTO.cs",
+              "RelativeDocumentMoniker": "Data\\DTOs\\MemberDTO.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DTOs\\MemberDTO.cs",
+              "RelativeToolTip": "Data\\DTOs\\MemberDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T17:02:53.293Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MerchantDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DTOs\\MerchantDTO.cs",
+              "RelativeDocumentMoniker": "Data\\DTOs\\MerchantDTO.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DTOs\\MerchantDTO.cs",
+              "RelativeToolTip": "Data\\DTOs\\MerchantDTO.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAA0wD4AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T17:01:18.114Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CityDto.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DTOs\\CityDto.cs",
+              "RelativeDocumentMoniker": "Data\\DTOs\\CityDto.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DTOs\\CityDto.cs",
+              "RelativeToolTip": "Data\\DTOs\\CityDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T17:00:16.835Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Data\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\Models\\User.cs",
+              "RelativeToolTip": "Data\\Models\\User.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAA6wC4AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T16:53:04.446Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Merchant.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\Models\\Merchant.cs",
+              "RelativeDocumentMoniker": "Data\\Models\\Merchant.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\Models\\Merchant.cs",
+              "RelativeToolTip": "Data\\Models\\Merchant.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T16:52:42.49Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MerchantService.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Bussiness\\Services\\MerchantService.cs",
+              "RelativeDocumentMoniker": "Bussiness\\Services\\MerchantService.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Bussiness\\Services\\MerchantService.cs",
+              "RelativeToolTip": "Bussiness\\Services\\MerchantService.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAzwCQAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:31:23.347Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MerchantController.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\API\\Controllers\\MerchantController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\MerchantController.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\API\\Controllers\\MerchantController.cs",
+              "RelativeToolTip": "API\\Controllers\\MerchantController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:28:13.669Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IocContainer.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\API\\Services\\IocContainer.cs",
+              "RelativeDocumentMoniker": "API\\Services\\IocContainer.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\API\\Services\\IocContainer.cs",
+              "RelativeToolTip": "API\\Services\\IocContainer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAawAoAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:27:44.767Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CategoryController.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\API\\Controllers\\CategoryController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\CategoryController.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\API\\Controllers\\CategoryController.cs",
+              "RelativeToolTip": "API\\Controllers\\CategoryController.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAAAAcAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:26:55.933Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ApplicationProfile.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Bussiness\\Profilers\\ApplicationProfile.cs",
+              "RelativeDocumentMoniker": "Bussiness\\Profilers\\ApplicationProfile.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Bussiness\\Profilers\\ApplicationProfile.cs",
+              "RelativeToolTip": "Bussiness\\Profilers\\ApplicationProfile.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAA1wBkAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:26:45.344Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DatabaseContext.cs",
+              "DocumentMoniker": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DatabaseContext.cs",
+              "RelativeDocumentMoniker": "Data\\DatabaseContext.cs",
+              "ToolTip": "C:\\Users\\Abdullah_Abbas\\source\\repos\\AbdullahAbbas08\\CarParts\\Fekrah\\Data\\DatabaseContext.cs",
+              "RelativeToolTip": "Data\\DatabaseContext.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAA1wA4AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:24:39.195Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

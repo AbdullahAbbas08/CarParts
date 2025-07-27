@@ -10,10 +10,9 @@ public class DatabaseContext : DbContext
     { }
 
     public DbSet<Part> Parts { get; set; }
-    public DbSet<Merchant> Sellers { get; set; }
+    public DbSet<Merchant> Merchants { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Category> Categories { get; set; } 
-    public DbSet<SellerCategory> SellerCategories { get; set; } 
     public DbSet<Localization> Localizations { get; set; }
     public DbSet<CarsModel> CarsModels { get; set; }
     public DbSet<ModelType> ModelTypes { get; set; }
@@ -29,11 +28,6 @@ public class DatabaseContext : DbContext
             .HasMany(s => s.Parts)
             .WithOne(p => p.Seller)
             .HasForeignKey(p => p.SellerId);
-
-        modelBuilder.Entity<Merchant>()
-            .HasMany(s => s.SellerCategories)
-            .WithOne(s => s.Seller)
-            .HasForeignKey(f => f.SellerId);
 
         modelBuilder.Entity<Category>()
           .HasMany(c => c.Parts)

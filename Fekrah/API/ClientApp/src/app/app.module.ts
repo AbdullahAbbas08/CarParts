@@ -18,7 +18,6 @@ import { API_BASE_URL,SwaggerClient } from './Shared/Services/Swagger/SwaggerCli
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { HeaderInterceptor } from './Shared/Services/header.interceptor';
 import { LoaderComponent } from './Shared/components/loader/loader.component';
-import { UserProfileDemoComponent } from './user-profile-demo/user-profile-demo.component';
 import { environment } from '../environments/environment';
 registerLocaleData(localeAr);
 
@@ -31,7 +30,6 @@ registerLocaleData(localeAr);
     EnhancedSearchComponent,
     PartsFilterComponent,
     LoaderComponent,
-    UserProfileDemoComponent
   ],
   imports: [
     BrowserModule,

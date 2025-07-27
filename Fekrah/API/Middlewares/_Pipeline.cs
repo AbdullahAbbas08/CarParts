@@ -21,6 +21,9 @@ namespace API.Middlewares
                 app.UseHsts();
             }
 
+            // Initial Data Middleware
+            app.SeedData();
+
             app.UseFileServer(new FileServerOptions() { EnableDirectoryBrowsing = false });
 
             app.UseCors(SwaggerServices.CorsAllowedOriginsPolicyName);

@@ -26,7 +26,7 @@ export class SwaggerClient {
         this.baseUrl = baseUrl ?? "https://localhost:5200";
     }
 
-    apiCategoriesGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCategoryDto> {
+    apiCategoriesGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCategoryDTO> {
         let url_ = this.baseUrl + "/api/Categories/GetAll?";
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
@@ -55,14 +55,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCategoriesGetAllGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfCategoryDto>;
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfCategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfCategoryDto>;
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfCategoryDTO>;
         }));
     }
 
-    protected processApiCategoriesGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfCategoryDto> {
+    protected processApiCategoriesGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfCategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -73,7 +73,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfCategoryDto.fromJS(resultData200);
+            result200 = DataSourceResultOfCategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -84,7 +84,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCategoriesGetDetailsGet(id: number | undefined): Observable<CategoryDto> {
+    apiCategoriesGetDetailsGet(id: number | undefined): Observable<CategoryDTO> {
         let url_ = this.baseUrl + "/api/Categories/GetDetails?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -107,14 +107,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCategoriesGetDetailsGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CategoryDto>;
+                    return _observableThrow(e) as any as Observable<CategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CategoryDto>;
+                return _observableThrow(response_) as any as Observable<CategoryDTO>;
         }));
     }
 
-    protected processApiCategoriesGetDetailsGet(response: HttpResponseBase): Observable<CategoryDto> {
+    protected processApiCategoriesGetDetailsGet(response: HttpResponseBase): Observable<CategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -125,7 +125,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CategoryDto.fromJS(resultData200);
+            result200 = CategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -136,7 +136,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCategoriesInsertPost(entity: CategoryDto): Observable<CategoryDto> {
+    apiCategoriesInsertPost(entity: CategoryDTO): Observable<CategoryDTO> {
         let url_ = this.baseUrl + "/api/Categories/Insert";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -159,14 +159,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCategoriesInsertPost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CategoryDto>;
+                    return _observableThrow(e) as any as Observable<CategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CategoryDto>;
+                return _observableThrow(response_) as any as Observable<CategoryDTO>;
         }));
     }
 
-    protected processApiCategoriesInsertPost(response: HttpResponseBase): Observable<CategoryDto> {
+    protected processApiCategoriesInsertPost(response: HttpResponseBase): Observable<CategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -177,7 +177,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CategoryDto.fromJS(resultData200);
+            result200 = CategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -188,7 +188,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCategoriesUpdatePost(entity: CategoryDto): Observable<CategoryDto> {
+    apiCategoriesUpdatePost(entity: CategoryDTO): Observable<CategoryDTO> {
         let url_ = this.baseUrl + "/api/Categories/Update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -211,14 +211,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCategoriesUpdatePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CategoryDto>;
+                    return _observableThrow(e) as any as Observable<CategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CategoryDto>;
+                return _observableThrow(response_) as any as Observable<CategoryDTO>;
         }));
     }
 
-    protected processApiCategoriesUpdatePost(response: HttpResponseBase): Observable<CategoryDto> {
+    protected processApiCategoriesUpdatePost(response: HttpResponseBase): Observable<CategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -229,7 +229,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CategoryDto.fromJS(resultData200);
+            result200 = CategoryDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -240,7 +240,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCategoriesDeletePost(id: number | undefined): Observable<CategoryDto> {
+    apiCategoriesDeletePost(id: number | undefined): Observable<CategoryDTO> {
         let url_ = this.baseUrl + "/api/Categories/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -263,14 +263,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiCategoriesDeletePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CategoryDto>;
+                    return _observableThrow(e) as any as Observable<CategoryDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CategoryDto>;
+                return _observableThrow(response_) as any as Observable<CategoryDTO>;
         }));
     }
 
-    protected processApiCategoriesDeletePost(response: HttpResponseBase): Observable<CategoryDto> {
+    protected processApiCategoriesDeletePost(response: HttpResponseBase): Observable<CategoryDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -281,7 +281,527 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CategoryDto.fromJS(resultData200);
+            result200 = CategoryDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantGetDataByIdGet(id: number): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/GetDataById/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantGetDataByIdGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantGetDataByIdGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantGetDataByIdGet(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantInsertMerchantPost(id: number | undefined, shopName: string | undefined, slug: string | undefined, description: string | undefined, shortDescription: string | undefined, locationOnMap: string | undefined, address: string | undefined, latitude: number | null | undefined, longitude: number | null | undefined, rating: number | undefined, ratingCount: number | undefined, mobileNo: string | undefined, whatsAppMobileNo: string | undefined, email: string | null | undefined, governorateId: number | null | undefined, cityId: number | null | undefined, isFavoriteMerchant: boolean | undefined, commercialRegistrationNumber: string | undefined, nationalIdNumber: string | undefined, businessHours: string | undefined, logo: string | null | undefined, commercialRegistrationImage: string | null | undefined, nationalIdImage: string | null | undefined, nationalIdImageForm: FileParameter | undefined, logoForm: FileParameter | undefined, commercialRegistrationImageForm: FileParameter | undefined, membersJson: string | null | undefined, members: MemberDTO[] | null | undefined, city_Id: number | undefined, city_NameAr: string | undefined, city_NameEn: string | undefined, governorate_Id: number | undefined, governorate_Name: string | undefined, governorate_CreatedByUserId: number | null | undefined, governorate_CreatedOn: Date | null | undefined, governorate_CreatedByUser_Id: number | undefined, governorate_CreatedByUser_NationalId: string | undefined, governorate_CreatedByUser_UserName: string | null | undefined, governorate_CreatedByUser_FullName: string | null | undefined, governorate_CreatedByUser_Email: string | null | undefined, governorate_CreatedByUser_PasswordHash: string | null | undefined, governorate_CreatedByUser_Photo: string | null | undefined, governorate_CreatedByUser_UserType: UserTypeEnum | null | undefined, governorate_CreatedByUser_PhoneNumber: string | null | undefined, governorate_CreatedByUser_Address: string | null | undefined, governorate_CreatedByUser_IsActive: boolean | null | undefined, governorate_UpdatedBy: number | null | undefined, governorate_UpdatedOn: Date | null | undefined, governorate_UpdatedByUser_Id: number | undefined, governorate_UpdatedByUser_NationalId: string | undefined, governorate_UpdatedByUser_UserName: string | null | undefined, governorate_UpdatedByUser_FullName: string | null | undefined, governorate_UpdatedByUser_Email: string | null | undefined, governorate_UpdatedByUser_PasswordHash: string | null | undefined, governorate_UpdatedByUser_Photo: string | null | undefined, governorate_UpdatedByUser_UserType: UserTypeEnum | null | undefined, governorate_UpdatedByUser_PhoneNumber: string | null | undefined, governorate_UpdatedByUser_Address: string | null | undefined, governorate_UpdatedByUser_IsActive: boolean | null | undefined, governorate_Cities: CityDTO[] | undefined, createdOn: Date | null | undefined, categoriesJson: string | null | undefined, categoriesDTO: CategoryDTO[] | null | undefined): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/InsertMerchant";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (id === null || id === undefined)
+            throw new Error("The parameter 'id' cannot be null.");
+        else
+            content_.append("Id", id.toString());
+        if (shopName === null || shopName === undefined)
+            throw new Error("The parameter 'shopName' cannot be null.");
+        else
+            content_.append("ShopName", shopName.toString());
+        if (slug === null || slug === undefined)
+            throw new Error("The parameter 'slug' cannot be null.");
+        else
+            content_.append("Slug", slug.toString());
+        if (description === null || description === undefined)
+            throw new Error("The parameter 'description' cannot be null.");
+        else
+            content_.append("Description", description.toString());
+        if (shortDescription === null || shortDescription === undefined)
+            throw new Error("The parameter 'shortDescription' cannot be null.");
+        else
+            content_.append("ShortDescription", shortDescription.toString());
+        if (locationOnMap === null || locationOnMap === undefined)
+            throw new Error("The parameter 'locationOnMap' cannot be null.");
+        else
+            content_.append("LocationOnMap", locationOnMap.toString());
+        if (address === null || address === undefined)
+            throw new Error("The parameter 'address' cannot be null.");
+        else
+            content_.append("Address", address.toString());
+        if (latitude !== null && latitude !== undefined)
+            content_.append("Latitude", latitude.toString());
+        if (longitude !== null && longitude !== undefined)
+            content_.append("Longitude", longitude.toString());
+        if (rating === null || rating === undefined)
+            throw new Error("The parameter 'rating' cannot be null.");
+        else
+            content_.append("Rating", rating.toString());
+        if (ratingCount === null || ratingCount === undefined)
+            throw new Error("The parameter 'ratingCount' cannot be null.");
+        else
+            content_.append("RatingCount", ratingCount.toString());
+        if (mobileNo === null || mobileNo === undefined)
+            throw new Error("The parameter 'mobileNo' cannot be null.");
+        else
+            content_.append("MobileNo", mobileNo.toString());
+        if (whatsAppMobileNo === null || whatsAppMobileNo === undefined)
+            throw new Error("The parameter 'whatsAppMobileNo' cannot be null.");
+        else
+            content_.append("WhatsAppMobileNo", whatsAppMobileNo.toString());
+        if (email !== null && email !== undefined)
+            content_.append("Email", email.toString());
+        if (governorateId !== null && governorateId !== undefined)
+            content_.append("GovernorateId", governorateId.toString());
+        if (cityId !== null && cityId !== undefined)
+            content_.append("CityId", cityId.toString());
+        if (isFavoriteMerchant === null || isFavoriteMerchant === undefined)
+            throw new Error("The parameter 'isFavoriteMerchant' cannot be null.");
+        else
+            content_.append("IsFavoriteMerchant", isFavoriteMerchant.toString());
+        if (commercialRegistrationNumber === null || commercialRegistrationNumber === undefined)
+            throw new Error("The parameter 'commercialRegistrationNumber' cannot be null.");
+        else
+            content_.append("CommercialRegistrationNumber", commercialRegistrationNumber.toString());
+        if (nationalIdNumber === null || nationalIdNumber === undefined)
+            throw new Error("The parameter 'nationalIdNumber' cannot be null.");
+        else
+            content_.append("NationalIdNumber", nationalIdNumber.toString());
+        if (businessHours === null || businessHours === undefined)
+            throw new Error("The parameter 'businessHours' cannot be null.");
+        else
+            content_.append("BusinessHours", businessHours.toString());
+        if (logo !== null && logo !== undefined)
+            content_.append("Logo", logo.toString());
+        if (commercialRegistrationImage !== null && commercialRegistrationImage !== undefined)
+            content_.append("CommercialRegistrationImage", commercialRegistrationImage.toString());
+        if (nationalIdImage !== null && nationalIdImage !== undefined)
+            content_.append("NationalIdImage", nationalIdImage.toString());
+        if (nationalIdImageForm === null || nationalIdImageForm === undefined)
+            throw new Error("The parameter 'nationalIdImageForm' cannot be null.");
+        else
+            content_.append("NationalIdImageForm", nationalIdImageForm.data, nationalIdImageForm.fileName ? nationalIdImageForm.fileName : "NationalIdImageForm");
+        if (logoForm === null || logoForm === undefined)
+            throw new Error("The parameter 'logoForm' cannot be null.");
+        else
+            content_.append("LogoForm", logoForm.data, logoForm.fileName ? logoForm.fileName : "LogoForm");
+        if (commercialRegistrationImageForm === null || commercialRegistrationImageForm === undefined)
+            throw new Error("The parameter 'commercialRegistrationImageForm' cannot be null.");
+        else
+            content_.append("CommercialRegistrationImageForm", commercialRegistrationImageForm.data, commercialRegistrationImageForm.fileName ? commercialRegistrationImageForm.fileName : "CommercialRegistrationImageForm");
+        if (membersJson !== null && membersJson !== undefined)
+            content_.append("MembersJson", membersJson.toString());
+        if (members !== null && members !== undefined)
+            members.forEach(item_ => content_.append("Members", item_.toString()));
+        if (city_Id === null || city_Id === undefined)
+            throw new Error("The parameter 'city_Id' cannot be null.");
+        else
+            content_.append("City.Id", city_Id.toString());
+        if (city_NameAr === null || city_NameAr === undefined)
+            throw new Error("The parameter 'city_NameAr' cannot be null.");
+        else
+            content_.append("City.NameAr", city_NameAr.toString());
+        if (city_NameEn === null || city_NameEn === undefined)
+            throw new Error("The parameter 'city_NameEn' cannot be null.");
+        else
+            content_.append("City.NameEn", city_NameEn.toString());
+        if (governorate_Id === null || governorate_Id === undefined)
+            throw new Error("The parameter 'governorate_Id' cannot be null.");
+        else
+            content_.append("Governorate.Id", governorate_Id.toString());
+        if (governorate_Name === null || governorate_Name === undefined)
+            throw new Error("The parameter 'governorate_Name' cannot be null.");
+        else
+            content_.append("Governorate.Name", governorate_Name.toString());
+        if (governorate_CreatedByUserId !== null && governorate_CreatedByUserId !== undefined)
+            content_.append("Governorate.CreatedByUserId", governorate_CreatedByUserId.toString());
+        if (governorate_CreatedOn !== null && governorate_CreatedOn !== undefined)
+            content_.append("Governorate.CreatedOn", governorate_CreatedOn.toJSON());
+        if (governorate_CreatedByUser_Id === null || governorate_CreatedByUser_Id === undefined)
+            throw new Error("The parameter 'governorate_CreatedByUser_Id' cannot be null.");
+        else
+            content_.append("Governorate.CreatedByUser.Id", governorate_CreatedByUser_Id.toString());
+        if (governorate_CreatedByUser_NationalId === null || governorate_CreatedByUser_NationalId === undefined)
+            throw new Error("The parameter 'governorate_CreatedByUser_NationalId' cannot be null.");
+        else
+            content_.append("Governorate.CreatedByUser.NationalId", governorate_CreatedByUser_NationalId.toString());
+        if (governorate_CreatedByUser_UserName !== null && governorate_CreatedByUser_UserName !== undefined)
+            content_.append("Governorate.CreatedByUser.UserName", governorate_CreatedByUser_UserName.toString());
+        if (governorate_CreatedByUser_FullName !== null && governorate_CreatedByUser_FullName !== undefined)
+            content_.append("Governorate.CreatedByUser.FullName", governorate_CreatedByUser_FullName.toString());
+        if (governorate_CreatedByUser_Email !== null && governorate_CreatedByUser_Email !== undefined)
+            content_.append("Governorate.CreatedByUser.Email", governorate_CreatedByUser_Email.toString());
+        if (governorate_CreatedByUser_PasswordHash !== null && governorate_CreatedByUser_PasswordHash !== undefined)
+            content_.append("Governorate.CreatedByUser.PasswordHash", governorate_CreatedByUser_PasswordHash.toString());
+        if (governorate_CreatedByUser_Photo !== null && governorate_CreatedByUser_Photo !== undefined)
+            content_.append("Governorate.CreatedByUser.Photo", governorate_CreatedByUser_Photo.toString());
+        if (governorate_CreatedByUser_UserType !== null && governorate_CreatedByUser_UserType !== undefined)
+            content_.append("Governorate.CreatedByUser.UserType", governorate_CreatedByUser_UserType.toString());
+        if (governorate_CreatedByUser_PhoneNumber !== null && governorate_CreatedByUser_PhoneNumber !== undefined)
+            content_.append("Governorate.CreatedByUser.PhoneNumber", governorate_CreatedByUser_PhoneNumber.toString());
+        if (governorate_CreatedByUser_Address !== null && governorate_CreatedByUser_Address !== undefined)
+            content_.append("Governorate.CreatedByUser.Address", governorate_CreatedByUser_Address.toString());
+        if (governorate_CreatedByUser_IsActive !== null && governorate_CreatedByUser_IsActive !== undefined)
+            content_.append("Governorate.CreatedByUser.IsActive", governorate_CreatedByUser_IsActive.toString());
+        if (governorate_UpdatedBy !== null && governorate_UpdatedBy !== undefined)
+            content_.append("Governorate.UpdatedBy", governorate_UpdatedBy.toString());
+        if (governorate_UpdatedOn !== null && governorate_UpdatedOn !== undefined)
+            content_.append("Governorate.UpdatedOn", governorate_UpdatedOn.toJSON());
+        if (governorate_UpdatedByUser_Id === null || governorate_UpdatedByUser_Id === undefined)
+            throw new Error("The parameter 'governorate_UpdatedByUser_Id' cannot be null.");
+        else
+            content_.append("Governorate.UpdatedByUser.Id", governorate_UpdatedByUser_Id.toString());
+        if (governorate_UpdatedByUser_NationalId === null || governorate_UpdatedByUser_NationalId === undefined)
+            throw new Error("The parameter 'governorate_UpdatedByUser_NationalId' cannot be null.");
+        else
+            content_.append("Governorate.UpdatedByUser.NationalId", governorate_UpdatedByUser_NationalId.toString());
+        if (governorate_UpdatedByUser_UserName !== null && governorate_UpdatedByUser_UserName !== undefined)
+            content_.append("Governorate.UpdatedByUser.UserName", governorate_UpdatedByUser_UserName.toString());
+        if (governorate_UpdatedByUser_FullName !== null && governorate_UpdatedByUser_FullName !== undefined)
+            content_.append("Governorate.UpdatedByUser.FullName", governorate_UpdatedByUser_FullName.toString());
+        if (governorate_UpdatedByUser_Email !== null && governorate_UpdatedByUser_Email !== undefined)
+            content_.append("Governorate.UpdatedByUser.Email", governorate_UpdatedByUser_Email.toString());
+        if (governorate_UpdatedByUser_PasswordHash !== null && governorate_UpdatedByUser_PasswordHash !== undefined)
+            content_.append("Governorate.UpdatedByUser.PasswordHash", governorate_UpdatedByUser_PasswordHash.toString());
+        if (governorate_UpdatedByUser_Photo !== null && governorate_UpdatedByUser_Photo !== undefined)
+            content_.append("Governorate.UpdatedByUser.Photo", governorate_UpdatedByUser_Photo.toString());
+        if (governorate_UpdatedByUser_UserType !== null && governorate_UpdatedByUser_UserType !== undefined)
+            content_.append("Governorate.UpdatedByUser.UserType", governorate_UpdatedByUser_UserType.toString());
+        if (governorate_UpdatedByUser_PhoneNumber !== null && governorate_UpdatedByUser_PhoneNumber !== undefined)
+            content_.append("Governorate.UpdatedByUser.PhoneNumber", governorate_UpdatedByUser_PhoneNumber.toString());
+        if (governorate_UpdatedByUser_Address !== null && governorate_UpdatedByUser_Address !== undefined)
+            content_.append("Governorate.UpdatedByUser.Address", governorate_UpdatedByUser_Address.toString());
+        if (governorate_UpdatedByUser_IsActive !== null && governorate_UpdatedByUser_IsActive !== undefined)
+            content_.append("Governorate.UpdatedByUser.IsActive", governorate_UpdatedByUser_IsActive.toString());
+        if (governorate_Cities === null || governorate_Cities === undefined)
+            throw new Error("The parameter 'governorate_Cities' cannot be null.");
+        else
+            governorate_Cities.forEach(item_ => content_.append("Governorate.Cities", item_.toString()));
+        if (createdOn !== null && createdOn !== undefined)
+            content_.append("CreatedOn", createdOn.toJSON());
+        if (categoriesJson !== null && categoriesJson !== undefined)
+            content_.append("CategoriesJson", categoriesJson.toString());
+        if (categoriesDTO !== null && categoriesDTO !== undefined)
+            categoriesDTO.forEach(item_ => content_.append("CategoriesDTO", item_.toString()));
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantInsertMerchantPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantInsertMerchantPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantInsertMerchantPost(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiMerchantPut(idPath: number, idFormData: number | undefined, shopName: string | undefined, slug: string | undefined, description: string | undefined, shortDescription: string | undefined, locationOnMap: string | undefined, address: string | undefined, latitude: number | null | undefined, longitude: number | null | undefined, rating: number | undefined, ratingCount: number | undefined, mobileNo: string | undefined, whatsAppMobileNo: string | undefined, email: string | null | undefined, governorateId: number | null | undefined, cityId: number | null | undefined, isFavoriteMerchant: boolean | undefined, commercialRegistrationNumber: string | undefined, nationalIdNumber: string | undefined, businessHours: string | undefined, logo: string | null | undefined, commercialRegistrationImage: string | null | undefined, nationalIdImage: string | null | undefined, nationalIdImageForm: FileParameter | undefined, logoForm: FileParameter | undefined, commercialRegistrationImageForm: FileParameter | undefined, membersJson: string | null | undefined, members: MemberDTO[] | null | undefined, city_Id: number | undefined, city_NameAr: string | undefined, city_NameEn: string | undefined, governorate_Id: number | undefined, governorate_Name: string | undefined, governorate_CreatedByUserId: number | null | undefined, governorate_CreatedOn: Date | null | undefined, governorate_CreatedByUser_Id: number | undefined, governorate_CreatedByUser_NationalId: string | undefined, governorate_CreatedByUser_UserName: string | null | undefined, governorate_CreatedByUser_FullName: string | null | undefined, governorate_CreatedByUser_Email: string | null | undefined, governorate_CreatedByUser_PasswordHash: string | null | undefined, governorate_CreatedByUser_Photo: string | null | undefined, governorate_CreatedByUser_UserType: UserTypeEnum | null | undefined, governorate_CreatedByUser_PhoneNumber: string | null | undefined, governorate_CreatedByUser_Address: string | null | undefined, governorate_CreatedByUser_IsActive: boolean | null | undefined, governorate_UpdatedBy: number | null | undefined, governorate_UpdatedOn: Date | null | undefined, governorate_UpdatedByUser_Id: number | undefined, governorate_UpdatedByUser_NationalId: string | undefined, governorate_UpdatedByUser_UserName: string | null | undefined, governorate_UpdatedByUser_FullName: string | null | undefined, governorate_UpdatedByUser_Email: string | null | undefined, governorate_UpdatedByUser_PasswordHash: string | null | undefined, governorate_UpdatedByUser_Photo: string | null | undefined, governorate_UpdatedByUser_UserType: UserTypeEnum | null | undefined, governorate_UpdatedByUser_PhoneNumber: string | null | undefined, governorate_UpdatedByUser_Address: string | null | undefined, governorate_UpdatedByUser_IsActive: boolean | null | undefined, governorate_Cities: CityDTO[] | undefined, createdOn: Date | null | undefined, categoriesJson: string | null | undefined, categoriesDTO: CategoryDTO[] | null | undefined): Observable<MerchantDTO> {
+        let url_ = this.baseUrl + "/api/Merchant/{id}";
+        if (idPath === undefined || idPath === null)
+            throw new Error("The parameter 'idPath' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + idPath));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (idFormData === null || idFormData === undefined)
+            throw new Error("The parameter 'idFormData' cannot be null.");
+        else
+            content_.append("Id", idFormData.toString());
+        if (shopName === null || shopName === undefined)
+            throw new Error("The parameter 'shopName' cannot be null.");
+        else
+            content_.append("ShopName", shopName.toString());
+        if (slug === null || slug === undefined)
+            throw new Error("The parameter 'slug' cannot be null.");
+        else
+            content_.append("Slug", slug.toString());
+        if (description === null || description === undefined)
+            throw new Error("The parameter 'description' cannot be null.");
+        else
+            content_.append("Description", description.toString());
+        if (shortDescription === null || shortDescription === undefined)
+            throw new Error("The parameter 'shortDescription' cannot be null.");
+        else
+            content_.append("ShortDescription", shortDescription.toString());
+        if (locationOnMap === null || locationOnMap === undefined)
+            throw new Error("The parameter 'locationOnMap' cannot be null.");
+        else
+            content_.append("LocationOnMap", locationOnMap.toString());
+        if (address === null || address === undefined)
+            throw new Error("The parameter 'address' cannot be null.");
+        else
+            content_.append("Address", address.toString());
+        if (latitude !== null && latitude !== undefined)
+            content_.append("Latitude", latitude.toString());
+        if (longitude !== null && longitude !== undefined)
+            content_.append("Longitude", longitude.toString());
+        if (rating === null || rating === undefined)
+            throw new Error("The parameter 'rating' cannot be null.");
+        else
+            content_.append("Rating", rating.toString());
+        if (ratingCount === null || ratingCount === undefined)
+            throw new Error("The parameter 'ratingCount' cannot be null.");
+        else
+            content_.append("RatingCount", ratingCount.toString());
+        if (mobileNo === null || mobileNo === undefined)
+            throw new Error("The parameter 'mobileNo' cannot be null.");
+        else
+            content_.append("MobileNo", mobileNo.toString());
+        if (whatsAppMobileNo === null || whatsAppMobileNo === undefined)
+            throw new Error("The parameter 'whatsAppMobileNo' cannot be null.");
+        else
+            content_.append("WhatsAppMobileNo", whatsAppMobileNo.toString());
+        if (email !== null && email !== undefined)
+            content_.append("Email", email.toString());
+        if (governorateId !== null && governorateId !== undefined)
+            content_.append("GovernorateId", governorateId.toString());
+        if (cityId !== null && cityId !== undefined)
+            content_.append("CityId", cityId.toString());
+        if (isFavoriteMerchant === null || isFavoriteMerchant === undefined)
+            throw new Error("The parameter 'isFavoriteMerchant' cannot be null.");
+        else
+            content_.append("IsFavoriteMerchant", isFavoriteMerchant.toString());
+        if (commercialRegistrationNumber === null || commercialRegistrationNumber === undefined)
+            throw new Error("The parameter 'commercialRegistrationNumber' cannot be null.");
+        else
+            content_.append("CommercialRegistrationNumber", commercialRegistrationNumber.toString());
+        if (nationalIdNumber === null || nationalIdNumber === undefined)
+            throw new Error("The parameter 'nationalIdNumber' cannot be null.");
+        else
+            content_.append("NationalIdNumber", nationalIdNumber.toString());
+        if (businessHours === null || businessHours === undefined)
+            throw new Error("The parameter 'businessHours' cannot be null.");
+        else
+            content_.append("BusinessHours", businessHours.toString());
+        if (logo !== null && logo !== undefined)
+            content_.append("Logo", logo.toString());
+        if (commercialRegistrationImage !== null && commercialRegistrationImage !== undefined)
+            content_.append("CommercialRegistrationImage", commercialRegistrationImage.toString());
+        if (nationalIdImage !== null && nationalIdImage !== undefined)
+            content_.append("NationalIdImage", nationalIdImage.toString());
+        if (nationalIdImageForm === null || nationalIdImageForm === undefined)
+            throw new Error("The parameter 'nationalIdImageForm' cannot be null.");
+        else
+            content_.append("NationalIdImageForm", nationalIdImageForm.data, nationalIdImageForm.fileName ? nationalIdImageForm.fileName : "NationalIdImageForm");
+        if (logoForm === null || logoForm === undefined)
+            throw new Error("The parameter 'logoForm' cannot be null.");
+        else
+            content_.append("LogoForm", logoForm.data, logoForm.fileName ? logoForm.fileName : "LogoForm");
+        if (commercialRegistrationImageForm === null || commercialRegistrationImageForm === undefined)
+            throw new Error("The parameter 'commercialRegistrationImageForm' cannot be null.");
+        else
+            content_.append("CommercialRegistrationImageForm", commercialRegistrationImageForm.data, commercialRegistrationImageForm.fileName ? commercialRegistrationImageForm.fileName : "CommercialRegistrationImageForm");
+        if (membersJson !== null && membersJson !== undefined)
+            content_.append("MembersJson", membersJson.toString());
+        if (members !== null && members !== undefined)
+            members.forEach(item_ => content_.append("Members", item_.toString()));
+        if (city_Id === null || city_Id === undefined)
+            throw new Error("The parameter 'city_Id' cannot be null.");
+        else
+            content_.append("City.Id", city_Id.toString());
+        if (city_NameAr === null || city_NameAr === undefined)
+            throw new Error("The parameter 'city_NameAr' cannot be null.");
+        else
+            content_.append("City.NameAr", city_NameAr.toString());
+        if (city_NameEn === null || city_NameEn === undefined)
+            throw new Error("The parameter 'city_NameEn' cannot be null.");
+        else
+            content_.append("City.NameEn", city_NameEn.toString());
+        if (governorate_Id === null || governorate_Id === undefined)
+            throw new Error("The parameter 'governorate_Id' cannot be null.");
+        else
+            content_.append("Governorate.Id", governorate_Id.toString());
+        if (governorate_Name === null || governorate_Name === undefined)
+            throw new Error("The parameter 'governorate_Name' cannot be null.");
+        else
+            content_.append("Governorate.Name", governorate_Name.toString());
+        if (governorate_CreatedByUserId !== null && governorate_CreatedByUserId !== undefined)
+            content_.append("Governorate.CreatedByUserId", governorate_CreatedByUserId.toString());
+        if (governorate_CreatedOn !== null && governorate_CreatedOn !== undefined)
+            content_.append("Governorate.CreatedOn", governorate_CreatedOn.toJSON());
+        if (governorate_CreatedByUser_Id === null || governorate_CreatedByUser_Id === undefined)
+            throw new Error("The parameter 'governorate_CreatedByUser_Id' cannot be null.");
+        else
+            content_.append("Governorate.CreatedByUser.Id", governorate_CreatedByUser_Id.toString());
+        if (governorate_CreatedByUser_NationalId === null || governorate_CreatedByUser_NationalId === undefined)
+            throw new Error("The parameter 'governorate_CreatedByUser_NationalId' cannot be null.");
+        else
+            content_.append("Governorate.CreatedByUser.NationalId", governorate_CreatedByUser_NationalId.toString());
+        if (governorate_CreatedByUser_UserName !== null && governorate_CreatedByUser_UserName !== undefined)
+            content_.append("Governorate.CreatedByUser.UserName", governorate_CreatedByUser_UserName.toString());
+        if (governorate_CreatedByUser_FullName !== null && governorate_CreatedByUser_FullName !== undefined)
+            content_.append("Governorate.CreatedByUser.FullName", governorate_CreatedByUser_FullName.toString());
+        if (governorate_CreatedByUser_Email !== null && governorate_CreatedByUser_Email !== undefined)
+            content_.append("Governorate.CreatedByUser.Email", governorate_CreatedByUser_Email.toString());
+        if (governorate_CreatedByUser_PasswordHash !== null && governorate_CreatedByUser_PasswordHash !== undefined)
+            content_.append("Governorate.CreatedByUser.PasswordHash", governorate_CreatedByUser_PasswordHash.toString());
+        if (governorate_CreatedByUser_Photo !== null && governorate_CreatedByUser_Photo !== undefined)
+            content_.append("Governorate.CreatedByUser.Photo", governorate_CreatedByUser_Photo.toString());
+        if (governorate_CreatedByUser_UserType !== null && governorate_CreatedByUser_UserType !== undefined)
+            content_.append("Governorate.CreatedByUser.UserType", governorate_CreatedByUser_UserType.toString());
+        if (governorate_CreatedByUser_PhoneNumber !== null && governorate_CreatedByUser_PhoneNumber !== undefined)
+            content_.append("Governorate.CreatedByUser.PhoneNumber", governorate_CreatedByUser_PhoneNumber.toString());
+        if (governorate_CreatedByUser_Address !== null && governorate_CreatedByUser_Address !== undefined)
+            content_.append("Governorate.CreatedByUser.Address", governorate_CreatedByUser_Address.toString());
+        if (governorate_CreatedByUser_IsActive !== null && governorate_CreatedByUser_IsActive !== undefined)
+            content_.append("Governorate.CreatedByUser.IsActive", governorate_CreatedByUser_IsActive.toString());
+        if (governorate_UpdatedBy !== null && governorate_UpdatedBy !== undefined)
+            content_.append("Governorate.UpdatedBy", governorate_UpdatedBy.toString());
+        if (governorate_UpdatedOn !== null && governorate_UpdatedOn !== undefined)
+            content_.append("Governorate.UpdatedOn", governorate_UpdatedOn.toJSON());
+        if (governorate_UpdatedByUser_Id === null || governorate_UpdatedByUser_Id === undefined)
+            throw new Error("The parameter 'governorate_UpdatedByUser_Id' cannot be null.");
+        else
+            content_.append("Governorate.UpdatedByUser.Id", governorate_UpdatedByUser_Id.toString());
+        if (governorate_UpdatedByUser_NationalId === null || governorate_UpdatedByUser_NationalId === undefined)
+            throw new Error("The parameter 'governorate_UpdatedByUser_NationalId' cannot be null.");
+        else
+            content_.append("Governorate.UpdatedByUser.NationalId", governorate_UpdatedByUser_NationalId.toString());
+        if (governorate_UpdatedByUser_UserName !== null && governorate_UpdatedByUser_UserName !== undefined)
+            content_.append("Governorate.UpdatedByUser.UserName", governorate_UpdatedByUser_UserName.toString());
+        if (governorate_UpdatedByUser_FullName !== null && governorate_UpdatedByUser_FullName !== undefined)
+            content_.append("Governorate.UpdatedByUser.FullName", governorate_UpdatedByUser_FullName.toString());
+        if (governorate_UpdatedByUser_Email !== null && governorate_UpdatedByUser_Email !== undefined)
+            content_.append("Governorate.UpdatedByUser.Email", governorate_UpdatedByUser_Email.toString());
+        if (governorate_UpdatedByUser_PasswordHash !== null && governorate_UpdatedByUser_PasswordHash !== undefined)
+            content_.append("Governorate.UpdatedByUser.PasswordHash", governorate_UpdatedByUser_PasswordHash.toString());
+        if (governorate_UpdatedByUser_Photo !== null && governorate_UpdatedByUser_Photo !== undefined)
+            content_.append("Governorate.UpdatedByUser.Photo", governorate_UpdatedByUser_Photo.toString());
+        if (governorate_UpdatedByUser_UserType !== null && governorate_UpdatedByUser_UserType !== undefined)
+            content_.append("Governorate.UpdatedByUser.UserType", governorate_UpdatedByUser_UserType.toString());
+        if (governorate_UpdatedByUser_PhoneNumber !== null && governorate_UpdatedByUser_PhoneNumber !== undefined)
+            content_.append("Governorate.UpdatedByUser.PhoneNumber", governorate_UpdatedByUser_PhoneNumber.toString());
+        if (governorate_UpdatedByUser_Address !== null && governorate_UpdatedByUser_Address !== undefined)
+            content_.append("Governorate.UpdatedByUser.Address", governorate_UpdatedByUser_Address.toString());
+        if (governorate_UpdatedByUser_IsActive !== null && governorate_UpdatedByUser_IsActive !== undefined)
+            content_.append("Governorate.UpdatedByUser.IsActive", governorate_UpdatedByUser_IsActive.toString());
+        if (governorate_Cities === null || governorate_Cities === undefined)
+            throw new Error("The parameter 'governorate_Cities' cannot be null.");
+        else
+            governorate_Cities.forEach(item_ => content_.append("Governorate.Cities", item_.toString()));
+        if (createdOn !== null && createdOn !== undefined)
+            content_.append("CreatedOn", createdOn.toJSON());
+        if (categoriesJson !== null && categoriesJson !== undefined)
+            content_.append("CategoriesJson", categoriesJson.toString());
+        if (categoriesDTO !== null && categoriesDTO !== undefined)
+            categoriesDTO.forEach(item_ => content_.append("CategoriesDTO", item_.toString()));
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiMerchantPut(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiMerchantPut(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MerchantDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MerchantDTO>;
+        }));
+    }
+
+    protected processApiMerchantPut(response: HttpResponseBase): Observable<MerchantDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MerchantDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1512,6 +2032,61 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
+    apiCategoryAllGet(): Observable<CategoryDTO[]> {
+        let url_ = this.baseUrl + "/api/Category/All";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiCategoryAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiCategoryAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CategoryDTO[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CategoryDTO[]>;
+        }));
+    }
+
+    protected processApiCategoryAllGet(response: HttpResponseBase): Observable<CategoryDTO[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CategoryDTO.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     apiCityGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCityDTO> {
         let url_ = this.baseUrl + "/api/City/GetAll?";
         if (pageSize === null)
@@ -1839,18 +2414,8 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfSellerCategoryDTO> {
-        let url_ = this.baseUrl + "/api/SellerCategory/GetAll?";
-        if (pageSize === null)
-            throw new Error("The parameter 'pageSize' cannot be null.");
-        else if (pageSize !== undefined)
-            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (page === null)
-            throw new Error("The parameter 'page' cannot be null.");
-        else if (page !== undefined)
-            url_ += "page=" + encodeURIComponent("" + page) + "&";
-        if (searchTerm !== undefined && searchTerm !== null)
-            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+    apiLookupGovernoratesGet(): Observable<GovernorateLookupDto[]> {
+        let url_ = this.baseUrl + "/api/Lookup/Governorates";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1862,20 +2427,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellerCategoryGetAllGet(response_);
+            return this.processApiLookupGovernoratesGet(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiSellerCategoryGetAllGet(response_ as any);
+                    return this.processApiLookupGovernoratesGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfSellerCategoryDTO>;
+                    return _observableThrow(e) as any as Observable<GovernorateLookupDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfSellerCategoryDTO>;
+                return _observableThrow(response_) as any as Observable<GovernorateLookupDto[]>;
         }));
     }
 
-    protected processApiSellerCategoryGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfSellerCategoryDTO> {
+    protected processApiLookupGovernoratesGet(response: HttpResponseBase): Observable<GovernorateLookupDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1886,7 +2451,14 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfSellerCategoryDTO.fromJS(resultData200);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GovernorateLookupDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1897,12 +2469,10 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiSellerCategoryGetDetailsGet(id: number | undefined): Observable<SellerCategoryDTO> {
-        let url_ = this.baseUrl + "/api/SellerCategory/GetDetails?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
+    apiLookupCitiesGet(governorateId: number | null | undefined): Observable<CityLookupDto[]> {
+        let url_ = this.baseUrl + "/api/Lookup/Cities?";
+        if (governorateId !== undefined && governorateId !== null)
+            url_ += "governorateId=" + encodeURIComponent("" + governorateId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1914,20 +2484,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellerCategoryGetDetailsGet(response_);
+            return this.processApiLookupCitiesGet(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiSellerCategoryGetDetailsGet(response_ as any);
+                    return this.processApiLookupCitiesGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
+                    return _observableThrow(e) as any as Observable<CityLookupDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
+                return _observableThrow(response_) as any as Observable<CityLookupDto[]>;
         }));
     }
 
-    protected processApiSellerCategoryGetDetailsGet(response: HttpResponseBase): Observable<SellerCategoryDTO> {
+    protected processApiLookupCitiesGet(response: HttpResponseBase): Observable<CityLookupDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1938,163 +2508,14 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDTO.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellerCategoryInsertPost(entity: SellerCategoryDTO): Observable<SellerCategoryDTO> {
-        let url_ = this.baseUrl + "/api/SellerCategory/Insert";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(entity);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellerCategoryInsertPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellerCategoryInsertPost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
-        }));
-    }
-
-    protected processApiSellerCategoryInsertPost(response: HttpResponseBase): Observable<SellerCategoryDTO> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDTO.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellerCategoryUpdatePost(entity: SellerCategoryDTO): Observable<SellerCategoryDTO> {
-        let url_ = this.baseUrl + "/api/SellerCategory/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(entity);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellerCategoryUpdatePost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellerCategoryUpdatePost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
-        }));
-    }
-
-    protected processApiSellerCategoryUpdatePost(response: HttpResponseBase): Observable<SellerCategoryDTO> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDTO.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiSellerCategoryDeletePost(id: number | undefined): Observable<SellerCategoryDTO> {
-        let url_ = this.baseUrl + "/api/SellerCategory/Delete?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiSellerCategoryDeletePost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiSellerCategoryDeletePost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<SellerCategoryDTO>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<SellerCategoryDTO>;
-        }));
-    }
-
-    protected processApiSellerCategoryDeletePost(response: HttpResponseBase): Observable<SellerCategoryDTO> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SellerCategoryDTO.fromJS(resultData200);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CityLookupDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2106,12 +2527,12 @@ export class SwaggerClient {
     }
 }
 
-export class DataSourceResultOfCategoryDto implements IDataSourceResultOfCategoryDto {
-    data!: CategoryDto[];
+export class DataSourceResultOfCategoryDTO implements IDataSourceResultOfCategoryDTO {
+    data!: CategoryDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfCategoryDto) {
+    constructor(data?: IDataSourceResultOfCategoryDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2128,16 +2549,16 @@ export class DataSourceResultOfCategoryDto implements IDataSourceResultOfCategor
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(CategoryDto.fromJS(item));
+                    this.data!.push(CategoryDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfCategoryDto {
+    static fromJS(data: any): DataSourceResultOfCategoryDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfCategoryDto();
+        let result = new DataSourceResultOfCategoryDTO();
         result.init(data);
         return result;
     }
@@ -2155,17 +2576,17 @@ export class DataSourceResultOfCategoryDto implements IDataSourceResultOfCategor
     }
 }
 
-export interface IDataSourceResultOfCategoryDto {
-    data: CategoryDto[];
+export interface IDataSourceResultOfCategoryDTO {
+    data: CategoryDTO[];
     count: number;
     additionalValue: number;
 }
 
-export class CategoryDto implements ICategoryDto {
+export class CategoryDTO implements ICategoryDTO {
     id!: number;
     name!: string;
 
-    constructor(data?: ICategoryDto) {
+    constructor(data?: ICategoryDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2181,9 +2602,9 @@ export class CategoryDto implements ICategoryDto {
         }
     }
 
-    static fromJS(data: any): CategoryDto {
+    static fromJS(data: any): CategoryDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new CategoryDto();
+        let result = new CategoryDTO();
         result.init(data);
         return result;
     }
@@ -2196,97 +2617,45 @@ export class CategoryDto implements ICategoryDto {
     }
 }
 
-export interface ICategoryDto {
+export interface ICategoryDTO {
     id: number;
     name: string;
-}
-
-export class DataSourceResultOfMerchantDTO implements IDataSourceResultOfMerchantDTO {
-    data!: MerchantDTO[];
-    count!: number;
-    additionalValue!: number;
-
-    constructor(data?: IDataSourceResultOfMerchantDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.data = [];
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["data"])) {
-                this.data = [] as any;
-                for (let item of _data["data"])
-                    this.data!.push(MerchantDTO.fromJS(item));
-            }
-            this.count = _data["count"];
-            this.additionalValue = _data["additionalValue"];
-        }
-    }
-
-    static fromJS(data: any): DataSourceResultOfMerchantDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfMerchantDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.data)) {
-            data["data"] = [];
-            for (let item of this.data)
-                data["data"].push(item.toJSON());
-        }
-        data["count"] = this.count;
-        data["additionalValue"] = this.additionalValue;
-        return data;
-    }
-}
-
-export interface IDataSourceResultOfMerchantDTO {
-    data: MerchantDTO[];
-    count: number;
-    additionalValue: number;
 }
 
 export class MerchantDTO implements IMerchantDTO {
     id!: number;
     shopName!: string;
-    logo!: string;
     slug!: string;
     description!: string;
     shortDescription!: string;
+    locationOnMap!: string;
     address!: string;
     latitude?: number | undefined;
     longitude?: number | undefined;
     rating!: number;
     ratingCount!: number;
+    mobileNo!: string;
+    whatsAppMobileNo!: string;
+    email?: string | undefined;
+    governorateId?: number | undefined;
     cityId?: number | undefined;
     isFavoriteMerchant!: boolean;
     commercialRegistrationNumber!: string;
-    commercialRegistrationImageForm!: any;
-    commercialRegistrationImage!: string;
     nationalIdNumber!: string;
+    businessHours!: string;
+    logo?: string | undefined;
+    commercialRegistrationImage?: string | undefined;
+    nationalIdImage?: string | undefined;
     nationalIdImageForm!: any;
-    nationalIdImage!: string;
-    members!: UserDTO[];
-    city!: CityDTO;
-    governorate!: GovernorateDTO;
-    parts!: PartDTO[];
-    sellerCategories!: SellerCategoryDTO[];
-    deletedBy?: number | undefined;
-    deletedOn?: Date | undefined;
-    updatedBy?: number | undefined;
-    updatedOn?: Date | undefined;
-    createdByUserId?: number | undefined;
+    logoForm!: any;
+    commercialRegistrationImageForm!: any;
+    membersJson?: string | undefined;
+    members?: MemberDTO[] | undefined;
+    city?: CityDTO | undefined;
+    governorate?: GovernorateDTO | undefined;
     createdOn?: Date | undefined;
+    categoriesJson?: string | undefined;
+    categoriesDTO?: CategoryDTO[] | undefined;
 
     constructor(data?: IMerchantDTO) {
         if (data) {
@@ -2295,59 +2664,51 @@ export class MerchantDTO implements IMerchantDTO {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.members = [];
-            this.city = new CityDTO();
-            this.governorate = new GovernorateDTO();
-            this.parts = [];
-            this.sellerCategories = [];
-        }
     }
 
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
             this.shopName = _data["shopName"];
-            this.logo = _data["logo"];
             this.slug = _data["slug"];
             this.description = _data["description"];
             this.shortDescription = _data["shortDescription"];
+            this.locationOnMap = _data["locationOnMap"];
             this.address = _data["address"];
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
             this.rating = _data["rating"];
             this.ratingCount = _data["ratingCount"];
+            this.mobileNo = _data["mobileNo"];
+            this.whatsAppMobileNo = _data["whatsAppMobileNo"];
+            this.email = _data["email"];
+            this.governorateId = _data["governorateId"];
             this.cityId = _data["cityId"];
             this.isFavoriteMerchant = _data["isFavoriteMerchant"];
             this.commercialRegistrationNumber = _data["commercialRegistrationNumber"];
-            this.commercialRegistrationImageForm = _data["commercialRegistrationImageForm"];
-            this.commercialRegistrationImage = _data["commercialRegistrationImage"];
             this.nationalIdNumber = _data["nationalIdNumber"];
-            this.nationalIdImageForm = _data["nationalIdImageForm"];
+            this.businessHours = _data["businessHours"];
+            this.logo = _data["logo"];
+            this.commercialRegistrationImage = _data["commercialRegistrationImage"];
             this.nationalIdImage = _data["nationalIdImage"];
+            this.nationalIdImageForm = _data["nationalIdImageForm"];
+            this.logoForm = _data["logoForm"];
+            this.commercialRegistrationImageForm = _data["commercialRegistrationImageForm"];
+            this.membersJson = _data["membersJson"];
             if (Array.isArray(_data["members"])) {
                 this.members = [] as any;
                 for (let item of _data["members"])
-                    this.members!.push(UserDTO.fromJS(item));
+                    this.members!.push(MemberDTO.fromJS(item));
             }
-            this.city = _data["city"] ? CityDTO.fromJS(_data["city"]) : new CityDTO();
-            this.governorate = _data["governorate"] ? GovernorateDTO.fromJS(_data["governorate"]) : new GovernorateDTO();
-            if (Array.isArray(_data["parts"])) {
-                this.parts = [] as any;
-                for (let item of _data["parts"])
-                    this.parts!.push(PartDTO.fromJS(item));
-            }
-            if (Array.isArray(_data["sellerCategories"])) {
-                this.sellerCategories = [] as any;
-                for (let item of _data["sellerCategories"])
-                    this.sellerCategories!.push(SellerCategoryDTO.fromJS(item));
-            }
-            this.deletedBy = _data["deletedBy"];
-            this.deletedOn = _data["deletedOn"] ? new Date(_data["deletedOn"].toString()) : <any>undefined;
-            this.updatedBy = _data["updatedBy"];
-            this.updatedOn = _data["updatedOn"] ? new Date(_data["updatedOn"].toString()) : <any>undefined;
-            this.createdByUserId = _data["createdByUserId"];
+            this.city = _data["city"] ? CityDTO.fromJS(_data["city"]) : <any>undefined;
+            this.governorate = _data["governorate"] ? GovernorateDTO.fromJS(_data["governorate"]) : <any>undefined;
             this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
+            this.categoriesJson = _data["categoriesJson"];
+            if (Array.isArray(_data["categoriesDTO"])) {
+                this.categoriesDTO = [] as any;
+                for (let item of _data["categoriesDTO"])
+                    this.categoriesDTO!.push(CategoryDTO.fromJS(item));
+            }
         }
     }
 
@@ -2362,23 +2723,31 @@ export class MerchantDTO implements IMerchantDTO {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["shopName"] = this.shopName;
-        data["logo"] = this.logo;
         data["slug"] = this.slug;
         data["description"] = this.description;
         data["shortDescription"] = this.shortDescription;
+        data["locationOnMap"] = this.locationOnMap;
         data["address"] = this.address;
         data["latitude"] = this.latitude;
         data["longitude"] = this.longitude;
         data["rating"] = this.rating;
         data["ratingCount"] = this.ratingCount;
+        data["mobileNo"] = this.mobileNo;
+        data["whatsAppMobileNo"] = this.whatsAppMobileNo;
+        data["email"] = this.email;
+        data["governorateId"] = this.governorateId;
         data["cityId"] = this.cityId;
         data["isFavoriteMerchant"] = this.isFavoriteMerchant;
         data["commercialRegistrationNumber"] = this.commercialRegistrationNumber;
-        data["commercialRegistrationImageForm"] = this.commercialRegistrationImageForm;
-        data["commercialRegistrationImage"] = this.commercialRegistrationImage;
         data["nationalIdNumber"] = this.nationalIdNumber;
-        data["nationalIdImageForm"] = this.nationalIdImageForm;
+        data["businessHours"] = this.businessHours;
+        data["logo"] = this.logo;
+        data["commercialRegistrationImage"] = this.commercialRegistrationImage;
         data["nationalIdImage"] = this.nationalIdImage;
+        data["nationalIdImageForm"] = this.nationalIdImageForm;
+        data["logoForm"] = this.logoForm;
+        data["commercialRegistrationImageForm"] = this.commercialRegistrationImageForm;
+        data["membersJson"] = this.membersJson;
         if (Array.isArray(this.members)) {
             data["members"] = [];
             for (let item of this.members)
@@ -2386,22 +2755,13 @@ export class MerchantDTO implements IMerchantDTO {
         }
         data["city"] = this.city ? this.city.toJSON() : <any>undefined;
         data["governorate"] = this.governorate ? this.governorate.toJSON() : <any>undefined;
-        if (Array.isArray(this.parts)) {
-            data["parts"] = [];
-            for (let item of this.parts)
-                data["parts"].push(item.toJSON());
-        }
-        if (Array.isArray(this.sellerCategories)) {
-            data["sellerCategories"] = [];
-            for (let item of this.sellerCategories)
-                data["sellerCategories"].push(item.toJSON());
-        }
-        data["deletedBy"] = this.deletedBy;
-        data["deletedOn"] = this.deletedOn ? this.deletedOn.toISOString() : <any>undefined;
-        data["updatedBy"] = this.updatedBy;
-        data["updatedOn"] = this.updatedOn ? this.updatedOn.toISOString() : <any>undefined;
-        data["createdByUserId"] = this.createdByUserId;
         data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        data["categoriesJson"] = this.categoriesJson;
+        if (Array.isArray(this.categoriesDTO)) {
+            data["categoriesDTO"] = [];
+            for (let item of this.categoriesDTO)
+                data["categoriesDTO"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -2409,45 +2769,106 @@ export class MerchantDTO implements IMerchantDTO {
 export interface IMerchantDTO {
     id: number;
     shopName: string;
-    logo: string;
     slug: string;
     description: string;
     shortDescription: string;
+    locationOnMap: string;
     address: string;
     latitude?: number | undefined;
     longitude?: number | undefined;
     rating: number;
     ratingCount: number;
+    mobileNo: string;
+    whatsAppMobileNo: string;
+    email?: string | undefined;
+    governorateId?: number | undefined;
     cityId?: number | undefined;
     isFavoriteMerchant: boolean;
     commercialRegistrationNumber: string;
-    commercialRegistrationImageForm: any;
-    commercialRegistrationImage: string;
     nationalIdNumber: string;
+    businessHours: string;
+    logo?: string | undefined;
+    commercialRegistrationImage?: string | undefined;
+    nationalIdImage?: string | undefined;
     nationalIdImageForm: any;
-    nationalIdImage: string;
-    members: UserDTO[];
-    city: CityDTO;
-    governorate: GovernorateDTO;
-    parts: PartDTO[];
-    sellerCategories: SellerCategoryDTO[];
-    deletedBy?: number | undefined;
-    deletedOn?: Date | undefined;
-    updatedBy?: number | undefined;
-    updatedOn?: Date | undefined;
-    createdByUserId?: number | undefined;
+    logoForm: any;
+    commercialRegistrationImageForm: any;
+    membersJson?: string | undefined;
+    members?: MemberDTO[] | undefined;
+    city?: CityDTO | undefined;
+    governorate?: GovernorateDTO | undefined;
     createdOn?: Date | undefined;
+    categoriesJson?: string | undefined;
+    categoriesDTO?: CategoryDTO[] | undefined;
+}
+
+export class MemberDTO implements IMemberDTO {
+    id!: number;
+    userId!: number;
+    merchantId!: number;
+    role!: string;
+    userDTO!: UserDTO;
+
+    constructor(data?: IMemberDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.userDTO = new UserDTO();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.userId = _data["userId"];
+            this.merchantId = _data["merchantId"];
+            this.role = _data["role"];
+            this.userDTO = _data["userDTO"] ? UserDTO.fromJS(_data["userDTO"]) : new UserDTO();
+        }
+    }
+
+    static fromJS(data: any): MemberDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userId"] = this.userId;
+        data["merchantId"] = this.merchantId;
+        data["role"] = this.role;
+        data["userDTO"] = this.userDTO ? this.userDTO.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMemberDTO {
+    id: number;
+    userId: number;
+    merchantId: number;
+    role: string;
+    userDTO: UserDTO;
 }
 
 export class UserDTO implements IUserDTO {
     id!: number;
+    nationalId!: string;
     userName?: string | undefined;
     fullName?: string | undefined;
     email?: string | undefined;
-    userType!: UserTypeEnum;
-    userTypeName?: string | undefined;
+    passwordHash?: string | undefined;
+    photo?: string | undefined;
+    userType?: UserTypeEnum | undefined;
     phoneNumber?: string | undefined;
     address?: string | undefined;
+    isActive?: boolean | undefined;
 
     constructor(data?: IUserDTO) {
         if (data) {
@@ -2461,13 +2882,16 @@ export class UserDTO implements IUserDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.nationalId = _data["nationalId"];
             this.userName = _data["userName"];
             this.fullName = _data["fullName"];
             this.email = _data["email"];
+            this.passwordHash = _data["passwordHash"];
+            this.photo = _data["photo"];
             this.userType = _data["userType"];
-            this.userTypeName = _data["userTypeName"];
             this.phoneNumber = _data["phoneNumber"];
             this.address = _data["address"];
+            this.isActive = _data["isActive"];
         }
     }
 
@@ -2481,26 +2905,32 @@ export class UserDTO implements IUserDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["nationalId"] = this.nationalId;
         data["userName"] = this.userName;
         data["fullName"] = this.fullName;
         data["email"] = this.email;
+        data["passwordHash"] = this.passwordHash;
+        data["photo"] = this.photo;
         data["userType"] = this.userType;
-        data["userTypeName"] = this.userTypeName;
         data["phoneNumber"] = this.phoneNumber;
         data["address"] = this.address;
+        data["isActive"] = this.isActive;
         return data;
     }
 }
 
 export interface IUserDTO {
     id: number;
+    nationalId: string;
     userName?: string | undefined;
     fullName?: string | undefined;
     email?: string | undefined;
-    userType: UserTypeEnum;
-    userTypeName?: string | undefined;
+    passwordHash?: string | undefined;
+    photo?: string | undefined;
+    userType?: UserTypeEnum | undefined;
     phoneNumber?: string | undefined;
     address?: string | undefined;
+    isActive?: boolean | undefined;
 }
 
 export enum UserTypeEnum {
@@ -2635,6 +3065,116 @@ export interface IGovernorateDTO {
     cities: CityDTO[];
 }
 
+export class DataSourceResultOfMerchantDTO implements IDataSourceResultOfMerchantDTO {
+    data!: MerchantDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfMerchantDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(MerchantDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfMerchantDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfMerchantDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfMerchantDTO {
+    data: MerchantDTO[];
+    count: number;
+    additionalValue: number;
+}
+
+export class DataSourceResultOfPartDTO implements IDataSourceResultOfPartDTO {
+    data!: PartDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfPartDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(PartDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfPartDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfPartDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfPartDTO {
+    data: PartDTO[];
+    count: number;
+    additionalValue: number;
+}
+
 export class PartDTO implements IPartDTO {
     id!: number;
     name!: string;
@@ -2723,101 +3263,6 @@ export enum PartConditionEnum {
     New = 1,
     Used = 2,
     Refurbished = 3,
-}
-
-export class SellerCategoryDTO implements ISellerCategoryDTO {
-    id!: number;
-    name!: string;
-
-    constructor(data?: ISellerCategoryDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-        }
-    }
-
-    static fromJS(data: any): SellerCategoryDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new SellerCategoryDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data;
-    }
-}
-
-export interface ISellerCategoryDTO {
-    id: number;
-    name: string;
-}
-
-export class DataSourceResultOfPartDTO implements IDataSourceResultOfPartDTO {
-    data!: PartDTO[];
-    count!: number;
-    additionalValue!: number;
-
-    constructor(data?: IDataSourceResultOfPartDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.data = [];
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["data"])) {
-                this.data = [] as any;
-                for (let item of _data["data"])
-                    this.data!.push(PartDTO.fromJS(item));
-            }
-            this.count = _data["count"];
-            this.additionalValue = _data["additionalValue"];
-        }
-    }
-
-    static fromJS(data: any): DataSourceResultOfPartDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfPartDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.data)) {
-            data["data"] = [];
-            for (let item of this.data)
-                data["data"].push(item.toJSON());
-        }
-        data["count"] = this.count;
-        data["additionalValue"] = this.additionalValue;
-        return data;
-    }
-}
-
-export interface IDataSourceResultOfPartDTO {
-    data: PartDTO[];
-    count: number;
-    additionalValue: number;
 }
 
 export class AuthDto implements IAuthDto {
@@ -3297,59 +3742,93 @@ export interface ILookupDTO {
     text: string;
 }
 
-export class DataSourceResultOfSellerCategoryDTO implements IDataSourceResultOfSellerCategoryDTO {
-    data!: SellerCategoryDTO[];
-    count!: number;
-    additionalValue!: number;
+export class GovernorateLookupDto implements IGovernorateLookupDto {
+    id!: number;
+    name!: string;
 
-    constructor(data?: IDataSourceResultOfSellerCategoryDTO) {
+    constructor(data?: IGovernorateLookupDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.data = [];
-        }
     }
 
     init(_data?: any) {
         if (_data) {
-            if (Array.isArray(_data["data"])) {
-                this.data = [] as any;
-                for (let item of _data["data"])
-                    this.data!.push(SellerCategoryDTO.fromJS(item));
-            }
-            this.count = _data["count"];
-            this.additionalValue = _data["additionalValue"];
+            this.id = _data["id"];
+            this.name = _data["name"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfSellerCategoryDTO {
+    static fromJS(data: any): GovernorateLookupDto {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfSellerCategoryDTO();
+        let result = new GovernorateLookupDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.data)) {
-            data["data"] = [];
-            for (let item of this.data)
-                data["data"].push(item.toJSON());
-        }
-        data["count"] = this.count;
-        data["additionalValue"] = this.additionalValue;
+        data["id"] = this.id;
+        data["name"] = this.name;
         return data;
     }
 }
 
-export interface IDataSourceResultOfSellerCategoryDTO {
-    data: SellerCategoryDTO[];
-    count: number;
-    additionalValue: number;
+export interface IGovernorateLookupDto {
+    id: number;
+    name: string;
+}
+
+export class CityLookupDto implements ICityLookupDto {
+    id!: number;
+    nameAr!: string;
+    governorateId!: number;
+
+    constructor(data?: ICityLookupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.nameAr = _data["nameAr"];
+            this.governorateId = _data["governorateId"];
+        }
+    }
+
+    static fromJS(data: any): CityLookupDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CityLookupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["nameAr"] = this.nameAr;
+        data["governorateId"] = this.governorateId;
+        return data;
+    }
+}
+
+export interface ICityLookupDto {
+    id: number;
+    nameAr: string;
+    governorateId: number;
+}
+
+export interface FileParameter {
+    data: any;
+    fileName: string;
 }
 
 export class ApiException extends Error {

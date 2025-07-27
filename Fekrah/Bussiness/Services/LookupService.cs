@@ -74,5 +74,29 @@ namespace Bussiness.Services
 
             return result;
         }
+
+        public List<GovernorateLookupDto> GetGovernorates()
+        {
+            return _unitOfWork.Repository<Governorate>()
+                .GetAll()
+                .Select(g => new GovernorateLookupDto
+                {
+                    Id = g.Id,
+                    Name = g.Name
+                }).ToList();
+        }
+
+        public List<CityLookupDto> GetCities(int? governorateId = null)
+        {
+            var query = _unitOfWork.Repository<City>().GetAll().AsQueryable();
+            if (governorateId.HasValue)
+                query = query.Where(c => c.GovernorateId == governorateId.Value);
+            return query.Select(c => new CityLookupDto
+            {
+                Id = c.Id,
+                NameAr = c.NameAr,
+                GovernorateId = c.GovernorateId
+            }).ToList();
+        }
     }
 }

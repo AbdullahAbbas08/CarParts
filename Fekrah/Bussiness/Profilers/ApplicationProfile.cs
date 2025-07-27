@@ -13,12 +13,17 @@ namespace Bussiness.Profilers
     {
         public ApplicationProfile()
         {
-            CreateMap<Category, CategoryDto>().ReverseMap();
-            CreateMap<Merchant, MerchantDTO>().ReverseMap();
+            CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Merchant, MerchantDTO>()
+                .ForMember(dest => dest.CategoriesDTO, opt => opt.MapFrom(src => src.Categories))
+                .ReverseMap()
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.CategoriesDTO));
             CreateMap<Part, PartDTO>().ReverseMap();
-            CreateMap<SellerCategory, SellerCategoryDTO>().ReverseMap();
             CreateMap<CarsModel, CarsModelDto>().ReverseMap();
             CreateMap<City, CityDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Governorate, GovernorateDTO>().ReverseMap();
+            CreateMap<Member, MemberDTO>().ReverseMap();
         }
     }
 }
