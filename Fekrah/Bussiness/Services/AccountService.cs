@@ -44,7 +44,7 @@ namespace Bussiness.Services
             if(!currentUser.IsActive)
                 return new AuthDto { Message = "حسابك غير مفعل برجاء التواصل مع الأدمن .", StatusCode = 500 };
 
-            var jwtSecurityToken = await CreateJwtToken(currentUser);
+            var jwtSecurityToken = await CreateJwtToken(currentUser, currentUser.UserType == UserTypeEnum.Merchant ? currentUser.MerchantId : null);
 
             return new AuthDto
             {
@@ -128,7 +128,7 @@ namespace Bussiness.Services
                 FullName = result.FullName,
                 PhoneNumber = result.PhoneNumber,
                 Message = "تم ارسال طلبك بنجاح .",
-                UserType = UserTypeEnum.Seller,
+                UserType = UserTypeEnum.Merchant,
                 IsAdmin =  false,
                 StatusCode = 200
             };
@@ -144,7 +144,7 @@ namespace Bussiness.Services
                 return Convert.ToBase64String(byteHash);
             }
         }
-        private async Task<JwtSecurityToken> CreateJwtToken(User user)
+        private async Task<JwtSecurityToken> CreateJwtToken(User user, int? MerchantId = null)
         {
             var claims = new[]
             {
@@ -155,6 +155,9 @@ namespace Bussiness.Services
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim("UserType", ((int)user.UserType).ToString()),
             };
+
+            if (MerchantId.HasValue && MerchantId > 0)
+                claims.Append(new Claim("MerchantId", MerchantId.ToString()));
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_JWT.Key));
             var signingCardentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);

@@ -4,7 +4,7 @@
     {
         Admin = 1,
         Client = 2,
-        Seller = 3,
+        Merchant = 3,
         ShippingCompany = 4
     }
 }

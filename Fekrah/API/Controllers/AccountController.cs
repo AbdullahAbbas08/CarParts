@@ -1,6 +1,5 @@
 ﻿using Bussiness.Interfaces;
 using Data.DTOs;
-using Data.Enums;
 using Data.Models;
 using Data.ViewModels;
 using Microsoft.AspNetCore.Http;

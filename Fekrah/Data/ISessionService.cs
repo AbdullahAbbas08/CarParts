@@ -6,6 +6,7 @@ namespace Data.Interfaces
     {
         HttpContext HttpContext { get; set; }
         string? UserId { get; }
+        int? MerchantId { get; }
         string? UserName { get; }
         int? UserType { get; }
     }

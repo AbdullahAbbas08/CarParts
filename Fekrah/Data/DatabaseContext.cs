@@ -26,8 +26,8 @@ public class DatabaseContext : DbContext
 
         modelBuilder.Entity<Merchant>()
             .HasMany(s => s.Parts)
-            .WithOne(p => p.Seller)
-            .HasForeignKey(p => p.SellerId);
+            .WithOne(p => p.Merchant)
+            .HasForeignKey(p => p.MerchantId);
 
         modelBuilder.Entity<Category>()
           .HasMany(c => c.Parts)
