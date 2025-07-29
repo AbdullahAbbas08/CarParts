@@ -44,7 +44,7 @@ namespace Bussiness.Services
             if(!currentUser.IsActive)
                 return new AuthDto { Message = "حسابك غير مفعل برجاء التواصل مع الأدمن .", StatusCode = 500 };
 
-            var jwtSecurityToken = await CreateJwtToken(currentUser, currentUser.UserType == UserTypeEnum.Merchant ? currentUser.MerchantId : null);
+            var jwtSecurityToken = await CreateJwtToken(currentUser, currentUser.UserType == UserTypeEnum.Merchant ? /*currentUser.MerchantId*/null : null);
 
             return new AuthDto
             {
