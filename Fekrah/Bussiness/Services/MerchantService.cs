@@ -48,7 +48,7 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
 
             var newMembers = JsonSerializer.Deserialize<List<UserDTO>>(dto.MembersJson) ?? new List<UserDTO>();
             var newCategories = !string.IsNullOrEmpty(dto.CategoriesJson) ? JsonSerializer.Deserialize<List<CategoryDTO>>(dto.CategoriesJson) : dto.CategoriesDTO;
-           
+
             var existingUsers = _unitOfWork.Repository<User>().GetAll().ToList();
             var filteredMembers = newMembers.Where(u =>
                 !existingUsers.Any(e =>
@@ -58,9 +58,17 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
                     || (!string.IsNullOrEmpty(u.PhoneNumber) && e.PhoneNumber == u.PhoneNumber)
                 )
             ).ToList();
-            dto.Members = filteredMembers.Select(x=> new MemberDTO
+
+            List<User> NewUsers = new List<User>();
+            foreach (var item in filteredMembers)
             {
-                UserDTO = x
+                var _user = _mapper.Map<User>(item);
+                NewUsers.Add(_user);
+                _unitOfWork.Repository<User>().Insert(_user);
+            }
+            dto.Members = NewUsers.Select(x => new MemberDTO
+            {
+                UserId = x.Id
             }).ToList();
             var entity = _mapper.Map<Merchant>(dto);
 
@@ -217,7 +225,8 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
                 .Include(x => x.Governorate)
                 .Include(x => x.Categories)
                 .FirstOrDefault(m => m.Id == id);
-            return entity == null ? null : _mapper.Map<MerchantDTO>(entity);
+            var ttt = entity == null ? null : _mapper.Map<MerchantDTO>(entity);
+            return ttt;
         }
         catch (Exception ex)
         {

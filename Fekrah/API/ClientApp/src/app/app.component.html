@@ -3,9 +3,9 @@
 
   <!-- ✅ Pre-Navbar مع بيانات المستخدم -->
   <app-pre-navbar
-    [isMerchant]=true
+    [isMerchant]=false
     [isDriver]=false
-    [isAdmin]=false
+    [isAdmin]=true
     [pendingOrdersCount]="userData.pendingOrdersCount"
     [deliveryOrdersCount]="userData.deliveryOrdersCount"
     [userName]="userData.userName">

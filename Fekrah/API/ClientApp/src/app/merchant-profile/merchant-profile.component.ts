@@ -100,6 +100,11 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
     this.showToast('هذه الميزة قيد التطوير', 'info');
   }
 
+  navigateToProducts(): void {
+    // Navigate to products list page
+    this.router.navigate(['/dashboard/merchant']);
+  }
+
   addAttachment(): void {
     // Create file input element
     const fileInput = document.createElement('input');

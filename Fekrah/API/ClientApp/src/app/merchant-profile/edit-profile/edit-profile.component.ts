@@ -27,6 +27,9 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   saveChanges = 'حفظ التغييرات';
   showPassword = false;
   
+  // Admin mode check
+  isAdminMode = false;
+  
   // Progress bar properties
   progressPercentage = 0;
   completedSteps = 0;
@@ -128,6 +131,14 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Check if coming from admin route (admin adding new merchant)
+    this.isAdminMode = this.router.url.includes('/admin/') || 
+                      this.router.url.includes('add-merchant') ||
+                      localStorage.getItem('currentUserRole') === 'admin';
+    
+    console.log('🔍 Admin mode detected:', this.isAdminMode);
+    console.log('📍 Current route:', this.router.url);
+    
     this.initializeForm(); // Initialize empty form first
     this.initializeNewCategoryForm(); // Initialize add category form
     this.loadCurrentProfile();
@@ -302,7 +313,9 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       description: [merchant?.description || ''],
       commercialRegistrationNumber: [merchant?.commercialRegistrationNumber || '', [Validators.required]],
       nationalIdNumber: [merchant?.nationalIdNumber || '', [Validators.required]],
-      categoriesIds: [merchant?.categoriesDTO?.map(c => c.id) || []], // Add categories selection
+      // Store complete CategoryDTO objects instead of just IDs
+      categories: [merchant?.categoriesDTO || []], // Complete category objects
+      categoriesIds: [merchant?.categoriesDTO?.map(c => c.id) || []], // Keep IDs for backward compatibility
       businessHours: this.fb.array([]),
       members: this.fb.array([])
     });
@@ -401,17 +414,35 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
   toggleCategory(categoryId: number): void {
     const currentIds = this.editForm.get('categoriesIds')?.value || [];
+    const currentCategories = this.editForm.get('categories')?.value || [];
     let newIds: number[];
+    let newCategories: any[];
     
     if (currentIds.includes(categoryId)) {
       // Remove category
       newIds = currentIds.filter((id: number) => id !== categoryId);
+      newCategories = currentCategories.filter((cat: any) => cat.id !== categoryId);
     } else {
-      // Add category
-      newIds = [...currentIds, categoryId];
+      // Add category - find complete category object
+      const categoryToAdd = this.categories.find(c => c.id === categoryId);
+      if (categoryToAdd) {
+        newIds = [...currentIds, categoryId];
+        newCategories = [...currentCategories, categoryToAdd];
+        console.log('🏷️ Adding complete category object:', categoryToAdd);
+      } else {
+        console.warn('❌ Category not found for ID:', categoryId);
+        return;
+      }
     }
     
-    this.editForm.patchValue({ categoriesIds: newIds });
+    // Update both categoriesIds and categories form controls
+    this.editForm.patchValue({ 
+      categoriesIds: newIds,
+      categories: newCategories 
+    });
+    
+    console.log('🏷️ Updated categories:', newCategories);
+    console.log('🏷️ Updated categories IDs:', newIds);
   }
 
   addCategoryFromSuggestion(categoryName: string): void {
@@ -441,6 +472,10 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     this.showAddCategoryForm = true;
     this.newCategoryForm.reset();
     
+    // Prevent body scroll and save current scroll position
+    document.body.classList.add('modal-open');
+    document.body.style.top = `-${window.scrollY}px`;
+    
     console.log('📝 Form state after reset:', this.newCategoryForm.value);
     console.log('✅ Modal opened successfully');
   }
@@ -448,6 +483,14 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   hideAddCategoryModal(): void {
     this.showAddCategoryForm = false;
     this.newCategoryForm.reset();
+    
+    // Restore body scroll and scroll position
+    const scrollY = document.body.style.top;
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
   }
 
   addNewCategory(): void {
@@ -543,11 +586,20 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   // Select/Deselect all categories functions
   selectAllCategories(): void {
     const allCategoryIds = this.categories.map(c => c.id!).filter(id => id);
-    this.editForm.patchValue({ categoriesIds: allCategoryIds });
+    const allCategories = this.categories.slice(); // Copy all categories
+    this.editForm.patchValue({ 
+      categoriesIds: allCategoryIds,
+      categories: allCategories 
+    });
+    console.log('🏷️ Selected all categories:', allCategories);
   }
 
   clearAllCategories(): void {
-    this.editForm.patchValue({ categoriesIds: [] });
+    this.editForm.patchValue({ 
+      categoriesIds: [],
+      categories: [] 
+    });
+    console.log('🏷️ Cleared all categories');
   }
 
   // Document upload methods
@@ -765,29 +817,45 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       formData.append('CommercialRegistrationNumber', formValue.commercialRegistrationNumber || '');
       formData.append('NationalIdNumber', formValue.nationalIdNumber || '');
       
-      // التصنيفات المختارة - Categories IDs
+      // التصنيفات المختارة - Complete Category Objects
+      const selectedCategories = formValue.categories || [];
       const selectedCategoriesIds = formValue.categoriesIds || [];
-      console.log('🏷️ Selected Categories IDs:', selectedCategoriesIds);
+      console.log('🏷️ Selected Categories (complete objects):', selectedCategories);
+      console.log('🏷️ Selected Categories IDs (backup):', selectedCategoriesIds);
       
-      if (selectedCategoriesIds.length > 0) {
-        // إرسال كل ID منفصلاً (indexed approach)
-        selectedCategoriesIds.forEach((categoryId: number, index: number) => {
-          formData.append(`CategoriesIds[${index}]`, categoryId.toString());
-          console.log(`📤 Category ${index + 1} ID:`, categoryId);
+      if (selectedCategories.length > 0) {
+        // إرسال كل category object منفصلاً (indexed approach with PascalCase) 
+        selectedCategories.forEach((category: any, index: number) => {
+          formData.append(`Categories[${index}].Id`, category.id?.toString() || '');
+          formData.append(`Categories[${index}].Name`, category.name || ''); // ✅ PascalCase Name
+          formData.append(`Categories[${index}].Description`, category.description || '');
+          formData.append(`Categories[${index}].Image`, category.image || '');
+          console.log(`📤 Category ${index + 1} Object (PascalCase):`, category);
         });
         
-        // إرسال التصنيفات كـ JSON string واحد للـ server (بنفس طريقة Members)
-        const categoriesIdsJson = JSON.stringify(selectedCategoriesIds);
-        formData.append('CategoriesJson', categoriesIdsJson);
+        // إرسال التصنيفات الكاملة كـ JSON string واحد للـ server (complete objects with PascalCase)
+        const categoriesForServer = selectedCategories.map((category: any) => ({
+          Id: category.id || 0,
+          Name: category.name || '', // ✅ Changed to PascalCase Name
+          Description: category.description || '',
+          Image: category.image || ''
+        }));
         
-        console.log('📤 CategoriesJson (for server deserialize):', categoriesIdsJson);
-        console.log('📤 Total categories being sent:', selectedCategoriesIds.length);
+        const categoriesJson = JSON.stringify(categoriesForServer);
+        formData.append('CategoriesJson', categoriesJson);
         
-        // Log the actual Categories structure being sent
-        console.log('📤 Categories IDs Array Structure:', selectedCategoriesIds);
+        // الاحتفاظ بـ IDs approach للـ backward compatibility
+        selectedCategoriesIds.forEach((categoryId: number, index: number) => {
+          formData.append(`CategoriesIds[${index}]`, categoryId.toString());
+        });
+        
+        console.log('📤 CategoriesJson (PascalCase objects for server):', categoriesJson);
+        console.log('📤 Total categories being sent:', selectedCategories.length);
+        console.log('📤 Categories PascalCase Structure:', categoriesForServer);
         
       } else {
         // إذا لم تكن هناك تصنيفات، أرسل array فارغ
+        formData.append('Categories', '[]');
         formData.append('CategoriesIds', '[]');
         formData.append('CategoriesJson', '[]');
         console.log('📤 No categories selected, sending empty arrays');
@@ -818,7 +886,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           userDTO.email = member.email || '';
           userDTO.passwordHash = member.password || ''; // سيتم hash في الـ backend
           userDTO.phoneNumber = member.phone || '';
-          userDTO.userType = UserTypeEnum.Seller; // نوع المستخدم: بائع
+          userDTO.userType = UserTypeEnum.Merchant; // نوع المستخدم: بائع
           userDTO.isActive = true;
           userDTO.address = member.position || ''; // نستخدم المنصب كعنوان مؤقت
           
@@ -973,13 +1041,19 @@ export class EditProfileComponent implements OnInit, OnDestroy {
             console.log('✅ API Success response:', response);
             this.isLoading = false;
             if (response) {
-              this.showToast('تم إنشاء الملف التجاري بنجاح', 'success');
+              const successMessage = this.isAdminMode ? 'تم إضافة التاجر الجديد بنجاح' : 'تم إنشاء الملف التجاري بنجاح';
+              this.showToast(successMessage, 'success');
               this.merchantId = response.id;
               if (response.id) {
                 localStorage.setItem('currentMerchantId', response.id.toString());
               }
               setTimeout(() => {
-                this.router.navigate(['/merchant-profile']);
+                // Navigate based on user mode
+                if (this.isAdminMode) {
+                  this.router.navigate(['/admin']); // Return to admin dashboard
+                } else {
+                  this.router.navigate(['/merchant-profile']); // Go to merchant profile
+                }
               }, 1500);
             } else {
               this.showToast('حدث خطأ أثناء حفظ البيانات', 'error');
@@ -1043,7 +1117,13 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.location.back();
+    if (this.isAdminMode) {
+      // If in admin mode, go back to admin dashboard
+      this.router.navigate(['/admin']);
+    } else {
+      // Normal back navigation
+      this.location.back();
+    }
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -1091,6 +1171,9 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   getMerchantTitle(): string {
+    if (this.isAdminMode) {
+      return this.isUpdateMode() ? 'تحديث بيانات التاجر (وضع الأدمن)' : 'إضافة تاجر جديد (وضع الأدمن)';
+    }
     return this.isUpdateMode() ? 'تحديث الملف التجاري' : 'إنشاء ملف تجاري جديد';
   }
 
@@ -1108,7 +1191,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       Email: userDTO.email || '',
       PasswordHash: userDTO.passwordHash || '',
       Photo: userDTO.photo || '',
-      UserType: userDTO.userType || UserTypeEnum.Seller,
+      UserType: userDTO.userType || UserTypeEnum.Merchant,
       PhoneNumber: userDTO.phoneNumber || '',
       Address: userDTO.address || '',
       IsActive: userDTO.isActive !== undefined ? userDTO.isActive : true

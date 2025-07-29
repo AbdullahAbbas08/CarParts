@@ -5,7 +5,7 @@ import { Subject, takeUntil, interval } from 'rxjs';
 @Component({
   selector: 'app-pre-navbar',
   templateUrl: './pre-navbar.component.html',
-  styleUrls: ['./pre-navbar.component.scss']
+  styleUrls: ['./pre-navbar-simple.component.scss']
 })
 export class PreNavbarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -20,30 +20,73 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
 
   currentRoute = '';
   isVisible = true;
+  
+  // Admin UI State
+  showNotifications = false;
+  showQuickSettings = false;
+  showProfileMenu = false;
+  isMaintenanceMode = false;
+  isLoading = false;
 
-  // Admin Nav
+  // Admin Nav - Enhanced
   adminNavItems = [
-    { route: '/admin/dashboard', icon: 'fas fa-user-shield', label: 'لوحة التحكم' },
-    { route: '/admin/users', icon: 'fas fa-users-cog', label: 'إدارة المستخدمين' },
-    { route: '/admin/logs', icon: 'fas fa-file-alt', label: 'سجلات النظام' },
-    { route: '/admin/settings', icon: 'fas fa-cogs', label: 'الإعدادات' }
+    { 
+      route: '/admin/dashboard', 
+      icon: 'fas fa-tachometer-alt', 
+      label: 'لوحة التحكم',
+      hasNotifications: false,
+      notificationCount: 0
+    },
+    { 
+      route: '/admin/manage-merchants', 
+      icon: 'fas fa-store', 
+      label: 'إدارة التجار',
+      hasNotifications: true,
+      notificationCount: 3
+    },
+    { 
+      route: '/admin/users', 
+      icon: 'fas fa-users', 
+      label: 'إدارة المستخدمين',
+      hasNotifications: false,
+      notificationCount: 0
+    },
+    { 
+      route: '/admin/orders', 
+      icon: 'fas fa-shopping-cart', 
+      label: 'إدارة الطلبات',
+      hasNotifications: true,
+      notificationCount: 7
+    },
+    { 
+      route: '/admin/reports', 
+      icon: 'fas fa-chart-line', 
+      label: 'التقارير والإحصائيات',
+      hasNotifications: false,
+      notificationCount: 0
+    },
+    { 
+      route: '/admin/settings', 
+      icon: 'fas fa-cog', 
+      label: 'إعدادات النظام',
+      hasNotifications: false,
+      notificationCount: 0
+    }
   ];
 
-  // Merchant Nav
+  // Merchant Nav - Simplified
   merchantNavItems = [
     { route: '/dashboard/overview', icon: 'fas fa-th-large', label: 'نظرة شاملة', isOverview: true },
     { route: '/dashboard/super', icon: 'fas fa-tachometer-alt', label: 'لوحة التحكم' },
     { route: '/order-mgr/merchant-orders', icon: 'fas fa-clipboard-list', label: 'الطلبات', hasBadge: true, badgeCount: () => this.pendingOrdersCount },
-    { route: '/dashboard/merchant', icon: 'fas fa-box', label: 'المنتجات' },
-    { route: '/merchant/analytics', icon: 'fas fa-chart-bar', label: 'التقارير' }
+    { route: '/dashboard/merchant', icon: 'fas fa-box', label: 'المنتجات' }
   ];
 
-  // Driver Nav
+  // Driver Nav - Simplified
   driverNavItems = [
     { route: '/dashboard/overview', icon: 'fas fa-th-large', label: 'نظرة شاملة', isOverview: true },
     { route: '/driver/dashboard', icon: 'fas fa-tachometer-alt', label: 'لوحة التحكم' },
     { route: '/driver/deliveries', icon: 'fas fa-truck', label: 'طلبات التوصيل', hasBadge: true, badgeCount: () => this.deliveryOrdersCount },
-    { route: '/driver/schedule', icon: 'fas fa-calendar-alt', label: 'الجدولة' },
     { route: '/driver/earnings', icon: 'fas fa-dollar-sign', label: 'الأرباح' }
   ];
 
@@ -142,25 +185,22 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
   }
 
   getCurrentNavItems() {
-    if (this.isMerchant) return this.merchantNavItems;
-    if (this.isDriver) return this.driverNavItems;
+    if (this.isMerchant) {
+      return this.merchantNavItems.map((item: any) => ({
+        ...item,
+        hasNotifications: item.hasBadge || false,
+        notificationCount: item.badgeCount ? (typeof item.badgeCount === 'function' ? item.badgeCount() : item.badgeCount) : 0
+      }));
+    }
+    if (this.isDriver) {
+      return this.driverNavItems.map((item: any) => ({
+        ...item,
+        hasNotifications: item.hasBadge || false,
+        notificationCount: item.badgeCount ? (typeof item.badgeCount === 'function' ? item.badgeCount() : item.badgeCount) : 0
+      }));
+    }
     if (this.isAdmin) return this.adminNavItems;
     return [];
-  }
-
-  switchToCustomerMode(): void {
-    if (!this.isAdmin && (this.isMerchant || this.isDriver)) {
-      const btn = this.elementRef.nativeElement.querySelector('.customer-mode-btn');
-      if (btn) {
-        this.renderer.addClass(btn, 'loading');
-        setTimeout(() => {
-          this.renderer.removeClass(btn, 'loading');
-          this.isVisible = false;
-          this.router.navigate(['/']);
-          this.showNotification('تم التبديل لوضع العميل بنجاح', 'success');
-        }, 1000);
-      }
-    }
   }
 
   showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
@@ -268,6 +308,148 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     if (this.isDriver) return 'driver-mode';
     if (this.isAdmin) return 'admin-mode';
     return '';
+  }
+
+  // ==================== طرق الأدمن الجديدة ====================
+
+  // Navigation helpers
+  getAdminNavItems() {
+    return this.adminNavItems;
+  }
+
+  trackByRoute(index: number, item: any): any {
+    return item.route;
+  }
+
+  // Statistics methods
+  getTotalMerchants(): number {
+    return parseInt(localStorage.getItem('total_merchants') || '245');
+  }
+
+  getTotalOrders(): number {
+    return parseInt(localStorage.getItem('total_orders') || '1,847');
+  }
+
+  getRevenue(): string {
+    return localStorage.getItem('total_revenue') || '125,400';
+  }
+
+  // Notifications methods
+  toggleNotifications(): void {
+    this.showNotifications = !this.showNotifications;
+    this.showQuickSettings = false;
+    this.showProfileMenu = false;
+  }
+
+  getRecentNotifications() {
+    return [
+      {
+        type: 'merchant',
+        icon: 'fas fa-store',
+        title: 'تاجر جديد في انتظار الموافقة',
+        timeAgo: 'منذ 5 دقائق'
+      },
+      {
+        type: 'order',
+        icon: 'fas fa-shopping-cart',
+        title: 'طلب جديد يحتاج مراجعة',
+        timeAgo: 'منذ 15 دقيقة'
+      },
+      {
+        type: 'system',
+        icon: 'fas fa-exclamation-triangle',
+        title: 'تحديث النظام متاح',
+        timeAgo: 'منذ ساعة'
+      }
+    ];
+  }
+
+  viewAllNotifications(): void {
+    this.showNotifications = false;
+    this.navigateToRoute('/admin/notifications');
+  }
+
+  // Quick Settings methods
+  toggleQuickSettings(): void {
+    this.showQuickSettings = !this.showQuickSettings;
+    this.showNotifications = false;
+    this.showProfileMenu = false;
+  }
+
+  toggleMaintenanceMode(): void {
+    this.isMaintenanceMode = !this.isMaintenanceMode;
+    console.log('وضع الصيانة:', this.isMaintenanceMode ? 'مفعل' : 'معطل');
+    // هنا يمكن إضافة API call لتفعيل/إلغاء وضع الصيانة
+  }
+
+  viewSystemHealth(): void {
+    this.showQuickSettings = false;
+    this.navigateToRoute('/admin/system-health');
+  }
+
+  // Platform switching
+  switchToCustomerMode(): void {
+    console.log('التبديل للمنصة الرئيسية');
+    this.navigateToRoute('/');
+  }
+
+  // Profile methods
+  toggleProfileMenu(): void {
+    this.showProfileMenu = !this.showProfileMenu;
+    this.showNotifications = false;
+    this.showQuickSettings = false;
+  }
+
+  getAdminAvatar(): string {
+    return localStorage.getItem('admin_avatar') || '/assets/images/admin-avatar.png';
+  }
+
+  onAvatarError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.src = '/assets/images/default-admin.png';
+    }
+  }
+
+  getLastLoginTime(): string {
+    const lastLogin = localStorage.getItem('last_login_time');
+    if (lastLogin) {
+      const date = new Date(lastLogin);
+      return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+    return 'اليوم';
+  }
+
+  viewProfile(): void {
+    this.showProfileMenu = false;
+    this.navigateToRoute('/admin/profile');
+  }
+
+  viewSettings(): void {
+    this.showProfileMenu = false;
+    this.navigateToRoute('/admin/settings');
+  }
+
+  viewActivityLog(): void {
+    this.showProfileMenu = false;
+    this.navigateToRoute('/admin/activity-log');
+  }
+
+  logout(): void {
+    if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+      // Clear session data
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_data');
+      
+      // Navigate to login
+      this.navigateToRoute('/auth/login');
+      
+      // Show logout message
+      console.log('تم تسجيل الخروج بنجاح');
+    }
   }
 
   shouldShowBadge(item: any): boolean {

@@ -19,7 +19,6 @@ namespace Api.Services
             services.AddScoped<ILookupService, LookupService>();
             services.AddScoped<ICarsModelService, CarsModelService>();
             services.AddScoped<ICityService, CityService>();
-            services.AddScoped<IMerchantCategoryService, MerchantCategoryService>();
             services.AddScoped<IModelTypeService, ModelTypeService>();
         }
 

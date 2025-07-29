@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250726111747_ChangeFilesDataTypes")]
-    partial class ChangeFilesDataTypes
+    [Migration("20250729161347_makeRolenuall")]
+    partial class makeRolenuall
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,13 +32,40 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("CategoryMerchant", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MerchantsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesId", "MerchantsId");
+
+                    b.HasIndex("MerchantsId");
+
+                    b.ToTable("CategoryMerchant");
                 });
 
             modelBuilder.Entity("Data.Models.CarsModel", b =>
@@ -110,6 +137,39 @@ namespace Data.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("City");
+                });
+
+            modelBuilder.Entity("Data.Models.CountryOfManufacture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("UpdatedBy");
+
+                    b.ToTable("CountryOfManufacture");
                 });
 
             modelBuilder.Entity("Data.Models.Governorate", b =>
@@ -185,6 +245,32 @@ namespace Data.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Localizations");
+                });
+
+            modelBuilder.Entity("Data.Models.Member", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MerchantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MerchantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Data.Models.ModelType", b =>
@@ -265,44 +351,6 @@ namespace Data.Migrations
                     b.ToTable("Offers");
                 });
 
-            modelBuilder.Entity("Data.Models.SellerCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("UpdatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("SellerId");
-
-                    b.HasIndex("UpdatedBy");
-
-                    b.ToTable("SellerCategories");
-                });
-
             modelBuilder.Entity("Data.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -328,12 +376,6 @@ namespace Data.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("MerchantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MobileNo")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NationalId")
                         .IsRequired()
@@ -363,8 +405,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("MerchantId");
 
                     b.HasIndex("UpdatedBy");
 
@@ -447,7 +487,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GovernorateId")
@@ -530,6 +569,9 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CarModelTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CarsModelId")
                         .HasColumnType("int");
 
@@ -539,41 +581,80 @@ namespace Data.Migrations
                     b.Property<int>("Condition")
                         .HasColumnType("int");
 
+                    b.Property<int>("CountryOfManufactureId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("float");
+
+                    b.Property<double>("FinalPrice")
+                        .HasColumnType("float");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDelivery")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFavorit")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSold")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ModelTypeId")
+                    b.Property<int>("MerchantId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PartType")
+                        .HasColumnType("int");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("SellerId")
+                    b.Property<int>("Quality")
+                        .HasColumnType("int");
+
+                    b.Property<int>("YearOfManufacture")
+                        .HasMaxLength(4)
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CarModelTypeId");
 
                     b.HasIndex("CarsModelId");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("ModelTypeId");
+                    b.HasIndex("CountryOfManufactureId");
 
-                    b.HasIndex("SellerId");
+                    b.HasIndex("MerchantId");
 
                     b.ToTable("Parts");
+                });
+
+            modelBuilder.Entity("CategoryMerchant", b =>
+                {
+                    b.HasOne("Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Merchant", null)
+                        .WithMany()
+                        .HasForeignKey("MerchantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Data.Models.CarsModel", b =>
@@ -614,6 +695,21 @@ namespace Data.Migrations
                     b.Navigation("UpdatedByUser");
                 });
 
+            modelBuilder.Entity("Data.Models.CountryOfManufacture", b =>
+                {
+                    b.HasOne("Data.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.HasOne("Data.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
             modelBuilder.Entity("Data.Models.Governorate", b =>
                 {
                     b.HasOne("Data.Models.User", "CreatedByUser")
@@ -642,6 +738,25 @@ namespace Data.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("UpdatedByUser");
+                });
+
+            modelBuilder.Entity("Data.Models.Member", b =>
+                {
+                    b.HasOne("Merchant", "Merchant")
+                        .WithMany("Members")
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.User", "MerchantMember")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("MerchantMember");
                 });
 
             modelBuilder.Entity("Data.Models.ModelType", b =>
@@ -690,38 +805,11 @@ namespace Data.Migrations
                     b.Navigation("UpdatedByUser");
                 });
 
-            modelBuilder.Entity("Data.Models.SellerCategory", b =>
-                {
-                    b.HasOne("Data.Models.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
-
-                    b.HasOne("Merchant", "Seller")
-                        .WithMany("SellerCategories")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.User", "UpdatedByUser")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("Seller");
-
-                    b.Navigation("UpdatedByUser");
-                });
-
             modelBuilder.Entity("Data.Models.User", b =>
                 {
                     b.HasOne("Data.Models.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
-
-                    b.HasOne("Merchant", null)
-                        .WithMany("Members")
-                        .HasForeignKey("MerchantId");
 
                     b.HasOne("Data.Models.User", "UpdatedByUser")
                         .WithMany()
@@ -753,6 +841,12 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Part", b =>
                 {
+                    b.HasOne("Data.Models.ModelType", "CarModelType")
+                        .WithMany()
+                        .HasForeignKey("CarModelTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Data.Models.CarsModel", null)
                         .WithMany("Parts")
                         .HasForeignKey("CarsModelId");
@@ -763,23 +857,25 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Models.ModelType", "ModelType")
+                    b.HasOne("Data.Models.CountryOfManufacture", "CountryOfManufacture")
                         .WithMany()
-                        .HasForeignKey("ModelTypeId")
+                        .HasForeignKey("CountryOfManufactureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Merchant", "Seller")
+                    b.HasOne("Merchant", "Merchant")
                         .WithMany("Parts")
-                        .HasForeignKey("SellerId")
+                        .HasForeignKey("MerchantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CarModelType");
 
                     b.Navigation("Category");
 
-                    b.Navigation("ModelType");
+                    b.Navigation("CountryOfManufacture");
 
-                    b.Navigation("Seller");
+                    b.Navigation("Merchant");
                 });
 
             modelBuilder.Entity("Category", b =>
@@ -804,8 +900,6 @@ namespace Data.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("Parts");
-
-                    b.Navigation("SellerCategories");
                 });
 
             modelBuilder.Entity("Part", b =>

@@ -20,6 +20,107 @@
 
   <!-- ✅ خرائط جوجل -->
   <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+
+  <!-- ✅ إصلاح أنماط إدارة التجار - مؤقت -->
+  <style>
+    /* EMERGENCY FIX FOR MANAGE MERCHANTS PAGE */
+    app-manage-merchants {
+      display: block !important;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+      min-height: 100vh !important;
+      width: 100% !important;
+    }
+    
+    app-manage-merchants .manage-merchants-container,
+    app-manage-merchants > div {
+      padding: 2rem !important;
+      max-width: 1400px !important;
+      margin: 0 auto !important;
+      direction: rtl !important;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    }
+    
+    app-manage-merchants .page-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border-radius: 16px !important;
+      padding: 2rem !important;
+      margin-bottom: 2rem !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+    
+    app-manage-merchants .page-title,
+    app-manage-merchants h1 {
+      font-size: 2.5rem !important;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      margin: 0 !important;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    app-manage-merchants .stats-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+      gap: 1.5rem !important;
+      margin-bottom: 2rem !important;
+    }
+    
+    app-manage-merchants .stat-card {
+      background: #ffffff !important;
+      border-radius: 12px !important;
+      padding: 1.5rem !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 1rem !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border-left: 4px solid #4299e1 !important;
+    }
+    
+    app-manage-merchants .stat-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    app-manage-merchants .stat-card.total {
+      border-left-color: #4299e1 !important;
+    }
+    
+    app-manage-merchants .stat-card.active {
+      border-left-color: #48bb78 !important;
+    }
+    
+    app-manage-merchants .stat-card.pending {
+      border-left-color: #ed8936 !important;
+    }
+    
+    app-manage-merchants .stat-card.rating {
+      border-left-color: #764ba2 !important;
+    }
+    
+    app-manage-merchants .filters-card {
+      background: #ffffff !important;
+      border-radius: 16px !important;
+      padding: 1.5rem !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+      margin-bottom: 1rem !important;
+    }
+    
+    @media (max-width: 768px) {
+      app-manage-merchants .manage-merchants-container {
+        padding: 1rem !important;
+      }
+      
+      app-manage-merchants .stats-grid {
+        grid-template-columns: 1fr !important;
+      }
+      
+      app-manage-merchants .page-title {
+        font-size: 1.75rem !important;
+      }
+    }
+  </style>
 </head>
 
 <body>

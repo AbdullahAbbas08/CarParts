@@ -1,54 +1,99 @@
-<div class="pre-navbar" [ngClass]="getUserRoleClass()" *ngIf="isVisible">
-  <div class="pre-navbar-container">
+<!-- شريط التنقل المبسط للأدمن -->
+<div class="admin-navbar" *ngIf="isVisible && isAdmin">
+  <div class="navbar-content">
     
-    <!-- Brand Section -->
+    <!-- العلامة التجارية -->
+    <div class="brand-section">
+      <div class="brand-icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">لوحة الإدارة</span>
+      </div>
+    </div>
+
+    <!-- التنقل -->
+    <nav class="nav-section">
+      <a *ngFor="let item of getCurrentNavItems()"
+         [routerLink]="item.route"
+         class="nav-item"
+         [class.active]="isActiveRoute(item.route)"
+         [title]="item.label">
+        <i [class]="item.icon"></i>
+        <span class="nav-label">{{ item.label }}</span>
+        <span *ngIf="item.hasNotifications && item.notificationCount > 0" 
+              class="notification-badge">{{ item.notificationCount }}</span>
+      </a>
+    </nav>
+
+    <!-- الإعدادات -->
+    <div class="settings-section">
+      <button class="settings-btn" 
+              (click)="toggleProfileMenu()"
+              [class.active]="showProfileMenu">
+        <i class="fas fa-cog"></i>
+      </button>
+      
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+
+    <!-- قائمة الإعدادات -->
+    <div class="profile-dropdown" *ngIf="showProfileMenu">
+      <div class="dropdown-content">
+        <a (click)="viewProfile()" class="dropdown-item">
+          <i class="fas fa-user"></i>
+          الملف الشخصي
+        </a>
+        <a (click)="viewSettings()" class="dropdown-item">
+          <i class="fas fa-cog"></i>
+          الإعدادات
+        </a>
+        <div class="dropdown-divider"></div>
+        <a (click)="logout()" class="dropdown-item logout">
+          <i class="fas fa-sign-out-alt"></i>
+          تسجيل الخروج
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- للتجار والسائقين -->
+<div class="simple-navbar" [ngClass]="getUserRoleClass()" *ngIf="isVisible && !isAdmin">
+  <div class="navbar-container">
+    
+    <!-- العلامة التجارية -->
     <div class="brand-section">
       <div class="brand-logo">
         <i [class]="getBrandIcon()"></i>
       </div>
-      <div class="brand-info" (click)="navigateToRoute('/merchant-profile')">
-        <h2>{{ getBrandText() }}</h2>
-        <div class="user-role">{{ getDisplayName() }}</div>
+      <div class="brand-info">
+        <h3>{{ getBrandText() }}</h3>
+        <span class="user-name">{{ getDisplayName() }}</span>
       </div>
     </div>
 
-    <!-- Navigation Links -->
+    <!-- التنقل -->
     <div class="nav-links">
       <a *ngFor="let item of getCurrentNavItems()"
-         href="#"
+         [routerLink]="item.route"
          class="nav-link"
-         [attr.data-route]="item.route"
-         [ngClass]="{
-           'overview-link':false,
-           'active': isActiveRoute(item.route)
-         }"
-         (click)="onNavItemClick(item, $event)">
+         [class.active]="isActiveRoute(item.route)">
         <i [class]="item.icon"></i>
         <span>{{ item.label }}</span>
-        <span *ngIf="shouldShowBadge(item)" class="nav-badge">{{ getBadgeCount(item) }}</span>
+        <span *ngIf="item.hasNotifications && item.notificationCount > 0" 
+              class="nav-badge">{{ item.notificationCount }}</span>
       </a>
     </div>
 
-    <!-- Actions Section -->
+    <!-- الإجراءات -->
     <div class="nav-actions">
-      <div class="quick-stats">
-        <div class="stat-item">
-          <i [class]="getQuickStatsIcon()"></i>
-          <span>{{ getQuickStatsText() }}</span>
-        </div>
-      </div>
-
-      <button class="customer-mode-btn">
+      <button class="customer-mode-btn" (click)="switchToCustomerMode()">
         <i class="fas fa-shopping-cart"></i>
         <span>وضع العميل</span>
       </button>
     </div>
-
-  </div>
-
-  <!-- Activity Indicator -->
-  <div class="activity-indicator" *ngIf="getTotalNotifications() > 0">
-    <div class="indicator-dot"></div>
-    <span>{{ getTotalNotifications() }} إشعارات جديدة</span>
   </div>
 </div>

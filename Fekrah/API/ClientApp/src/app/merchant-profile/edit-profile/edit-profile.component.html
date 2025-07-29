@@ -845,9 +845,9 @@
 
  <!-- Add Category Modal -->
         <div class="add-category-modal" *ngIf="showAddCategoryForm" (click)="hideAddCategoryModal()"
-             style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+             style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); z-index: 10000; backdrop-filter: blur(5px);">
             <div class="modal-content" (click)="$event.stopPropagation()"
-                 style="background: white; border-radius: 1rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; position: relative; box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3); overflow-y: auto;">
+                 style="background: white; border-radius: 1rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 80vh; position: fixed; top: 50vh; left: 50vw; transform: translate(-50%, -50%); box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.4); overflow-y: auto; animation: modalSlideIn 0.3s ease-out; z-index: 10001;">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e9ecef;">
                     <h4 style="font-size: 1.25rem; font-weight: 600; color: #212529; margin: 0; display: flex; align-items: center; gap: 0.5rem;">🏷️ إضافة تصنيف جديد</h4>
                     <button type="button" class="close-modal" (click)="hideAddCategoryModal()"
@@ -891,3 +891,164 @@
                 </div>
             </div>
         </div>
+
+<!-- CSS Animations for Modal -->
+<style>
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.add-category-modal {
+  animation: modalFadeIn 0.3s ease-out;
+  /* Force modal to stay in viewport center regardless of page scroll */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 10000 !important;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(5px);
+  }
+}
+
+/* Enhanced modal positioning for long pages */
+.add-category-modal .modal-content {
+  /* Use fixed positioning to center exactly in viewport regardless of page scroll */
+  position: fixed !important;
+  top: 50vh !important;
+  left: 50vw !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  /* Ensure modal stays within viewport */
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  /* Force viewport positioning */
+  z-index: 10001 !important;
+}
+
+/* Fallback positioning for very small screens */
+@media (max-height: 600px) {
+  .add-category-modal .modal-content {
+    top: 10vh !important;
+    transform: translateX(-50%) !important;
+    max-height: 80vh !important;
+  }
+}
+
+/* Better mobile responsiveness */
+@media (max-width: 768px) {
+  .add-category-modal .modal-content {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    padding: 1.5rem !important;
+    left: 50vw !important;
+    top: 50vh !important;
+  }
+}
+
+/* Force modal to always stay in viewport center */
+.add-category-modal .modal-content {
+  position: fixed !important;
+  top: 50vh !important;
+  left: 50vw !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10001 !important;
+  /* Prevent any layout shifts */
+  margin: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+/* Prevent body scroll when modal is open and ensure modal stays in place */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Additional safety measures for viewport centering */
+.add-category-modal {
+  display: block !important;
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Ensure modal container takes full viewport */
+.add-category-modal {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed !important;
+}
+
+/* Style enhancements for better visibility */
+.add-category-modal .modal-content {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Animation keyframes for smooth appearance */
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.8);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -55%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Override any parent positioning context */
+.add-category-modal {
+  /* Force modal to escape any positioned containers */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 99999 !important;
+  /* Ensure it covers entire viewport */
+  width: 100vw !important;
+  height: 100vh !important;
+  /* Remove any transforms that might affect positioning */
+  transform: none !important;
+}
+
+/* Force modal content to center in viewport */
+.add-category-modal .modal-content {
+  /* Use viewport units for absolute screen positioning */
+  position: fixed !important;
+  top: 50vh !important;
+  left: 50vw !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 100000 !important;
+  /* Override any inherited positioning */
+  margin: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  /* Force out of document flow */
+  float: none !important;
+  clear: none !important;
+}
+</style>

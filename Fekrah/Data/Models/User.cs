@@ -34,7 +34,7 @@ namespace Data.Models
         public int Id { get; set; }
         public int UserId { get; set; }
         public int MerchantId { get; set; }
-        public string Role  { get; set; }
+        public string? Role  { get; set; }
 
         [ForeignKey(nameof(MerchantId))]
         public virtual Merchant Merchant { get; set; }
