@@ -1,0 +1,316 @@
+<div class="manage-merchants-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-store"></i>
+        إدارة التجار
+      </h1>
+      <p class="page-description">
+        إدارة وعرض جميع التجار المسجلين في المنصة
+      </p>
+    </div>
+    
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="addNewMerchant()">
+        <i class="fas fa-plus"></i>
+        إضافة تاجر جديد
+      </button>
+      <button class="btn btn-secondary" (click)="refreshData()">
+        <i class="fas fa-sync"></i>
+        تحديث
+      </button>
+      <button class="btn btn-outline" (click)="exportData()">
+        <i class="fas fa-download"></i>
+        تصدير
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <div class="stat-number">{{ getTotalCount() }}</div>
+        <div class="stat-label">إجمالي التجار</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon active">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-info">
+        <div class="stat-number">{{ getActiveCount() }}</div>
+        <div class="stat-label">التجار النشطون</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon inactive">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <div class="stat-info">
+        <div class="stat-number">{{ getInactiveCount() }}</div>
+        <div class="stat-label">غير النشطين</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon deleted">
+        <i class="fas fa-ban"></i>
+      </div>
+      <div class="stat-info">
+        <div class="stat-number">{{ getDeletedCount() }}</div>
+        <div class="stat-label">المغلقة</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="filters-container">
+    <div class="search-section">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="البحث في التجار..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()">
+        <button class="clear-btn" *ngIf="searchTerm" (click)="searchTerm=''; onSearchChange()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <!-- Status Filter -->
+      <div class="filter-group">
+        <label>الحالة</label>
+        <select [(ngModel)]="selectedStatus" (change)="onStatusChange()">
+          <option value="all">جميع الحالات</option>
+          <option value="active">نشط</option>
+          <option value="inactive">غير نشط</option>
+          <option value="deleted">مغلق</option>
+        </select>
+      </div>
+
+      <!-- Governorate Filter -->
+      <div class="filter-group">
+        <label>المحافظة</label>
+        <select [(ngModel)]="selectedGovernorate" (change)="onGovernorateChange()">
+          <option value="">جميع المحافظات</option>
+          <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
+        </select>
+      </div>
+
+      <!-- City Filter -->
+      <div class="filter-group">
+        <label>المدينة</label>
+        <select [(ngModel)]="selectedCity" (change)="onCityChange()" [disabled]="!selectedGovernorate">
+          <option value="">جميع المدن</option>
+          <option *ngFor="let city of cities" [value]="city.id">{{ city.nameAr }}</option>
+        </select>
+      </div>
+
+      <!-- Clear Filters -->
+      <div class="filter-group">
+        <button class="btn btn-outline" (click)="clearFilters()">
+          <i class="fas fa-times"></i>
+          مسح الفلاتر
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Info -->
+  <div class="results-info">
+    <span class="results-text">{{ getResultsText() }}</span>
+    
+    <div class="view-controls">
+      <div class="items-per-page">
+        <label>عرض:</label>
+        <select [(ngModel)]="itemsPerPage" (change)="updateItemsPerPage()">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <span>عنصر</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p>جارٍ تحميل البيانات...</p>
+  </div>
+
+  <!-- Merchants Table -->
+  <div class="table-container" *ngIf="!isLoading">
+    <table class="merchants-table">
+      <thead>
+        <tr>
+          <th>التاجر</th>
+          <th>الموقع</th>
+          <th>التقييم</th>
+          <th>الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let merchant of getPaginatedMerchants(); trackBy: trackByMerchantId" 
+            class="merchant-row">
+          
+          <!-- Merchant Info -->
+          <td class="merchant-info">
+            <div class="merchant-avatar">
+              <img [src]="merchant.logo || '/assets/images/default-store.png'" 
+                   [alt]="merchant.shopName"
+                   (error)="onImageError($event)">
+              
+              <!-- Map indicator -->
+              <div class="map-badge" *ngIf="merchant.locationOnMap" title="يظهر على الخريطة">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+            </div>
+            
+            <div class="merchant-details">
+              <h4 class="merchant-name">{{ merchant.shopName }}</h4>
+              <p class="merchant-email">{{ merchant.email }}</p>
+              <p class="merchant-phone">{{ merchant.mobileNo }}</p>
+              
+              <!-- National ID -->
+              <div class="merchant-id" *ngIf="merchant.nationalIdNumber">
+                <i class="fas fa-id-card"></i>
+                <span>{{ merchant.nationalIdNumber }}</span>
+              </div>
+            </div>
+          </td>
+
+          <!-- Location -->
+          <td class="location-info">
+            <div class="location-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ getGovernorateName(merchant.governorateId || 0) }}</span>
+            </div>
+            <div class="location-item" *ngIf="merchant.cityId">
+              <i class="fas fa-city"></i>
+              <span>{{ getCityName(merchant.cityId) }}</span>
+            </div>
+          </td>
+
+          <!-- Rating -->
+          <td class="rating-info">
+            <div class="rating-stars">
+              <span class="rating-number">{{ merchant.rating || 0 }}</span>
+              <div class="stars">
+                <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]; let i = index" 
+                   [class.filled]="(merchant.rating || 0) > i"></i>
+              </div>
+              <span class="rating-count">({{ merchant.ratingCount || 0 }})</span>
+            </div>
+          </td>
+
+          <!-- Status -->
+          <td class="status-info">
+            <span class="status-badge" [ngClass]="getMerchantStatusClass(merchant)">
+              <i class="fas fa-circle"></i>
+              {{ getMerchantStatusLabel(merchant) }}
+            </span>
+          </td>
+
+          <!-- Actions -->
+          <td class="actions-info">
+            <div class="action-buttons">
+              <button class="action-btn view" 
+                      (click)="viewMerchant(merchant)"
+                      title="عرض التفاصيل">
+                <i class="fas fa-eye"></i>
+              </button>
+              
+              <button class="action-btn edit" 
+                      (click)="editMerchant(merchant)"
+                      title="تعديل">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <button class="action-btn activate" 
+                      *ngIf="getMerchantStatus(merchant) === 'active'"
+                      (click)="toggleMerchantStatus(merchant)"
+                      title="إلغاء التفعيل">
+                <i class="fas fa-toggle-off"></i>
+              </button>
+
+              <button class="action-btn deactivate" 
+                      *ngIf="getMerchantStatus(merchant) === 'inactive'"
+                      (click)="toggleMerchantStatus(merchant)"
+                      title="تفعيل">
+                <i class="fas fa-toggle-on"></i>
+              </button>
+
+              <button class="action-btn delete" 
+                      *ngIf="getMerchantStatus(merchant) !== 'deleted'"
+                      (click)="deleteMerchant(merchant)"
+                      title="إغلاق">
+                <i class="fas fa-ban"></i>
+              </button>
+
+              <button class="action-btn reactivate" 
+                      *ngIf="getMerchantStatus(merchant) === 'deleted'"
+                      (click)="reactivateMerchant(merchant)"
+                      title="إعادة تفعيل">
+                <i class="fas fa-undo"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && getPaginatedMerchants().length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-store-slash"></i>
+      </div>
+      <h3>لا توجد تجار</h3>
+      <p>لم يتم العثور على أي تجار بالمعايير المحددة</p>
+      <button class="btn btn-primary" (click)="clearFilters()">
+        مسح الفلاتر
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="!isLoading && getPaginatedMerchants().length > 0">
+    <button class="pagination-btn" 
+            [disabled]="currentPage === 1"
+            (click)="previousPage()">
+      <i class="fas fa-chevron-right"></i>
+      السابق
+    </button>
+
+    <div class="pagination-pages">
+      <button class="pagination-btn page-btn" 
+              *ngFor="let page of getVisiblePages()"
+              [class.active]="page === currentPage"
+              [disabled]="page === -1"
+              (click)="page !== -1 && goToPage(page)">
+        {{ page === -1 ? '...' : page }}
+      </button>
+    </div>
+
+    <button class="pagination-btn" 
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()">
+      التالي
+      <i class="fas fa-chevron-left"></i>
+    </button>
+  </div>
+</div>

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CityLookupDto, GovernorateLookupDto, MerchantDTO, SwaggerClient } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
-import { MerchantPerformanceMetrics } from './merchant-performance-metrics';
+import { MerchantStatus } from 'src/app/Shared/Models/merchant-status.enum';
 
 @Component({
   selector: 'app-manage-merchants',
@@ -21,7 +21,7 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   isLoadingGovernorates = false;
   
   // Performance tracking
-  private performanceMetrics = MerchantPerformanceMetrics;
+  // private performanceMetrics = MerchantPerformanceMetrics;
   private subscription: Subscription = new Subscription();
   
   // Enhanced loading states
@@ -30,8 +30,11 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   isFiltering: boolean = false;
   
   // Animation states
-  showEnhancedAnimations: boolean = true;
-  animationDelay: number = 50;
+  showEnhancedAnimations: boolean = false;
+  animationDelay: number = 0;
+  
+  // Dropdown states for actions
+  showDropdown: { [key: number]: boolean } = {};
   
   // Search and filter
   searchTerm = '';
@@ -47,20 +50,21 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     city: ''
   };
   
-  // إضافة خصائص الإحصائيات
+  // إضافة خصائص الإحصائيات المحدثة مع دعم كامل للـ API
   totalMerchants = 0;
   activeMerchants = 0;
-  pendingMerchants = 0;
   inactiveMerchants = 0;
+  deletedMerchants = 0; // استبدال pending بـ deleted
+  totalCount = 0; // للعدد الإجمالي من API
   
-  // Pagination
+  // Pagination محدثة للعمل مع server-side pagination
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 0;
   
   // View options
   viewMode: 'grid' | 'list' = 'list';
-  sortBy: 'name' | 'date' | 'rating' | 'orders' = 'date';
+  sortBy: 'name' | 'date' | 'orders' = 'date';
   sortDirection: 'asc' | 'desc' = 'desc';
   
   // Advanced filters
@@ -81,41 +85,41 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.subscription.unsubscribe();
-    this.performanceMetrics.cleanup();
   }
 
   loadMerchants(): void {
     this.isLoading = true;
-    console.log('🏪 Loading merchants for admin...');
+    console.log('🏪 Loading merchants from API...');
     
-    // Mock data for now - replace with actual API call
+    const pageSize = this.itemsPerPage;
+    const page = this.currentPage;
+    const searchTerm = this.searchTerm?.trim() || undefined;
+    
     this.subscriptions.add(
-      // this.swaggerClient.apiMerchantGetAllGet().subscribe({
-      //   next: (merchants) => {
-      //     this.merchants = merchants || [];
-      //     this.updateStatistics();
-      //     this.applyFilters();
-      //     this.isLoading = false;
-      //     console.log('✅ Merchants loaded:', this.merchants.length);
-      //   },
-      //   error: (error) => {
-      //     console.error('❌ Error loading merchants:', error);
-      //     this.isLoading = false;
-      //   }
-      // })
+      this.swaggerClient.apiMerchantGetAllGet(pageSize, page, searchTerm).subscribe({
+        next: (response) => {
+          this.merchants = response.data || [];
+          this.totalCount = response.count || 0;
+          this.totalPages = Math.ceil(this.totalCount / this.itemsPerPage);
+          
+          this.updateStatistics();
+          this.applyFilters(); // تطبيق الفلاتر المحلية فقط
+          this.isLoading = false;
+          console.log('✅ Merchants loaded from API:', this.merchants.length);
+          this.showToast(`تم تحميل ${this.merchants.length} تاجر بنجاح`, 'success');
+        },
+        error: (error) => {
+          console.error('❌ Error loading merchants:', error);
+          this.merchants = [];
+          this.totalCount = 0;
+          this.totalPages = 0;
+          this.updateStatistics();
+          this.applyFilters();
+          this.isLoading = false;
+          this.showToast('حدث خطأ أثناء تحميل البيانات', 'error');
+        }
+      })
     );
-    
-    // Mock data for demonstration
-    setTimeout(() => {
-      this.merchants = this.getMockMerchants();
-      this.updateStatistics();
-      this.applyFilters();
-      this.isLoading = false;
-      console.log('✅ Mock merchants loaded:', this.merchants.length);
-      
-      // إظهار رسالة نجاح التحميل
-      this.showToast(`تم تحميل ${this.merchants.length} تاجر بنجاح`, 'success');
-    }, 1000);
   }
 
   loadGovernorates(): void {
@@ -154,68 +158,57 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Search and filter methods
+  // Search and filter methods محدثة للعمل مع API
   onSearchChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadMerchants(); // إعادة تحميل البيانات من API مع البحث الجديد
   }
   
-  // Enhanced search with performance optimization
+  // Enhanced search with debounce
   onSearchInputChange(event: any): void {
     this.isSearching = true;
     this.searchQuery = event.target.value;
     
-    // Use debounced search for better performance
-    const debouncedSearch = this.performanceMetrics.debounce(() => {
+    // Simple debounced search
+    setTimeout(() => {
       this.performSearch();
       this.isSearching = false;
     }, 300);
-    
-    debouncedSearch();
   }
   
   private performSearch(): void {
-    this.performanceMetrics.startMeasure('search-performance');
-    
     if (!this.searchQuery.trim()) {
       this.filteredMerchants = [...this.merchants];
     } else {
-      const normalizedQuery = this.performanceMetrics.normalizeArabicText(this.searchQuery);
+      const query = this.searchQuery.toLowerCase();
       this.filteredMerchants = this.merchants.filter(merchant => {
         const searchableText = [
           merchant.shopName || '',
           merchant.email || '',
           merchant.address || '',
           merchant.description || ''
-        ].join(' ');
+        ].join(' ').toLowerCase();
         
-        const normalizedText = this.performanceMetrics.normalizeArabicText(searchableText);
-        return this.performanceMetrics.fuzzySearch(normalizedQuery, normalizedText);
+        return searchableText.includes(query);
       });
     }
     
     this.updatePagination();
-    this.performanceMetrics.endMeasure('search-performance');
   }
   
-  // إضافة دالة refreshData
+  // إضافة دالة refreshData محدثة
   refreshData(): void {
     console.log('🔄 Refreshing merchant data...');
-    this.isLoading = true;
-    
-    // محاكاة تحديث البيانات
-    setTimeout(() => {
-      this.loadMerchants();
-      this.showToast('تم تحديث البيانات بنجاح', 'success');
-    }, 500);
+    this.loadMerchants();
   }
   
-  // إضافة دالة تحديث الإحصائيات
+  // إضافة دالة تحديث الإحصائيات المحدثة
   updateStatistics(): void {
-    this.totalMerchants = this.merchants.length;
+    // استخدام العدد الإجمالي من API إذا كان متوفر
+    this.totalMerchants = this.totalCount || this.merchants.length;
     this.activeMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'active').length;
-    this.pendingMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'pending').length;
     this.inactiveMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'inactive').length;
+    this.deletedMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'deleted').length;
   }
 
   onGovernorateChange(): void {
@@ -283,10 +276,6 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
           aValue = a.id || 0;
           bValue = b.id || 0;
           break;
-        case 'rating':
-          aValue = a.rating || 0;
-          bValue = b.rating || 0;
-          break;
         case 'orders':
           aValue = this.getMerchantOrdersCount(a);
           bValue = this.getMerchantOrdersCount(b);
@@ -304,43 +293,62 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   }
 
   updatePagination(): void {
-    this.totalPages = Math.ceil(this.filteredMerchants.length / this.itemsPerPage);
-    if (this.currentPage > this.totalPages) {
+    // التحديث من API response
+    this.totalPages = Math.ceil(this.totalCount / this.itemsPerPage);
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
       this.currentPage = 1;
+      this.loadMerchants(); // إعادة تحميل البيانات
     }
   }
 
   getPaginatedMerchants(): MerchantDTO[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.filteredMerchants.slice(startIndex, endIndex);
+    // البيانات تأتي مقسمة من API، لا حاجة للتقسيم المحلي
+    return this.filteredMerchants;
   }
 
-  // Pagination methods
+  // Pagination methods محدثة للعمل مع API
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadMerchants(); // تحميل الصفحة التالية من API
     }
   }
 
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadMerchants(); // تحميل الصفحة السابقة من API
     }
   }
 
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
+      this.loadMerchants(); // تحميل الصفحة المحددة من API
     }
   }
 
-  // Utility methods
+  // Utility methods محدثة (مؤقت لحد إضافة status للـ API)
   getMerchantStatus(merchant: MerchantDTO): string {
-    // Since isActive is not in MerchantDTO, we'll use rating as a status indicator
-    if (merchant.rating === 0) return 'pending';
+    // حالياً سنستخدم rating كمؤشر للحالة لحد ما نضيف status property للـ API
+    if (merchant.rating === 0) return 'inactive';
     if ((merchant.rating || 0) < 3.0) return 'inactive';
     return 'active';
+    
+    // TODO: عند إضافة status property للـ MerchantDTO، استخدم هذا الكود:
+    // if (!merchant.status) {
+    //   return 'inactive';
+    // }
+    // switch (merchant.status) {
+    //   case MerchantStatus.Active:
+    //     return 'active';
+    //   case MerchantStatus.Inactive:
+    //     return 'inactive';
+    //   case MerchantStatus.Deleted:
+    //     return 'deleted';
+    //   default:
+    //     return 'inactive';
+    // }
   }
 
   getMerchantStatusLabel(merchant: MerchantDTO): string {
@@ -348,7 +356,7 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     switch (status) {
       case 'active': return 'نشط';
       case 'inactive': return 'غير نشط';
-      case 'pending': return 'في الانتظار';
+      case 'deleted': return 'مغلق';
       default: return 'غير محدد';
     }
   }
@@ -358,7 +366,7 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     switch (status) {
       case 'active': return 'status-active';
       case 'inactive': return 'status-inactive';
-      case 'pending': return 'status-pending';
+      case 'deleted': return 'status-deleted';
       default: return 'status-unknown';
     }
   }
@@ -401,49 +409,86 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     console.log('🔄 Toggling merchant status:', merchant.shopName);
     
     const currentStatus = this.getMerchantStatus(merchant);
-    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    const statusText = newStatus === 'active' ? 'تفعيل' : 'إلغاء تفعيل';
+    let newStatus: string;
+    let statusText: string;
+    
+    // تحديد الحالة الجديدة
+    if (currentStatus === 'active') {
+      newStatus = 'inactive';
+      statusText = 'إلغاء تفعيل';
+    } else {
+      newStatus = 'active';
+      statusText = 'تفعيل';
+    }
     
     if (confirm(`هل أنت متأكد من ${statusText} التاجر "${merchant.shopName}"؟`)) {
-      // Update merchant rating to reflect status (using rating as status indicator)
+      // تحديث البيانات محلياً أولاً للاستجابة السريعة (مؤقت)
       merchant.rating = newStatus === 'active' ? 4.0 : 2.0;
       
-      // Here you would make an API call to update the status
-      // this.swaggerClient.apiMerchantUpdateStatusPut(merchant.id, newStatus).subscribe(...)
+      // TODO: عند إضافة API لتحديث الحالة، استخدم هذا الكود:
+      // this.swaggerClient.apiMerchantUpdateStatusPost(merchant.id, newStatus).subscribe({
+      //   next: (updatedMerchant) => {
+      //     this.showToast(`تم ${statusText} التاجر بنجاح`, 'success');
+      //     this.loadMerchants(); // إعادة تحميل البيانات
+      //   },
+      //   error: (error) => {
+      //     console.error('Error updating merchant status:', error);
+      //     this.showToast('حدث خطأ أثناء تحديث حالة التاجر', 'error');
+      //     // استرجاع الحالة السابقة
+      //     merchant.rating = currentStatus === 'active' ? 4.0 : 2.0;
+      //   }
+      // });
       
       this.showToast(`تم ${statusText} التاجر بنجاح`, 'success');
-      this.applyFilters(); // Refresh the list
+      this.applyFilters(); // تحديث القائمة
     }
   }
 
   deleteMerchant(merchant: MerchantDTO): void {
-    console.log('🗑️ Deleting merchant:', merchant.shopName);
+    console.log('🗑️ Closing merchant:', merchant.shopName);
     
-    if (confirm(`هل أنت متأكد من حذف التاجر "${merchant.shopName}"؟ هذا الإجراء لا يمكن التراجع عنه.`)) {
+    if (confirm(`هل أنت متأكد من إغلاق التاجر "${merchant.shopName}"؟ يمكن إعادة تفعيله لاحقاً.`)) {
       this.isLoading = true;
       
-      // Here you would make an API call to delete the merchant
-      // this.swaggerClient.apiMerchantDeleteDelete(merchant.id).subscribe({
-      //   next: () => {
-      //     this.merchants = this.merchants.filter(m => m.id !== merchant.id);
-      //     this.applyFilters();
-      //     this.showToast('تم حذف التاجر بنجاح', 'success');
-      //     this.isLoading = false;
-      //   },
-      //   error: (error) => {
-      //     console.error('Error deleting merchant:', error);
-      //     this.showToast('حدث خطأ أثناء حذف التاجر', 'error');
-      //     this.isLoading = false;
-      //   }
-      // });
+      // TODO: عند إضافة API للحذف/الإغلاق، استخدم هذا الكود:
+      // this.subscriptions.add(
+      //   this.swaggerClient.apiMerchantUpdateStatusPost(merchant.id, MerchantStatus.Deleted).subscribe({
+      //     next: (response) => {
+      //       this.updateStatistics();
+      //       this.applyFilters();
+      //       this.showToast('تم إغلاق التاجر بنجاح', 'success');
+      //       this.isLoading = false;
+      //     },
+      //     error: (error) => {
+      //       console.error('Error closing merchant:', error);
+      //       this.showToast('حدث خطأ أثناء إغلاق التاجر', 'error');
+      //       this.isLoading = false;
+      //     }
+      //   })
+      // );
       
-      // Mock deletion for demonstration
+      // مؤقت: محاكاة الحذف محلياً
       setTimeout(() => {
         this.merchants = this.merchants.filter(m => m.id !== merchant.id);
+        this.updateStatistics();
         this.applyFilters();
-        this.showToast('تم حذف التاجر بنجاح', 'success');
+        this.showToast('تم إغلاق التاجر بنجاح', 'success');
         this.isLoading = false;
       }, 1000);
+    }
+  }
+
+  // إعادة تفعيل متجر مغلق
+  reactivateMerchant(merchant: MerchantDTO): void {
+    console.log('🔄 Reactivating merchant:', merchant.shopName);
+    
+    if (confirm(`هل أنت متأكد من إعادة تفعيل التاجر "${merchant.shopName}"؟`)) {
+      // TODO: استخدام API عند توفره
+      // this.swaggerClient.apiMerchantUpdateStatusPost(merchant.id, MerchantStatus.Active).subscribe({...});
+      
+      merchant.rating = 4.0; // مؤقت
+      this.showToast('تم إعادة تفعيل التاجر بنجاح', 'success');
+      this.applyFilters(); // تحديث القائمة
     }
   }
 
@@ -452,7 +497,7 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
   }
 
-  changeSortBy(sortBy: 'name' | 'date' | 'rating' | 'orders'): void {
+  changeSortBy(sortBy: 'name' | 'date' | 'orders'): void {
     if (this.sortBy === sortBy) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -462,7 +507,7 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  // Clear filters
+  // Clear filters محدث للعمل مع API
   clearFilters(): void {
     this.searchTerm = '';
     this.searchQuery = '';
@@ -476,7 +521,13 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     };
     this.cities = [];
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadMerchants(); // إعادة تحميل البيانات مع إزالة الفلاتر
+  }
+
+  // دالة لتحديث عدد العناصر في الصفحة
+  updateItemsPerPage(): void {
+    this.currentPage = 1;
+    this.loadMerchants(); // إعادة تحميل البيانات مع العدد الجديد
   }
 
   // Toast notification
@@ -713,23 +764,21 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Statistics methods for dashboard cards
+  // Statistics methods محدثة للـ dashboard cards
   getActiveCount(): number {
-    return this.merchants.filter(m => this.getMerchantStatus(m) === 'active').length;
-  }
-
-  getPendingCount(): number {
-    return this.merchants.filter(m => this.getMerchantStatus(m) === 'pending').length;
+    return this.activeMerchants;
   }
 
   getInactiveCount(): number {
-    return this.merchants.filter(m => this.getMerchantStatus(m) === 'inactive').length;
+    return this.inactiveMerchants;
   }
 
-  getAverageRating(): string {
-    const total = this.merchants.reduce((sum, m) => sum + (m.rating || 0), 0);
-    const average = this.merchants.length > 0 ? total / this.merchants.length : 0;
-    return average.toFixed(1);
+  getDeletedCount(): number {
+    return this.deletedMerchants;
+  }
+
+  getTotalCount(): number {
+    return this.totalMerchants;
   }
 
   // Export data method
@@ -820,5 +869,63 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     }
     
     return pages;
+  }
+
+  // دالة مساعدة لتحديث عرض النتائج
+  getResultsText(): string {
+    const start = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const end = Math.min(this.currentPage * this.itemsPerPage, this.totalCount);
+    return `عرض ${start} - ${end} من ${this.totalCount} تاجر`;
+  }
+
+  // Toggle dropdown for actions
+  toggleDropdown(merchantId: number): void {
+    // Close all other dropdowns
+    Object.keys(this.showDropdown).forEach(key => {
+      if (+key !== merchantId) {
+        this.showDropdown[+key] = false;
+      }
+    });
+    
+    // Toggle current dropdown
+    this.showDropdown[merchantId] = !this.showDropdown[merchantId];
+  }
+
+  // Open location on Google Maps
+  openLocationOnMap(merchant: MerchantDTO): void {
+    if (merchant.locationOnMap) {
+      window.open(merchant.locationOnMap, '_blank');
+    } else {
+      // Fallback to search by name and address
+      const query = encodeURIComponent(`${merchant.shopName} ${merchant.address || ''}`);
+      const mapsUrl = `https://www.google.com/maps/search/${query}`;
+      window.open(mapsUrl, '_blank');
+    }
+  }
+
+  // Check if has active filters
+  hasActiveFilters(): boolean {
+    return !!(
+      this.searchTerm ||
+      this.selectedStatus !== 'all' ||
+      this.selectedGovernorate ||
+      this.selectedCity ||
+      this.filters.status ||
+      this.filters.category ||
+      this.filters.city
+    );
+  }
+
+  // Get active filters count
+  getActiveFiltersCount(): number {
+    let count = 0;
+    if (this.searchTerm) count++;
+    if (this.selectedStatus !== 'all') count++;
+    if (this.selectedGovernorate) count++;
+    if (this.selectedCity) count++;
+    if (this.filters.status) count++;
+    if (this.filters.category) count++;
+    if (this.filters.city) count++;
+    return count;
   }
 }
