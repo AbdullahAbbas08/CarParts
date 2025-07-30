@@ -1,0 +1,424 @@
+/* Enhanced Merchant Management - Advanced Animations Configuration */
+
+:root {
+  /* Animation timing functions */
+  --ease-in-cubic: cubic-bezier(0.32, 0, 0.67, 0);
+  --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in-quart: cubic-bezier(0.5, 0, 0.75, 0);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Performance optimized durations */
+  --animation-fast: 150ms;
+  --animation-normal: 300ms;
+  --animation-slow: 500ms;
+  --animation-slower: 800ms;
+  
+  /* Advanced color schemes */
+  --primary-gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  --success-gradient: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  --warning-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --danger-gradient: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  --info-gradient: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  
+  /* Glass effect variables */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-backdrop: blur(20px);
+  
+  /* Neon effect variables */
+  --neon-glow: 0 0 20px var(--primary-color);
+  --neon-glow-strong: 0 0 40px var(--primary-color);
+  
+  /* Particle effect variables */
+  --particle-count: 50;
+  --particle-speed: 20s;
+}
+
+/* Advanced loading animations */
+.merchant-loading {
+  &.skeleton-loading {
+    .merchant-card {
+      background: linear-gradient(
+        90deg,
+        var(--glass-bg) 25%,
+        rgba(255, 255, 255, 0.2) 50%,
+        var(--glass-bg) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+      
+      .merchant-logo,
+      .merchant-name,
+      .merchant-email,
+      .merchant-rating {
+        background: var(--glass-bg);
+        border-radius: 4px;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+          );
+          animation: skeleton-wave 2s infinite;
+        }
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes skeleton-wave {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Advanced hover effects */
+.merchant-card {
+  &.hover-magnetic {
+    transition: transform var(--animation-normal) var(--ease-out-quart);
+    
+    &:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.15),
+        0 0 0 1px var(--glass-border),
+        var(--neon-glow);
+    }
+  }
+  
+  &.hover-tilt {
+    transform-style: preserve-3d;
+    transition: transform var(--animation-normal) var(--ease-out-cubic);
+    
+    &:hover {
+      transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateZ(20px);
+    }
+  }
+  
+  &.hover-hologram {
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      transition: left var(--animation-slow) var(--ease-out-cubic);
+    }
+    
+    &:hover::before {
+      left: 100%;
+    }
+  }
+}
+
+/* Advanced filter animations */
+.filter-container {
+  .filter-item {
+    transition: all var(--animation-normal) var(--ease-out-cubic);
+    transform-origin: center;
+    
+    &.filter-entering {
+      animation: filterEnter var(--animation-normal) var(--ease-out-cubic);
+    }
+    
+    &.filter-leaving {
+      animation: filterLeave var(--animation-normal) var(--ease-in-cubic);
+    }
+  }
+}
+
+@keyframes filterEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes filterLeave {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+}
+
+/* Advanced search animations */
+.search-container {
+  .search-results {
+    .result-item {
+      animation: resultSlideIn var(--animation-normal) var(--ease-out-cubic);
+      animation-fill-mode: both;
+    }
+    
+    @for $i from 1 through 10 {
+      .result-item:nth-child(#{$i}) {
+        animation-delay: #{($i - 1) * 50ms};
+      }
+    }
+  }
+}
+
+@keyframes resultSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Advanced pagination animations */
+.pagination-container {
+  .page-item {
+    transition: all var(--animation-fast) var(--ease-out-cubic);
+    
+    &.page-changing {
+      animation: pageChange var(--animation-normal) var(--ease-in-out-cubic);
+    }
+  }
+}
+
+@keyframes pageChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: var(--neon-glow-strong);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Advanced modal animations */
+.modal-overlay {
+  &.modal-entering {
+    animation: modalFadeIn var(--animation-normal) var(--ease-out-cubic);
+  }
+  
+  &.modal-leaving {
+    animation: modalFadeOut var(--animation-normal) var(--ease-in-cubic);
+  }
+  
+  .modal-content {
+    &.modal-entering {
+      animation: modalSlideIn var(--animation-normal) var(--ease-out-cubic);
+    }
+    
+    &.modal-leaving {
+      animation: modalSlideOut var(--animation-normal) var(--ease-in-cubic);
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(20px);
+  }
+}
+
+@keyframes modalFadeOut {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(20px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+}
+
+/* Advanced loading states */
+.loading-state {
+  &.pulse-loading {
+    animation: pulseGlow 2s infinite;
+  }
+  
+  &.wave-loading {
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+      );
+      animation: waveMove 2s infinite;
+    }
+  }
+  
+  &.dots-loading {
+    &::after {
+      content: '';
+      display: inline-block;
+      animation: dotsAnimation 1.5s infinite;
+    }
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(var(--primary-color-rgb), 0.6);
+  }
+}
+
+@keyframes waveMove {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes dotsAnimation {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+
+/* Performance optimizations */
+.merchant-table {
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  
+  /* Optimize rendering */
+  contain: layout style paint;
+  
+  .merchant-row {
+    /* Optimize individual rows */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    &.virtualized {
+      /* Virtual scrolling optimizations */
+      position: absolute;
+      width: 100%;
+      contain: strict;
+    }
+  }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .merchant-card {
+    border: 2px solid;
+    background: var(--background-color);
+    
+    &:hover {
+      border-width: 3px;
+    }
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass-bg: rgba(0, 0, 0, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Print styles */
+@media print {
+  .merchant-table {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    
+    .merchant-card {
+      break-inside: avoid;
+      background: white !important;
+      border: 1px solid black !important;
+    }
+    
+    .action-buttons,
+    .filter-container,
+    .pagination-container {
+      display: none !important;
+    }
+  }
+}

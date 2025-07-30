@@ -60,6 +60,8 @@ namespace Bussiness.Services
                     Count = query.Cast<TDetailsDTO>().Count()
                 };
 
+            //var _Data = query.ProjectTo<TDetailsDTO>(_Mapper.ConfigurationProvider).Skip((page - 1) * pageSize).Take(pageSize);
+
             return new DataSourceResult<TDetailsDTO>
             {
                 Data = query.ProjectTo<TDetailsDTO>(_Mapper.ConfigurationProvider).Skip((page - 1) * pageSize).Take(pageSize),

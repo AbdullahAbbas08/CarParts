@@ -234,4 +234,24 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
             return null;
         }
     }
+
+    //public MerchantDTO GetAll()
+    //{
+    //    try
+    //    {
+    //        var entity = _unitOfWork.Repository<Merchant>().GetAll()
+    //            .Include(m => m.Members)
+    //            .Include(x => x.City)
+    //            .Include(x => x.Governorate)
+    //            .Include(x => x.Categories)
+    //            .FirstOrDefault(m => m.Id == id);
+    //        var ttt = entity == null ? null : _mapper.Map<MerchantDTO>(entity);
+    //        return ttt;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // يمكن تسجيل الخطأ هنا
+    //        return null;
+    //    }
+    //}
 }

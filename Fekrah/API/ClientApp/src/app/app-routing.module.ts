@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: 'home', loadChildren: () => import('./core/features/home/home.module').then(m => m.HomeModule) },
   { path: 'parts', loadChildren: () => import('./core/features/parts/parts.module').then(m => m.PartsModule) },
   { path: 'auth', loadChildren: () => import('./core/features/auth/auth.module').then(m => m.AuthModule) },
-  { path: 'admin', loadChildren: () => import('./core/features/admin/admin.module').then(m => m.AdminModule) },
+  { path: 'admin', loadChildren: () => import('../app/dashboard/admin/admin.module').then(m => m.AdminModule) },
   { path: 'category', loadChildren: () => import('./core/features/category/category.module').then(m => m.CategoryModule) },
   { path: 'brands', loadChildren: () => import('./core/features/all-brands/all-prands.module').then(m => m.AllPrandsModule) },
   { path: 'offers', loadChildren: () => import('./core/features/all-offers/all-offers.module').then(m => m.AllOffersModule) },

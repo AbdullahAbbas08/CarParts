@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { CityLookupDto, GovernorateLookupDto, MerchantDTO, SwaggerClient } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
+import { MerchantPerformanceMetrics } from './merchant-performance-metrics';
 
 @Component({
   selector: 'app-manage-merchants',
@@ -19,11 +20,38 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   isLoading = false;
   isLoadingGovernorates = false;
   
+  // Performance tracking
+  private performanceMetrics = MerchantPerformanceMetrics;
+  private subscription: Subscription = new Subscription();
+  
+  // Enhanced loading states
+  isTableLoading: boolean = false;
+  isSearching: boolean = false;
+  isFiltering: boolean = false;
+  
+  // Animation states
+  showEnhancedAnimations: boolean = true;
+  animationDelay: number = 50;
+  
   // Search and filter
   searchTerm = '';
+  searchQuery = ''; // إضافة خاصية searchQuery
   selectedGovernorate: number | null = null;
   selectedCity: number | null = null;
   selectedStatus: string = 'all'; // all, active, inactive, pending
+  
+  // إضافة كائن الفلاتر
+  filters = {
+    status: '',
+    category: '',
+    city: ''
+  };
+  
+  // إضافة خصائص الإحصائيات
+  totalMerchants = 0;
+  activeMerchants = 0;
+  pendingMerchants = 0;
+  inactiveMerchants = 0;
   
   // Pagination
   currentPage = 1;
@@ -52,6 +80,8 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    this.subscription.unsubscribe();
+    this.performanceMetrics.cleanup();
   }
 
   loadMerchants(): void {
@@ -63,6 +93,7 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
       // this.swaggerClient.apiMerchantGetAllGet().subscribe({
       //   next: (merchants) => {
       //     this.merchants = merchants || [];
+      //     this.updateStatistics();
       //     this.applyFilters();
       //     this.isLoading = false;
       //     console.log('✅ Merchants loaded:', this.merchants.length);
@@ -77,9 +108,13 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     // Mock data for demonstration
     setTimeout(() => {
       this.merchants = this.getMockMerchants();
+      this.updateStatistics();
       this.applyFilters();
       this.isLoading = false;
       console.log('✅ Mock merchants loaded:', this.merchants.length);
+      
+      // إظهار رسالة نجاح التحميل
+      this.showToast(`تم تحميل ${this.merchants.length} تاجر بنجاح`, 'success');
     }, 1000);
   }
 
@@ -124,6 +159,64 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.applyFilters();
   }
+  
+  // Enhanced search with performance optimization
+  onSearchInputChange(event: any): void {
+    this.isSearching = true;
+    this.searchQuery = event.target.value;
+    
+    // Use debounced search for better performance
+    const debouncedSearch = this.performanceMetrics.debounce(() => {
+      this.performSearch();
+      this.isSearching = false;
+    }, 300);
+    
+    debouncedSearch();
+  }
+  
+  private performSearch(): void {
+    this.performanceMetrics.startMeasure('search-performance');
+    
+    if (!this.searchQuery.trim()) {
+      this.filteredMerchants = [...this.merchants];
+    } else {
+      const normalizedQuery = this.performanceMetrics.normalizeArabicText(this.searchQuery);
+      this.filteredMerchants = this.merchants.filter(merchant => {
+        const searchableText = [
+          merchant.shopName || '',
+          merchant.email || '',
+          merchant.address || '',
+          merchant.description || ''
+        ].join(' ');
+        
+        const normalizedText = this.performanceMetrics.normalizeArabicText(searchableText);
+        return this.performanceMetrics.fuzzySearch(normalizedQuery, normalizedText);
+      });
+    }
+    
+    this.updatePagination();
+    this.performanceMetrics.endMeasure('search-performance');
+  }
+  
+  // إضافة دالة refreshData
+  refreshData(): void {
+    console.log('🔄 Refreshing merchant data...');
+    this.isLoading = true;
+    
+    // محاكاة تحديث البيانات
+    setTimeout(() => {
+      this.loadMerchants();
+      this.showToast('تم تحديث البيانات بنجاح', 'success');
+    }, 500);
+  }
+  
+  // إضافة دالة تحديث الإحصائيات
+  updateStatistics(): void {
+    this.totalMerchants = this.merchants.length;
+    this.activeMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'active').length;
+    this.pendingMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'pending').length;
+    this.inactiveMerchants = this.merchants.filter(m => this.getMerchantStatus(m) === 'inactive').length;
+  }
 
   onGovernorateChange(): void {
     this.selectedCity = null;
@@ -148,9 +241,10 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = [...this.merchants];
 
-    // Search filter
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase();
+    // Search filter (تحديث للعمل مع searchQuery أيضاً)
+    const searchTerm = this.searchTerm || this.searchQuery || '';
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
       filtered = filtered.filter(merchant => 
         merchant.shopName?.toLowerCase().includes(term) ||
         merchant.email?.toLowerCase().includes(term) ||
@@ -158,19 +252,21 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
       );
     }
 
+    // Status filter (العمل مع كل من filters.status و selectedStatus)
+    const statusFilter = this.filters.status || this.selectedStatus;
+    if (statusFilter && statusFilter !== 'all' && statusFilter !== '') {
+      filtered = filtered.filter(merchant => this.getMerchantStatus(merchant) === statusFilter);
+    }
+
     // Governorate filter
     if (this.selectedGovernorate) {
       filtered = filtered.filter(merchant => merchant.governorateId === this.selectedGovernorate);
     }
 
-    // City filter
-    if (this.selectedCity) {
-      filtered = filtered.filter(merchant => merchant.cityId === this.selectedCity);
-    }
-
-    // Status filter
-    if (this.selectedStatus !== 'all') {
-      filtered = filtered.filter(merchant => this.getMerchantStatus(merchant) === this.selectedStatus);
+    // City filter (العمل مع كل من filters.city و selectedCity)
+    const cityFilter = this.filters.city || this.selectedCity;
+    if (cityFilter) {
+      filtered = filtered.filter(merchant => merchant.cityId === +cityFilter);
     }
 
     // Sort
@@ -369,9 +465,15 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   // Clear filters
   clearFilters(): void {
     this.searchTerm = '';
+    this.searchQuery = '';
     this.selectedGovernorate = null;
     this.selectedCity = null;
     this.selectedStatus = 'all';
+    this.filters = {
+      status: '',
+      category: '',
+      city: ''
+    };
     this.cities = [];
     this.currentPage = 1;
     this.applyFilters();
@@ -485,6 +587,118 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
         description: 'متجر قطع غيار الشمال',
         shortDescription: 'قطع غيار الشمال',
         locationOnMap: 'https://maps.google.com/?q=28.3998,36.5783'
+      },
+      {
+        id: 6,
+        shopName: 'مركز النخبة للإطارات',
+        email: 'elite@example.com',
+        mobileNo: '+966545678901',
+        governorateId: 1,
+        cityId: 1,
+        address: 'شارع الأمير محمد بن عبدالعزيز، الرياض',
+        rating: 4.6,
+        ratingCount: 180,
+        logo: '/assets/images/merchants/elite-tires.jpg',
+        slug: 'elite-tires',
+        description: 'متخصصون في بيع وتركيب الإطارات',
+        shortDescription: 'مركز النخبة للإطارات',
+        locationOnMap: 'https://maps.google.com/?q=24.7136,46.6753'
+      },
+      {
+        id: 7,
+        shopName: 'ورشة الماهر للسيارات',
+        email: 'almaher@example.com',
+        mobileNo: '+966556789012',
+        governorateId: 2,
+        cityId: 2,
+        address: 'شارع الظهران، الخبر',
+        rating: 4.3,
+        ratingCount: 95,
+        logo: '/assets/images/merchants/almaher.jpg',
+        slug: 'almaher-workshop',
+        description: 'ورشة متكاملة لصيانة جميع أنواع السيارات',
+        shortDescription: 'ورشة الماهر',
+        locationOnMap: 'https://maps.google.com/?q=26.4282,50.1000'
+      },
+      {
+        id: 8,
+        shopName: 'قطع غيار الأصيل',
+        email: 'alaseel@example.com',
+        mobileNo: '+966567890123',
+        governorateId: 3,
+        cityId: 3,
+        address: 'شارع المدينة، جدة',
+        rating: 0,
+        ratingCount: 0,
+        logo: '/assets/images/merchants/alaseel.jpg',
+        slug: 'alaseel-parts',
+        description: 'قطع غيار أصلية وبديلة بجودة عالية',
+        shortDescription: 'قطع غيار الأصيل',
+        locationOnMap: 'https://maps.google.com/?q=21.3891,39.8579'
+      },
+      {
+        id: 9,
+        shopName: 'مركز التميز للزيوت',
+        email: 'excellence@example.com',
+        mobileNo: '+966578901234',
+        governorateId: 4,
+        cityId: 4,
+        address: 'شارع الجوف، حائل',
+        rating: 4.1,
+        ratingCount: 67,
+        logo: '/assets/images/merchants/excellence-oils.jpg',
+        slug: 'excellence-oils',
+        description: 'متخصصون في زيوت وسوائل السيارات',
+        shortDescription: 'مركز التميز للزيوت',
+        locationOnMap: 'https://maps.google.com/?q=27.5114,41.6900'
+      },
+      {
+        id: 10,
+        shopName: 'ورشة المهندس للكهرباء',
+        email: 'engineer@example.com',
+        mobileNo: '+966589012345',
+        governorateId: 1,
+        cityId: 1,
+        address: 'شارع العليا، الرياض',
+        rating: 4.7,
+        ratingCount: 203,
+        logo: '/assets/images/merchants/engineer-electric.jpg',
+        slug: 'engineer-electric',
+        description: 'متخصصون في كهرباء السيارات والأنظمة الإلكترونية',
+        shortDescription: 'ورشة المهندس للكهرباء',
+        locationOnMap: 'https://maps.google.com/?q=24.7136,46.6753'
+      },
+      {
+        id: 11,
+        shopName: 'مركز الجودة للفحص',
+        email: 'quality@example.com',
+        mobileNo: '+966590123456',
+        governorateId: 2,
+        cityId: 2,
+        address: 'شارع العزيزية، الدمام',
+        rating: 2.8,
+        ratingCount: 32,
+        logo: '/assets/images/merchants/quality-inspection.jpg',
+        slug: 'quality-inspection',
+        description: 'مركز فحص دوري للسيارات',
+        shortDescription: 'مركز الجودة للفحص',
+        locationOnMap: 'https://maps.google.com/?q=26.4282,50.1000'
+      },
+      {
+        id: 12,
+        shopName: 'ورشة الحرفي المتقن',
+        email: 'craftsman@example.com',
+        mobileNo: '+966501234568',
+        governorateId: 3,
+        cityId: 3,
+        address: 'شارع الروضة، مكة المكرمة',
+        rating: 4.9,
+        ratingCount: 312,
+        logo: '/assets/images/merchants/craftsman.jpg',
+        slug: 'craftsman-workshop',
+        description: 'ورشة متخصصة في الدهان والحدادة',
+        shortDescription: 'ورشة الحرفي المتقن',
+        locationOnMap: 'https://maps.google.com/?q=21.4225,39.8262'
       }
     ];
     
@@ -506,6 +720,10 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
 
   getPendingCount(): number {
     return this.merchants.filter(m => this.getMerchantStatus(m) === 'pending').length;
+  }
+
+  getInactiveCount(): number {
+    return this.merchants.filter(m => this.getMerchantStatus(m) === 'inactive').length;
   }
 
   getAverageRating(): string {
