@@ -1,0 +1,93 @@
+<div class="add-category-modal" 
+     *ngIf="isVisible" 
+     (click)="onBackdropClick()">
+  
+  <div class="modal-content" (click)="onContentClick($event)">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-tag"></i>
+        إضافة تصنيف جديد
+      </h4>
+      <button type="button" 
+              class="close-modal" 
+              (click)="hide()"
+              [attr.aria-label]="'إغلاق النافذة'">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form [formGroup]="newCategoryForm" (ngSubmit)="addNewCategory()">
+        
+        <!-- Category Name Field -->
+        <div class="form-group">
+          <label for="categoryName" class="form-label">
+            <i class="fas fa-tag"></i>
+            اسم التصنيف
+            <span class="required-star">*</span>
+          </label>
+          
+          <input type="text" 
+                 id="categoryName"
+                 formControlName="name" 
+                 class="form-control"
+                 [class.error]="showNameError"
+                 placeholder="أدخل اسم التصنيف الجديد"
+                 maxlength="50"
+                 autocomplete="off">
+          
+          <!-- Character Counter -->
+          <div class="char-counter" *ngIf="nameControl?.value">
+            <span [class.warning]="nameControl?.value?.length > 40">
+              {{ nameControl?.value?.length }}/50
+            </span>
+          </div>
+
+          <!-- Error Message -->
+          <div class="error-message" *ngIf="showNameError">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span *ngIf="nameControl?.errors?.['required']">اسم التصنيف مطلوب</span>
+            <span *ngIf="nameControl?.errors?.['minlength']">اسم التصنيف يجب أن يكون على الأقل حرفين</span>
+            <span *ngIf="nameControl?.errors?.['maxlength']">اسم التصنيف لا يجب أن يزيد عن 50 حرف</span>
+          </div>
+
+          <!-- Hint -->
+          <div class="field-hint" *ngIf="!showNameError">
+            <i class="fas fa-info-circle"></i>
+            اختر اسماً واضحاً ومفهوماً للتصنيف
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions">
+          <button type="button" 
+                  class="btn-cancel" 
+                  (click)="hide()"
+                  [disabled]="isAddingCategory">
+            <i class="fas fa-times"></i>
+            إلغاء
+          </button>
+          
+          <button type="submit" 
+                  class="btn-add" 
+                  [disabled]="!isFormValid || isAddingCategory">
+            
+            <!-- Loading State -->
+            <div class="btn-content" *ngIf="isAddingCategory">
+              <i class="fas fa-spinner fa-spin"></i>
+              جاري الإضافة...
+            </div>
+            
+            <!-- Normal State -->
+            <div class="btn-content" *ngIf="!isAddingCategory">
+              <i class="fas fa-plus"></i>
+              إضافة التصنيف
+            </div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -33,7 +33,20 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   // Progress bar properties
   progressPercentage = 0;
   completedSteps = 0;
-  totalSteps = 6; // Basic info, Location, Documents, Logo, Team, Business Hours
+  totalSteps = 8; // Logo, Basic info, Location, Documents, Team, Business Hours, Categories, Description
+  
+  // Step wizard properties
+  currentStep: number = 1;
+  steps = [
+    { id: 1, title: 'شعار المتجر', icon: 'fas fa-images', completed: false },
+    { id: 2, title: 'معلومات أساسية', icon: 'fas fa-info-circle', completed: false },
+    { id: 3, title: 'الموقع', icon: 'fas fa-map-marker-alt', completed: false },
+    { id: 4, title: 'الوثائق', icon: 'fas fa-file-alt', completed: false },
+    { id: 5, title: 'فريق العمل', icon: 'fas fa-users', completed: false },
+    { id: 6, title: 'ساعات العمل', icon: 'fas fa-clock', completed: false },
+    { id: 7, title: 'التصنيفات', icon: 'fas fa-tags', completed: false },
+    { id: 8, title: 'وصف المتجر', icon: 'fas fa-align-left', completed: false }
+  ];
   
   // Lookup data
   governorates: GovernorateLookupDto[] = [];
@@ -136,9 +149,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
                       this.router.url.includes('add-merchant') ||
                       localStorage.getItem('currentUserRole') === 'admin';
     
-    console.log('🔍 Admin mode detected:', this.isAdminMode);
-    console.log('📍 Current route:', this.router.url);
-    
     this.initializeForm(); // Initialize empty form first
     this.initializeNewCategoryForm(); // Initialize add category form
     this.loadCurrentProfile();
@@ -152,6 +162,11 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Subscribe to form changes to update progress
     this.editForm.valueChanges.subscribe(() => {
       this.updateProgress();
+    });
+    
+    // Subscribe to form status changes for step validation
+    this.editForm.statusChanges.subscribe(() => {
+      // Trigger change detection for step navigation buttons
     });
   }
 
@@ -168,7 +183,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           this.isLoadingGovernorates = false;
         },
         error: (error) => {
-          console.error('Error loading governorates:', error);
           this.governorates = [];
           this.isLoadingGovernorates = false;
         }
@@ -183,10 +197,8 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         next: (categories) => {
           this.categories = categories || [];
           this.isLoadingCategories = false;
-          console.log('Categories loaded:', this.categories);
         },
         error: (error) => {
-          console.error('Error loading categories:', error);
           this.categories = [];
           this.isLoadingCategories = false;
         }
@@ -208,7 +220,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           this.isLoadingCities = false;
         },
         error: (error) => {
-          console.error('Error loading cities:', error);
           this.cities = [];
           this.isLoadingCities = false;
         }
@@ -241,7 +252,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
             this.initializeForm();
           },
           error: (error) => {
-            console.error('Error loading merchant data:', error);
             this.initializeForm(); // Initialize empty form
           }
         })
@@ -253,23 +263,19 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
   loadCurrentProfile(): void {
     // Load merchant profile from API if needed
-    console.log('🏪 Loading current merchant profile...');
     if (this.merchantId) {
       this.swaggerClient.apiMerchantGetDetailsGet(this.merchantId).subscribe({
         next: (merchant: MerchantDTO) => {
           this.currentMerchant = merchant;
-          console.log('✅ Merchant profile loaded:', merchant);
           this.populateFormWithMerchant(merchant);
         },
         error: (error: any) => {
-          console.error('❌ Error loading merchant profile:', error);
         }
       });
     }
   }
 
   populateFormWithMerchant(merchant: MerchantDTO): void {
-    console.log('🏪 Populating form with merchant data:', merchant);
     if (this.editForm) {
     this.editForm.patchValue({
       shopName: merchant.shopName || '',
@@ -302,7 +308,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     this.editForm = this.fb.group({
       shopName: [merchant?.shopName || '', [Validators.required, Validators.minLength(3)]],
       shortDescription: [merchant?.shortDescription || ''],
-      email: ['', [EditProfileComponent.optionalEmailValidator]], // Optional email validation
+      email: [merchant?.email || '', [Validators.required, Validators.email]], // Make email required
       phone: ['', [Validators.required]],
       whatsapp: [''],
       governorateId: [merchant?.governorateId || '', [Validators.required]],
@@ -428,9 +434,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       if (categoryToAdd) {
         newIds = [...currentIds, categoryId];
         newCategories = [...currentCategories, categoryToAdd];
-        console.log('🏷️ Adding complete category object:', categoryToAdd);
       } else {
-        console.warn('❌ Category not found for ID:', categoryId);
         return;
       }
     }
@@ -440,9 +444,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       categoriesIds: newIds,
       categories: newCategories 
     });
-    
-    console.log('🏷️ Updated categories:', newCategories);
-    console.log('🏷️ Updated categories IDs:', newIds);
   }
 
   addCategoryFromSuggestion(categoryName: string): void {
@@ -466,18 +467,12 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   showAddCategoryModal(): void {
-    console.log('🏷️ === OPENING ADD CATEGORY MODAL ===');
-    console.log('📝 Form state before reset:', this.newCategoryForm.value);
-    
     this.showAddCategoryForm = true;
     this.newCategoryForm.reset();
     
     // Prevent body scroll and save current scroll position
     document.body.classList.add('modal-open');
     document.body.style.top = `-${window.scrollY}px`;
-    
-    console.log('📝 Form state after reset:', this.newCategoryForm.value);
-    console.log('✅ Modal opened successfully');
   }
 
   hideAddCategoryModal(): void {
@@ -493,94 +488,16 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  addNewCategory(): void {
-    console.log('🏷️ === ADD NEW CATEGORY START ===');
-    console.log('📝 Form valid:', this.newCategoryForm.valid);
-    console.log('📝 Form value:', this.newCategoryForm.value);
-    console.log('📝 Form errors:', this.newCategoryForm.errors);
+  onCategoryAdded(newCategory: CategoryDTO): void {
+    // Add to local categories list
+    this.categories.push(newCategory);
     
-    if (!this.newCategoryForm.valid) {
-      console.log('❌ Form is invalid, marking as touched');
-      this.newCategoryForm.markAllAsTouched();
-      this.showToast('يرجى إدخال اسم التصنيف', 'error');
-      return;
+    // Auto select the new category
+    if (newCategory.id) {
+      this.toggleCategory(newCategory.id);
     }
-
-    const categoryName = this.newCategoryForm.get('name')?.value?.trim();
-    console.log('📝 Category name:', categoryName);
     
-    if (!categoryName) {
-      console.log('❌ Category name is empty');
-      this.showToast('يرجى إدخال اسم التصنيف', 'error');
-      return;
-    }
-
-    // Check if category already exists
-    const existingCategory = this.categories.find(cat => 
-      cat.name?.toLowerCase() === categoryName.toLowerCase()
-    );
-    
-    if (existingCategory) {
-      console.log('❌ Category already exists:', existingCategory);
-      this.showToast('هذا التصنيف موجود بالفعل', 'error');
-      return;
-    }
-
-    this.isAddingCategory = true;
-    console.log('⏳ Starting category creation...');
-    
-    // Create new CategoryDTO
-    const newCategory = new CategoryDTO();
-    newCategory.name = categoryName;
-    
-    console.log('📤 Sending category to API:', newCategory);
-    
-    // Add to API
-    this.subscriptions.add(
-      this.swaggerClient.apiCategoriesInsertPost(newCategory).subscribe({
-        next: (response: CategoryDTO) => {
-          console.log('✅ Category added successfully:', response);
-          
-          // Add to local categories list
-          this.categories.push(response);
-          console.log('📊 Categories count after add:', this.categories.length);
-          
-          // Auto select the new category
-          if (response.id) {
-            console.log('🎯 Auto-selecting new category with ID:', response.id);
-            this.toggleCategory(response.id);
-          }
-          
-          this.isAddingCategory = false;
-          this.hideAddCategoryModal();
-          this.showToast('تم إضافة التصنيف بنجاح', 'success');
-          console.log('🏷️ === ADD NEW CATEGORY SUCCESS ===');
-        },
-        error: (error: any) => {
-          console.error('❌ Error adding category:', error);
-          console.error('❌ Error details:', {
-            message: error.message,
-            status: error.status,
-            statusText: error.statusText,
-            error: error.error
-          });
-          
-          this.isAddingCategory = false;
-          
-          let errorMessage = 'حدث خطأ أثناء إضافة التصنيف';
-          if (error.status === 400) {
-            errorMessage = 'بيانات التصنيف غير صحيحة';
-          } else if (error.status === 409) {
-            errorMessage = 'هذا التصنيف موجود بالفعل';
-          } else if (error.status === 500) {
-            errorMessage = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
-          }
-          
-          this.showToast(errorMessage, 'error');
-          console.log('🏷️ === ADD NEW CATEGORY ERROR ===');
-        }
-      })
-    );
+    this.showToast('تم إضافة التصنيف بنجاح', 'success');
   }
 
   // Select/Deselect all categories functions
@@ -591,7 +508,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       categoriesIds: allCategoryIds,
       categories: allCategories 
     });
-    console.log('🏷️ Selected all categories:', allCategories);
   }
 
   clearAllCategories(): void {
@@ -599,7 +515,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       categoriesIds: [],
       categories: [] 
     });
-    console.log('🏷️ Cleared all categories');
   }
 
   // Document upload methods
@@ -717,14 +632,14 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   toggleBusinessDay(index: number): void {
-    console.log('Toggle clicked for day index:', index);
+    
     const dayFormGroup = this.businessHoursArray.at(index) as FormGroup;
     const isOpenControl = dayFormGroup.get('isOpen');
     
     if (isOpenControl) {
       const currentValue = isOpenControl.value;
       const newValue = !currentValue;
-      console.log('Changing from', currentValue, 'to', newValue);
+      
       
       isOpenControl.setValue(newValue);
       dayFormGroup.updateValueAndValidity();
@@ -734,16 +649,16 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       
       // Force change detection
       setTimeout(() => {
-        console.log('New value after change:', isOpenControl.value);
+        
       }, 100);
     }
   }
 
   onSubmit(): void {
-    console.log('🚀 Submit clicked!');
-    console.log('Form valid:', this.editForm.valid);
-    console.log('Form value:', this.editForm.value);
-    console.log('Form errors:', this.getFormValidationErrors());
+    
+    
+    
+    
     
     // Check for required files and members
     const missingFiles: string[] = [];
@@ -777,15 +692,15 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     }
     
     if (missingFiles.length > 0) {
-      console.log('❌ Missing required files/data:', missingFiles);
+      
       this.updateErrors = missingFiles;
       this.showToast('يرجى تحديد جميع الوثائق المطلوبة (شعار المتجر، بطاقة الهوية، السجل التجاري) وإكمال بيانات فريق العمل', 'error');
       return;
     }
     
     if (this.editForm.valid) {
-      console.log('✅ Form is valid, proceeding with API call...');
-      console.log('📍 LocationOnMap value:', this.editForm.get('locationOnMap')?.value);
+      
+      
       this.isLoading = true;
       this.updateErrors = [];
 
@@ -820,8 +735,8 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       // التصنيفات المختارة - Complete Category Objects
       const selectedCategories = formValue.categories || [];
       const selectedCategoriesIds = formValue.categoriesIds || [];
-      console.log('🏷️ Selected Categories (complete objects):', selectedCategories);
-      console.log('🏷️ Selected Categories IDs (backup):', selectedCategoriesIds);
+      
+      
       
       if (selectedCategories.length > 0) {
         // إرسال كل category object منفصلاً (indexed approach with PascalCase) 
@@ -830,7 +745,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           formData.append(`Categories[${index}].Name`, category.name || ''); // ✅ PascalCase Name
           formData.append(`Categories[${index}].Description`, category.description || '');
           formData.append(`Categories[${index}].Image`, category.image || '');
-          console.log(`📤 Category ${index + 1} Object (PascalCase):`, category);
+          
         });
         
         // إرسال التصنيفات الكاملة كـ JSON string واحد للـ server (complete objects with PascalCase)
@@ -849,16 +764,16 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           formData.append(`CategoriesIds[${index}]`, categoryId.toString());
         });
         
-        console.log('📤 CategoriesJson (PascalCase objects for server):', categoriesJson);
-        console.log('📤 Total categories being sent:', selectedCategories.length);
-        console.log('📤 Categories PascalCase Structure:', categoriesForServer);
+        
+        
+        
         
       } else {
         // إذا لم تكن هناك تصنيفات، أرسل array فارغ
         formData.append('Categories', '[]');
         formData.append('CategoriesIds', '[]');
         formData.append('CategoriesJson', '[]');
-        console.log('📤 No categories selected, sending empty arrays');
+        
       }
       
       // ساعات العمل
@@ -871,7 +786,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       
       // أعضاء الفريق - إرسال كـ JSON للـ server ليقوم بـ deserialize
       const members = formValue.members || [];
-      console.log('👥 Raw Members from form:', members);
+      
       
       if (members.length > 0) {
         // تحضير أعضاء الفريق بـ UserDTO format
@@ -890,7 +805,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           userDTO.isActive = true;
           userDTO.address = member.position || ''; // نستخدم المنصب كعنوان مؤقت
           
-          console.log(`👤 Member ${index + 1} UserDTO object:`, userDTO);
+          
           
           // تحويل إلى plain object باستخدام toJSON()
           const memberJsonObj = userDTO.toJSON();
@@ -899,45 +814,45 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           const memberWithPascalCase = this.convertUserDTOToPascalCase(memberJsonObj);
           userDTOArray.push(memberWithPascalCase);
           
-          console.log(`👤 Member ${index + 1} PascalCase object:`, memberWithPascalCase);
           
-          console.log(`� Member ${index + 1} JSON object:`, memberJsonObj);
+          
+          
           
           // إرسال كل عضو منفصلاً أيضاً (backup approach)
           const memberJsonString = JSON.stringify(memberJsonObj);
           formData.append(`Members[${index}]`, memberJsonString);
-          console.log(`📤 Member ${index + 1} JSON string:`, memberJsonString);
+          
         });
         
         // إرسال أعضاء الفريق كـ JSON string واحد للـ server
         const membersJsonString = JSON.stringify(userDTOArray);
         formData.append('MembersJson', membersJsonString);
         
-        console.log('📤 MembersJson (for server deserialize):', membersJsonString);
-        console.log('📤 Total members being sent:', userDTOArray.length);
+        
+        
         
         // Log the actual UserDTO structure being sent with PascalCase
-        console.log('📤 UserDTO Array Structure (PascalCase):', userDTOArray);
+        
         
       } else {
         // إذا لم يكن هناك أعضاء، أرسل array فارغ
         formData.append('MembersJson', '[]');
-        console.log('📤 No members, sending empty JSON array');
+        
       }
       
       // الملفات المطلوبة - بأسماء API الصحيحة
       if (this.selectedLogo) {
         formData.append('LogoForm', this.selectedLogo);
-        console.log('📸 Logo file being sent:', this.selectedLogo.name);
+        
       } else {
         // شعار المتجر إجباري - يجب عدم الوصول هنا
-        console.error('❌ Logo is required but not selected!');
+        
         formData.append('LogoForm', new Blob(), '');
       }
       
       if (this.selectedNationalId) {
         formData.append('NationalIdImageForm', this.selectedNationalId);
-        console.log('🆔 National ID file being sent:', this.selectedNationalId.name);
+        
       } else {
         // API requires this parameter
         formData.append('NationalIdImageForm', new Blob(), '');
@@ -945,73 +860,70 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       
       if (this.selectedCommercialReg) {
         formData.append('CommercialRegistrationImageForm', this.selectedCommercialReg);
-        console.log('🏢 Commercial Registration file being sent:', this.selectedCommercialReg.name);
+        
       } else {
         // API requires this parameter
         formData.append('CommercialRegistrationImageForm', new Blob(), '');
       }
       
-      console.log('� === FULL API DATA REPORT ===');
-      console.log('🏪 ShopName:', formValue.shopName);
-      console.log('📞 MobileNo (Phone):', formValue.phone);
-      console.log('📱 WhatsAppMobileNo:', formValue.whatsapp);
-      console.log('📧 Email:', formValue.email);
-      console.log('🗺️ LocationOnMap:', formValue.locationOnMap);
-      console.log('� Address:', formValue.address);
-      console.log('🏛️ GovernorateId:', formValue.governorateId);
-      console.log('🏘️ CityId:', formValue.cityId);
-      console.log('📝 Description:', formValue.description);
-      console.log('📄 ShortDescription:', formValue.shortDescription);
-      console.log('🌐 Slug:', formValue.slug);
-      console.log('🏢 CommercialRegistrationNumber:', formValue.commercialRegistrationNumber);
-      console.log('🆔 NationalIdNumber:', formValue.nationalIdNumber);
-      console.log('🏷️ Selected Categories IDs:', formValue.categoriesIds);
-      console.log('🏷️ Categories Count:', (formValue.categoriesIds || []).length);
-      console.log('🕐 BusinessHours:', this.generateBusinessHoursString());
-      console.log('👥 Members Count:', members.length);
-      console.log('👥 Members Raw Data:', formValue.members);
-      console.log('📸 Has Logo:', !!this.selectedLogo);
-      console.log('🆔 Has National ID:', !!this.selectedNationalId);
-      console.log('🏢 Has Commercial Reg:', !!this.selectedCommercialReg);
       
-      // Log all FormData entries for debugging
-      console.log('📤 === FORMDATA ENTRIES ===');
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       try {
         // Use forEach instead of entries() for better TypeScript compatibility
         (formData as any).forEach((value: any, key: string) => {
           if (key === 'MembersJson' || key.startsWith('Members[') || key === 'CategoriesJson' || key.startsWith('CategoriesIds[')) {
-            console.log(`FormData[${key}]:`, value);
+            
             if (typeof value === 'string') {
               try {
                 const parsed = JSON.parse(value);
-                console.log(`FormData[${key}] parsed:`, parsed);
+                
               } catch (e) {
-                console.log(`FormData[${key}] parse error (might be raw string):`, e);
+                
               }
             }
           } else {
-            console.log(`FormData[${key}]:`, value);
+            
           }
         });
       } catch (e) {
-        console.log('FormData iteration error:', e);
+        
         
         // Alternative method to check FormData - enhanced for Members
-        console.log('--- Alternative FormData Check ---');
+        
         const keys = ['MembersJson', 'ShopName', 'MobileNo', 'WhatsAppMobileNo', 'LocationOnMap'];
         keys.forEach(key => {
           const values = (formData as any).getAll(key);
           if (values && values.length > 0) {
-            console.log(`FormData.getAll('${key}'):`, values);
+            
             if (key === 'MembersJson') {
               values.forEach((val: any, idx: number) => {
-                console.log(`  MembersJson[${idx}]:`, val);
+                
                 if (typeof val === 'string') {
                   try {
                     const parsed = JSON.parse(val);
-                    console.log(`  MembersJson[${idx}] parsed:`, parsed);
+                    
                   } catch (e) {
-                    console.log(`  MembersJson[${idx}] parse error:`, e);
+                    
                   }
                 }
               });
@@ -1020,16 +932,16 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         });
         
         // Check for indexed Members entries
-        console.log('--- Checking Indexed Members ---');
+        
         for (let i = 0; i < 5; i++) {
           const memberKey = `Members[${i}]`;
           const memberValues = (formData as any).getAll(memberKey);
           if (memberValues && memberValues.length > 0) {
-            console.log(`FormData.getAll('${memberKey}'):`, memberValues);
+            
           }
         }
       }
-      console.log('================================');
+      
 
       // Send using HttpClient directly (not SwaggerClient)
       // You must inject HttpClient in the constructor: private http: HttpClient
@@ -1038,11 +950,15 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.http.post(apiUrl, formData).subscribe({
           next: (response: any) => {
-            console.log('✅ API Success response:', response);
+            
             this.isLoading = false;
             if (response) {
               const successMessage = this.isAdminMode ? 'تم إضافة التاجر الجديد بنجاح' : 'تم إنشاء الملف التجاري بنجاح';
               this.showToast(successMessage, 'success');
+              
+              // Reset form completely after successful save
+              this.resetFormToInitialState();
+              
               this.merchantId = response.id;
               if (response.id) {
                 localStorage.setItem('currentMerchantId', response.id.toString());
@@ -1060,7 +976,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
             }
           },
           error: (error) => {
-            console.error('❌ API Error:', error);
+            
             this.isLoading = false;
             let errorMessages: string[] = [];
             if (error.error) {
@@ -1102,11 +1018,113 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         })
       );
     } else {
-      console.log('❌ Form is invalid, marking fields as touched...');
+      
       this.markAllFieldsAsTouched(); // Use the enhanced function
       this.updateErrors = ['يرجى تعبئة جميع الحقول المطلوبة بشكل صحيح'];
       this.showToast('يرجى تصحيح الأخطاء في النموذج', 'error');
     }
+  }
+
+  // Reset form to completely clean initial state
+  resetFormToInitialState(): void {
+    
+    
+    // Clear all selected files and previews
+    this.selectedLogo = null;
+    this.selectedNationalId = null;
+    this.selectedCommercialReg = null;
+    this.previewLogo = null;
+    this.previewNationalId = null;
+    this.previewCommercialReg = null;
+    
+    // Reset current merchant data
+    this.currentMerchant = null;
+    this.merchantId = null;
+    
+    // Clear any errors
+    this.updateErrors = [];
+    
+    // Reset step to first step
+    this.currentStep = 1;
+    
+    // Reset all step completion status
+    this.steps.forEach(step => step.completed = false);
+    
+    // Reset progress
+    this.progressPercentage = 0;
+    this.completedSteps = 0;
+    
+    // Clear arrays completely and reinitialize
+    while (this.businessHoursArray.length !== 0) {
+      this.businessHoursArray.removeAt(0);
+    }
+    
+    while (this.membersArray.length !== 0) {
+      this.membersArray.removeAt(0);
+    }
+    
+    // Reinitialize form with completely clean data
+    this.initializeCleanForm();
+    
+    
+  }
+
+  // Initialize completely clean form (no merchant data)
+  initializeCleanForm(): void {
+    this.editForm = this.fb.group({
+      shopName: ['', [Validators.required, Validators.minLength(3)]],
+      shortDescription: [''],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
+      whatsapp: [''],
+      governorateId: ['', [Validators.required]],
+      cityId: ['', [Validators.required]],
+      address: ['', [Validators.required]],
+      locationOnMap: ['', [Validators.required]],
+      slug: [''],
+      description: [''],
+      commercialRegistrationNumber: ['', [Validators.required]],
+      nationalIdNumber: ['', [Validators.required]],
+      categories: [[]],
+      categoriesIds: [[]],
+      businessHours: this.fb.array([]),
+      members: this.fb.array([])
+    });
+
+    // Initialize businessHours FormArray with default clean data
+    const defaultBusinessHours = [
+      { day: 'السبت', hours: '9:00 ص - 9:00 م', isOpen: true, openTime: '09:00', closeTime: '21:00' },
+      { day: 'الأحد', hours: '9:00 ص - 9:00 م', isOpen: true, openTime: '09:00', closeTime: '21:00' },
+      { day: 'الاثنين', hours: '9:00 ص - 9:00 م', isOpen: true, openTime: '09:00', closeTime: '21:00' },
+      { day: 'الثلاثاء', hours: '9:00 ص - 9:00 م', isOpen: true, openTime: '09:00', closeTime: '21:00' },
+      { day: 'الأربعاء', hours: '9:00 ص - 9:00 م', isOpen: true, openTime: '09:00', closeTime: '21:00' },
+      { day: 'الخميس', hours: '9:00 ص - 9:00 م', isOpen: true, openTime: '09:00', closeTime: '21:00' },
+      { day: 'الجمعة', hours: '2:00 م - 8:00 م', isOpen: true, openTime: '14:00', closeTime: '20:00' }
+    ];
+    
+    defaultBusinessHours.forEach((bh: any) => this.businessHoursArray.push(
+      this.fb.group({
+        day: [bh.day],
+        hours: [bh.hours],
+        isOpen: [bh.isOpen],
+        openTime: [bh.openTime],
+        closeTime: [bh.closeTime]
+      })
+    ));
+
+    // Add one clean member to the team
+    this.addMember();
+
+    // Subscribe to form changes for progress tracking
+    this.editForm.valueChanges.subscribe(() => {
+      this.updateProgress();
+      
+    });
+    
+    // Initial progress calculation
+    this.updateProgress();
+
+    
   }
 
   markFormGroupTouched(): void {
@@ -1232,164 +1250,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     return governorate?.name || '';
   }
 
-  // Auto fill form for testing
-  autoFillForm(): void {
-    console.log('🔧 Auto filling form for testing...');
-    
-    this.editForm.patchValue({
-      shopName: 'متجر قطع غيار الخليج',
-      email: 'test@example.com',
-      phone: '+966501234567',
-      whatsapp: '+966501234567',
-      governorateId: this.governorates.length > 0 ? this.governorates[0].id : 1,
-      cityId: 1, // Will be set after governorate loads cities
-      address: 'شارع الملك عبدالعزيز، الرياض',
-      locationOnMap: 'https://maps.google.com/?q=24.7136,46.6753',
-      slug: 'https://gulf-parts.com',
-      description: 'متجر متخصص في قطع غيار السيارات الأصلية والبديلة',
-      shortDescription: 'قطع غيار أصلية وبديلة',
-      commercialRegistrationNumber: '1234567890',
-      nationalIdNumber: '1098765432'
-    });
-
-    // Auto select city after governorate
-    if (this.governorates.length > 0) {
-      this.loadCities(this.governorates[0].id!);
-      setTimeout(() => {
-        if (this.cities.length > 0) {
-          this.editForm.patchValue({ cityId: this.cities[0].id });
-        }
-      }, 1000);
-    }
-
-    // Fill member data
-    if (this.membersArray.length > 0) {
-      const memberControl = this.membersArray.at(0) as FormGroup;
-      memberControl.patchValue({
-        name: 'أحمد محمد',
-        phone: '+966507654321',
-        email: 'ahmed@example.com',
-        username: 'ahmed123',
-        password: 'Test123!@#',
-        confirmPassword: 'Test123!@#',
-        position: 'manager'
-      });
-    }
-
-    // Create mock files for testing (you should replace this with actual file selection)
-    this.createMockFiles();
-
-    this.showToast('تم تعبئة النموذج تلقائياً للاختبار', 'success');
-  }
-
-  // Helper method to create mock files for testing
-  private createMockFiles(): void {
-    // Create a simple blob as a mock file
-    const mockBlob = new Blob(['mock file content'], { type: 'image/jpeg' });
-    
-    // Create mock files
-    const mockNationalId = new File([mockBlob], 'national-id.jpg', { type: 'image/jpeg' });
-    const mockCommercialReg = new File([mockBlob], 'commercial-reg.jpg', { type: 'image/jpeg' });
-    
-    this.selectedNationalId = mockNationalId;
-    this.selectedCommercialReg = mockCommercialReg;
-    this.previewNationalId = 'data:image/jpeg;base64,mock-preview';
-    this.previewCommercialReg = 'data:image/jpeg;base64,mock-preview';
-    
-    console.log('📁 Mock files created for testing');
-  }
-
-  // Force submit for testing (bypasses validation)
-  forceSubmit(): void {
-    console.log('🚀 Force Submit clicked! Bypassing validation...');
-    
-    this.isLoading = true;
-    this.updateErrors = [];
-    
-    const formValue = this.editForm.value;
-    
-    // Prepare complete merchant data with all required fields
-    const merchantData = new MerchantDTO();
-    merchantData.id = this.merchantId || 0;
-    merchantData.shopName = formValue.shopName || 'Test Shop';
-    merchantData.description = formValue.description || 'Test Description';
-    merchantData.shortDescription = formValue.shortDescription || 'Test Short Description';
-    merchantData.address = formValue.address || 'Test Address';
-    merchantData.cityId = formValue.cityId ? parseInt(formValue.cityId) : 1;
-    merchantData.commercialRegistrationNumber = formValue.commercialRegistrationNumber || '123456789';
-    merchantData.nationalIdNumber = formValue.nationalIdNumber || '987654321';
-    
-    // Add missing required fields
-    merchantData.logo = 'default-logo.jpg';
-    merchantData.slug = this.generateSlug(merchantData.shopName);
-    merchantData.businessHours = this.generateBusinessHoursString();
-    merchantData.nationalIdImage = 'default-national-id.jpg';
-    merchantData.commercialRegistrationImage = 'default-commercial-reg.jpg';
-    
-    // Required file form fields - mandatory for API
-    merchantData.nationalIdImageForm = this.selectedNationalId || null;
-    merchantData.commercialRegistrationImageForm = this.selectedCommercialReg || null;
-    
-    // Set default values
-    merchantData.rating = 0;
-    merchantData.ratingCount = 0;
-    merchantData.isFavoriteMerchant = false;
-    
-    console.log('📦 Force submit - Complete Merchant data:', merchantData);
-
-    // Always use insert for testing
-    console.log('📡 Making force API call (INSERT)...');
-    
-    this.subscriptions.add(
-      this.swaggerClient.apiMerchantInsertPost(merchantData).subscribe({
-        next: (response: MerchantDTO) => {
-          console.log('✅ Force API Success response:', response);
-          this.isLoading = false;
-          this.showToast('تم إرسال البيانات بنجاح (اختبار)', 'success');
-        },
-        error: (error) => {
-          console.error('❌ Force API Error:', error);
-          console.error('❌ Force Error details:', JSON.stringify(error, null, 2));
-          this.isLoading = false;
-          
-          // Show detailed error info
-          let errorMessage = 'حدث خطأ في الإرسال القسري';
-          if (error.error) {
-            try {
-              const errorObj = typeof error.error === 'string' ? JSON.parse(error.error) : error.error;
-              if (errorObj.errors) {
-                const errorDetails = Object.keys(errorObj.errors).map(key => 
-                  `${key}: ${errorObj.errors[key].join(', ')}`
-                ).join(' | ');
-                errorMessage += ': ' + errorDetails;
-              }
-            } catch (e) {
-              console.error('Failed to parse force error:', e);
-            }
-          }
-          
-          this.showToast(errorMessage, 'error');
-        }
-      })
-    );
-  }
-
-  // Debug function to check form validity
-  debugFormStatus(): void {
-    console.log('=== تشخيص حالة النموذج ===');
-    console.log('Form Valid:', this.editForm?.valid);
-    console.log('Form Status:', this.editForm?.status);
-    console.log('Form Errors:', this.getFormValidationErrors());
-    console.log('=== تفاصيل الحقول ===');
-    this.logFieldDetails();
-    
-    // Mark all fields as touched to show errors
-    this.markAllFieldsAsTouched();
-  }
-
   markAllFieldsAsTouched(): void {
-    console.log('🔄 تفعيل عرض جميع الأخطاء...');
-    
     // Mark main form controls as touched
     Object.keys(this.editForm.controls).forEach(key => {
       const control = this.editForm.get(key);
@@ -1464,37 +1325,21 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
     requiredFields.forEach(field => {
       const control = this.editForm.get(field);
-      console.log(`${field}:`, {
-        value: control?.value,
-        valid: control?.valid,
-        errors: control?.errors,
-        touched: control?.touched
-      });
     });
 
     // Members array check
-    console.log('=== فريق العمل ===');
+    
     this.membersArray.controls.forEach((member, index) => {
       const memberGroup = member as FormGroup;
-      console.log(`Member ${index + 1}:`, {
-        valid: memberGroup.valid,
-        errors: memberGroup.errors,
-        controls: Object.keys(memberGroup.controls).reduce((acc: any, key) => {
-          const control = memberGroup.get(key);
-          acc[key] = {
-            value: control?.value,
-            valid: control?.valid,
-            errors: control?.errors
-          };
-          return acc;
-        }, {})
-      });
     });
   }
 
   // Progress bar calculation methods
   calculateProgress(): void {
     let completed = 0;
+    
+    // Check logo
+    if (this.isLogoComplete()) completed++;
     
     // Check basic info (shopName, phone, governorateId, cityId, address)
     if (this.isBasicInfoComplete()) completed++;
@@ -1505,14 +1350,17 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Check documents (nationalId and commercial registration)
     if (this.isDocumentsComplete()) completed++;
     
-    // Check logo
-    if (this.isLogoComplete()) completed++;
-    
     // Check team (at least one member with valid data)
     if (this.isTeamComplete()) completed++;
     
     // Check business hours (all days configured)
     if (this.isBusinessHoursComplete()) completed++;
+    
+    // Check categories (at least one category selected)
+    if (this.isCategoriesComplete()) completed++;
+    
+    // Check description
+    if (this.isDescriptionComplete()) completed++;
     
     this.completedSteps = completed;
     this.progressPercentage = Math.round((completed / this.totalSteps) * 100);
@@ -1522,13 +1370,37 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     const form = this.editForm;
     if (!form) return false;
     
-    return !!(
-      form.get('shopName')?.value?.trim() &&
-      form.get('phone')?.value?.trim() &&
-      form.get('governorateId')?.value &&
-      form.get('cityId')?.value &&
-      form.get('address')?.value?.trim()
+    const shopName = form.get('shopName')?.value?.trim();
+    const phone = form.get('phone')?.value?.trim();
+    const email = form.get('email')?.value?.trim();
+    const governorateId = form.get('governorateId')?.value;
+    const cityId = form.get('cityId')?.value;
+    const address = form.get('address')?.value?.trim();
+    
+    // Check if form controls are valid (not just filled)
+    const shopNameValid = form.get('shopName')?.valid;
+    const phoneValid = form.get('phone')?.valid;
+    const emailValid = form.get('email')?.valid;
+    const governorateValid = form.get('governorateId')?.valid;
+    const cityValid = form.get('cityId')?.valid;
+    const addressValid = form.get('address')?.valid;
+    
+    const isComplete = !!(
+      shopName &&
+      phone &&
+      email &&
+      // governorateId &&
+      // cityId &&
+      // address &&
+      shopNameValid &&
+      phoneValid &&
+      emailValid 
+      // governorateValid &&
+      // cityValid &&
+      // addressValid
     );
+    
+    return isComplete;
   }
 
   isLocationComplete(): boolean {
@@ -1617,6 +1489,87 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   // Check if logo section should have error styling
   hasLogoError(): boolean {
     return !this.isLogoComplete();
+  }
+
+  // Step navigation methods
+  nextStep(): void {
+    if (this.currentStep < this.totalSteps) {
+      this.markCurrentStepAsCompleted();
+      this.currentStep++;
+      this.updateProgress();
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
+  goToStep(stepNumber: number): void {
+    if (stepNumber >= 1 && stepNumber <= this.totalSteps) {
+      this.markCurrentStepAsCompleted();
+      this.currentStep = stepNumber;
+      this.updateProgress();
+    }
+  }
+
+  markCurrentStepAsCompleted(): void {
+    if (this.isCurrentStepValid()) {
+      const step = this.steps.find(s => s.id === this.currentStep);
+      if (step) {
+        step.completed = true;
+      }
+    }
+  }
+
+  isCurrentStepValid(): boolean {
+    switch (this.currentStep) {
+      case 1: // Logo
+        return this.isLogoComplete();
+      case 2: // Basic Info
+        return this.isBasicInfoComplete();
+      case 3: // Location
+        return this.isLocationComplete();
+      case 4: // Documents
+        return this.isDocumentsComplete();
+      case 5: // Team
+        return this.isTeamComplete();
+      case 6: // Business Hours
+        return this.isBusinessHoursComplete();
+      case 7: // Categories
+        return this.isCategoriesComplete();
+      case 8: // Description
+        return this.isDescriptionComplete();
+      default:
+        return false;
+    }
+  }
+
+  isDescriptionComplete(): boolean {
+    const description = this.editForm?.get('description')?.value;
+    return !!(description && description.trim());
+  }
+
+  isCategoriesComplete(): boolean {
+    const categories = this.editForm?.get('categories')?.value;
+    return !!(categories && categories.length > 0);
+  }
+
+  canGoToNextStep(): boolean {
+    const isValid = this.isCurrentStepValid();
+    const canMove = isValid && this.currentStep < this.totalSteps;
+    
+    return canMove;
+  }
+
+  canGoToPrevStep(): boolean {
+    return this.currentStep > 1;
+  }
+
+  isStepAccessible(stepNumber: number): boolean {
+    // Allow access to current step, previous steps, and next step if current is valid
+    return stepNumber <= this.currentStep || (stepNumber === this.currentStep + 1 && this.isCurrentStepValid());
   }
 
 

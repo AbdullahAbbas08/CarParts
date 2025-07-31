@@ -10,6 +10,7 @@ import { CardComponent } from './components/card/card.component';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import { OfferCardComponent } from './components/offer-card/offer-card.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { AddCategoryModalComponent } from './components/add-category-modal/add-category-modal.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     CardComponent,
     OfferCardComponent,
     BreadcrumbComponent,
-  
+    AddCategoryModalComponent
   ],
   declarations: [
     PartCardComponent,
@@ -39,7 +40,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     CardComponent,
     BreadcrumbComponent,
     OfferCardComponent,
-    
+    AddCategoryModalComponent
   ]
 })
 export class SharedModule { }
