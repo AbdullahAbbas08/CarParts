@@ -229,10 +229,11 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     if (this.selectedStatus && this.selectedStatus !== 'all') {
       filtered = filtered.filter(merchant => this.getMerchantStatus(merchant) === this.selectedStatus);
     }
-
     // Governorate filter  
     if (this.selectedGovernorate) {
-      filtered = filtered.filter(merchant => merchant.governorateId === this.selectedGovernorate);
+      console.log(filtered);
+      filtered = filtered.filter(merchant => merchant.governorateId == this.selectedGovernorate);
+      console.log(filtered);
     }
 
     // City filter
