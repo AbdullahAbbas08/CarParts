@@ -104,6 +104,12 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     const page = this.currentPage;
     const searchTerm = this.searchTerm?.trim() || undefined;
     
+    console.log('🔍 Loading with basic params:', {
+      pageSize,
+      page,
+      searchTerm
+    });
+    
     this.subscriptions.add(
       this.swaggerClient.apiMerchantGetAllGet(pageSize, page, searchTerm).subscribe({
         next: (response) => {
@@ -124,11 +130,19 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
             });
           }
           
+          console.log('✅ Merchants loaded:', {
+            totalLoaded: this.merchants.length,
+            totalCount: this.totalCount,
+            beforeFiltering: this.merchants.length
+          });
+          
           this.updateStatistics();
-          this.applyFilters();
+          this.applyFilters(); // Apply client-side filters after loading
           this.isLoading = false;
-          console.log('✅ Merchants loaded:', this.merchants.length);
-          this.showToast(`تم تحميل ${this.merchants.length} تاجر بنجاح`, 'success');
+          
+          const filteredCount = this.filteredMerchants.length;
+          console.log('🔍 After filtering:', { filteredCount });
+          this.showToast(`تم تحميل ${filteredCount} تاجر بنجاح`, 'success');
         },
         error: (error) => {
           console.error('❌ Error loading merchants:', error);
@@ -209,36 +223,82 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
       this.loadCities(this.selectedGovernorate);
     }
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadMerchants(); // Reload data instead of just applying filters
   }
 
   onCityChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadMerchants(); // Reload data instead of just applying filters
   }
 
   onStatusChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadMerchants(); // Reload data instead of just applying filters
   }
 
   applyFilters(): void {
+    console.log('🔍 Applying filters...');
+    console.log('📋 Current filters:', {
+      selectedStatus: this.selectedStatus,
+      selectedGovernorate: this.selectedGovernorate,
+      selectedCity: this.selectedCity,
+      totalMerchants: this.merchants.length
+    });
+
     let filtered = [...this.merchants];
+    const initialCount = filtered.length;
 
     // Status filter
     if (this.selectedStatus && this.selectedStatus !== 'all') {
-      filtered = filtered.filter(merchant => this.getMerchantStatus(merchant) === this.selectedStatus);
+      const beforeStatusFilter = filtered.length;
+      filtered = filtered.filter(merchant => {
+        const merchantStatus = this.getMerchantStatus(merchant);
+        const matches = merchantStatus === this.selectedStatus;
+        if (!matches) {
+          console.log(`❌ Status filter: ${merchant.shopName} has status ${merchantStatus}, looking for ${this.selectedStatus}`);
+        }
+        return matches;
+      });
+      console.log(`📊 Status filter: ${beforeStatusFilter} → ${filtered.length}`);
     }
+
     // Governorate filter  
     if (this.selectedGovernorate) {
-      console.log(filtered);
-      filtered = filtered.filter(merchant => merchant.governorateId == this.selectedGovernorate);
-      console.log(filtered);
+      const beforeGovFilter = filtered.length;
+      filtered = filtered.filter(merchant => {
+        const matches = merchant.governorateId == this.selectedGovernorate;
+        if (!matches) {
+          console.log(`❌ Governorate filter: ${merchant.shopName} has governorate ${merchant.governorateId}, looking for ${this.selectedGovernorate}`);
+        }
+        return matches;
+      });
+      console.log(`📊 Governorate filter: ${beforeGovFilter} → ${filtered.length}`);
     }
 
     // City filter
     if (this.selectedCity) {
-      filtered = filtered.filter(merchant => merchant.cityId === this.selectedCity);
+      const beforeCityFilter = filtered.length;
+      filtered = filtered.filter(merchant => {
+        const matches = merchant.cityId == this.selectedCity;
+        if (!matches) {
+          console.log(`❌ City filter: ${merchant.shopName} has city ${merchant.cityId}, looking for ${this.selectedCity}`);
+        }
+        return matches;
+      });
+      console.log(`📊 City filter: ${beforeCityFilter} → ${filtered.length}`);
+    }
+
+    // Advanced filters
+    if (this.registrationDateFilter) {
+      const beforeDateFilter = filtered.length;
+      // Add date filtering logic here if needed
+      console.log(`📊 Date filter: ${beforeDateFilter} → ${filtered.length}`);
+    }
+
+    if (this.merchantTypeFilter) {
+      const beforeTypeFilter = filtered.length;
+      // Add merchant type filtering logic here if needed  
+      console.log(`📊 Type filter: ${beforeTypeFilter} → ${filtered.length}`);
     }
 
     // Sort
@@ -262,16 +322,24 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
       return this.sortDirection === 'asc' ? comparison : -comparison;
     });
 
+    console.log(`✅ Final filtering result: ${initialCount} → ${filtered.length}`);
+    console.log('📋 Filtered merchants:', filtered.map(m => ({ id: m.id, name: m.shopName, governorate: m.governorateId, city: m.cityId })));
+
     this.filteredMerchants = filtered;
   }
 
   clearFilters(): void {
+    console.log('🧹 Clearing all filters...');
     this.searchTerm = '';
     this.selectedGovernorate = null;
     this.selectedCity = null;
     this.selectedStatus = 'all';
+    this.registrationDateFilter = '';
+    this.merchantTypeFilter = '';
     this.cities = [];
     this.currentPage = 1;
+    
+    // Reload fresh data from API
     this.loadMerchants();
   }
 
@@ -285,17 +353,29 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   
   // Date filter change handler
   onDateFilterChange(): void {
-    this.applyFilters();
+    console.log('📅 Date filter changed:', this.registrationDateFilter);
+    this.currentPage = 1;
+    this.applyFilters(); // For advanced filters, apply locally for now
   }
   
   // Merchant type filter change handler
   onTypeFilterChange(): void {
-    this.applyFilters();
+    console.log('🏪 Type filter changed:', this.merchantTypeFilter);
+    this.currentPage = 1;
+    this.applyFilters(); // For advanced filters, apply locally for now
   }
   
   // Sort change handler
   onSortChange(): void {
-    this.applyFilters();
+    console.log('📊 Sort changed:', { sortBy: this.sortBy, sortOrder: this.sortOrder });
+    this.applyFilters(); // Sorting is done locally
+  }
+
+  // Update items per page and reset to first page
+  updateItemsPerPage(): void {
+    console.log('📄 Items per page changed:', this.itemsPerPage);
+    this.currentPage = 1;
+    this.loadMerchants(); // Reload with new page size
   }
 
   // =============================
@@ -397,11 +477,6 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
       this.sortDirection = 'desc';
     }
     this.applyFilters();
-  }
-
-  updateItemsPerPage(): void {
-    this.currentPage = 1;
-    this.loadMerchants();
   }
 
   // =============================
