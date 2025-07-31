@@ -1,9 +1,12 @@
-﻿
+﻿using Data.Enums;
+
 namespace Data.DTOs
 {
     public class MerchantDTO
     {
         public int Id { get; set; }
+        public string? Code { get; set; }
+        public MerchantStatus? Status { get; set; }
 
         [Required, StringLength(100)]
         public string ShopName { get; set; }
@@ -35,10 +38,9 @@ namespace Data.DTOs
         [StringLength(2000)]
         public string BusinessHours { get; set; }
 
-
-        public byte[]? Logo { get; set; }
-        public byte[]? CommercialRegistrationImage { get; set; }
-        public byte[]? NationalIdImage { get; set; }
+        public string? Logo { get; set; } // changed from byte[] to string
+        public string? CommercialRegistrationImage { get; set; } // changed from byte[] to string
+        public string? NationalIdImage { get; set; } // changed from byte[] to string
 
         [NotMapped]
         public IFormFile NationalIdImageForm { get; set; }

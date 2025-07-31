@@ -1,0 +1,541 @@
+// ===============================
+// Enhanced Pagination - Beautiful & Responsive
+// ===============================
+.pagination-wrapper {
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  
+  .pagination-info {
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    
+    .current-range {
+      color: #667eea;
+      font-weight: 700;
+    }
+  }
+  
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .page-size-selector {
+      margin-left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      label {
+        font-size: 14px;
+        color: #475569;
+        font-weight: 600;
+      }
+      
+      select {
+        padding: 8px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        background: white;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        &:hover {
+          border-color: #cbd5e1;
+        }
+      }
+    }
+    
+    .pagination-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      .page-btn {
+        padding: 10px 14px;
+        border: 2px solid transparent;
+        background: white;
+        color: #64748b;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+          transition: left 0.5s ease;
+        }
+        
+        &:hover {
+          background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+          color: #334155;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          
+          &::before {
+            left: 100%;
+          }
+        }
+        
+        &.active {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          border-color: #667eea;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          transform: translateY(-1px);
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background: #f1f5f9;
+          color: #94a3b8;
+          
+          &:hover {
+            transform: none;
+            box-shadow: none;
+          }
+        }
+        
+        &.prev-btn,
+        &.next-btn {
+          padding: 10px 16px;
+          
+          i {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ===============================
+// Enhanced Loading States - Beautiful Animations
+// ===============================
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px;
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  
+  .loading-spinner {
+    position: relative;
+    
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #e2e8f0;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        z-index: -1;
+        filter: blur(8px);
+        opacity: 0.3;
+      }
+    }
+    
+    .loading-text {
+      margin-top: 20px;
+      color: #64748b;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// ===============================
+// Enhanced Empty State - Beautiful & Engaging
+// ===============================
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 80px;
+    color: #cbd5e1;
+    margin-bottom: 24px;
+    opacity: 0.8;
+    
+    &::before {
+      content: '🏪';
+    }
+  }
+  
+  .empty-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 12px;
+    letter-spacing: 0.025em;
+  }
+  
+  .empty-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 32px;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+  
+  .empty-action {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    
+    &:hover {
+      background: linear-gradient(135deg, #5a67d8, #667eea);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    }
+  }
+}
+
+// ===============================
+// Enhanced Responsive Design - Mobile First & No Horizontal Scroll
+// ===============================
+@media (max-width: 1200px) {
+  .table-container {
+    .merchants-table {
+      thead th {
+        padding: 16px 12px;
+        font-size: 13px;
+        
+        // Adjust column widths for medium screens - Updated without merchant code
+        &:nth-child(1) { width: 35%; } // Store Name
+        &:nth-child(2) { width: 25%; } // Contact
+        &:nth-child(3) { width: 20%; } // Location
+        &:nth-child(4) { width: 12%; } // Status
+        &:nth-child(5) { width: 8%; } // Actions
+      }
+      
+      tbody tr td {
+        padding: 16px 12px;
+        font-size: 13px;
+        
+        &.contact-cell .contact-info .contact-item {
+          font-size: 12px;
+        }
+        
+        &.actions-cell .table-actions {
+          gap: 4px;
+          
+          .action-btn {
+            padding: 8px 10px;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .table-container {
+    border-radius: 12px;
+    
+    .table-header {
+      padding: 20px 16px;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+      
+      .table-info,
+      .table-actions {
+        text-align: center;
+      }
+    }
+    
+    .merchants-table {
+      thead th {
+        padding: 14px 8px;
+        font-size: 12px;
+      }
+      
+      tbody tr td {
+        padding: 14px 8px;
+        
+        &.merchant-name-cell .merchant-info-compact {
+          gap: 12px;
+          
+          .name-info .store-name {
+            font-size: 14px;
+          }
+        }
+        
+        &.contact-cell .contact-info .contact-item {
+          margin-bottom: 4px;
+          
+          span {
+            font-size: 11px;
+          }
+        }
+        
+        &.location-cell .location-info {
+          flex-direction: column;
+          gap: 8px;
+          align-items: flex-start;
+          
+          .map-btn {
+            align-self: flex-end;
+            font-size: 10px;
+            padding: 6px 8px;
+          }
+        }
+      }
+    }
+  }
+  
+  .pagination-wrapper {
+    padding: 20px 16px;
+    flex-direction: column;
+    gap: 16px;
+    
+    .pagination-controls {
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      
+      .page-size-selector {
+        margin-left: 0;
+        justify-content: center;
+      }
+      
+      .pagination-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    margin: 0 -16px;
+    border-radius: 0;
+    
+    .table-wrapper {
+      // Force no horizontal scroll on mobile
+      overflow-x: hidden !important;
+    }
+    
+    .merchants-table {
+      table-layout: fixed;
+      width: 100%;
+      min-width: unset !important;
+      
+      // Hide less important columns on mobile to prevent horizontal scroll
+      th:nth-child(2), // Contact
+      td:nth-child(2) {
+        display: none;
+      }
+      
+      th:nth-child(3), // Location
+      td:nth-child(3) {
+        display: none;
+      }
+      
+      // Redistribute remaining column widths - Updated layout
+      thead th {
+        &:nth-child(1) { width: 55%; } // Store Name
+        &:nth-child(4) { width: 25%; } // Status
+        &:nth-child(5) { width: 20%; } // Actions
+        
+        padding: 12px 6px;
+        font-size: 11px;
+      }
+      
+      tbody tr td {
+        padding: 12px 6px;
+        
+        &.merchant-name-cell .merchant-info-compact {
+          gap: 8px;
+          
+          .merchant-avatar .status-indicator {
+            width: 20px;
+            height: 20px;
+            
+            &::before {
+              font-size: 10px;
+            }
+          }
+          
+          .name-info .store-name {
+            font-size: 13px;
+            line-height: 1.3;
+          }
+        }
+        
+        &.status-cell .status-badge {
+          padding: 6px 10px;
+          font-size: 10px;
+          
+          i {
+            font-size: 8px;
+          }
+        }
+        
+        &.actions-cell .table-actions {
+          flex-direction: column;
+          gap: 4px;
+          
+          .action-btn {
+            padding: 6px 8px;
+            font-size: 10px;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  
+  .pagination-wrapper {
+    padding: 16px 12px;
+    
+    .pagination-info {
+      font-size: 12px;
+    }
+    
+    .pagination-nav .page-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .table-container {
+    .table-header {
+      padding: 16px 12px;
+      
+      .table-info .results-text {
+        font-size: 14px;
+      }
+      
+      .table-actions .table-controls .control-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+    }
+    
+    .merchants-table {
+      thead th {
+        padding: 10px 4px;
+        font-size: 10px;
+      }
+      
+      tbody tr td {
+        padding: 10px 4px;
+        
+        &.merchant-name-cell .merchant-info-compact {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+        }
+        
+        &.status-cell .status-badge {
+          padding: 4px 8px;
+          font-size: 9px;
+        }
+      }
+    }
+  }
+  
+  .pagination-wrapper {
+    padding: 12px 8px;
+    
+    .pagination-nav .page-btn {
+      padding: 6px 8px;
+      font-size: 11px;
+    }
+  }
+}
+
+// ===============================
+// Print Styles
+// ===============================
+@media print {
+  .table-container {
+    box-shadow: none;
+    border: 1px solid #000;
+    
+    .table-header {
+      background: #f5f5f5 !important;
+      
+      .table-actions {
+        display: none;
+      }
+    }
+    
+    .merchants-table {
+      tbody tr td.actions-cell {
+        display: none;
+      }
+      
+      thead th.actions-column {
+        display: none;
+      }
+    }
+    
+    .pagination-wrapper {
+      display: none;
+    }
+  }
+}

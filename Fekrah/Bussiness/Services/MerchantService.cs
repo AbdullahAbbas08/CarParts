@@ -5,45 +5,84 @@ using Data.DTOs;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchantService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly string _mainImagePath;
+    private readonly string _backupImagePath;
+    private readonly string _webRootPath;
 
-    public MerchantService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+    public MerchantService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IHostingEnvironment webHostEnvironment) : base(unitOfWork, mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _mainImagePath = configuration["MerchantImagePaths:Main"];
+        _backupImagePath = configuration["MerchantImagePaths:Backup"];
+        _webRootPath = webHostEnvironment.ContentRootPath;
+    }
+
+    private string SaveImageToPaths(IFormFile file)
+    {
+        if (file == null) return null;
+        var fileExt = Path.GetExtension(file.FileName);
+        var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+        // Save under wwwroot/Main and wwwroot/Backup
+        var mainPath = Path.Combine(_webRootPath, _mainImagePath, fileName);
+        var backupPath = Path.Combine(_webRootPath, _backupImagePath, fileName);
+
+        var mainDir = Path.GetDirectoryName(mainPath);
+        var backupDir = Path.GetDirectoryName(backupPath);
+
+        if (!Directory.Exists(mainDir))
+            Directory.CreateDirectory(mainDir);
+        if (!Directory.Exists(backupDir))
+            Directory.CreateDirectory(backupDir);
+
+        using (var stream = new FileStream(mainPath, FileMode.Create))
+        {
+            file.CopyTo(stream);
+        }
+        using (var stream = new FileStream(backupPath, FileMode.Create))
+        {
+            file.CopyTo(stream);
+        }
+        // Return relative path (e.g. MerchantData/filename.jpg)
+        return Path.Combine(_mainImagePath, fileName).Replace("\\", "/");
     }
 
     public MerchantDTO Insert(MerchantDTO dto)
     {
         try
         {
+            var MerchantCount = _unitOfWork.Repository<Merchant>().GetAll().Count();
+            if (MerchantCount == 0) MerchantCount = 1;
+            dto.Code = DateTime.Now.Year.ToString().Substring(2, 2) +
+                       DateTime.Now.Month.ToString("00") +
+                       (MerchantCount+1).ToString("000000");
+
+            // Save images and set file names
             if (dto.CommercialRegistrationImageForm != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    dto.CommercialRegistrationImageForm.CopyTo(ms);
-                    dto.CommercialRegistrationImage = ms.ToArray();
-                }
+                dto.CommercialRegistrationImage = null;
+                var fileName = SaveImageToPaths(dto.CommercialRegistrationImageForm);
+                dto.CommercialRegistrationImage = fileName;
             }
             if (dto.NationalIdImageForm != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    dto.NationalIdImageForm.CopyTo(ms);
-                    dto.NationalIdImage = ms.ToArray();
-                }
+                dto.NationalIdImage = null;
+                var fileName = SaveImageToPaths(dto.NationalIdImageForm);
+                dto.NationalIdImage = fileName;
             }
             if (dto.LogoForm != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    dto.LogoForm.CopyTo(ms);
-                    dto.Logo = ms.ToArray();
-                }
+                dto.Logo = null;
+                var fileName = SaveImageToPaths(dto.LogoForm);
+                dto.Logo = fileName;
             }
 
             var newMembers = JsonSerializer.Deserialize<List<UserDTO>>(dto.MembersJson) ?? new List<UserDTO>();
@@ -117,27 +156,18 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
             // تحديث الصور فقط إذا تم رفع ملفات جديدة
             if (dto.CommercialRegistrationImageForm != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    dto.CommercialRegistrationImageForm.CopyTo(ms);
-                    entity.CommercialRegistrationImage = ms.ToArray();
-                }
+                var fileName = SaveImageToPaths(dto.CommercialRegistrationImageForm);
+                entity.CommercialRegistrationImage = fileName;
             }
             if (dto.NationalIdImageForm != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    dto.NationalIdImageForm.CopyTo(ms);
-                    entity.NationalIdImage = ms.ToArray();
-                }
+                var fileName = SaveImageToPaths(dto.NationalIdImageForm);
+                entity.NationalIdImage = fileName;
             }
             if (dto.LogoForm != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    dto.LogoForm.CopyTo(ms);
-                    entity.Logo = ms.ToArray();
-                }
+                var fileName = SaveImageToPaths(dto.LogoForm);
+                entity.Logo = fileName;
             }
 
             // تحديث بيانات الأعضاء مع منع التكرار في الداتا بيز
@@ -196,7 +226,6 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
         }
     }
 
-
     public bool Delete(int id)
     {
         try
@@ -234,24 +263,4 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
             return null;
         }
     }
-
-    //public MerchantDTO GetAll()
-    //{
-    //    try
-    //    {
-    //        var entity = _unitOfWork.Repository<Merchant>().GetAll()
-    //            .Include(m => m.Members)
-    //            .Include(x => x.City)
-    //            .Include(x => x.Governorate)
-    //            .Include(x => x.Categories)
-    //            .FirstOrDefault(m => m.Id == id);
-    //        var ttt = entity == null ? null : _mapper.Map<MerchantDTO>(entity);
-    //        return ttt;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // يمكن تسجيل الخطأ هنا
-    //        return null;
-    //    }
-    //}
 }
