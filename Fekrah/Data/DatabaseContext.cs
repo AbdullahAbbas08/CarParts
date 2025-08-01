@@ -18,6 +18,9 @@ public class DatabaseContext : DbContext
     public DbSet<ModelType> ModelTypes { get; set; }
     public DbSet<Offer> Offers { get; set; }
     public DbSet<VisitorRegister> VisitorRegisters { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,5 +36,24 @@ public class DatabaseContext : DbContext
           .HasMany(c => c.Parts)
           .WithOne(p => p.Category)
           .HasForeignKey(p => p.CategoryId);
+
+        modelBuilder.Entity<UserRole>()
+        .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+        modelBuilder.Entity<UserRole>()
+            .HasOne(ur => ur.User)
+            .WithMany(u => u.UserRoles)
+            .HasForeignKey(ur => ur.UserId);
+
+        modelBuilder.Entity<UserRole>()
+            .HasOne(ur => ur.Role)
+            .WithMany(r => r.UserRoles)
+            .HasForeignKey(ur => ur.RoleId);
+
+        modelBuilder.Entity<UserRole>()
+        .HasOne(ur => ur.CreatedByUser)
+        .WithOne()
+        .HasForeignKey<UserRole>(ur => ur.CreatedByUserId)
+        .OnDelete(DeleteBehavior.Restrict);
     }
 }

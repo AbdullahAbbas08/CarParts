@@ -3,11 +3,6 @@ using Data;
 using Data.DTOs;
 using Data.Enums;
 using Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bussiness.Services
 {
@@ -32,7 +27,7 @@ namespace Bussiness.Services
                         .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm))
                         .Select(c => new LookupDTO
                         {
-                            Id = c.Id,  
+                            Id = c.Id,
                             Text = c.Name,
                         }).ToList();
                     break;
@@ -40,7 +35,7 @@ namespace Bussiness.Services
                 case "parts":
                     result = _unitOfWork.Repository<Part>()
                         .GetAll()
-                        .Where (p => string.IsNullOrEmpty(searchTerm) || p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
+                        .Where(p => string.IsNullOrEmpty(searchTerm) || p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
                         .Select(c => new LookupDTO
                         {
                             Id = c.Id,
@@ -61,7 +56,7 @@ namespace Bussiness.Services
                 case "cities":
                     result = _unitOfWork.Repository<City>()
                         .GetAll()
-                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.NameAr.Contains(searchTerm) )
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.NameAr.Contains(searchTerm))
                         .Select(c => new LookupDTO
                         {
                             Id = c.Id,
@@ -133,6 +128,26 @@ namespace Bussiness.Services
 
                         result.Add(newlookUp);
                     }
+                    break;
+                case "roles":
+                    result = _unitOfWork.Repository<Role>()
+                        .GetAll()
+                        .Where(s => (string.IsNullOrEmpty(searchTerm) || s.RoleNameAr.Contains(searchTerm)) && s.IsActive)
+                        .Select(c => new LookupDTO
+                        {
+                            Id = c.Id,
+                            Text = c.RoleNameAr,
+                        }).ToList();
+                    break;
+                case "permissions":
+                    result = _unitOfWork.Repository<Permission>()
+                        .GetAll()
+                        .Where(s => string.IsNullOrEmpty(searchTerm) || s.PermissionNameAr.Contains(searchTerm))
+                        .Select(c => new LookupDTO
+                        {
+                            Id = c.Id,
+                            Text = c.PermissionNameAr,
+                        }).ToList();
                     break;
                 default:
                     break;

@@ -17,6 +17,8 @@ namespace Data.Models
         public string? Address { get; set; }
         public bool IsActive { get; set; } = true;
 
+        public ICollection<UserRole> UserRoles { get; set; }
+
         public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
         [ForeignKey(nameof(CreatedByUserId))]
@@ -42,8 +44,5 @@ namespace Data.Models
         [ForeignKey(nameof(UserId))]
         public virtual User MerchantMember { get; set; }
     }
- 
-    
-  
 }
 

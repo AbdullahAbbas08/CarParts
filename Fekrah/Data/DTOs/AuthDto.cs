@@ -20,5 +20,9 @@ namespace Data.DTOs
         public bool IsAuthenticated { get; set; } = false;
         public bool IsAdmin { get; set; } = false;
         public UserTypeEnum UserType { get; set; }
+        public string UserTypeName { get; set; }
+        public int? RoleId { get; set; }
+        public string? RoleName { get; set; }
+        public ICollection<PermissionDTO>? Permissions { get; set; }
     }
 }

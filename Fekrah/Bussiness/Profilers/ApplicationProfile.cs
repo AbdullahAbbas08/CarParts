@@ -24,6 +24,7 @@ namespace Bussiness.Profilers
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Governorate, GovernorateDTO>().ReverseMap();
             CreateMap<Member, MemberDTO>().ReverseMap();
+            CreateMap<Role, RoleDTO>().ReverseMap();
         }
     }
 }
