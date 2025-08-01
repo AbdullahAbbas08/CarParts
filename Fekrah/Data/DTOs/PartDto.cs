@@ -22,7 +22,7 @@ namespace Data.DTOs
         public PartTypeEnum PartType { get; set; }
         public string PartTypeName { get; set; }
         public int YearOfManufacture { get; set; }
-        public int MerchantId { get; set; }
+        public int? MerchantId { get; set; }
         public string MerchantName { get; set; }
         public int CategoryId { get; set; } 
         public string CategoryName { get; set; } 
@@ -32,5 +32,6 @@ namespace Data.DTOs
         public string? CarModelTypeName { get; set; }
         public int? CountryOfManufactureId { get; set; }
         public string? CountryOfManufactureName { get; set; }
+        public int Count { get; set; }
     }
 }

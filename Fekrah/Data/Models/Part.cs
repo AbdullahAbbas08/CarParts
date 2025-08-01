@@ -1,6 +1,6 @@
 ﻿using Data.Enums;
 
-public class Part
+public class Part : IAuditableInsert, IAuditableUpdate
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -17,6 +17,7 @@ public class Part
     public PartTypeEnum PartType { get; set; }
     [Required, MaxLength(4)]
     public int YearOfManufacture { get; set; }
+    public int Count { get; set; }
 
     public int MerchantId { get; set; }
     [ForeignKey(nameof(MerchantId))]
@@ -35,4 +36,14 @@ public class Part
     // Add Category relation
     public int CategoryId { get; set; }
     public virtual Category Category { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+    public DateTimeOffset? CreatedOn { get; set; }
+    [ForeignKey(nameof(CreatedByUserId))]
+    public User? CreatedByUser { get; set; }
+
+    public int? UpdatedBy { get; set; }
+    public DateTimeOffset? UpdatedOn { get; set; }
+    [ForeignKey(nameof(UpdatedBy))]
+    public User? UpdatedByUser { get; set; }
 }

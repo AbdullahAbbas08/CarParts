@@ -17,6 +17,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Bussiness.Helpers;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bussiness.Services
 {
@@ -33,6 +34,9 @@ namespace Bussiness.Services
         {
             var currentUser = _UnitOfWork.Repository<User>()
                 .GetAll()
+                .Include(u => u.UserRoles)
+                .ThenInclude(r => r.Role)
+                .ThenInclude(p => p.Permissions)
                 .FirstOrDefault(u => u.Email.Equals(loginViewModel.Email));
 
             if(currentUser is null)
@@ -46,7 +50,7 @@ namespace Bussiness.Services
 
             var jwtSecurityToken = await CreateJwtToken(currentUser, currentUser.UserType == UserTypeEnum.Merchant ? /*currentUser.MerchantId*/null : null);
 
-            return new AuthDto
+            var returned = new AuthDto
             {
                 UserId = currentUser.Id,
                 UserName = currentUser.UserName,
@@ -58,8 +62,23 @@ namespace Bussiness.Services
                 Message = "LoggedIn Successfully !",
                 UserType = currentUser.UserType,
                 IsAdmin = currentUser.UserType == UserTypeEnum.Admin ? true : false,
-                StatusCode = 200
+                StatusCode = 200,
             };
+
+            // Get Role & Permissions For Current User
+            if (currentUser.UserRoles.Any())
+            {
+                var lastSelectedRole = currentUser.UserRoles.FirstOrDefault(r => r.IsLastSelected);
+
+                if (lastSelectedRole is not null)
+                {
+                    returned.RoleId = lastSelectedRole.RoleId;
+                    returned.RoleName = lastSelectedRole.Role.RoleNameAr;
+                    returned.Permissions = _Mapper.Map<List<PermissionDTO>>(lastSelectedRole.Role.Permissions);
+                }
+            }
+
+            return returned;
 
         }
 
@@ -82,7 +101,8 @@ namespace Bussiness.Services
                 Address = registerViewModel.Address,
                 IsActive = true,
                 UserType = registerViewModel.UserType,
-                FullName = registerViewModel.FullName
+                FullName = registerViewModel.FullName,
+                NationalId = "مصرى"
             };
 
             var result = _UnitOfWork.Repository<User>().Insert(newUser);
@@ -96,6 +116,7 @@ namespace Bussiness.Services
                 Photo = result.Photo,
                 Message = "تم تسجيل مستخدم جديد بنجاح .",
                 UserType = result.UserType,
+                UserTypeName = Enum.GetName(result.UserType),
                 IsAdmin = result.UserType == UserTypeEnum.Admin ? true : false,
                 StatusCode = 200
             };

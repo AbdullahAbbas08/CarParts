@@ -60,7 +60,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 CarModelId = p.CarModelType.CarsModelId,
                 CarModelName = p.CarModelType.CarsModel?.Name,
                 CountryOfManufactureId = p.CountryOfManufactureId,
-                CountryOfManufactureName = p.CountryOfManufacture.Name
+                CountryOfManufactureName = p.CountryOfManufacture.Name,
+                Count = p.Count
             })
             .ToList();
 
@@ -113,7 +114,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             CarModelId = part.CarModelType.CarsModelId,
             CarModelName = part.CarModelType.CarsModel?.Name,
             CountryOfManufactureId = part.CountryOfManufactureId,
-            CountryOfManufactureName = part.CountryOfManufacture.Name
+            CountryOfManufactureName = part.CountryOfManufacture.Name,
+            Count = part.Count
         };
     }
 
@@ -139,7 +141,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             FinalPrice = part.FinalPrice,
             Discount = part.Discount,
             ImageUrl = part.ImageUrl,
-            MerchantId = _sessionService.MerchantId.Value
+            MerchantId = part.MerchantId.HasValue ? part.MerchantId :  _sessionService.MerchantId.Value,
+            Count = part.Count
         };
 
         var result = base.Insert(addNewPart);
@@ -164,7 +167,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                         (part.PriceFrom == 0 || p.Price >= part.PriceFrom) &&
                         (part.PriceTo == 0 || p.Price <= part.PriceTo) &&
                         (part.CountryOfManufacture == 0 || p.CountryOfManufactureId == part.CountryOfManufacture) &&
-                        (part.CreatedOn.HasValue ) &&
+                        (part.PartCount == 0 || p.Count >= part.PartCount) &&
+                        (!part.CreatedOn.HasValue || p.CreatedOn.Equals(part.CreatedOn)) &&
                         (!part.IsDelivery || (part.IsDelivery && p.IsDelivery)) &&
                         (!(part.IsSold || (part.IsSold && p.IsSold)) &&
                         (!part.IsFavorit || (part.IsFavorit && p.IsFavorit))))
@@ -200,7 +204,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 CarModelId = p.CarModelType.CarsModelId,
                 CarModelName = p.CarModelType.CarsModel?.Name,
                 CountryOfManufactureId = p.CountryOfManufactureId,
-                CountryOfManufactureName = p.CountryOfManufacture.Name
+                CountryOfManufactureName = p.CountryOfManufacture.Name,
+                Count = p.Count
             })
             .ToList();
 

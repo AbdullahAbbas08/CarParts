@@ -1,4 +1,5 @@
 ﻿using Bussiness.Interfaces;
+using Bussiness.IService;
 using Bussiness.Services;
 using Data;
 using Data.Interfaces;
@@ -20,6 +21,8 @@ namespace Api.Services
             services.AddScoped<ICarsModelService, CarsModelService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IModelTypeService, ModelTypeService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IAccountService, AccountService>();
         }
 
