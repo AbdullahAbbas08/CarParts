@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, Validat
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO, MemberDTO } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -152,7 +152,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Check if coming from admin route (admin adding new merchant)
     this.isAdminMode = this.router.url.includes('/admin/') || 
                       this.router.url.includes('add-merchant') ||
-                      localStorage.getItem('currentUserRole') === 'admin';
+                      this.router.url.includes('/dashboard/');
     
     // Initialize form first
     this.initializeForm();
@@ -264,13 +264,11 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   loadMerchantData(): void {
-    // Get merchant ID from route params or local storage
+    // Get merchant ID only from route params (no localStorage fallback)
     const routeMerchantId = this.route.snapshot.paramMap.get('id');
-    const storedMerchantId = localStorage.getItem('currentMerchantId');
-    const merchantIdStr = routeMerchantId || storedMerchantId;
     
-    if (merchantIdStr) {
-      this.merchantId = parseInt(merchantIdStr);
+    if (routeMerchantId) {
+      this.merchantId = parseInt(routeMerchantId);
       console.log('Loading merchant data for ID:', this.merchantId);
       
       // Note: We don't set isLoading = true here to avoid button disable issues
@@ -282,9 +280,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
             this.currentMerchant = merchant;
             this.populateFormWithMerchant(merchant);
             this.isLoading = false;
-            
-            // Store merchant ID for future use
-            localStorage.setItem('currentMerchantId', this.merchantId!.toString());
           },
           error: (error) => {
             console.error('Error loading merchant data:', error);
@@ -294,7 +289,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         })
       );
     } else {
-      console.log('No merchant ID found, initializing empty form for new merchant');
+      console.log('No merchant ID found in URL, initializing empty form for new merchant');
       this.initializeForm(); // Initialize empty form for new merchant
     }
   }
@@ -393,6 +388,11 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Update progress after populating form
     this.calculateProgress();
     this.updateProgress();
+
+    // Force change detection to update error states
+    setTimeout(() => {
+      this.editForm.updateValueAndValidity();
+    }, 100);
 
     // Additional check to ensure cityId is set correctly after a small delay
     setTimeout(() => {
@@ -662,14 +662,23 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
   // Members management methods
   addMember(): void {
+    // Password is required for new members in create mode, optional in update mode
+    const passwordValidators = this.isUpdateMode() 
+      ? [EditProfileComponent.passwordValidator] // Optional but validated if filled
+      : [Validators.required, Validators.minLength(8), EditProfileComponent.passwordValidator]; // Required for new merchants
+    
+    const confirmPasswordValidators = this.isUpdateMode()
+      ? [] // Optional in update mode
+      : [Validators.required]; // Required for new merchants
+
     const memberGroup = this.fb.group({
       name: ['', Validators.required],
       phone: ['', Validators.required],
       email: ['', EditProfileComponent.optionalEmailValidator], // Optional but validated if filled
       position: ['', Validators.required],
       username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(8), EditProfileComponent.passwordValidator]],
-      confirmPassword: ['', [Validators.required]]
+      password: ['', passwordValidators],
+      confirmPassword: ['', confirmPasswordValidators]
     }, { validators: EditProfileComponent.passwordMatchValidator });
 
     this.membersArray.push(memberGroup);
@@ -808,16 +817,25 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       missingFiles.push('يجب إضافة عضو واحد على الأقل إلى فريق العمل');
     } else {
       // Check if at least one member is complete
-      const hasValidMember = formMembers.some((member: any) => 
-        member.name?.trim() && 
-        member.phone?.trim() && 
-        member.username?.trim() && 
-        member.password?.trim() && 
-        member.position?.trim()
-      );
+      // In update mode, password is optional for existing members
+      const hasValidMember = formMembers.some((member: any) => {
+        const basicInfoComplete = member.name?.trim() && 
+                                 member.phone?.trim() && 
+                                 member.username?.trim() && 
+                                 member.position?.trim();
+        
+        if (this.isUpdateMode()) {
+          // In update mode, password is optional (empty password means keep existing)
+          return basicInfoComplete;
+        } else {
+          // In create mode, password is required
+          return basicInfoComplete && member.password?.trim();
+        }
+      });
       
       if (!hasValidMember) {
-        missingFiles.push('يجب إكمال بيانات عضو واحد على الأقل في فريق العمل');
+        const passwordRequirement = this.isUpdateMode() ? '' : ' وكلمة المرور';
+        missingFiles.push(`يجب إكمال بيانات عضو واحد على الأقل في فريق العمل (الاسم، الهاتف، اسم المستخدم، المنصب${passwordRequirement})`);
       }
     }
     
@@ -922,32 +940,49 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       
       
       if (members.length > 0) {
-        // تحضير أعضاء الفريق بـ UserDTO format
-        const userDTOArray: any[] = [];
+        // تحضير أعضاء الفريق بـ MemberDTO format
+        const memberDTOArray: any[] = [];
         
         members.forEach((member: any, index: number) => {
+          // Create UserDTO for the member
           const userDTO = new UserDTO();
-          userDTO.id = 0; // للأعضاء الجدد
+          userDTO.id = member.userId || 0; // Use existing userId if available
           userDTO.nationalId = member.phone || ''; // نستخدم الهاتف كـ national ID مؤقتاً
           userDTO.userName = member.username || '';
           userDTO.fullName = member.name || '';
           userDTO.email = member.email || '';
-          userDTO.passwordHash = member.password || ''; // سيتم hash في الـ backend
+          
+          // Handle password: only send if provided (for new members or password changes)
+          if (member.password && member.password.trim()) {
+            userDTO.passwordHash = member.password; // سيتم hash في الـ backend
+          } else {
+            // In update mode, empty password means keep existing password
+            userDTO.passwordHash = this.isUpdateMode() ? '' : member.password || '';
+          }
+          
           userDTO.phoneNumber = member.phone || '';
           userDTO.userType = UserTypeEnum.Merchant; // نوع المستخدم: بائع
           userDTO.isActive = true;
           userDTO.address = member.position || ''; // نستخدم المنصب كعنوان مؤقت
           
+          // Create MemberDTO with UserDTO
+          const memberDTO = new MemberDTO();
+          memberDTO.id = member.id || 0; // Use existing member ID if available
+          memberDTO.userId = member.userId || 0; // سيتم تعيينه في الـ backend
+          memberDTO.merchantId = this.merchantId || 0;
+          memberDTO.role = member.position || 'موظف';
+          memberDTO.merchantMember = userDTO;
           
+          console.log('🧑‍💼 Created MemberDTO:', memberDTO);
           
           // تحويل إلى plain object باستخدام toJSON()
-          const memberJsonObj = userDTO.toJSON();
+          const memberJsonObj = memberDTO.toJSON();
           
           // تحويل إلى PascalCase كما هو مطلوب في C# API
-          const memberWithPascalCase = this.convertUserDTOToPascalCase(memberJsonObj);
-          userDTOArray.push(memberWithPascalCase);
+          const memberWithPascalCase = this.convertMemberDTOToPascalCase(memberJsonObj);
+          memberDTOArray.push(memberWithPascalCase);
           
-          
+          console.log('📤 Member with PascalCase:', memberWithPascalCase);
           
           
           
@@ -958,14 +993,14 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         });
         
         // إرسال أعضاء الفريق كـ JSON string واحد للـ server
-        const membersJsonString = JSON.stringify(userDTOArray);
+        const membersJsonString = JSON.stringify(memberDTOArray);
         formData.append('MembersJson', membersJsonString);
         
+        console.log('📤 Final MembersJson being sent:', membersJsonString);
+        console.log('📤 MemberDTO Array count:', memberDTOArray.length);
         
-        
-        
-        // Log the actual UserDTO structure being sent with PascalCase
-        
+        // Log the actual MemberDTO structure being sent with PascalCase
+        console.log('📋 Sample MemberDTO structure:', memberDTOArray[0]);
         
       } else {
         // إذا لم يكن هناك أعضاء، أرسل array فارغ
@@ -976,46 +1011,47 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       // الملفات المطلوبة - بأسماء API الصحيحة
       // Logo handling
       if (this.selectedLogo) {
-        // New logo selected
+        // New logo selected - send file via LogoForm
         formData.append('LogoForm', this.selectedLogo);
         console.log('📤 Sending new logo file:', this.selectedLogo.name);
       } else if (this.isUpdateMode() && this.currentMerchant?.logo) {
-        // Edit mode with existing logo - send existing logo filename
+        // Edit mode with existing logo - send existing logo filename only (no LogoForm)
         formData.append('Logo', this.currentMerchant.logo);
-        formData.append('LogoForm', new Blob(), ''); // Empty file for API compatibility
         console.log('📤 Keeping existing logo:', this.currentMerchant.logo);
-      } else {
-        // No logo (shouldn't reach here if validation works)
+      } else if (!this.isUpdateMode()) {
+        // Create mode requires LogoForm - this shouldn't happen if validation works
         formData.append('LogoForm', new Blob(), '');
-        console.log('⚠️ No logo provided');
+        console.log('⚠️ No logo provided for create mode');
       }
       
       // National ID handling
       if (this.selectedNationalId) {
+        // New national ID selected - send file via NationalIdImageForm
         formData.append('NationalIdImageForm', this.selectedNationalId);
         console.log('📤 Sending new national ID file:', this.selectedNationalId.name);
       } else if (this.isUpdateMode() && this.currentMerchant?.nationalIdImage) {
-        // Edit mode with existing national ID - send existing filename
+        // Edit mode with existing national ID - send existing filename only (no NationalIdImageForm)
         formData.append('NationalIdImage', this.currentMerchant.nationalIdImage);
-        formData.append('NationalIdImageForm', new Blob(), ''); // Empty file for API compatibility
         console.log('📤 Keeping existing national ID:', this.currentMerchant.nationalIdImage);
-      } else {
+      } else if (!this.isUpdateMode()) {
+        // Create mode requires NationalIdImageForm - this shouldn't happen if validation works
         formData.append('NationalIdImageForm', new Blob(), '');
-        console.log('⚠️ No national ID provided');
+        console.log('⚠️ No national ID provided for create mode');
       }
       
       // Commercial Registration handling
       if (this.selectedCommercialReg) {
+        // New commercial reg selected - send file via CommercialRegistrationImageForm
         formData.append('CommercialRegistrationImageForm', this.selectedCommercialReg);
         console.log('📤 Sending new commercial reg file:', this.selectedCommercialReg.name);
       } else if (this.isUpdateMode() && this.currentMerchant?.commercialRegistrationImage) {
-        // Edit mode with existing commercial reg - send existing filename
+        // Edit mode with existing commercial reg - send existing filename only (no CommercialRegistrationImageForm)
         formData.append('CommercialRegistrationImage', this.currentMerchant.commercialRegistrationImage);
-        formData.append('CommercialRegistrationImageForm', new Blob(), ''); // Empty file for API compatibility
         console.log('📤 Keeping existing commercial reg:', this.currentMerchant.commercialRegistrationImage);
-      } else {
+      } else if (!this.isUpdateMode()) {
+        // Create mode requires CommercialRegistrationImageForm - this shouldn't happen if validation works
         formData.append('CommercialRegistrationImageForm', new Blob(), '');
-        console.log('⚠️ No commercial registration provided');
+        console.log('⚠️ No commercial registration provided for create mode');
       }
       
       
@@ -1095,81 +1131,76 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       }
       
 
-      // Send using HttpClient directly (not SwaggerClient)
+      // Send using HttpClient with proper endpoints
       // Use different endpoints for create vs update
-      const apiUrl = this.isUpdateMode() ? '/api/Merchant/UpdateMerchant' : '/api/Merchant/InsertMerchant';
-      console.log('📤 API Endpoint:', apiUrl, '(Update mode:', this.isUpdateMode(), ')');
-      
-      this.subscriptions.add(
-        this.http.post(apiUrl, formData).subscribe({
-          next: (response: any) => {
-            
-            this.isLoading = false;
-            if (response) {
-              const successMessage = this.isAdminMode ? 'تم إضافة التاجر الجديد بنجاح' : 'تم إنشاء الملف التجاري بنجاح';
-              this.showToast(successMessage, 'success');
-              
-              // Reset form completely after successful save
-              this.resetFormToInitialState();
-              
-              this.merchantId = response.id;
-              if (response.id) {
-                localStorage.setItem('currentMerchantId', response.id.toString());
+      if (this.isUpdateMode() && this.merchantId) {
+        const apiUrl = `/api/Merchant/UpdateMerchant/${this.merchantId}`;
+        console.log('📤 API Endpoint:', apiUrl, '(Update mode for merchant ID:', this.merchantId, ')');
+        
+        this.subscriptions.add(
+          this.http.post(apiUrl, formData).subscribe({
+            next: (response: any) => {
+              console.log('✅ Update response:', response);
+              this.isLoading = false;
+              if (response) {
+                const successMessage = this.isAdminMode ? 'تم تحديث بيانات التاجر بنجاح' : 'تم تحديث الملف التجاري بنجاح';
+                this.showToast(successMessage, 'success');
+                
+                this.merchantId = response.id;
+                setTimeout(() => {
+                  if (this.isAdminMode) {
+                    this.router.navigate(['/admin']);
+                  } else {
+                    this.router.navigate(['/merchant-profile']);
+                  }
+                }, 1500);
+              } else {
+                this.showToast('حدث خطأ أثناء تحديث البيانات', 'error');
               }
-              setTimeout(() => {
-                // Navigate based on user mode
-                if (this.isAdminMode) {
-                  this.router.navigate(['/admin']); // Return to admin dashboard
-                } else {
-                  this.router.navigate(['/merchant-profile']); // Go to merchant profile
-                }
-              }, 1500);
-            } else {
-              this.showToast('حدث خطأ أثناء حفظ البيانات', 'error');
+            },
+            error: (error) => {
+              console.error('❌ Update error:', error);
+              this.isLoading = false;
+              this.handleApiError(error);
             }
-          },
-          error: (error) => {
-            
-            this.isLoading = false;
-            let errorMessages: string[] = [];
-            if (error.error) {
-              try {
-                let errorObj: any;
-                if (typeof error.error === 'string') {
-                  errorObj = JSON.parse(error.error);
-                } else {
-                  errorObj = error.error;
-                }
-                if (errorObj.errors) {
-                  Object.keys(errorObj.errors).forEach(key => {
-                    const fieldErrors = errorObj.errors[key];
-                    if (Array.isArray(fieldErrors)) {
-                      fieldErrors.forEach((msg: string) => {
-                        errorMessages.push(`${key}: ${msg}`);
-                      });
-                    } else {
-                      errorMessages.push(`${key}: ${fieldErrors}`);
-                    }
-                  });
-                } else if (errorObj.message) {
-                  errorMessages.push(errorObj.message);
-                } else if (errorObj.title) {
-                  errorMessages.push(errorObj.title);
-                }
-              } catch (parseError) {
-                errorMessages.push(error.error.toString());
+          })
+        );
+      } else {
+        const apiUrl = '/api/Merchant/InsertMerchant';
+        console.log('📤 API Endpoint:', apiUrl, '(Insert mode for new merchant)');
+        
+        this.subscriptions.add(
+          this.http.post(apiUrl, formData).subscribe({
+            next: (response: any) => {
+              console.log('✅ Insert response:', response);
+              this.isLoading = false;
+              if (response) {
+                const successMessage = this.isAdminMode ? 'تم إضافة التاجر الجديد بنجاح' : 'تم إنشاء الملف التجاري بنجاح';
+                this.showToast(successMessage, 'success');
+                
+                // Reset form completely after successful save
+                this.resetFormToInitialState();
+                
+                this.merchantId = response.id;
+                setTimeout(() => {
+                  if (this.isAdminMode) {
+                    this.router.navigate(['/admin']);
+                  } else {
+                    this.router.navigate(['/merchant-profile']);
+                  }
+                }, 1500);
+              } else {
+                this.showToast('حدث خطأ أثناء حفظ البيانات', 'error');
               }
-            } else if (error.message) {
-              errorMessages.push(error.message);
+            },
+            error: (error) => {
+              console.error('❌ Insert error:', error);
+              this.isLoading = false;
+              this.handleApiError(error);
             }
-            if (errorMessages.length === 0) {
-              errorMessages.push('حدث خطأ غير متوقع أثناء حفظ البيانات');
-            }
-            this.updateErrors = errorMessages;
-            this.showToast('حدث خطأ أثناء حفظ الملف التجاري', 'error');
-          }
-        })
-      );
+          })
+        );
+      }
     } else {
       
       this.isLoading = false; // Reset isLoading if form validation fails
@@ -1338,6 +1369,45 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     }, 3000);
   }
 
+  private handleApiError(error: any): void {
+    let errorMessages: string[] = [];
+    if (error.error) {
+      try {
+        let errorObj: any;
+        if (typeof error.error === 'string') {
+          errorObj = JSON.parse(error.error);
+        } else {
+          errorObj = error.error;
+        }
+        if (errorObj.errors) {
+          Object.keys(errorObj.errors).forEach(key => {
+            const fieldErrors = errorObj.errors[key];
+            if (Array.isArray(fieldErrors)) {
+              fieldErrors.forEach((msg: string) => {
+                errorMessages.push(`${key}: ${msg}`);
+              });
+            } else {
+              errorMessages.push(`${key}: ${fieldErrors}`);
+            }
+          });
+        } else if (errorObj.message) {
+          errorMessages.push(errorObj.message);
+        } else if (errorObj.title) {
+          errorMessages.push(errorObj.title);
+        }
+      } catch (parseError) {
+        errorMessages.push(error.error.toString());
+      }
+    } else if (error.message) {
+      errorMessages.push(error.message);
+    }
+    if (errorMessages.length === 0) {
+      errorMessages.push('حدث خطأ غير متوقع أثناء حفظ البيانات');
+    }
+    this.updateErrors = errorMessages;
+    this.showToast('حدث خطأ أثناء حفظ الملف التجاري', 'error');
+  }
+
   isUpdateMode(): boolean {
     return this.merchantId !== null && this.merchantId > 0;
   }
@@ -1367,6 +1437,17 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       PhoneNumber: userDTO.phoneNumber || '',
       Address: userDTO.address || '',
       IsActive: userDTO.isActive !== undefined ? userDTO.isActive : true
+    };
+  }
+
+  // Helper method to convert MemberDTO to PascalCase for C# API
+  private convertMemberDTOToPascalCase(memberDTO: any): any {
+    return {
+      Id: memberDTO.id || 0,
+      UserId: memberDTO.userId || 0,
+      MerchantId: memberDTO.merchantId || 0,
+      Role: memberDTO.role || '',
+      MerchantMember: memberDTO.merchantMember ? this.convertUserDTOToPascalCase(memberDTO.merchantMember) : null
     };
   }
 
@@ -1608,14 +1689,22 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Check if at least one member has all required fields filled
     return this.membersArray.controls.some(member => {
       const memberGroup = member as FormGroup;
-      return !!(
+      const basicInfoComplete = !!(
         memberGroup.get('name')?.value?.trim() &&
         memberGroup.get('phone')?.value?.trim() &&
         memberGroup.get('position')?.value?.trim() &&
-        memberGroup.get('username')?.value?.trim() &&
-        memberGroup.get('password')?.value?.trim() &&
-        memberGroup.valid
+        memberGroup.get('username')?.value?.trim()
       );
+      
+      if (this.isUpdateMode()) {
+        // In update mode, password is optional
+        return basicInfoComplete && memberGroup.valid;
+      } else {
+        // In create mode, password is required
+        return basicInfoComplete && 
+               memberGroup.get('password')?.value?.trim() &&
+               memberGroup.valid;
+      }
     });
   }
 
@@ -1687,6 +1776,34 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   // Check if logo section should have error styling
   hasLogoError(): boolean {
     return !this.isLogoComplete();
+  }
+
+  // Check if commercial registration has error
+  hasCommercialRegError(): boolean {
+    // For new merchants (create mode): selectedCommercialReg is required
+    if (!this.isUpdateMode()) {
+      return !this.selectedCommercialReg;
+    }
+    
+    // For existing merchants (edit mode): either new file OR existing file from API
+    const hasNewCommercialReg = !!(this.selectedCommercialReg);
+    const hasExistingCommercialReg = !!(this.currentMerchant?.commercialRegistrationImage && this.currentMerchant.commercialRegistrationImage.trim() !== '');
+    
+    return !hasNewCommercialReg && !hasExistingCommercialReg;
+  }
+
+  // Check if national ID has error
+  hasNationalIdError(): boolean {
+    // For new merchants (create mode): selectedNationalId is required
+    if (!this.isUpdateMode()) {
+      return !this.selectedNationalId;
+    }
+    
+    // For existing merchants (edit mode): either new file OR existing file from API
+    const hasNewNationalId = !!(this.selectedNationalId);
+    const hasExistingNationalId = !!(this.currentMerchant?.nationalIdImage && this.currentMerchant.nationalIdImage.trim() !== '');
+    
+    return !hasNewNationalId && !hasExistingNationalId;
   }
 
   // Step navigation methods
@@ -1803,16 +1920,27 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Add team members from API data
     if (Array.isArray(members) && members.length > 0) {
       members.forEach((member: any) => {
+        // For existing members in update mode, password is optional
+        const passwordValidators = this.isUpdateMode() 
+          ? [EditProfileComponent.passwordValidator] // Optional but validated if filled
+          : [Validators.required, Validators.minLength(8), EditProfileComponent.passwordValidator];
+        
+        const confirmPasswordValidators = this.isUpdateMode()
+          ? [] // Optional in update mode
+          : [Validators.required];
+
         this.membersArray.push(
           this.fb.group({
-            name: [member.userDTO?.fullName || member.name || '', [Validators.required]],
-            email: [member.userDTO?.email || member.email || '', [Validators.email]],
-            phone: [member.userDTO?.phoneNumber || member.phone || ''],
-            role: [member.role || 'موظف', [Validators.required]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
+            name: [member.merchantMember?.fullName || member.userDTO?.fullName || member.name || '', [Validators.required]],
+            email: [member.merchantMember?.email || member.userDTO?.email || member.email || '', [Validators.email]],
+            phone: [member.merchantMember?.phoneNumber || member.userDTO?.phoneNumber || member.phone || ''],
+            position: [member.role || 'موظف', [Validators.required]],
+            username: [member.merchantMember?.userName || member.userDTO?.userName || member.username || '', [Validators.required, Validators.minLength(3)]],
+            password: ['', passwordValidators], // Empty for existing members, optional in update mode
+            confirmPassword: ['', confirmPasswordValidators],
             userId: [member.userId || null],
             id: [member.id || null]
-          })
+          }, { validators: EditProfileComponent.passwordMatchValidator })
         );
       });
     }

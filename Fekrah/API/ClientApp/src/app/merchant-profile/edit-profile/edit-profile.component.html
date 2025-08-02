@@ -347,7 +347,7 @@
 
                 <div class="documents-grid-enhanced">
                     <!-- Commercial Registration -->
-                    <div class="document-card-enhanced commercial-reg-card">
+                    <div class="document-card-enhanced commercial-reg-card" [class.error-card]="hasCommercialRegError()">
                         <div class="document-header-enhanced">
                             <div class="document-icon-wrapper">
                                 <i class="fas fa-building"></i>
@@ -412,7 +412,7 @@
                                 </div>
                             </div>
 
-                            <div class="validation-message error" *ngIf="!selectedCommercialReg">
+                            <div class="validation-message error" *ngIf="hasCommercialRegError()">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 صورة السجل التجاري مطلوبة
                             </div>
@@ -420,7 +420,7 @@
                     </div>
 
                     <!-- National ID -->
-                    <div class="document-card-enhanced national-id-card">
+                    <div class="document-card-enhanced national-id-card" [class.error-card]="hasNationalIdError()">
                         <div class="document-header-enhanced">
                             <div class="document-icon-wrapper">
                                 <i class="fas fa-id-card"></i>
@@ -483,7 +483,7 @@
                                 </div>
                             </div>
 
-                            <div class="validation-message error" *ngIf="!selectedNationalId">
+                            <div class="validation-message error" *ngIf="hasNationalIdError()">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 صورة بطاقة الهوية مطلوبة
                             </div>
