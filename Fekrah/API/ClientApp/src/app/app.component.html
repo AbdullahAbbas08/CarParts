@@ -3,9 +3,9 @@
 
   <!-- ✅ Pre-Navbar مع بيانات المستخدم -->
   <app-pre-navbar
-    [isMerchant]=false
-    [isDriver]=false
-    [isAdmin]=true
+    [isMerchant]="authService.getUserType() === 3"
+    [isDriver]="authService.getUserType() === 4"
+    [isAdmin]="authService.getUserType() === 1"
     [pendingOrdersCount]="userData.pendingOrdersCount"
     [deliveryOrdersCount]="userData.deliveryOrdersCount"
     [userName]="userData.userName">

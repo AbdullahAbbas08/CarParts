@@ -355,17 +355,17 @@
         <!-- تسجيل الدخول / قائمة المستخدم -->
         <div class="auth-section">
           <!-- إذا لم يسجل دخول -->
-          <a routerLink="/auth/login" class="nav-link" *ngIf="!isLoggedIn" (click)="closeMobileMenus()">
+          <a routerLink="/auth/login" class="nav-link" *ngIf="!user" (click)="closeMobileMenus()">
             <i class="fas fa-sign-in-alt"></i>
             <span class="menu-text">دخول</span>
           </a>
 
           <!-- إذا سجل دخول -->
-          <div class="user-menu" *ngIf="isLoggedIn">
+          <div class="user-menu" *ngIf="user">
             <div class="user-avatar" (click)="toggleUserMenu()">
               <img [src]="userAvatar" [alt]="userName" *ngIf="userAvatar" class="avatar-image">
               <div class="avatar-fallback" *ngIf="!userAvatar">{{ getUserInitials() }}</div>
-              <span class="user-name desktop-only">{{ userName }}</span>
+              <span class="user-name desktop-only">{{ user.userName }}</span>
               <i class="fas fa-chevron-down dropdown-arrow"></i>
             </div>
             <div class="user-dropdown" [class.show]="showUserMenu">

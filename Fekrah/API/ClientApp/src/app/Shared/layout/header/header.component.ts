@@ -1,6 +1,8 @@
 import { Component, HostListener, OnInit, OnDestroy, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, takeUntil, interval } from 'rxjs';
+import { AuthService } from '../../../core/features/auth/auth.service';
+import { AuthDto } from '../../Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-header',
@@ -135,6 +137,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
   userAvatar = '';
   pendingOrdersCount = 0;
   showUserMenu = false;
+  user!:AuthDto;
   userType: 'customer' | 'merchant' | 'driver' | 'admin' = 'customer';
   deliveryOrdersCount = 0;
 
@@ -166,7 +169,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
     { label: 'الأصناف', type: 'section', target: '/parts' }
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private  auth:AuthService) { }
 
   ngOnInit(): void {
     this.updateCartCount();
@@ -174,7 +177,9 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
     this.loadPendingOrders();
     this.loadRecentSearches();
     this.loadSimpleSearchData();
-
+   this.auth.currentUserSub().subscribe((user) => {
+        this.user = user!
+    })
     // للتجربة - إظهار pre-navbar
     this.isMerchant = true;
     this.pendingOrdersCount = 7;

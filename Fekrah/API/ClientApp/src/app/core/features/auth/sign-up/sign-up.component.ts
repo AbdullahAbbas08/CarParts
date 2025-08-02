@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthDto, SwaggerClient, UserTypeEnum } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -16,7 +18,7 @@ export class SignUpComponent implements OnInit {
     { id: UserTypeEnum.ShippingCompany, label: 'شركة شحن (Shipping Company)' },
   ];
 
-  constructor(private fb: FormBuilder, private swagger: SwaggerClient) {}
+  constructor(private fb: FormBuilder, private swagger: SwaggerClient,private toastr: ToastrService,  private router: Router) {}
 
   ngOnInit(): void {
     this.signupForm = this.fb.group({
@@ -41,8 +43,12 @@ const formData = {
   userType: Number(this.signupForm.value.userType)
 };  
     this.swagger.apiAccountRegisterNewUserPost(formData).subscribe((response:AuthDto) => {
-      console.log('✅ تسجيل المستخدم بنجاح:', response);
-      // هنا يمكنك التعامل مع الاستجابة من الخادم، مثل إعادة التوجيه أو عرض رسالة نجاح
+       if(response.message === 'تم تسجيل مستخدم جديد بنجاح .'){
+          this.toastr.success('تم التسجيل بنجاح', 'نجاح');
+           this.router.navigate(['/auth/login']);
+       }else {
+          this.toastr.error(response.message);
+       }
     })
 
     // TODO: Call your API here
