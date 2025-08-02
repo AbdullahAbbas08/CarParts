@@ -3,6 +3,7 @@
 import { Component, OnInit, OnDestroy, HostListener, Renderer2, ElementRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FilterService } from './Shared/Services/filter.service';
+import { AuthService } from './core/features/auth/auth.service';
 
 interface UserData {
   isLoggedIn: boolean;
@@ -58,7 +59,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private filterService: FilterService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    public authService:AuthService
   ) {
     this.checkDeviceType();
   }
@@ -199,28 +201,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private loadUserData(): void {
-    try {
-      const authToken = localStorage.getItem('auth_token');
-      const userDataStr = localStorage.getItem('user_data');
-
-      if (authToken && userDataStr) {
-        const user = JSON.parse(userDataStr);
-        this.userData = {
-          ...this.userData,
-          isLoggedIn: true,
-          userName: user.name || 'المستخدم',
-          userAvatar: user.avatar || '',
-          userType: user.type || 'customer',
-          isMerchant: user.type === 'merchant',
-          isDriver: user.type === 'driver'
-        };
-
-        this.updateOrdersCounts();
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-      this.resetUserData();
-    }
+    this.authService.autoAuthUser();
   }
 
   private resetUserData(): void {

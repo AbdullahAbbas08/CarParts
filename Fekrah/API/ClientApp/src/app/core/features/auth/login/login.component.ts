@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthDto, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { AuthService } from '../auth.service';
+import { LoaderService } from '../../../../Shared/Services/Loader.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -12,28 +16,39 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private swagger: SwaggerClient,
+    private authService:AuthService,
+    private loaderService: LoaderService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  onSubmit(): void {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
+ onSubmit() {
+    this.authService.clearAuthData()
+    if (!this.loginForm.valid) {
+      return 
     }
 
-    const { username, password } = this.loginForm.value;
+     this.loaderService.show(); 
+    
 
- 
-    console.log('Logging in...', { username, password });
-
-    this.router.navigate(['/home']);
+    this.authService.loginUser(this.loginForm.value).subscribe((isLoggedIn:boolean) => {
+        if(isLoggedIn){
+           this.authService.getUserAuthData();
+          this.toastr.success("تم تسجيل الدخول بنجاح")
+          this.loaderService.hide(); 
+          this.router.navigate(['/']);
+        } else {
+          this.toastr.error("من فضلك تأكد من البيانات المدخلة")
+          this.loaderService.hide(); 
+        }
+    });
   }
-  
 }

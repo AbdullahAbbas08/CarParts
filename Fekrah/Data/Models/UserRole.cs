@@ -8,7 +8,8 @@ namespace Data.Models
 {
     public class UserRole : IAuditableInsert, IAuditableUpdate
     {
-        public int Id { get; set; }
+        [Key]
+        public int UserRoleId { get; set; }
         public bool IsLastSelected { get; set; }
 
         public int UserId { get; set; }
