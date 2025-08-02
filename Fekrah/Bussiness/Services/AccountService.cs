@@ -32,6 +32,10 @@ namespace Bussiness.Services
 
         public async Task<AuthDto> Login(LoginViewModel loginViewModel)
         {
+            int? merchantId = null;
+            UserRole? lastSelectedRole = null;
+            AuthDto returned = new();
+
             var currentUser = _UnitOfWork.Repository<User>()
                 .GetAll()
                 .Include(u => u.UserRoles)
@@ -48,9 +52,32 @@ namespace Bussiness.Services
             if(!currentUser.IsActive)
                 return new AuthDto { Message = "حسابك غير مفعل برجاء التواصل مع الأدمن .", StatusCode = 500 };
 
-            var jwtSecurityToken = await CreateJwtToken(currentUser, currentUser.UserType == UserTypeEnum.Merchant ? /*currentUser.MerchantId*/null : null);
+            // Check if current user has (Merchant) user type
+            if(currentUser.UserType == UserTypeEnum.Merchant)
+            {
+                merchantId = _UnitOfWork.Repository<Member>()
+                    .GetAll()
+                    .FirstOrDefault(m => m.UserId == currentUser.Id)?
+                    .MerchantId;
+            }
 
-            var returned = new AuthDto
+            // Get Role & Permissions For Current User
+            if (currentUser.UserRoles.Any())
+            {
+                lastSelectedRole = currentUser.UserRoles.FirstOrDefault(r => r.IsLastSelected);
+
+                if (lastSelectedRole is not null)
+                {
+                    returned.RoleId = lastSelectedRole.RoleId;
+                    returned.RoleName = lastSelectedRole.Role.RoleNameAr;
+                    returned.Permissions = lastSelectedRole.Role.Permissions.Select(p => p.PermissionCode).ToList();
+                }
+            }
+
+
+            var jwtSecurityToken = await CreateJwtToken(currentUser, lastSelectedRole is not null ? lastSelectedRole.UserRoleId : null, merchantId);
+
+            returned = new AuthDto
             {
                 UserId = currentUser.Id,
                 UserName = currentUser.UserName,
@@ -64,19 +91,6 @@ namespace Bussiness.Services
                 IsAdmin = currentUser.UserType == UserTypeEnum.Admin ? true : false,
                 StatusCode = 200,
             };
-
-            // Get Role & Permissions For Current User
-            if (currentUser.UserRoles.Any())
-            {
-                var lastSelectedRole = currentUser.UserRoles.FirstOrDefault(r => r.IsLastSelected);
-
-                if (lastSelectedRole is not null)
-                {
-                    returned.RoleId = lastSelectedRole.RoleId;
-                    returned.RoleName = lastSelectedRole.Role.RoleNameAr;
-                    returned.Permissions = _Mapper.Map<List<PermissionDTO>>(lastSelectedRole.Role.Permissions);
-                }
-            }
 
             return returned;
 
@@ -106,6 +120,18 @@ namespace Bussiness.Services
             };
 
             var result = _UnitOfWork.Repository<User>().Insert(newUser);
+
+            // Add Role For New User If Exist
+            if (registerViewModel.RoleId.HasValue)
+            {
+                _UnitOfWork.Repository<UserRole>()
+                    .Insert(new UserRole
+                    {
+                        RoleId = registerViewModel.RoleId.Value,
+                        UserId = result.Id,
+                        IsLastSelected = true
+                    });
+            }
 
             return new AuthDto
             {
@@ -165,7 +191,7 @@ namespace Bussiness.Services
                 return Convert.ToBase64String(byteHash);
             }
         }
-        private async Task<JwtSecurityToken> CreateJwtToken(User user, int? MerchantId = null)
+        private async Task<JwtSecurityToken> CreateJwtToken(User user, int? userRoleId = null, int? merchantId = null)
         {
             var claims = new[]
             {
@@ -177,8 +203,11 @@ namespace Bussiness.Services
                 new Claim("UserType", ((int)user.UserType).ToString()),
             };
 
-            if (MerchantId.HasValue && MerchantId > 0)
-                claims.Append(new Claim("MerchantId", MerchantId.ToString()));
+            if (merchantId.HasValue && merchantId > 0)
+                claims.Append(new Claim("MerchantId", merchantId.ToString()));
+
+            if(userRoleId.HasValue && userRoleId > 0)
+                claims.Append(new Claim("UserRoleId", userRoleId.ToString()));
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_JWT.Key));
             var signingCardentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);

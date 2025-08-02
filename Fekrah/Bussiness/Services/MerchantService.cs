@@ -8,6 +8,8 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Data.ViewModels;
+using Bussiness.Interfaces;
 
 public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchantService
 {
@@ -16,14 +18,17 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
     private readonly string _mainImagePath;
     private readonly string _backupImagePath;
     private readonly string _webRootPath;
+    private readonly IAccountService _accountService;
 
-    public MerchantService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IHostingEnvironment webHostEnvironment) : base(unitOfWork, mapper)
+    public MerchantService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration,
+        IHostingEnvironment webHostEnvironment, IAccountService accountService) : base(unitOfWork, mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _mainImagePath = configuration["MerchantImagePaths:Main"];
         _backupImagePath = configuration["MerchantImagePaths:Backup"];
         _webRootPath = webHostEnvironment.ContentRootPath;
+        _accountService = accountService;
     }
 
     private string SaveImageToPaths(IFormFile file)
@@ -85,7 +90,7 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
                 dto.Logo = fileName;
             }
 
-            var newMembers = JsonSerializer.Deserialize<List<UserDTO>>(dto.MembersJson) ?? new List<UserDTO>();
+            var newMembers = JsonSerializer.Deserialize<List<RegisterViewModel>>(dto.MembersJson) ?? new List<RegisterViewModel>();
             var newCategories = !string.IsNullOrEmpty(dto.CategoriesJson) ? JsonSerializer.Deserialize<List<CategoryDTO>>(dto.CategoriesJson) : dto.CategoriesDTO;
 
             var existingUsers = _unitOfWork.Repository<User>().GetAll().ToList();
@@ -93,22 +98,27 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
                 !existingUsers.Any(e =>
                     (!string.IsNullOrEmpty(u.UserName) && e.UserName == u.UserName)
                     || (!string.IsNullOrEmpty(u.Email) && e.Email == u.Email)
-                    || (!string.IsNullOrEmpty(u.NationalId) && e.NationalId == u.NationalId)
                     || (!string.IsNullOrEmpty(u.PhoneNumber) && e.PhoneNumber == u.PhoneNumber)
                 )
             ).ToList();
 
-            List<User> NewUsers = new List<User>();
+            List<AuthDto> NewUsers = new List<AuthDto>();
             foreach (var item in filteredMembers)
             {
-                var _user = _mapper.Map<User>(item);
-                NewUsers.Add(_user);
-                _unitOfWork.Repository<User>().Insert(_user);
+                //var _user = _mapper.Map<User>(item);
+                //NewUsers.Add(_user);
+                //_unitOfWork.Repository<User>().Insert(_user);
+
+                var _user = _accountService.RegisterNewUser(item);
+                NewUsers.Add(_user.Result);
             }
+
             dto.Members = NewUsers.Select(x => new MemberDTO
             {
-                UserId = x.Id
+                UserId = x.UserId
             }).ToList();
+
+
             var entity = _mapper.Map<Merchant>(dto);
 
             // ربط التصنيفات المختارة مع إضافة الجديد

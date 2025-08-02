@@ -49,6 +49,21 @@ namespace Data.Services
             }
         }
 
+        public int? UserRoleId
+        {
+            get
+            {
+                if (HttpContext.User is null)
+                    return null;
+
+                var claim = HttpContext.User.FindFirst("UserRoleId");
+                if (claim is null)
+                    return null;
+
+                return int.Parse(claim.Value);
+            }
+        }
+
         public string? UserName
         {
             get
