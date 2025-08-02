@@ -1,4 +1,5 @@
-﻿using Data.Enums;
+﻿using Data.DTOs;
+using Data.Enums;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Bussiness.IService
 {
     public interface IFileService
     {
-        string SaveFile(IFormFile formFile, FileTypeEnum fileType);
+        UploadDTO SaveFile(IFormFile formFile, FileTypeEnum fileType);
+        UploadDTO DeleteFile(string fileName, FileTypeEnum fileType);
     }
 }

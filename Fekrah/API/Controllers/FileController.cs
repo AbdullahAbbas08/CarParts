@@ -1,4 +1,5 @@
 ﻿using Bussiness.IService;
+using Data.DTOs;
 using Data.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,11 @@ namespace API.Controllers
         }
 
         [HttpPost("UploadFile")]
-        public string UploadFile(IFormFile file, FileTypeEnum fileTypeEnum) => _fileService.SaveFile(file, fileTypeEnum);
+        public UploadDTO UploadFile(IFormFile file, FileTypeEnum fileType) =>
+            _fileService.SaveFile(file, fileType);
+
+        [HttpPost("DeleteFile")]
+        public UploadDTO DeleteFile(string fileName, FileTypeEnum fileType) =>
+            _fileService.DeleteFile(fileName, fileType);
     }
 }
