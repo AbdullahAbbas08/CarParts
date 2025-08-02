@@ -2746,6 +2746,538 @@ export class SwaggerClient {
         }
         return _observableOf(null as any);
     }
+
+    apiPermissionGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfPermissionDTO> {
+        let url_ = this.baseUrl + "/api/Permission/GetAll?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPermissionGetAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPermissionGetAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfPermissionDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfPermissionDTO>;
+        }));
+    }
+
+    protected processApiPermissionGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfPermissionDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfPermissionDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiPermissionGetDetailsGet(id: number | undefined): Observable<PermissionDTO> {
+        let url_ = this.baseUrl + "/api/Permission/GetDetails?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPermissionGetDetailsGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPermissionGetDetailsGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PermissionDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PermissionDTO>;
+        }));
+    }
+
+    protected processApiPermissionGetDetailsGet(response: HttpResponseBase): Observable<PermissionDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PermissionDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiPermissionInsertPost(entity: PermissionDTO): Observable<PermissionDTO> {
+        let url_ = this.baseUrl + "/api/Permission/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPermissionInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPermissionInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PermissionDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PermissionDTO>;
+        }));
+    }
+
+    protected processApiPermissionInsertPost(response: HttpResponseBase): Observable<PermissionDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PermissionDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiPermissionUpdatePost(entity: PermissionDTO): Observable<PermissionDTO> {
+        let url_ = this.baseUrl + "/api/Permission/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPermissionUpdatePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPermissionUpdatePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PermissionDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PermissionDTO>;
+        }));
+    }
+
+    protected processApiPermissionUpdatePost(response: HttpResponseBase): Observable<PermissionDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PermissionDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiPermissionDeletePost(id: number | undefined): Observable<PermissionDTO> {
+        let url_ = this.baseUrl + "/api/Permission/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPermissionDeletePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPermissionDeletePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PermissionDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PermissionDTO>;
+        }));
+    }
+
+    protected processApiPermissionDeletePost(response: HttpResponseBase): Observable<PermissionDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PermissionDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiRoleGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfRoleDTO> {
+        let url_ = this.baseUrl + "/api/Role/GetAll?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiRoleGetAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiRoleGetAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfRoleDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfRoleDTO>;
+        }));
+    }
+
+    protected processApiRoleGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfRoleDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfRoleDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiRoleGetDetailsGet(id: number | undefined): Observable<RoleDTO> {
+        let url_ = this.baseUrl + "/api/Role/GetDetails?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiRoleGetDetailsGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiRoleGetDetailsGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RoleDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RoleDTO>;
+        }));
+    }
+
+    protected processApiRoleGetDetailsGet(response: HttpResponseBase): Observable<RoleDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RoleDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiRoleInsertPost(entity: RoleDTO): Observable<RoleDTO> {
+        let url_ = this.baseUrl + "/api/Role/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiRoleInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiRoleInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RoleDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RoleDTO>;
+        }));
+    }
+
+    protected processApiRoleInsertPost(response: HttpResponseBase): Observable<RoleDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RoleDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiRoleUpdatePost(entity: RoleDTO): Observable<RoleDTO> {
+        let url_ = this.baseUrl + "/api/Role/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiRoleUpdatePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiRoleUpdatePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RoleDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RoleDTO>;
+        }));
+    }
+
+    protected processApiRoleUpdatePost(response: HttpResponseBase): Observable<RoleDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RoleDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiRoleDeletePost(id: number | undefined): Observable<RoleDTO> {
+        let url_ = this.baseUrl + "/api/Role/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiRoleDeletePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiRoleDeletePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RoleDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RoleDTO>;
+        }));
+    }
+
+    protected processApiRoleDeletePost(response: HttpResponseBase): Observable<RoleDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RoleDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export class DataSourceResultOfCategoryDTO implements IDataSourceResultOfCategoryDTO {
@@ -3428,7 +3960,7 @@ export class PartDTO implements IPartDTO {
     partType!: PartTypeEnum;
     partTypeName!: string;
     yearOfManufacture!: number;
-    merchantId!: number;
+    merchantId?: number | undefined;
     merchantName!: string;
     categoryId!: number;
     categoryName!: string;
@@ -3438,6 +3970,7 @@ export class PartDTO implements IPartDTO {
     carModelTypeName?: string | undefined;
     countryOfManufactureId?: number | undefined;
     countryOfManufactureName?: string | undefined;
+    count!: number;
 
     constructor(data?: IPartDTO) {
         if (data) {
@@ -3477,6 +4010,7 @@ export class PartDTO implements IPartDTO {
             this.carModelTypeName = _data["carModelTypeName"];
             this.countryOfManufactureId = _data["countryOfManufactureId"];
             this.countryOfManufactureName = _data["countryOfManufactureName"];
+            this.count = _data["count"];
         }
     }
 
@@ -3516,6 +4050,7 @@ export class PartDTO implements IPartDTO {
         data["carModelTypeName"] = this.carModelTypeName;
         data["countryOfManufactureId"] = this.countryOfManufactureId;
         data["countryOfManufactureName"] = this.countryOfManufactureName;
+        data["count"] = this.count;
         return data;
     }
 }
@@ -3538,7 +4073,7 @@ export interface IPartDTO {
     partType: PartTypeEnum;
     partTypeName: string;
     yearOfManufacture: number;
-    merchantId: number;
+    merchantId?: number | undefined;
     merchantName: string;
     categoryId: number;
     categoryName: string;
@@ -3548,6 +4083,7 @@ export interface IPartDTO {
     carModelTypeName?: string | undefined;
     countryOfManufactureId?: number | undefined;
     countryOfManufactureName?: string | undefined;
+    count: number;
 }
 
 export enum PartConditionEnum {
@@ -3584,6 +4120,7 @@ export class PartFilterViewModel implements IPartFilterViewModel {
     isSold!: boolean;
     isFavorit!: boolean;
     isDelivery!: boolean;
+    partCount?: number | undefined;
 
     constructor(data?: IPartFilterViewModel) {
         if (data) {
@@ -3612,6 +4149,7 @@ export class PartFilterViewModel implements IPartFilterViewModel {
             this.isSold = _data["isSold"];
             this.isFavorit = _data["isFavorit"];
             this.isDelivery = _data["isDelivery"];
+            this.partCount = _data["partCount"];
         }
     }
 
@@ -3640,6 +4178,7 @@ export class PartFilterViewModel implements IPartFilterViewModel {
         data["isSold"] = this.isSold;
         data["isFavorit"] = this.isFavorit;
         data["isDelivery"] = this.isDelivery;
+        data["partCount"] = this.partCount;
         return data;
     }
 }
@@ -3661,6 +4200,7 @@ export interface IPartFilterViewModel {
     isSold: boolean;
     isFavorit: boolean;
     isDelivery: boolean;
+    partCount?: number | undefined;
 }
 
 export class AuthDto implements IAuthDto {
@@ -3675,6 +4215,10 @@ export class AuthDto implements IAuthDto {
     isAuthenticated!: boolean;
     isAdmin!: boolean;
     userType!: UserTypeEnum;
+    userTypeName!: string;
+    roleId?: number | undefined;
+    roleName?: string | undefined;
+    permissions?: PermissionDTO[] | undefined;
 
     constructor(data?: IAuthDto) {
         if (data) {
@@ -3698,6 +4242,14 @@ export class AuthDto implements IAuthDto {
             this.isAuthenticated = _data["isAuthenticated"];
             this.isAdmin = _data["isAdmin"];
             this.userType = _data["userType"];
+            this.userTypeName = _data["userTypeName"];
+            this.roleId = _data["roleId"];
+            this.roleName = _data["roleName"];
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(PermissionDTO.fromJS(item));
+            }
         }
     }
 
@@ -3721,6 +4273,14 @@ export class AuthDto implements IAuthDto {
         data["isAuthenticated"] = this.isAuthenticated;
         data["isAdmin"] = this.isAdmin;
         data["userType"] = this.userType;
+        data["userTypeName"] = this.userTypeName;
+        data["roleId"] = this.roleId;
+        data["roleName"] = this.roleName;
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -3737,6 +4297,58 @@ export interface IAuthDto {
     isAuthenticated: boolean;
     isAdmin: boolean;
     userType: UserTypeEnum;
+    userTypeName: string;
+    roleId?: number | undefined;
+    roleName?: string | undefined;
+    permissions?: PermissionDTO[] | undefined;
+}
+
+export class PermissionDTO implements IPermissionDTO {
+    id!: number;
+    permissionNameAr!: string;
+    permissionNameEn!: string;
+    permissionCode!: string;
+
+    constructor(data?: IPermissionDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.permissionNameAr = _data["permissionNameAr"];
+            this.permissionNameEn = _data["permissionNameEn"];
+            this.permissionCode = _data["permissionCode"];
+        }
+    }
+
+    static fromJS(data: any): PermissionDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new PermissionDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["permissionNameAr"] = this.permissionNameAr;
+        data["permissionNameEn"] = this.permissionNameEn;
+        data["permissionCode"] = this.permissionCode;
+        return data;
+    }
+}
+
+export interface IPermissionDTO {
+    id: number;
+    permissionNameAr: string;
+    permissionNameEn: string;
+    permissionCode: string;
 }
 
 export class LoginViewModel implements ILoginViewModel {
@@ -4222,6 +4834,160 @@ export interface ICityLookupDto {
     id: number;
     nameAr: string;
     governorateId: number;
+}
+
+export class DataSourceResultOfPermissionDTO implements IDataSourceResultOfPermissionDTO {
+    data!: PermissionDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfPermissionDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(PermissionDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfPermissionDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfPermissionDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfPermissionDTO {
+    data: PermissionDTO[];
+    count: number;
+    additionalValue: number;
+}
+
+export class DataSourceResultOfRoleDTO implements IDataSourceResultOfRoleDTO {
+    data!: RoleDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfRoleDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(RoleDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfRoleDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfRoleDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfRoleDTO {
+    data: RoleDTO[];
+    count: number;
+    additionalValue: number;
+}
+
+export class RoleDTO implements IRoleDTO {
+    id!: number;
+    roleNameAr!: string;
+    roleNameEn!: string;
+
+    constructor(data?: IRoleDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.roleNameAr = _data["roleNameAr"];
+            this.roleNameEn = _data["roleNameEn"];
+        }
+    }
+
+    static fromJS(data: any): RoleDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["roleNameAr"] = this.roleNameAr;
+        data["roleNameEn"] = this.roleNameEn;
+        return data;
+    }
+}
+
+export interface IRoleDTO {
+    id: number;
+    roleNameAr: string;
+    roleNameEn: string;
 }
 
 export interface FileParameter {

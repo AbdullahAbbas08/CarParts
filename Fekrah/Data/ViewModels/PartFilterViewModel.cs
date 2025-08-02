@@ -16,4 +16,5 @@
     public bool IsSold { get; set; }
     public bool IsFavorit { get; set; }
     public bool IsDelivery { get; set; }
+    public int? PartCount { get; set; }
 }
