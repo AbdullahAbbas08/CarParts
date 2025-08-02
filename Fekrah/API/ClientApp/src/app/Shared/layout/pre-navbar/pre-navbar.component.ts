@@ -1,11 +1,29 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef, Renderer2 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subject, takeUntil, interval } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-pre-navbar',
   templateUrl: './pre-navbar.component.html',
-  styleUrls: ['./pre-navbar-simple.component.scss']
+  styleUrls: ['./pre-navbar.component.scss'],
+  animations: [
+    trigger('slideInDown', [
+      transition(':enter', [
+        style({ transform: 'translateY(-100%)', opacity: 0 }),
+        animate('300ms ease-in', style({ transform: 'translateY(0%)', opacity: 1 }))
+      ])
+    ]),
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.95)' }),
+        animate('200ms ease-in', style({ opacity: 1, transform: 'scale(1)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-out', style({ opacity: 0, transform: 'scale(0.95)' }))
+      ])
+    ])
+  ]
 })
 export class PreNavbarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -33,42 +51,35 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     { 
       route: '/admin/dashboard', 
       icon: 'fas fa-tachometer-alt', 
-      label: 'لوحة التحكم',
+      label: 'لوحة الإدارة',
       hasNotifications: false,
       notificationCount: 0
     },
     { 
-      route: '/admin/manage-merchants', 
+      route: '/admin/merchants', 
       icon: 'fas fa-store', 
       label: 'إدارة التجار',
       hasNotifications: true,
-      notificationCount: 3
-    },
-    { 
-      route: '/admin/users', 
-      icon: 'fas fa-users', 
-      label: 'إدارة المستخدمين',
-      hasNotifications: false,
-      notificationCount: 0
+      notificationCount: 5
     },
     { 
       route: '/admin/orders', 
-      icon: 'fas fa-shopping-cart', 
+      icon: 'fas fa-clipboard-list', 
       label: 'إدارة الطلبات',
       hasNotifications: true,
-      notificationCount: 7
+      notificationCount: 12
+    },
+    { 
+      route: '/admin/drivers', 
+      icon: 'fas fa-truck', 
+      label: 'إدارة السائقين',
+      hasNotifications: false,
+      notificationCount: 0
     },
     { 
       route: '/admin/reports', 
       icon: 'fas fa-chart-line', 
-      label: 'التقارير والإحصائيات',
-      hasNotifications: false,
-      notificationCount: 0
-    },
-    { 
-      route: '/admin/settings', 
-      icon: 'fas fa-cog', 
-      label: 'إعدادات النظام',
+      label: 'التقارير',
       hasNotifications: false,
       notificationCount: 0
     }
@@ -82,12 +93,15 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     { route: '/dashboard/merchant', icon: 'fas fa-box', label: 'المنتجات' }
   ];
 
-  // Driver Nav - Simplified
+  // Driver Nav - Enhanced for شركة الشحن
   driverNavItems = [
     { route: '/dashboard/overview', icon: 'fas fa-th-large', label: 'نظرة شاملة', isOverview: true },
     { route: '/driver/dashboard', icon: 'fas fa-tachometer-alt', label: 'لوحة التحكم' },
     { route: '/driver/deliveries', icon: 'fas fa-truck', label: 'طلبات التوصيل', hasBadge: true, badgeCount: () => this.deliveryOrdersCount },
-    { route: '/driver/earnings', icon: 'fas fa-dollar-sign', label: 'الأرباح' }
+    { route: '/driver/fleet', icon: 'fas fa-shipping-fast', label: 'إدارة الأسطول' },
+    { route: '/driver/routes', icon: 'fas fa-route', label: 'الطرق والمسارات' },
+    { route: '/driver/earnings', icon: 'fas fa-dollar-sign', label: 'الأرباح' },
+    { route: '/driver/reports', icon: 'fas fa-chart-bar', label: 'التقارير' }
   ];
 
   constructor(
@@ -267,14 +281,18 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     console.log('Admin stats updated:', stats);
   }
 
-  navigateWithFeedback(route: string): void {
-    const activeLink = this.elementRef.nativeElement.querySelector('.nav-link.active');
-    if (activeLink) this.renderer.addClass(activeLink, 'loading');
-    this.router.navigate([route]).then(() => {
-      if (activeLink) this.renderer.removeClass(activeLink, 'loading');
-    });
+  // ==================== طرق الأدمن ====================
+
+  // Navigation helpers
+  getAdminNavItems() {
+    return this.adminNavItems;
   }
 
+  trackByRoute(index: number, item: any): any {
+    return item.route;
+  }
+
+  // Helper methods for display
   getDisplayName(): string {
     if (this.isMerchant) return `مرحباً ${this.userName} - لوحة التاجر`;
     if (this.isDriver) return `مرحباً ${this.userName} - لوحة المراسل`;
@@ -296,13 +314,6 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  getTotalNotifications(): number {
-    if (this.isMerchant) return this.pendingOrdersCount;
-    if (this.isDriver) return this.deliveryOrdersCount;
-    if (this.isAdmin) return parseInt(localStorage.getItem('pending_tickets') || '0');
-    return 0;
-  }
-
   getUserRoleClass(): string {
     if (this.isMerchant) return 'merchant-mode';
     if (this.isDriver) return 'driver-mode';
@@ -310,81 +321,41 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  // ==================== طرق الأدمن الجديدة ====================
-
-  // Navigation helpers
-  getAdminNavItems() {
-    return this.adminNavItems;
+  getDisplayRole(): string {
+    if (this.isMerchant) return 'تاجر';
+    if (this.isDriver) return 'شركة شحن';
+    if (this.isAdmin) return 'مدير النظام';
+    return '';
   }
 
-  trackByRoute(index: number, item: any): any {
-    return item.route;
+  getDashboardRoute(): string {
+    if (this.isMerchant) return '/dashboard/super';
+    if (this.isDriver) return '/driver/dashboard';
+    if (this.isAdmin) return '/admin/dashboard';
+    return '/dashboard';
   }
 
-  // Statistics methods
-  getTotalMerchants(): number {
-    return parseInt(localStorage.getItem('total_merchants') || '245');
+  getNotificationCount(): number {
+    if (this.isAdmin) return 8; // عدد الإشعارات للأدمن
+    if (this.isMerchant) return this.pendingOrdersCount;
+    if (this.isDriver) return this.deliveryOrdersCount;
+    return 0;
   }
 
-  getTotalOrders(): number {
-    return parseInt(localStorage.getItem('total_orders') || '1,847');
-  }
-
-  getRevenue(): string {
-    return localStorage.getItem('total_revenue') || '125,400';
-  }
-
-  // Notifications methods
   toggleNotifications(): void {
     this.showNotifications = !this.showNotifications;
-    this.showQuickSettings = false;
-    this.showProfileMenu = false;
+    if (this.showNotifications) {
+      this.showQuickSettings = false;
+      this.showProfileMenu = false;
+    }
   }
 
-  getRecentNotifications() {
-    return [
-      {
-        type: 'merchant',
-        icon: 'fas fa-store',
-        title: 'تاجر جديد في انتظار الموافقة',
-        timeAgo: 'منذ 5 دقائق'
-      },
-      {
-        type: 'order',
-        icon: 'fas fa-shopping-cart',
-        title: 'طلب جديد يحتاج مراجعة',
-        timeAgo: 'منذ 15 دقيقة'
-      },
-      {
-        type: 'system',
-        icon: 'fas fa-exclamation-triangle',
-        title: 'تحديث النظام متاح',
-        timeAgo: 'منذ ساعة'
-      }
-    ];
-  }
-
-  viewAllNotifications(): void {
-    this.showNotifications = false;
-    this.navigateToRoute('/admin/notifications');
-  }
-
-  // Quick Settings methods
-  toggleQuickSettings(): void {
+  toggleSettings(): void {
     this.showQuickSettings = !this.showQuickSettings;
-    this.showNotifications = false;
-    this.showProfileMenu = false;
-  }
-
-  toggleMaintenanceMode(): void {
-    this.isMaintenanceMode = !this.isMaintenanceMode;
-    console.log('وضع الصيانة:', this.isMaintenanceMode ? 'مفعل' : 'معطل');
-    // هنا يمكن إضافة API call لتفعيل/إلغاء وضع الصيانة
-  }
-
-  viewSystemHealth(): void {
-    this.showQuickSettings = false;
-    this.navigateToRoute('/admin/system-health');
+    if (this.showQuickSettings) {
+      this.showNotifications = false;
+      this.showProfileMenu = false;
+    }
   }
 
   // Platform switching
@@ -396,31 +367,10 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
   // Profile methods
   toggleProfileMenu(): void {
     this.showProfileMenu = !this.showProfileMenu;
-    this.showNotifications = false;
-    this.showQuickSettings = false;
-  }
-
-  getAdminAvatar(): string {
-    return localStorage.getItem('admin_avatar') || '/assets/images/admin-avatar.png';
-  }
-
-  onAvatarError(event: Event): void {
-    const target = event.target as HTMLImageElement;
-    if (target) {
-      target.src = '/assets/images/default-admin.png';
+    if (this.showProfileMenu) {
+      this.showNotifications = false;
+      this.showQuickSettings = false;
     }
-  }
-
-  getLastLoginTime(): string {
-    const lastLogin = localStorage.getItem('last_login_time');
-    if (lastLogin) {
-      const date = new Date(lastLogin);
-      return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
-    }
-    return 'اليوم';
   }
 
   viewProfile(): void {
@@ -431,11 +381,6 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
   viewSettings(): void {
     this.showProfileMenu = false;
     this.navigateToRoute('/admin/settings');
-  }
-
-  viewActivityLog(): void {
-    this.showProfileMenu = false;
-    this.navigateToRoute('/admin/activity-log');
   }
 
   logout(): void {
@@ -452,46 +397,7 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  shouldShowBadge(item: any): boolean {
-    return item.hasBadge && item.badgeCount && item.badgeCount() > 0;
-  }
-
-  getBadgeCount(item: any): number {
-    return item.badgeCount ? item.badgeCount() : 0;
-  }
-
-  onNavItemClick(item: any, event: Event): void {
-    event.preventDefault();
-    const target = event.currentTarget as HTMLElement;
-    this.renderer.addClass(target, 'clicked');
-    setTimeout(() => {
-      this.renderer.removeClass(target, 'clicked');
-      this.navigateWithFeedback(item.route);
-    }, 150);
-  }
-
-  getQuickStatsText(): string {
-    if (this.isMerchant) {
-      return `${this.pendingOrdersCount} طلب جديد`;
-    } else if (this.isDriver) {
-      return `${this.deliveryOrdersCount} طلب توصيل`;
-    } else if (this.isAdmin) {
-      const pending = parseInt(localStorage.getItem('pending_tickets') || '0');
-      return `${pending} تذكرة معلّقة`;
-    }
-    return '';
-  }
-
-  getQuickStatsIcon(): string {
-    if (this.isMerchant) return 'fas fa-shopping-bag';
-    if (this.isDriver) return 'fas fa-truck';
-    if (this.isAdmin) return 'fas fa-exclamation-triangle';
-    return '';
-  }
-
   navigateToRoute(route: string): void {
-  this.router.navigate([route]);
-}
-
-
+    this.router.navigate([route]);
+  }
 }

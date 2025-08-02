@@ -7,5 +7,7 @@ public interface IMerchantService : _IBusinessService<Merchant, MerchantDTO>
     MerchantDTO Update(int id, MerchantDTO dto);
     bool Delete(int id);
     MerchantDTO GetById(int id);
+    MerchantDTO ActivateMerchant(int id);
+    MerchantDTO DeactivateMerchant(int id);
+    MerchantDTO CloseMerchant(int id);
 }
- 

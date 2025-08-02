@@ -546,15 +546,23 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
   }
 
   editMerchant(merchant: MerchantDTO): void {
-    console.log('🏪 Editing merchant:', merchant.shopName);
+    console.log('🏪 Editing merchant:', merchant.shopName, 'ID:', merchant.id);
+    
+    // Store ID in localStorage as backup
     localStorage.setItem('currentMerchantId', merchant.id?.toString() || '');
-    this.router.navigate(['/merchant-profile/edit']);
+    
+    // Navigate with merchant ID as route parameter (preferred method)
+    this.router.navigate(['/merchant-profile/edit', merchant.id]);
   }
 
   viewMerchant(merchant: MerchantDTO): void {
-    console.log('👀 Viewing merchant:', merchant.shopName);
+    console.log('👀 Viewing merchant:', merchant.shopName, 'ID:', merchant.id);
+    
+    // Store ID in localStorage as backup  
     localStorage.setItem('currentMerchantId', merchant.id?.toString() || '');
-    this.router.navigate(['/merchant-profile']);
+    
+    // Navigate with merchant ID as route parameter (preferred method)
+    this.router.navigate(['/merchant-profile', merchant.id]);
   }
 
   toggleMerchantStatus(merchant: MerchantDTO): void {
@@ -563,16 +571,34 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     const statusText = newStatus === 'active' ? 'تفعيل' : 'إلغاء تفعيل';
     
     if (confirm(`هل أنت متأكد من ${statusText} التاجر "${merchant.shopName}"؟`)) {
-      // Update the status property if available, otherwise fallback to rating
-      if (merchant.status !== undefined) {
-        (merchant as any).status = newStatus === 'active' ? 1 : 0;
-      } else {
-        // Fallback to rating for backward compatibility
-        merchant.rating = newStatus === 'active' ? 4.0 : 2.0;
-      }
+      this.isLoading = true;
       
-      this.showToast(`تم ${statusText} التاجر بنجاح`, 'success');
-      this.applyFilters();
+      // Use appropriate API based on the target status
+      const apiCall = newStatus === 'active' 
+        ? this.swaggerClient.apiMerchantActivatePut(merchant.id)
+        : this.swaggerClient.apiMerchantDeactivatePut(merchant.id);
+      
+      this.subscriptions.add(
+        apiCall.subscribe({
+          next: (updatedMerchant) => {
+            // Update the merchant in the local array
+            const index = this.merchants.findIndex(m => m.id === merchant.id);
+            if (index !== -1) {
+              this.merchants[index] = updatedMerchant;
+            }
+            
+            this.updateStatistics();
+            this.applyFilters();
+            this.showToast(`تم ${statusText} التاجر بنجاح`, 'success');
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error(`❌ Error ${statusText} merchant:`, error);
+            this.showToast(`حدث خطأ أثناء ${statusText} التاجر`, 'error');
+            this.isLoading = false;
+          }
+        })
+      );
     }
   }
 
@@ -580,23 +606,27 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     if (confirm(`هل أنت متأكد من إغلاق التاجر "${merchant.shopName}"؟`)) {
       this.isLoading = true;
       
-      setTimeout(() => {
-        // Option 1: Mark as closed instead of removing
-        if (merchant.status !== undefined) {
-          (merchant as any).status = 3; // 3 for closed
-          this.updateStatistics();
-          this.applyFilters();
-          this.showToast('تم إغلاق التاجر بنجاح', 'success');
-        } else {
-          // Option 2: Remove from list (fallback for older API)
-          this.merchants = this.merchants.filter(m => m.id !== merchant.id);
-          this.updateStatistics();
-          this.applyFilters();
-          this.showToast('تم إغلاق التاجر بنجاح', 'success');
-        }
-        
-        this.isLoading = false;
-      }, 1000);
+      this.subscriptions.add(
+        this.swaggerClient.apiMerchantClosePut(merchant.id).subscribe({
+          next: (updatedMerchant) => {
+            // Update the merchant in the local array
+            const index = this.merchants.findIndex(m => m.id === merchant.id);
+            if (index !== -1) {
+              this.merchants[index] = updatedMerchant;
+            }
+            
+            this.updateStatistics();
+            this.applyFilters();
+            this.showToast('تم إغلاق التاجر بنجاح', 'success');
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('❌ Error closing merchant:', error);
+            this.showToast('حدث خطأ أثناء إغلاق التاجر', 'error');
+            this.isLoading = false;
+          }
+        })
+      );
     }
   }
 
@@ -604,18 +634,55 @@ export class ManageMerchantsComponent implements OnInit, OnDestroy {
     if (confirm(`هل أنت متأكد من إعادة تفعيل التاجر "${merchant.shopName}"؟`)) {
       this.isLoading = true;
       
-      setTimeout(() => {
-        if (merchant.status !== undefined) {
-          (merchant as any).status = 1; // 1 for active
-        } else {
-          merchant.rating = 4.0; // Fallback to rating
-        }
-        
-        this.updateStatistics();
-        this.applyFilters();
-        this.showToast('تم إعادة تفعيل التاجر بنجاح', 'success');
-        this.isLoading = false;
-      }, 1000);
+      this.subscriptions.add(
+        this.swaggerClient.apiMerchantActivatePut(merchant.id).subscribe({
+          next: (updatedMerchant) => {
+            // Update the merchant in the local array
+            const index = this.merchants.findIndex(m => m.id === merchant.id);
+            if (index !== -1) {
+              this.merchants[index] = updatedMerchant;
+            }
+            
+            this.updateStatistics();
+            this.applyFilters();
+            this.showToast('تم إعادة تفعيل التاجر بنجاح', 'success');
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('❌ Error activating merchant:', error);
+            this.showToast('حدث خطأ أثناء تفعيل التاجر', 'error');
+            this.isLoading = false;
+          }
+        })
+      );
+    }
+  }
+
+  deactivateMerchant(merchant: MerchantDTO): void {
+    if (confirm(`هل أنت متأكد من إلغاء تفعيل التاجر "${merchant.shopName}"؟`)) {
+      this.isLoading = true;
+      
+      this.subscriptions.add(
+        this.swaggerClient.apiMerchantDeactivatePut(merchant.id).subscribe({
+          next: (updatedMerchant) => {
+            // Update the merchant in the local array
+            const index = this.merchants.findIndex(m => m.id === merchant.id);
+            if (index !== -1) {
+              this.merchants[index] = updatedMerchant;
+            }
+            
+            this.updateStatistics();
+            this.applyFilters();
+            this.showToast('تم إلغاء تفعيل التاجر بنجاح', 'success');
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('❌ Error deactivating merchant:', error);
+            this.showToast('حدث خطأ أثناء إلغاء تفعيل التاجر', 'error');
+            this.isLoading = false;
+          }
+        })
+      );
     }
   }
 

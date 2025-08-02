@@ -1,16 +1,6 @@
 <!-- الحاوي الرئيسي للموقع مع إمكانية النقر للإغلاق -->
 <div class="app-container " [class.filter-active]="filtersOpened" (click)="onSiteClick($event)">
 
-  <!-- ✅ Pre-Navbar مع بيانات المستخدم -->
-  <app-pre-navbar
-    [isMerchant]=false
-    [isDriver]=false
-    [isAdmin]=true
-    [pendingOrdersCount]="userData.pendingOrdersCount"
-    [deliveryOrdersCount]="userData.deliveryOrdersCount"
-    [userName]="userData.userName">
-  </app-pre-navbar>
-
   <!-- ✅ الهيدر مع زر الفلتر -->
   <app-header
     [isFilterOpen]="filtersOpened"

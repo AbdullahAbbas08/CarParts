@@ -52,7 +52,7 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
             file.CopyTo(stream);
         }
         // Return relative path (e.g. MerchantData/filename.jpg)
-        return Path.Combine(_mainImagePath, fileName).Replace("\\", "/");
+        return  fileName.Replace("\\", "/");
     }
 
     public MerchantDTO Insert(MerchantDTO dto)
@@ -262,5 +262,40 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
             // يمكن تسجيل الخطأ هنا
             return null;
         }
+    }
+
+    public MerchantDTO ActivateMerchant(int id)
+    {
+        var repo = _unitOfWork.Repository<Merchant>();
+        var entity = repo.GetById(id);
+        if (entity == null) return null;
+        entity.Status = Data.Enums.MerchantStatus.Active;
+        repo.Update(entity);
+        _unitOfWork.SaveChanges();
+        return _mapper.Map<MerchantDTO>(entity);
+    }
+
+    public MerchantDTO DeactivateMerchant(int id)
+    {
+        var repo = _unitOfWork.Repository<Merchant>();
+        var entity = repo.GetById(id);
+        if (entity == null) return null;
+        entity.Status = Data.Enums.MerchantStatus.Inactive;
+        repo.Update(entity);
+        _unitOfWork.SaveChanges();
+        return _mapper.Map<MerchantDTO>(entity);
+    }
+
+    public MerchantDTO CloseMerchant(int id)
+    {
+        var repo = _unitOfWork.Repository<Merchant>();
+        var entity = repo.GetById(id);
+        if (entity == null) return null;
+        entity.Status = Data.Enums.MerchantStatus.Deleted;
+        //entity.DeletedBy = deletedBy;
+        entity.DeletedOn = DateTimeOffset.Now;
+        repo.Update(entity);
+        _unitOfWork.SaveChanges();
+        return _mapper.Map<MerchantDTO>(entity);
     }
 }
