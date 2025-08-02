@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthDto, SwaggerClient, UserTypeEnum } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-signup',
@@ -9,33 +10,24 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 export class SignUpComponent implements OnInit {
   signupForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  roles = [
+    { id: UserTypeEnum.Client, label: 'عميل (Client)' },
+    { id: UserTypeEnum.Merchant, label: 'تاجر (Merchant)' },
+    { id: UserTypeEnum.ShippingCompany, label: 'شركة شحن (Shipping Company)' },
+  ];
+
+  constructor(private fb: FormBuilder, private swagger: SwaggerClient) {}
 
   ngOnInit(): void {
     this.signupForm = this.fb.group({
+      userName: ['', [Validators.required, Validators.minLength(3)]],
       fullName: ['', [Validators.required, Validators.minLength(3)]],
-      address: ['', [Validators.required, Validators.minLength(5)]],
       email: ['', [Validators.required, Validators.email]],
-      userType: ['user', Validators.required], // default value
+      phoneNumber: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^01[0-2,5]{1}[0-9]{8}$/)]], // رقم مصري مثلاً
-    }, {
-      validators: [this.matchPasswords('password', 'confirmPassword')]
+      address: ['', [Validators.required, Validators.minLength(5)]],
+      userType: [null, Validators.required]
     });
-  }
-
-  matchPasswords(password: string, confirmPassword: string) {
-    return (formGroup: AbstractControl) => {
-      const pass = formGroup.get(password);
-      const confirm = formGroup.get(confirmPassword);
-
-      if (pass && confirm && pass.value !== confirm.value) {
-        confirm.setErrors({ notMatched: true });
-      } else {
-        confirm?.setErrors(null);
-      }
-    };
   }
 
   onSubmit(): void {
@@ -44,8 +36,14 @@ export class SignUpComponent implements OnInit {
       return;
     }
 
-    const formData = this.signupForm.value;
-    console.log('📦 بيانات التسجيل:', formData);
+const formData = {
+  ...this.signupForm.value,
+  userType: Number(this.signupForm.value.userType)
+};  
+    this.swagger.apiAccountRegisterNewUserPost(formData).subscribe((response:AuthDto) => {
+      console.log('✅ تسجيل المستخدم بنجاح:', response);
+      // هنا يمكنك التعامل مع الاستجابة من الخادم، مثل إعادة التوجيه أو عرض رسالة نجاح
+    })
 
     // TODO: Call your API here
   }

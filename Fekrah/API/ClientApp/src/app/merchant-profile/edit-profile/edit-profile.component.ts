@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
@@ -138,6 +138,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private location: Location,
     private swaggerClient: SwaggerClient,
     private http: HttpClient
@@ -149,12 +150,16 @@ export class EditProfileComponent implements OnInit, OnDestroy {
                       this.router.url.includes('add-merchant') ||
                       localStorage.getItem('currentUserRole') === 'admin';
     
-    this.initializeForm(); // Initialize empty form first
-    this.initializeNewCategoryForm(); // Initialize add category form
-    this.loadCurrentProfile();
-    this.loadMerchantData();
+    // Initialize form first
+    this.initializeForm();
+    this.initializeNewCategoryForm();
+    
+    // Load dropdown data
     this.loadGovernorates();
-    this.loadCategories(); // Load categories from API
+    this.loadCategories();
+    
+    // Load merchant data if editing existing merchant
+    this.loadMerchantData();
     
     // Initialize progress calculation
     this.calculateProgress();
@@ -241,123 +246,157 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
   loadMerchantData(): void {
     // Get merchant ID from route params or local storage
-    // For now, we'll check if there's a merchant ID to determine if this is an update
+    const routeMerchantId = this.route.snapshot.paramMap.get('id');
     const storedMerchantId = localStorage.getItem('currentMerchantId');
-    if (storedMerchantId) {
-      this.merchantId = parseInt(storedMerchantId);
+    const merchantIdStr = routeMerchantId || storedMerchantId;
+    
+    if (merchantIdStr) {
+      this.merchantId = parseInt(merchantIdStr);
+      console.log('Loading merchant data for ID:', this.merchantId);
+      
+      this.isLoading = true;
       this.subscriptions.add(
-        this.swaggerClient.apiMerchantGetDetailsGet(this.merchantId).subscribe({
+        this.swaggerClient.apiMerchantGetDataByIdGet(this.merchantId).subscribe({
           next: (merchant) => {
+            console.log('Merchant data loaded successfully:', merchant);
             this.currentMerchant = merchant;
-            this.initializeForm();
+            this.populateFormWithMerchant(merchant);
+            this.isLoading = false;
+            
+            // Store merchant ID for future use
+            localStorage.setItem('currentMerchantId', this.merchantId!.toString());
           },
           error: (error) => {
-            this.initializeForm(); // Initialize empty form
+            console.error('Error loading merchant data:', error);
+            this.initializeForm(); // Initialize empty form on error
+            this.isLoading = false;
           }
         })
       );
     } else {
+      console.log('No merchant ID found, initializing empty form for new merchant');
       this.initializeForm(); // Initialize empty form for new merchant
     }
   }
 
   loadCurrentProfile(): void {
-    // Load merchant profile from API if needed
-    if (this.merchantId) {
-      this.swaggerClient.apiMerchantGetDetailsGet(this.merchantId).subscribe({
-        next: (merchant: MerchantDTO) => {
-          this.currentMerchant = merchant;
-          this.populateFormWithMerchant(merchant);
-        },
-        error: (error: any) => {
-        }
-      });
+    // This method is now redundant as loadMerchantData handles everything
+    // Keep it for backward compatibility but make it call loadMerchantData
+    if (!this.currentMerchant && this.merchantId) {
+      this.loadMerchantData();
     }
   }
 
   populateFormWithMerchant(merchant: MerchantDTO): void {
-    if (this.editForm) {
+    if (!this.editForm || !merchant) {
+      console.warn('Form not initialized or merchant data not available');
+      return;
+    }
+
+    console.log('Populating form with merchant data:', merchant);
+
+    // Populate basic merchant information
     this.editForm.patchValue({
       shopName: merchant.shopName || '',
       shortDescription: merchant.shortDescription || '',
+      email: merchant.email || '',
+      phone: merchant.mobileNo || '',
+      whatsapp: merchant.whatsAppMobileNo || '',
       governorateId: merchant.governorateId || '',
       cityId: merchant.cityId || '',
       address: merchant.address || '',
+      locationOnMap: merchant.locationOnMap || '',
       slug: merchant.slug || '',
       description: merchant.description || '',
       commercialRegistrationNumber: merchant.commercialRegistrationNumber || '',
-      nationalIdNumber: merchant.nationalIdNumber || ''
+      nationalIdNumber: merchant.nationalIdNumber || '',
+      categories: merchant.categoriesDTO || [],
+      categoriesIds: merchant.categoriesDTO?.map(c => c.id) || []
     });
 
-    // Set preview images
+    // Load cities for selected governorate
+    if (merchant.governorateId) {
+      this.onGovernorateChange(merchant.governorateId);
+    }
+
+    // Populate business hours if available
+    if (merchant.businessHours) {
+      try {
+        const businessHours = JSON.parse(merchant.businessHours);
+        this.populateBusinessHours(businessHours);
+      } catch (error) {
+        console.warn('Error parsing business hours:', error);
+      }
+    }
+
+    // Populate team members if available
+    if (merchant.members && merchant.members.length > 0) {
+      this.populateTeamMembers(merchant.members);
+    }
+
+    // Set preview images with proper URL construction
     if (merchant.logo) {
-      this.previewLogo = merchant.logo;
+      this.previewLogo = this.constructImageUrl(merchant.logo);
     }
     if (merchant.commercialRegistrationImage) {
-      this.previewCommercialReg = merchant.commercialRegistrationImage;
+      this.previewCommercialReg = this.constructImageUrl(merchant.commercialRegistrationImage);
     }
     if (merchant.nationalIdImage) {
-      this.previewNationalId = merchant.nationalIdImage;
+      this.previewNationalId = this.constructImageUrl(merchant.nationalIdImage);
     }
-    }
+
+    // Update progress after populating form
+    this.calculateProgress();
+    this.updateProgress();
+
+    console.log('Form populated successfully');
   }
 
   initializeForm(): void {
-    const merchant = this.currentMerchant;
-    
+    // Initialize form with empty values - data will be populated later in populateFormWithMerchant
     this.editForm = this.fb.group({
-      shopName: [merchant?.shopName || '', [Validators.required, Validators.minLength(3)]],
-      shortDescription: [merchant?.shortDescription || ''],
-      email: [merchant?.email || '', [Validators.required, Validators.email]], // Make email required
+      shopName: ['', [Validators.required, Validators.minLength(3)]],
+      shortDescription: [''],
+      email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required]],
       whatsapp: [''],
-      governorateId: [merchant?.governorateId || '', [Validators.required]],
-      cityId: [merchant?.cityId || '', [Validators.required]],
-      address: [merchant?.address || '', [Validators.required]],
+      governorateId: ['', [Validators.required]],
+      cityId: ['', [Validators.required]],
+      address: ['', [Validators.required]],
       locationOnMap: ['', [Validators.required]],
-      slug: [merchant?.slug || ''],
-      description: [merchant?.description || ''],
-      commercialRegistrationNumber: [merchant?.commercialRegistrationNumber || '', [Validators.required]],
-      nationalIdNumber: [merchant?.nationalIdNumber || '', [Validators.required]],
-      // Store complete CategoryDTO objects instead of just IDs
-      categories: [merchant?.categoriesDTO || []], // Complete category objects
-      categoriesIds: [merchant?.categoriesDTO?.map(c => c.id) || []], // Keep IDs for backward compatibility
+      slug: [''],
+      description: [''],
+      commercialRegistrationNumber: ['', [Validators.required]],
+      nationalIdNumber: ['', [Validators.required]],
+      categories: [[]],
+      categoriesIds: [[]],
       businessHours: this.fb.array([]),
       members: this.fb.array([])
     });
 
-    // Initialize businessHours FormArray - Use simple business hours structure
-    const businessHours = [
-      { day: 'السبت', hours: '9:00 ص - 9:00 م', isOpen: true },
-      { day: 'الأحد', hours: '9:00 ص - 9:00 م', isOpen: true },
-      { day: 'الاثنين', hours: '9:00 ص - 9:00 م', isOpen: true },
-      { day: 'الثلاثاء', hours: '9:00 ص - 9:00 م', isOpen: true },
-      { day: 'الأربعاء', hours: '9:00 ص - 9:00 م', isOpen: true },
-      { day: 'الخميس', hours: '9:00 ص - 9:00 م', isOpen: true },
-      { day: 'الجمعة', hours: '2:00 م - 8:00 م', isOpen: true }
-    ];
-    businessHours.forEach((bh: any) => this.businessHoursArray.push(
-      this.fb.group({
-        day: [bh.day],
-        hours: [bh.hours],
-        isOpen: [bh.isOpen],
-        openTime: ['09:00'],
-        closeTime: ['21:00']
-      })
-    ));
+    // Initialize default businessHours FormArray only if no existing merchant data
+    if (!this.currentMerchant) {
+      const defaultBusinessHours = [
+        { day: 'السبت', hours: '9:00 ص - 9:00 م', isOpen: true },
+        { day: 'الأحد', hours: '9:00 ص - 9:00 م', isOpen: true },
+        { day: 'الاثنين', hours: '9:00 ص - 9:00 م', isOpen: true },
+        { day: 'الثلاثاء', hours: '9:00 ص - 9:00 م', isOpen: true },
+        { day: 'الأربعاء', hours: '9:00 ص - 9:00 م', isOpen: true },
+        { day: 'الخميس', hours: '9:00 ص - 9:00 م', isOpen: true },
+        { day: 'الجمعة', hours: '2:00 م - 8:00 م', isOpen: true }
+      ];
+      defaultBusinessHours.forEach((bh: any) => this.businessHoursArray.push(
+        this.fb.group({
+          day: [bh.day],
+          hours: [bh.hours],
+          isOpen: [bh.isOpen],
+          openTime: ['09:00'],
+          closeTime: ['21:00']
+        })
+      ));
 
-    // Add one default member to the team
-    this.addMember();
-
-    // Set preview images if available
-    if (merchant?.logo) {
-      this.previewLogo = merchant.logo;
-    }
-    if (merchant?.commercialRegistrationImage) {
-      this.previewCommercialReg = merchant.commercialRegistrationImage;
-    }
-    if (merchant?.nationalIdImage) {
-      this.previewNationalId = merchant.nationalIdImage;
+      // Add one default member to the team for new merchants
+      this.addMember();
     }
   }
 
@@ -1572,5 +1611,74 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     return stepNumber <= this.currentStep || (stepNumber === this.currentStep + 1 && this.isCurrentStepValid());
   }
 
+  // Helper method to populate business hours from API data
+  populateBusinessHours(businessHours: any[]): void {
+    // Clear existing business hours
+    while (this.businessHoursArray.length !== 0) {
+      this.businessHoursArray.removeAt(0);
+    }
+
+    // Add business hours from API data
+    if (Array.isArray(businessHours) && businessHours.length > 0) {
+      businessHours.forEach((bh: any) => {
+        this.businessHoursArray.push(
+          this.fb.group({
+            day: [bh.day || ''],
+            hours: [bh.hours || ''],
+            isOpen: [bh.isOpen !== undefined ? bh.isOpen : true],
+            openTime: [bh.openTime || '09:00'],
+            closeTime: [bh.closeTime || '21:00']
+          })
+        );
+      });
+    }
+  }
+
+  // Helper method to populate team members from API data
+  populateTeamMembers(members: any[]): void {
+    // Clear existing team members
+    while (this.membersArray.length !== 0) {
+      this.membersArray.removeAt(0);
+    }
+
+    // Add team members from API data
+    if (Array.isArray(members) && members.length > 0) {
+      members.forEach((member: any) => {
+        this.membersArray.push(
+          this.fb.group({
+            name: [member.userDTO?.fullName || member.name || '', [Validators.required]],
+            email: [member.userDTO?.email || member.email || '', [Validators.email]],
+            phone: [member.userDTO?.phoneNumber || member.phone || ''],
+            role: [member.role || 'موظف', [Validators.required]],
+            password: ['', [Validators.required, Validators.minLength(6)]],
+            userId: [member.userId || null],
+            id: [member.id || null]
+          })
+        );
+      });
+    }
+  }
+
+  // Helper method to construct proper image URLs
+  constructImageUrl(imageData: string): string {
+    if (!imageData) return '';
+
+    // If image is a filename (from API), construct path to assets/MerchantData
+    if (!imageData.startsWith('data:') && !imageData.includes('/')) {
+      return `assets/MerchantData/${imageData}`;
+    }
+    
+    // If image is base64 data
+    if (imageData.startsWith('data:')) {
+      return imageData;
+    }
+    
+    // If image is base64 without data prefix
+    if (imageData.length > 100) {
+      return `data:image/jpeg;base64,${imageData}`;
+    }
+    
+    return imageData;
+  }
 
 }

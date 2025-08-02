@@ -369,24 +369,125 @@
               <i class="fas fa-chevron-down dropdown-arrow"></i>
             </div>
             <div class="user-dropdown" [class.show]="showUserMenu">
-              <a routerLink="/profile" class="dropdown-item" (click)="closeMobileMenus()">
-                <i class="fas fa-user"></i>
-                <span>الملف الشخصي</span>
-              </a>
-              <a routerLink="/my-orders" class="dropdown-item" *ngIf="!isMerchant && !isDriver" (click)="closeMobileMenus()">
-                <i class="fas fa-shopping-bag"></i>
-                <span>طلباتي</span>
-              </a>
-              <div class="dropdown-divider" *ngIf="isMerchant || isDriver"></div>
-              <a class="dropdown-item" (click)="switchToCustomerMode()" *ngIf="isMerchant || isDriver">
-                <i class="fas fa-exchange-alt"></i>
-                <span>التسوق كعميل</span>
-              </a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item logout" (click)="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>تسجيل الخروج</span>
-              </a>
+              <!-- Navigation Section for Merchants/Drivers/Admins -->
+              <div class="dropdown-section navigation-section" *ngIf="isMerchant || isDriver || isAdmin">
+                <div class="section-header">
+                  <i class="fas fa-th-large"></i>
+                  <span>التنقل</span>
+                </div>
+                
+                <!-- Admin Navigation -->
+                <ng-container *ngIf="isAdmin">
+                  <a routerLink="/admin" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>لوحة الإدارة</span>
+                  </a>
+                  <a routerLink="/merchant" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-store"></i>
+                    <span>إدارة التجار</span>
+                    <div class="nav-badge" *ngIf="getMerchantNotificationCount() > 0">{{ getMerchantNotificationCount() }}</div>
+                  </a>
+                  <a routerLink="/admin/orders" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>إدارة الطلبات</span>
+                    <div class="nav-badge" *ngIf="getOrderNotificationCount() > 0">{{ getOrderNotificationCount() }}</div>
+                  </a>
+                  <a routerLink="/admin/drivers" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-truck"></i>
+                    <span>إدارة السائقين</span>
+                  </a>
+                  <a routerLink="/admin/reports" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-chart-line"></i>
+                    <span>التقارير</span>
+                  </a>
+                </ng-container>
+                
+                <!-- Merchant Navigation -->
+                <ng-container *ngIf="isMerchant && !isAdmin">
+                  <a routerLink="/dashboard/overview" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-th-large"></i>
+                    <span>نظرة شاملة</span>
+                  </a>
+                  <a routerLink="/dashboard/super" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>لوحة التحكم</span>
+                  </a>
+                  <a routerLink="/order-mgr/merchant-orders" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>الطلبات</span>
+                    <div class="nav-badge" *ngIf="pendingOrdersCount > 0">{{ pendingOrdersCount }}</div>
+                  </a>
+                  <a routerLink="/dashboard/merchant" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-box"></i>
+                    <span>المنتجات</span>
+                  </a>
+                </ng-container>
+                
+                <!-- Driver Navigation -->
+                <ng-container *ngIf="isDriver && !isAdmin">
+                  <a routerLink="/dashboard/overview" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-th-large"></i>
+                    <span>نظرة شاملة</span>
+                  </a>
+                  <a routerLink="/driver/dashboard" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>لوحة التحكم</span>
+                  </a>
+                  <a routerLink="/driver/deliveries" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-truck"></i>
+                    <span>طلبات التوصيل</span>
+                    <div class="nav-badge" *ngIf="deliveryOrdersCount > 0">{{ deliveryOrdersCount }}</div>
+                  </a>
+                  <a routerLink="/driver/fleet" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>إدارة الأسطول</span>
+                  </a>
+                  <a routerLink="/driver/routes" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-route"></i>
+                    <span>الطرق والمسارات</span>
+                  </a>
+                  <a routerLink="/driver/earnings" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>الأرباح</span>
+                  </a>
+                  <a routerLink="/driver/reports" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>التقارير</span>
+                  </a>
+                </ng-container>
+                
+                <div class="dropdown-divider"></div>
+              </div>
+              
+              <!-- Profile Section -->
+              <div class="dropdown-section profile-section">
+                <a routerLink="/profile" class="dropdown-item" (click)="closeMobileMenus()">
+                  <i class="fas fa-user"></i>
+                  <span>الملف الشخصي</span>
+                </a>
+                <a routerLink="/my-orders" class="dropdown-item" *ngIf="!isMerchant && !isDriver" (click)="closeMobileMenus()">
+                  <i class="fas fa-shopping-bag"></i>
+                  <span>طلباتي</span>
+                </a>
+              </div>
+              
+              <!-- Mode Switch Section -->
+              <div class="dropdown-section mode-section" *ngIf="isMerchant || isDriver">
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item mode-switch" (click)="switchToCustomerMode()">
+                  <i class="fas fa-exchange-alt"></i>
+                  <span>التسوق كعميل</span>
+                </a>
+              </div>
+              
+              <!-- Logout Section -->
+              <div class="dropdown-section logout-section">
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item logout" (click)="logout()">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>تسجيل الخروج</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>

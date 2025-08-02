@@ -13,6 +13,15 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { AddCategoryModalComponent } from './components/add-category-modal/add-category-modal.component';
 
 @NgModule({
+   declarations: [
+    PartCardComponent,
+    FilterSidebarComponent,
+    CardComponent,
+    BreadcrumbComponent,
+    OfferCardComponent,
+    AddCategoryModalComponent,
+    AddCategoryModalComponent
+  ],  
   imports: [
     CommonModule,
     FormsModule,
@@ -34,13 +43,6 @@ import { AddCategoryModalComponent } from './components/add-category-modal/add-c
     BreadcrumbComponent,
     AddCategoryModalComponent
   ],
-  declarations: [
-    PartCardComponent,
-    FilterSidebarComponent,
-    CardComponent,
-    BreadcrumbComponent,
-    OfferCardComponent,
-    AddCategoryModalComponent
-  ]
+ 
 })
 export class SharedModule { }
