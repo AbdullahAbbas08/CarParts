@@ -23,6 +23,6 @@ namespace Data.DTOs
         public string UserTypeName { get; set; }
         public int? RoleId { get; set; }
         public string? RoleName { get; set; }
-        public ICollection<PermissionDTO>? Permissions { get; set; }
+        public ICollection<string>? Permissions { get; set; }
     }
 }

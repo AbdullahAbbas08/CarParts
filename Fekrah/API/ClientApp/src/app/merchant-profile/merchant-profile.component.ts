@@ -15,10 +15,13 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
   errorMessage = '';
   subscriptions = new Subscription();
   
-  // Modal properties
+  // Modal properties - Enhanced
   showDocumentModal = false;
   currentDocumentImage = '';
   currentDocumentTitle = '';
+  imageLoaded = false;
+  imageError = false;
+  isFullscreen = false;
 
   constructor(
     private router: Router,
@@ -137,7 +140,7 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
     this.showToast('هذه الميزة قيد التطوير', 'info');
   }
 
-  // Document viewing with modal
+  // Document viewing with modal - Enhanced for documents and merchant logo
   viewDocument(imageData: string): void {
     if (imageData) {
       // Determine document title based on the content
@@ -152,6 +155,221 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
       this.currentDocumentImage = imageData;
       this.showDocumentModal = true;
     }
+  }
+
+  // View commercial register in modal
+  viewCommercialRegister(): void {
+    if (!this.merchant?.commercialRegistrationImage) return;
+    
+    const imageUrl = this.getDocumentImageUrl(this.merchant.commercialRegistrationImage);
+    this.currentDocumentTitle = 'السجل التجاري';
+    this.currentDocumentImage = imageUrl;
+    this.resetModalState();
+    this.showDocumentModal = true;
+    
+    // Scroll to top to ensure modal is visible
+    this.scrollToTop();
+  }
+
+  // View national ID in modal
+  viewNationalId(): void {
+    if (!this.merchant?.nationalIdImage) return;
+    
+    const imageUrl = this.getDocumentImageUrl(this.merchant.nationalIdImage);
+    this.currentDocumentTitle = 'بطاقة الهوية الوطنية';
+    this.currentDocumentImage = imageUrl;
+    this.resetModalState();
+    this.showDocumentModal = true;
+    
+    // Scroll to top to ensure modal is visible
+    this.scrollToTop();
+  }
+
+  // View merchant logo in modal
+  viewMerchantLogo(): void {
+    const logoUrl = this.getMerchantLogoUrl();
+    if (logoUrl && logoUrl !== 'assets/images/image_100_100.png') {
+      this.currentDocumentTitle = `شعار ${this.merchant?.shopName || 'المتجر'}`;
+      this.currentDocumentImage = logoUrl;
+      this.resetModalState();
+      this.showDocumentModal = true;
+      
+      // Scroll to top to ensure modal is visible
+      this.scrollToTop();
+    }
+  }
+
+  // Scroll to top of page and disable body scroll
+  private scrollToTop(): void {
+    // Disable body scroll to prevent background scrolling
+    this.disableBodyScroll();
+    
+    // Use setTimeout to ensure the modal is rendered first
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+      
+      // Also try document.body and document.documentElement
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }, 50);
+  }
+
+  // Disable body scroll
+  private disableBodyScroll(): void {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.width = '100%';
+  }
+
+  // Enable body scroll
+  private enableBodyScroll(): void {
+    const scrollY = document.body.style.top;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.overflow = '';
+    document.body.style.width = '';
+    
+    // Restore scroll position
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+  }
+
+  // Reset modal state
+  resetModalState(): void {
+    this.imageLoaded = false;
+    this.imageError = false;
+    this.isFullscreen = false;
+  }
+
+  // Close document modal
+  closeDocumentModal(): void {
+    this.showDocumentModal = false;
+    this.currentDocumentImage = '';
+    this.currentDocumentTitle = '';
+    this.resetModalState();
+    
+    // Re-enable body scroll
+    this.enableBodyScroll();
+  }
+
+  // Download document
+  downloadDocument(): void {
+    if (!this.currentDocumentImage) return;
+
+    try {
+      const link = document.createElement('a');
+      link.href = this.currentDocumentImage;
+      link.download = `${this.currentDocumentTitle}_${this.merchant?.shopName || 'document'}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.showToast('تم بدء التحميل', 'success');
+    } catch (error) {
+      console.error('Download failed:', error);
+      this.showToast('فشل في تحميل الملف', 'error');
+    }
+  }
+
+  // Toggle fullscreen
+  toggleFullscreen(): void {
+    this.isFullscreen = !this.isFullscreen;
+    const modalElement = document.querySelector('.document-modal .modal-content') as HTMLElement;
+    
+    if (modalElement) {
+      if (this.isFullscreen) {
+        modalElement.style.width = '100vw';
+        modalElement.style.height = '100vh';
+        modalElement.style.maxWidth = '100vw';
+        modalElement.style.maxHeight = '100vh';
+        modalElement.style.borderRadius = '0';
+        modalElement.style.top = '0';
+        modalElement.style.left = '0';
+        modalElement.style.transform = 'none';
+      } else {
+        modalElement.style.width = '90vw';
+        modalElement.style.height = '90vh';
+        modalElement.style.maxWidth = '1200px';
+        modalElement.style.maxHeight = '800px';
+        modalElement.style.borderRadius = '1rem';
+        modalElement.style.top = '50%';
+        modalElement.style.left = '50%';
+        modalElement.style.transform = 'translate(-50%, -50%)';
+      }
+    }
+  }
+
+  // Zoom image
+  zoomImage(): void {
+    const imgElement = document.querySelector('.document-modal img') as HTMLElement;
+    if (imgElement) {
+      const currentScale = imgElement.style.transform.includes('scale') ? 
+        parseFloat(imgElement.style.transform.match(/scale\(([\d.]+)\)/)?.[1] || '1') : 1;
+      
+      const newScale = currentScale === 1 ? 2 : 1;
+      imgElement.style.transform = `scale(${newScale})`;
+      imgElement.style.cursor = newScale === 1 ? 'zoom-in' : 'zoom-out';
+      imgElement.style.transition = 'transform 0.3s ease';
+    }
+  }
+
+  // Handle image error
+  onImageError(event: Event): void {
+    console.error('Failed to load image:', this.currentDocumentImage);
+    this.imageError = true;
+    this.imageLoaded = false;
+  }
+
+  // Get document image URL with support for assets/MerchantData
+  getDocumentImageUrl(imageData: string): string {
+    if (!imageData) return '';
+
+    // If image is a filename (from API), construct path to assets/MerchantData
+    if (!imageData.startsWith('data:') && !imageData.includes('/')) {
+      return `assets/MerchantData/${imageData}`;
+    }
+    
+    // If image is base64 data
+    if (imageData.startsWith('data:')) {
+      return imageData;
+    }
+    
+    // If image is base64 without data prefix
+    if (imageData.length > 100) {
+      return `data:image/jpeg;base64,${imageData}`;
+    }
+    
+    return imageData;
+  }
+
+  // Get merchant logo URL with support for assets/MerchantData
+  getMerchantLogoUrl(): string {
+    if (!this.merchant) {
+      return 'assets/images/image_100_100.png';
+    }
+
+    // If logo is a filename (from API), construct path to assets/MerchantData
+    if (this.merchant.logo && !this.merchant.logo.startsWith('data:') && !this.merchant.logo.includes('/')) {
+      return `assets/MerchantData/${this.merchant.logo}`;
+    }
+    
+    // If logo is base64 data
+    if (this.merchant.logo && this.merchant.logo.startsWith('data:')) {
+      return this.merchant.logo;
+    }
+    
+    // If logo is base64 without data prefix
+    if (this.merchant.logo && this.merchant.logo.length > 100) {
+      return `data:image/jpeg;base64,${this.merchant.logo}`;
+    }
+    
+    // Default logo
+    return 'assets/images/image_100_100.png';
   }
 
   // Contact methods
@@ -284,13 +502,6 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
   formatDate(date: Date | null | undefined): string {
     if (!date) return 'غير محدد';
     return new Date(date).toLocaleDateString('ar-SA');
-  }
-
-  // Document modal methods
-  closeDocumentModal(): void {
-    this.showDocumentModal = false;
-    this.currentDocumentImage = '';
-    this.currentDocumentTitle = '';
   }
 
   showToast(message: string, type: 'success' | 'error' | 'info' = 'info'): void {

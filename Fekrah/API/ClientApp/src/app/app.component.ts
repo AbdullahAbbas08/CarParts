@@ -46,14 +46,14 @@ export class AppComponent implements OnInit, OnDestroy {
   private animationTimeout: any;
 
   userData: UserData = {
-    isLoggedIn: false,
+    isLoggedIn: true,
     isMerchant: false,
     isDriver: false,
-    userName: '',
-    userAvatar: '',
-    userType: 'customer',
-    pendingOrdersCount: 0,
-    deliveryOrdersCount: 0
+    userName: 'أدمن النظام',
+    userAvatar: '/assets/images/admin-avatar.png',
+    userType: 'admin',
+    pendingOrdersCount: 5,
+    deliveryOrdersCount: 3
   };
 
   constructor(
@@ -66,6 +66,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.setupAdminTestData(); // إعداد بيانات اختبار للأدمن
     this.loadUserData();
     this.setupOrdersUpdateInterval();
     this.initializePageSetup();
@@ -329,5 +330,47 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  // إعداد بيانات اختبار للأدمن
+  private setupAdminTestData(): void {
+    // بيانات المستخدم
+    localStorage.setItem('auth_token', 'admin_test_token_123');
+    localStorage.setItem('user_data', JSON.stringify({
+      id: 1,
+      name: 'أدمن النظام',
+      email: 'admin@carparts.com',
+      type: 'admin',
+      avatar: '/assets/images/admin-avatar.png',
+      permissions: ['all']
+    }));
 
+    // إحصائيات الأدمن
+    localStorage.setItem('total_users', '250');
+    localStorage.setItem('total_merchants', '45');
+    localStorage.setItem('total_orders', '1250');
+    localStorage.setItem('total_revenue', '450000');
+    localStorage.setItem('pending_tickets', '12');
+    localStorage.setItem('system_health', 'ممتاز');
+
+    // بيانات إضافية للاختبار
+    localStorage.setItem('last_login_time', new Date().toISOString());
+    localStorage.setItem('admin_session_id', 'session_' + Date.now());
+
+    console.log('✅ تم إعداد بيانات اختبار الأدمن بنجاح');
+  }
+
+  /* 
+  🔧 لاختبار أنواع مستخدمين مختلفة، غيّر userData كالتالي:
+  
+  👑 للأدمن:
+  userType: 'admin', isLoggedIn: true, userName: 'أدمن النظام'
+  
+  🏪 للتاجر:
+  userType: 'merchant', isMerchant: true, isLoggedIn: true, userName: 'تاجر قطع الغيار', pendingOrdersCount: 8
+  
+  🚚 للسائق:
+  userType: 'driver', isDriver: true, isLoggedIn: true, userName: 'سائق التوصيل', deliveryOrdersCount: 5
+  
+  👤 للعميل:
+  userType: 'customer', isLoggedIn: false
+  */
 }

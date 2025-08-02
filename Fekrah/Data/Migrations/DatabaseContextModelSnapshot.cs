@@ -508,9 +508,6 @@ namespace Data.Migrations
                     b.Property<DateTimeOffset?>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsLastSelected")
                         .HasColumnType("bit");
 
@@ -519,6 +516,9 @@ namespace Data.Migrations
 
                     b.Property<DateTimeOffset?>("UpdatedOn")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("UserRoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 

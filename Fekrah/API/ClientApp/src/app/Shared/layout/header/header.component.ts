@@ -132,6 +132,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
   // New properties for orders management
   isMerchant = false;
   isDriver = false;
+  isAdmin = false;
   isLoggedIn = false;
   userName = '';
   userAvatar = '';
@@ -869,6 +870,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
         this.userType = user.type || 'customer';
         this.isMerchant = this.userType === 'merchant';
         this.isDriver = this.userType === 'driver';
+        this.isAdmin = this.userType === 'admin';
       } else {
         this.resetUserData();
       }
@@ -886,6 +888,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
     this.userType = 'customer';
     this.isMerchant = false;
     this.isDriver = false;
+    this.isAdmin = false;
     this.pendingOrdersCount = 0;
     this.deliveryOrdersCount = 0;
   }
@@ -920,9 +923,10 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
 
   // Switch to customer mode
   switchToCustomerMode(): void {
-    if (this.isMerchant || this.isDriver) {
+    if (this.isMerchant || this.isDriver || this.isAdmin) {
       this.isMerchant = false;
       this.isDriver = false;
+      this.isAdmin = false;
       this.showUserMenu = false;
       localStorage.setItem('view_mode', 'customer');
       this.router.navigate(['/']);
@@ -1235,5 +1239,16 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
   debugForceOpenFilter(): void {
     console.log('Force opening filter...');
     this.toggleFilter.emit();
+  }
+
+  // Navigation notification methods
+  getMerchantNotificationCount(): number {
+    // Mock data - replace with actual service call
+    return 5;
+  }
+
+  getOrderNotificationCount(): number {
+    // Mock data - replace with actual service call
+    return 12;
   }
 }

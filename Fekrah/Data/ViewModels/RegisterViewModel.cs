@@ -17,5 +17,6 @@ namespace Data.ViewModels
         public string? Photo { get; set; }
         public string? Address { get; set; }
         public UserTypeEnum UserType { get; set; }
+        public int? RoleId { get; set; }
     }
 }

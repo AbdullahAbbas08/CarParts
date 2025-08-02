@@ -8,7 +8,6 @@ import { HeaderComponent } from './Shared/layout/header/header.component';
 import { PromoTickerComponent } from './Shared/components/promo-ticker/promo-ticker.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from './Shared/layout/footer/footer.module';
-import { PreNavbarComponent } from './Shared/layout/pre-navbar/pre-navbar.component';
 import { registerLocaleData } from '@angular/common';
 import localeAr from '@angular/common/locales/ar';
 import { EnhancedSearchComponent } from './Shared/components/enhanced-search/enhanced-search.component';
@@ -20,6 +19,7 @@ import { HeaderInterceptor } from './Shared/Services/header.interceptor';
 import { LoaderComponent } from './Shared/components/loader/loader.component';
 import { environment } from '../environments/environment';
 import { ToastrModule } from 'ngx-toastr';
+import { AdminComponent } from './dashboard/admin.component';
 registerLocaleData(localeAr);
 
 @NgModule({
@@ -27,10 +27,10 @@ registerLocaleData(localeAr);
     AppComponent,
     HeaderComponent,
     PromoTickerComponent,
-    PreNavbarComponent,
     EnhancedSearchComponent,
     PartsFilterComponent,
     LoaderComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

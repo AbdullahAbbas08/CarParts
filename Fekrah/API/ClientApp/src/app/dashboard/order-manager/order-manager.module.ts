@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OrderManagerRoutingModule } from './order-manager-routing.module';
 import { MerchantOrdersComponent } from './merchant-orders/merchant-orders.component';
 import { OrderDetailsComponent } from './order-details/order-details.component';
-import { SharedModule } from '../Shared/shared.module';
+import { SharedModule } from 'src/app/Shared/shared.module';
 
 
 @NgModule({

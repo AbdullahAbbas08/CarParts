@@ -1,99 +1,311 @@
-<!-- شريط التنقل المبسط للأدمن -->
-<div class="admin-navbar" *ngIf="isVisible && isAdmin">
-  <div class="navbar-content">
+<!-- شريط التنقل الموحد والمتطور -->
+<nav class="modern-navbar" 
+     [ngClass]="getUserRoleClass()" 
+     *ngIf="isVisible"
+     [@slideInDown]="isVisible">
+
+  <!-- خلفية متحركة -->
+  <div class="navbar-background">
+    <div class="gradient-layer"></div>
+    <div class="pattern-layer"></div>
+    <div class="glow-animation"></div>
+  </div>
+
+  <!-- الحاوي الرئيسي -->
+  <div class="navbar-container">
     
-    <!-- العلامة التجارية -->
+    <!-- قسم العلامة التجارية -->
     <div class="brand-section">
-      <div class="brand-icon">
-        <i class="fas fa-user-shield"></i>
-      </div>
-      <div class="brand-text">
-        <span class="brand-title">لوحة الإدارة</span>
+      <div class="brand-wrapper" (click)="navigateToRoute(getDashboardRoute())">
+        
+        <!-- شعار متحرك -->
+        <div class="brand-logo-container">
+          <div class="logo-circle">
+            <i [class]="getBrandIcon()"></i>
+          </div>
+          <div class="pulse-ring"></div>
+        </div>
+        
+        <!-- معلومات العلامة التجارية -->
+        <div class="brand-info">
+          <h2 class="brand-title">
+            {{ getBrandText() }}
+            <span class="role-badge">{{ getDisplayRole() }}</span>
+          </h2>
+          
+          <div class="user-welcome">
+            <span class="welcome-text">مرحباً {{ userName || 'المستخدم' }}</span>
+            
+            <!-- مؤشر الحالة -->
+            <div class="status-indicator">
+              <div class="status-dot"></div>
+              <span>متصل</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- التنقل -->
-    <nav class="nav-section">
-      <a *ngFor="let item of getCurrentNavItems()"
-         [routerLink]="item.route"
-         class="nav-item"
-         [class.active]="isActiveRoute(item.route)"
-         [title]="item.label">
-        <i [class]="item.icon"></i>
-        <span class="nav-label">{{ item.label }}</span>
-        <span *ngIf="item.hasNotifications && item.notificationCount > 0" 
-              class="notification-badge">{{ item.notificationCount }}</span>
-      </a>
-    </nav>
+    <!-- قسم التنقل المركزي -->
+    <div class="navigation-center">
+      <div class="nav-container">
+        
+        <!-- روابط التنقل الرئيسية -->
+        <div class="primary-nav">
+          <a *ngFor="let item of getCurrentNavItems(); trackBy: trackByRoute"
+             class="nav-link"
+             [class.active]="isActiveRoute(item.route)"
+             [class.overview-link]="item.isOverview"
+             [attr.data-route]="item.route"
+             (click)="navigateToRoute(item.route)">
+            
+            <!-- أيقونة مع تأثيرات -->
+            <div class="nav-icon-wrapper">
+              <i [class]="item.icon" class="nav-icon"></i>
+              <div class="icon-glow"></div>
+            </div>
+            
+            <!-- نص الرابط -->
+            <span class="nav-text">{{ item.label }}</span>
+            
+            <!-- شارة الإشعارات -->
+            <div class="notification-badge" 
+                 *ngIf="item.hasNotifications && item.notificationCount > 0">
+              {{ item.notificationCount }}
+              <div class="badge-pulse"></div>
+            </div>
+            
+            <!-- مؤشر النشاط -->
+            <div class="activity-indicator"></div>
+          </a>
+        </div>
 
-    <!-- الإعدادات -->
-    <div class="settings-section">
-      <button class="settings-btn" 
-              (click)="toggleProfileMenu()"
-              [class.active]="showProfileMenu">
-        <i class="fas fa-cog"></i>
-      </button>
+        <!-- إحصائيات سريعة (للأدمن فقط) -->
+        <div class="quick-stats" *ngIf="isAdmin">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon merchants">
+                <i class="fas fa-store"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number">350</span>
+                <span class="stat-label">التجار</span>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-icon orders">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number">250</span>
+                <span class="stat-label">الطلبات</span>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-icon system">
+                <i class="fas fa-server"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number">جيد</span>
+                <span class="stat-label">النظام</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- قسم الإجراءات -->
+    <div class="actions-section">
       
-      <button class="logout-btn" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-      </button>
-    </div>
-
-    <!-- قائمة الإعدادات -->
-    <div class="profile-dropdown" *ngIf="showProfileMenu">
-      <div class="dropdown-content">
-        <a (click)="viewProfile()" class="dropdown-item">
-          <i class="fas fa-user"></i>
-          الملف الشخصي
-        </a>
-        <a (click)="viewSettings()" class="dropdown-item">
+      <!-- إجراءات سريعة -->
+      <div class="quick-actions">
+        
+        <!-- زر الإشعارات -->
+        <button class="action-btn" 
+                [class.active]="showNotifications"
+                (click)="toggleNotifications()">
+          <i class="fas fa-bell"></i>
+          <div class="notification-count" *ngIf="getNotificationCount() > 0">
+            {{ getNotificationCount() }}
+          </div>
+          <div class="btn-tooltip">الإشعارات</div>
+        </button>
+        
+        <!-- زر الإعدادات -->
+        <button class="action-btn" 
+                [class.active]="showQuickSettings"
+                (click)="toggleSettings()">
           <i class="fas fa-cog"></i>
-          الإعدادات
-        </a>
-        <div class="dropdown-divider"></div>
-        <a (click)="logout()" class="dropdown-item logout">
-          <i class="fas fa-sign-out-alt"></i>
-          تسجيل الخروج
-        </a>
+          <div class="btn-tooltip">الإعدادات</div>
+        </button>
+      </div>
+
+      <!-- زر تبديل المنصة -->
+      <div class="platform-switch-btn" 
+           *ngIf="!isAdmin"
+           (click)="switchToCustomerMode()">
+        <i class="fas fa-exchange-alt"></i>
+        <span>المنصة الرئيسية</span>
+        <div class="switch-glow"></div>
+      </div>
+
+      <!-- قسم الملف الشخصي -->
+      <div class="profile-section">
+        <div class="profile-dropdown-wrapper" [class.open]="showProfileMenu">
+          
+          <div class="profile-btn" (click)="toggleProfileMenu()">
+            <!-- صورة المستخدم -->
+            <div class="profile-avatar">
+              <div class="online-status"></div>
+            </div>
+            
+            <!-- معلومات المستخدم -->
+            <div class="profile-info">
+              <span class="profile-name">{{ userName || 'المستخدم' }}</span>
+              <span class="profile-role">{{ getDisplayRole() }}</span>
+            </div>
+            
+            <!-- سهم القائمة -->
+            <i class="fas fa-chevron-down profile-arrow"></i>
+          </div>
+
+          <!-- القائمة المنسدلة -->
+          <div class="profile-dropdown" 
+               *ngIf="showProfileMenu"
+               [@fadeInOut]="showProfileMenu">
+            
+            <div class="dropdown-header">
+              <h4>الملف الشخصي</h4>
+              <button class="close-btn" (click)="toggleProfileMenu()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="dropdown-content">
+              <button class="menu-item" (click)="viewProfile()">
+                <i class="fas fa-user"></i>
+                <span>عرض الملف الشخصي</span>
+              </button>
+              
+              <button class="menu-item" (click)="viewSettings()">
+                <i class="fas fa-cog"></i>
+                <span>الإعدادات</span>
+              </button>
+              
+              <div class="menu-divider"></div>
+              
+              <button class="menu-item logout" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout">تسجيل الخروج</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- للتجار والسائقين -->
-<div class="simple-navbar" [ngClass]="getUserRoleClass()" *ngIf="isVisible && !isAdmin">
-  <div class="navbar-container">
-    
-    <!-- العلامة التجارية -->
-    <div class="brand-section">
-      <div class="brand-logo">
-        <i [class]="getBrandIcon()"></i>
+  <!-- شريط التحميل -->
+  <div class="loading-bar" *ngIf="isLoading">
+    <div class="progress-fill"></div>
+  </div>
+</nav>
+
+<!-- القوائم المنسدلة العلوية -->
+<div class="dropdown-overlays" *ngIf="showNotifications || showQuickSettings">
+  
+  <!-- قائمة الإشعارات -->
+  <div class="notifications-overlay" 
+       *ngIf="showNotifications"
+       [@fadeInOut]="showNotifications">
+    <div class="overlay-content">
+      <div class="overlay-header">
+        <h3>الإشعارات</h3>
+        <button class="close-overlay" (click)="toggleNotifications()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <div class="brand-info">
-        <h3>{{ getBrandText() }}</h3>
-        <span class="user-name">{{ getDisplayName() }}</span>
+      
+      <div class="notifications-list">
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div class="notification-content">
+            <p>طلب جديد من العميل أحمد محمد</p>
+            <span class="notification-time">منذ 5 دقائق</span>
+          </div>
+        </div>
+        
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div class="notification-content">
+            <p>تم تسليم الطلب #1234 بنجاح</p>
+            <span class="notification-time">منذ ساعة</span>
+          </div>
+        </div>
+        
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="notification-content">
+            <p>تقييم جديد 5 نجوم</p>
+            <span class="notification-time">منذ 3 ساعات</span>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- التنقل -->
-    <div class="nav-links">
-      <a *ngFor="let item of getCurrentNavItems()"
-         [routerLink]="item.route"
-         class="nav-link"
-         [class.active]="isActiveRoute(item.route)">
-        <i [class]="item.icon"></i>
-        <span>{{ item.label }}</span>
-        <span *ngIf="item.hasNotifications && item.notificationCount > 0" 
-              class="nav-badge">{{ item.notificationCount }}</span>
-      </a>
-    </div>
-
-    <!-- الإجراءات -->
-    <div class="nav-actions">
-      <button class="customer-mode-btn" (click)="switchToCustomerMode()">
-        <i class="fas fa-shopping-cart"></i>
-        <span>وضع العميل</span>
-      </button>
+  <!-- قائمة الإعدادات السريعة -->
+  <div class="settings-overlay" 
+       *ngIf="showQuickSettings"
+       [@fadeInOut]="showQuickSettings">
+    <div class="overlay-content">
+      <div class="overlay-header">
+        <h3>الإعدادات السريعة</h3>
+        <button class="close-overlay" (click)="toggleSettings()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="settings-list">
+        <div class="setting-item">
+          <div class="setting-info">
+            <i class="fas fa-bell"></i>
+            <span>الإشعارات</span>
+          </div>
+          <div class="toggle-switch active">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <i class="fas fa-moon"></i>
+            <span>الوضع الليلي</span>
+          </div>
+          <div class="toggle-switch">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <i class="fas fa-language"></i>
+            <span>اللغة</span>
+          </div>
+          <div class="toggle-switch active">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

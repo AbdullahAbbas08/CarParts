@@ -38,6 +38,30 @@ public class MerchantController : _BaseController<Merchant, MerchantDTO>
         return Ok(result);
     }
 
+    [HttpPut("Activate/{id}")]
+    public ActionResult<MerchantDTO> ActivateMerchant(int id)
+    {
+        var result = _merchantService.ActivateMerchant(id);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
+    [HttpPut("Deactivate/{id}")]
+    public ActionResult<MerchantDTO> DeactivateMerchant(int id)
+    {
+        var result = _merchantService.DeactivateMerchant(id);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
+    [HttpPut("Close/{id}")]
+    public ActionResult<MerchantDTO> CloseMerchant(int id)
+    {
+        var result = _merchantService.CloseMerchant(id);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
     //[HttpDelete("{id}")]
     //public  ActionResult Delete(int id)
     //{
