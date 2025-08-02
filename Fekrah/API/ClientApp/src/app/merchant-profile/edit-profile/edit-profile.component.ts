@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, Validat
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO, LookupDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO, MemberDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -150,7 +150,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Check if coming from admin route (admin adding new merchant)
     this.isAdminMode = this.router.url.includes('/admin/') || 
                       this.router.url.includes('add-merchant') ||
-                      localStorage.getItem('currentUserRole') === 'admin';
+                      this.router.url.includes('/dashboard/');
     
     // Initialize form first
     this.initializeForm();
@@ -250,13 +250,11 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   loadMerchantData(): void {
-    // Get merchant ID from route params or local storage
+    // Get merchant ID only from route params (no localStorage fallback)
     const routeMerchantId = this.route.snapshot.paramMap.get('id');
-    const storedMerchantId = localStorage.getItem('currentMerchantId');
-    const merchantIdStr = routeMerchantId || storedMerchantId;
     
-    if (merchantIdStr) {
-      this.merchantId = parseInt(merchantIdStr);
+    if (routeMerchantId) {
+      this.merchantId = parseInt(routeMerchantId);
       console.log('Loading merchant data for ID:', this.merchantId);
       
       this.isLoading = true;
@@ -267,9 +265,6 @@ export class EditProfileComponent implements OnInit, OnDestroy {
             this.currentMerchant = merchant;
             this.populateFormWithMerchant(merchant);
             this.isLoading = false;
-            
-            // Store merchant ID for future use
-            localStorage.setItem('currentMerchantId', this.merchantId!.toString());
           },
           error: (error) => {
             console.error('Error loading merchant data:', error);
@@ -279,7 +274,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         })
       );
     } else {
-      console.log('No merchant ID found, initializing empty form for new merchant');
+      console.log('No merchant ID found in URL, initializing empty form for new merchant');
       this.initializeForm(); // Initialize empty form for new merchant
     }
   }
@@ -353,6 +348,11 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Update progress after populating form
     this.calculateProgress();
     this.updateProgress();
+
+    // Force change detection to update error states
+    setTimeout(() => {
+      this.editForm.updateValueAndValidity();
+    }, 100);
 
     console.log('Form populated successfully');
   }
@@ -602,14 +602,23 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
   // Members management methods
   addMember(): void {
+    // Password is required for new members in create mode, optional in update mode
+    const passwordValidators = this.isUpdateMode() 
+      ? [EditProfileComponent.passwordValidator] // Optional but validated if filled
+      : [Validators.required, Validators.minLength(8), EditProfileComponent.passwordValidator]; // Required for new merchants
+    
+    const confirmPasswordValidators = this.isUpdateMode()
+      ? [] // Optional in update mode
+      : [Validators.required]; // Required for new merchants
+
     const memberGroup = this.fb.group({
       name: ['', Validators.required],
       phone: ['', Validators.required],
       email: ['', EditProfileComponent.optionalEmailValidator], // Optional but validated if filled
       position: ['', Validators.required],
       username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(8), EditProfileComponent.passwordValidator]],
-      confirmPassword: ['', [Validators.required]]
+      password: ['', passwordValidators],
+      confirmPassword: ['', confirmPasswordValidators]
     }, { validators: EditProfileComponent.passwordMatchValidator });
 
     this.membersArray.push(memberGroup);
@@ -721,17 +730,29 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     if (formMembers.length === 0) {
       missingFiles.push('يجب إضافة عضو واحد على الأقل إلى فريق العمل');
     } else {
-      // Check if at least one member is complete
-      const hasValidMember = formMembers.some((member: any) => 
-        member.name?.trim() && 
-        member.phone?.trim() && 
-        member.username?.trim() && 
-        member.password?.trim() && 
-        member.position?.trim()
-      );
+      // Enhanced member validation with conditional password requirement
+      const hasValidMember = formMembers.some((member: any) => {
+        const isNewMember = !member.userId; // New members don't have userId
+        const hasBasicInfo = member.name?.trim() && 
+                           member.phone?.trim() && 
+                           member.username?.trim() && 
+                           member.position?.trim();
+        
+        // Password requirement based on member type
+        if (isNewMember) {
+          // New members must have password
+          return hasBasicInfo && member.password?.trim();
+        } else {
+          // Existing members don't need password
+          return hasBasicInfo;
+        }
+      });
       
       if (!hasValidMember) {
-        missingFiles.push('يجب إكمال بيانات عضو واحد على الأقل في فريق العمل');
+        const memberRequirement = this.isUpdateMode() 
+          ? 'يجب إكمال بيانات عضو واحد على الأقل في فريق العمل (كلمة المرور مطلوبة فقط للأعضاء الجدد)'
+          : 'يجب إكمال بيانات عضو واحد على الأقل في فريق العمل';
+        missingFiles.push(memberRequirement);
       }
     }
     
@@ -833,32 +854,47 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       
       
       if (members.length > 0) {
-        // تحضير أعضاء الفريق بـ UserDTO format
-        const userDTOArray: any[] = [];
+        // تحضير أعضاء الفريق بـ MemberDTO format
+        const memberDTOArray: any[] = [];
         
         members.forEach((member: any, index: number) => {
+          // Create UserDTO for the member
           const userDTO = new UserDTO();
-          userDTO.id = 0; // للأعضاء الجدد
+          userDTO.id = member.userId || 0; // Use existing userId or 0 for new members
           userDTO.nationalId = member.phone || ''; // نستخدم الهاتف كـ national ID مؤقتاً
           userDTO.userName = member.username || '';
           userDTO.fullName = member.name || '';
           userDTO.email = member.email || '';
-          userDTO.password = member.password || ''; // سيتم hash في الـ backend
+          
+          // Only set password for new members or when password is provided
+          const isNewMember = !member.userId;
+          if (isNewMember || (member.password && member.password.trim())) {
+            userDTO.passwordHash = member.password || '';
+          }
+          
           userDTO.phoneNumber = member.phone || '';
           userDTO.userType = UserTypeEnum.Merchant; // نوع المستخدم: بائع
           userDTO.isActive = true;
           userDTO.address = member.position || ''; // نستخدم المنصب كعنوان مؤقت
           
+          // Create MemberDTO with UserDTO
+          const memberDTO = new MemberDTO();
+          memberDTO.id = member.id || 0; // Use existing id or 0 for new members
+          memberDTO.userId = member.userId || 0; // سيتم تعيينه في الـ backend
+          memberDTO.merchantId = this.merchantId || 0;
+          memberDTO.role = member.position || 'موظف';
+          memberDTO.merchantMember = userDTO;
           
+          console.log('🧑‍💼 Created MemberDTO:', memberDTO);
           
           // تحويل إلى plain object باستخدام toJSON()
-          const memberJsonObj = userDTO.toJSON();
+          const memberJsonObj = memberDTO.toJSON();
           
           // تحويل إلى PascalCase كما هو مطلوب في C# API
-          const memberWithPascalCase = this.convertUserDTOToPascalCase(memberJsonObj);
-          userDTOArray.push(memberWithPascalCase);
+          const memberWithPascalCase = this.convertMemberDTOToPascalCase(memberJsonObj);
+          memberDTOArray.push(memberWithPascalCase);
           
-          
+          console.log('📤 Member with PascalCase:', memberWithPascalCase);
           
           
           
@@ -869,14 +905,14 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         });
         
         // إرسال أعضاء الفريق كـ JSON string واحد للـ server
-        const membersJsonString = JSON.stringify(userDTOArray);
+        const membersJsonString = JSON.stringify(memberDTOArray);
         formData.append('MembersJson', membersJsonString);
         
+        console.log('📤 Final MembersJson being sent:', membersJsonString);
+        console.log('📤 MemberDTO Array count:', memberDTOArray.length);
         
-        
-        
-        // Log the actual UserDTO structure being sent with PascalCase
-        
+        // Log the actual MemberDTO structure being sent with PascalCase
+        console.log('📋 Sample MemberDTO structure:', memberDTOArray[0]);
         
       } else {
         // إذا لم يكن هناك أعضاء، أرسل array فارغ
@@ -885,29 +921,49 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       }
       
       // الملفات المطلوبة - بأسماء API الصحيحة
+      // Logo handling
       if (this.selectedLogo) {
+        // New logo selected - send file via LogoForm
         formData.append('LogoForm', this.selectedLogo);
-        
-      } else {
-        // شعار المتجر إجباري - يجب عدم الوصول هنا
-        
+        console.log('📤 Sending new logo file:', this.selectedLogo.name);
+      } else if (this.isUpdateMode() && this.currentMerchant?.logo) {
+        // Edit mode with existing logo - send existing logo filename only (no LogoForm)
+        formData.append('Logo', this.currentMerchant.logo);
+        console.log('📤 Keeping existing logo:', this.currentMerchant.logo);
+      } else if (!this.isUpdateMode()) {
+        // Create mode requires LogoForm - this shouldn't happen if validation works
         formData.append('LogoForm', new Blob(), '');
+        console.log('⚠️ No logo provided for create mode');
       }
       
+      // National ID handling
       if (this.selectedNationalId) {
+        // New national ID selected - send file via NationalIdImageForm
         formData.append('NationalIdImageForm', this.selectedNationalId);
-        
-      } else {
-        // API requires this parameter
+        console.log('📤 Sending new national ID file:', this.selectedNationalId.name);
+      } else if (this.isUpdateMode() && this.currentMerchant?.nationalIdImage) {
+        // Edit mode with existing national ID - send existing filename only (no NationalIdImageForm)
+        formData.append('NationalIdImage', this.currentMerchant.nationalIdImage);
+        console.log('📤 Keeping existing national ID:', this.currentMerchant.nationalIdImage);
+      } else if (!this.isUpdateMode()) {
+        // Create mode requires NationalIdImageForm - this shouldn't happen if validation works
         formData.append('NationalIdImageForm', new Blob(), '');
+        console.log('⚠️ No national ID provided for create mode');
       }
       
+      // Commercial Registration handling
       if (this.selectedCommercialReg) {
+        // New commercial reg selected - send file via CommercialRegistrationImageForm
         formData.append('CommercialRegistrationImageForm', this.selectedCommercialReg);
-        
-      } else {
-        // API requires this parameter
+        console.log('📤 Sending new commercial reg file:', this.selectedCommercialReg.name);
+      } else if (this.isUpdateMode() && this.currentMerchant?.commercialRegistrationImage) {
+        // Edit mode with existing commercial reg - send existing filename only (no CommercialRegistrationImageForm)
+        formData.append('CommercialRegistrationImage', this.currentMerchant.commercialRegistrationImage);
+        console.log('📤 Keeping existing commercial reg:', this.currentMerchant.commercialRegistrationImage);
+      } else if (!this.isUpdateMode()) {
+        // Create mode requires CommercialRegistrationImageForm - this shouldn't happen if validation works
         formData.append('CommercialRegistrationImageForm', new Blob(), '');
+        console.log('⚠️ No commercial registration provided for create mode');
       }
       
       
@@ -988,25 +1044,36 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       
 
       // Send using HttpClient directly (not SwaggerClient)
-      // You must inject HttpClient in the constructor: private http: HttpClient
-      // Example endpoint: /api/Merchant/Insert (adjust as needed)
-      const apiUrl = '/api/Merchant/InsertMerchant';
+      // Use appropriate endpoint based on whether we're creating or updating
+      const isUpdate = this.merchantId && this.merchantId > 0;
+      const apiUrl = isUpdate 
+        ? `/api/Merchant/UpdateMerchant/${this.merchantId}` 
+        : '/api/Merchant/InsertMerchant';
+      
+      console.log(`${isUpdate ? 'Updating' : 'Creating'} merchant via API: ${apiUrl}`);
+      
       this.subscriptions.add(
         this.http.post(apiUrl, formData).subscribe({
           next: (response: any) => {
             
             this.isLoading = false;
             if (response) {
-              const successMessage = this.isAdminMode ? 'تم إضافة التاجر الجديد بنجاح' : 'تم إنشاء الملف التجاري بنجاح';
+              const isUpdate = this.merchantId && this.merchantId > 0;
+              let successMessage: string;
+              
+              if (isUpdate) {
+                successMessage = this.isAdminMode ? 'تم تحديث بيانات التاجر بنجاح' : 'تم تحديث الملف التجاري بنجاح';
+              } else {
+                successMessage = this.isAdminMode ? 'تم إضافة التاجر الجديد بنجاح' : 'تم إنشاء الملف التجاري بنجاح';
+                // For new merchants, set the merchantId from response
+                this.merchantId = response.id;
+              }
+              
               this.showToast(successMessage, 'success');
               
               // Reset form completely after successful save
               this.resetFormToInitialState();
               
-              this.merchantId = response.id;
-              if (response.id) {
-                localStorage.setItem('currentMerchantId', response.id.toString());
-              }
               setTimeout(() => {
                 // Navigate based on user mode
                 if (this.isAdminMode) {
@@ -1260,6 +1327,17 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     };
   }
 
+  // Helper method to convert MemberDTO to PascalCase for C# API
+  private convertMemberDTOToPascalCase(memberDTO: any): any {
+    return {
+      Id: memberDTO.id || 0,
+      UserId: memberDTO.userId || 0,
+      MerchantId: memberDTO.merchantId || 0,
+      Role: memberDTO.role || '',
+      MerchantMember: memberDTO.merchantMember ? this.convertUserDTOToPascalCase(memberDTO.merchantMember) : null
+    };
+  }
+
   // Helper functions for required fields
   generateSlug(shopName: string): string {
     return shopName
@@ -1465,14 +1543,30 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Check if at least one member has all required fields filled
     return this.membersArray.controls.some(member => {
       const memberGroup = member as FormGroup;
-      return !!(
+      const memberValue = memberGroup.value;
+      const isNewMember = !memberValue.userId; // New members don't have userId
+      
+      const hasBasicInfo = !!(
         memberGroup.get('name')?.value?.trim() &&
         memberGroup.get('phone')?.value?.trim() &&
         memberGroup.get('position')?.value?.trim() &&
-        memberGroup.get('username')?.value?.trim() &&
-        memberGroup.get('password')?.value?.trim() &&
-        memberGroup.valid
+        memberGroup.get('username')?.value?.trim()
       );
+      
+      // Password validation based on member type and mode
+      let hasValidPassword = true;
+      if (isNewMember) {
+        // New members must have password
+        hasValidPassword = !!(memberGroup.get('password')?.value?.trim());
+      } else if (this.isUpdateMode()) {
+        // Existing members in update mode don't need password
+        hasValidPassword = true;
+      } else {
+        // In insert mode, all members need password
+        hasValidPassword = !!(memberGroup.get('password')?.value?.trim());
+      }
+      
+      return hasBasicInfo && hasValidPassword && memberGroup.valid;
     });
   }
 
@@ -1533,6 +1627,34 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   // Check if logo section should have error styling
   hasLogoError(): boolean {
     return !this.isLogoComplete();
+  }
+
+  // Check if commercial registration has error
+  hasCommercialRegError(): boolean {
+    // For new merchants (create mode): selectedCommercialReg is required
+    if (!this.isUpdateMode()) {
+      return !this.selectedCommercialReg;
+    }
+    
+    // For existing merchants (edit mode): either new file OR existing file from API
+    const hasNewCommercialReg = !!(this.selectedCommercialReg);
+    const hasExistingCommercialReg = !!(this.currentMerchant?.commercialRegistrationImage && this.currentMerchant.commercialRegistrationImage.trim() !== '');
+    
+    return !hasNewCommercialReg && !hasExistingCommercialReg;
+  }
+
+  // Check if national ID has error
+  hasNationalIdError(): boolean {
+    // For new merchants (create mode): selectedNationalId is required
+    if (!this.isUpdateMode()) {
+      return !this.selectedNationalId;
+    }
+    
+    // For existing merchants (edit mode): either new file OR existing file from API
+    const hasNewNationalId = !!(this.selectedNationalId);
+    const hasExistingNationalId = !!(this.currentMerchant?.nationalIdImage && this.currentMerchant.nationalIdImage.trim() !== '');
+    
+    return !hasNewNationalId && !hasExistingNationalId;
   }
 
   // Step navigation methods
@@ -1649,16 +1771,27 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     // Add team members from API data
     if (Array.isArray(members) && members.length > 0) {
       members.forEach((member: any) => {
+        // For existing members in update mode, password is optional
+        const passwordValidators = this.isUpdateMode() 
+          ? [EditProfileComponent.passwordValidator] // Optional but validated if filled
+          : [Validators.required, Validators.minLength(8), EditProfileComponent.passwordValidator];
+        
+        const confirmPasswordValidators = this.isUpdateMode()
+          ? [] // Optional in update mode
+          : [Validators.required];
+
         this.membersArray.push(
           this.fb.group({
-            name: [member.userDTO?.fullName || member.name || '', [Validators.required]],
-            email: [member.userDTO?.email || member.email || '', [Validators.email]],
-            phone: [member.userDTO?.phoneNumber || member.phone || ''],
-            role: [member.role || 'موظف', [Validators.required]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
+            name: [member.merchantMember?.fullName || member.userDTO?.fullName || member.name || '', [Validators.required]],
+            email: [member.merchantMember?.email || member.userDTO?.email || member.email || '', [EditProfileComponent.optionalEmailValidator]],
+            phone: [member.merchantMember?.phoneNumber || member.userDTO?.phoneNumber || member.phone || '', [Validators.required]],
+            position: [member.role || 'موظف', [Validators.required]],
+            username: [member.merchantMember?.userName || member.userDTO?.userName || member.username || '', [Validators.required, Validators.minLength(3)]],
+            password: ['', passwordValidators], // Empty for existing members, optional in update mode
+            confirmPassword: ['', confirmPasswordValidators],
             userId: [member.userId || null],
             id: [member.id || null]
-          })
+          }, { validators: EditProfileComponent.passwordMatchValidator })
         );
       });
     }

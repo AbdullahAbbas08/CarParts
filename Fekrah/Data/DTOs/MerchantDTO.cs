@@ -43,13 +43,13 @@ namespace Data.DTOs
         public string? NationalIdImage { get; set; } // changed from byte[] to string
 
         [NotMapped]
-        public IFormFile NationalIdImageForm { get; set; }
+        public IFormFile? NationalIdImageForm { get; set; }
 
         [NotMapped]
-        public IFormFile LogoForm { get; set; }
+        public IFormFile? LogoForm { get; set; }
 
         [NotMapped]
-        public IFormFile CommercialRegistrationImageForm { get; set; }
+        public IFormFile? CommercialRegistrationImageForm { get; set; }
 
         [NotMapped]
         public string? MembersJson { get; set; }

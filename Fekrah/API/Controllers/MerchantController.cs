@@ -26,14 +26,14 @@ public class MerchantController : _BaseController<Merchant, MerchantDTO>
     [HttpPost("InsertMerchant")]
     public ActionResult<MerchantDTO> InsertMerchant([FromForm] MerchantDTO dto)
     {
-        var result = _merchantService.Insert(dto); 
+        var result = _merchantService.Insert(dto);
         return result;
     }
 
-    [HttpPut("{id}")]
-    public ActionResult<MerchantDTO> Update(int id, [FromForm] MerchantDTO dto)
+    [HttpPost("UpdateMerchant/{id}")]
+    public async Task<ActionResult<MerchantDTO>> Update(int id, [FromForm] MerchantDTO dto)
     {
-        var result = _merchantService.Update(id, dto);
+        var result = await _merchantService.Update(id, dto);
         if (result == null) return NotFound();
         return Ok(result);
     }
@@ -70,5 +70,5 @@ public class MerchantController : _BaseController<Merchant, MerchantDTO>
     //    return NoContent(); 
     //}
 
-  
+
 }

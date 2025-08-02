@@ -1,7 +1,5 @@
 <!-- الحاوي الرئيسي للموقع مع إمكانية النقر للإغلاق -->
 <div class="app-container " [class.filter-active]="filtersOpened" (click)="onSiteClick($event)">
-
-  <!-- ✅ الهيدر مع زر الفلتر -->
   <app-header
     [isFilterOpen]="filtersOpened"
     (toggleFilter)="toggleFilters()">

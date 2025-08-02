@@ -18,6 +18,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { HeaderInterceptor } from './Shared/Services/header.interceptor';
 import { LoaderComponent } from './Shared/components/loader/loader.component';
 import { environment } from '../environments/environment';
+import { ToastrModule } from 'ngx-toastr';
 import { AdminComponent } from './dashboard/admin.component';
 registerLocaleData(localeAr);
 
@@ -38,7 +39,12 @@ registerLocaleData(localeAr);
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    FooterModule
+    FooterModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
 
   ],
   exports: [
