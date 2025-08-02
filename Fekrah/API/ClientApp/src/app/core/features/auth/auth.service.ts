@@ -93,6 +93,10 @@ export class AuthService {
       this.authUserType = this.user?.userType!
   }
   clearAuthData() {
+    this.authStatus = false;
+    this.authStatusListener.next(false);
+    this.user = undefined;
+    this.user$.next(undefined);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.clear();

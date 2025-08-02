@@ -14,9 +14,9 @@
       formControlName="email"
       placeholder="البريد الإلكتروني"
     />
-    <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
+    <!-- <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
       البريد الإلكتروني مطلوب وصحيح
-    </div>
+    </div> -->
   </div>
 
   <div class="form-group">
@@ -26,20 +26,20 @@
       formControlName="password"
       placeholder="كلمة المرور"
     />
-    <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
+    <!-- <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
       كلمة المرور مطلوبة (6 حروف على الأقل)
-    </div>
+    </div> -->
   </div>
 
   <div class="forgot-password">
     <a href="#">نسيت كلمة المرور؟</a>
   </div>
 
-  <button class="login-btn" type="submit">تسجيل الدخول</button>
+  <button class="login-btn" type="submit"   [disabled]="loginForm.invalid">تسجيل الدخول</button>
 </form>
 
     <div class="signup-text" >
-      ليس لديك حساب؟ <a href="#" routerLink="/sign-up">اشترك</a>
+      ليس لديك حساب؟ <a href="#" routerLink="/auth/signup">اشترك</a>
     </div>
   </div>
 </div>

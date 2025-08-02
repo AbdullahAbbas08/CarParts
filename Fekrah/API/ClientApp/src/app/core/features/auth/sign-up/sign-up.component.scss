@@ -1,5 +1,5 @@
 .signup-wrapper {
-  min-height: 100vh;
+  min-height: 110vh;
   background: #f7f7f7;
   display: flex;
   justify-content: center;
@@ -79,6 +79,11 @@
         &:hover {
           background: #e69300;
         }
+        &:disabled {
+          background-color: #888 !important;
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
       }
     }
 
@@ -92,5 +97,26 @@
         text-decoration: underline;
       }
     }
+  }
+}
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2b2b2b;
+  color: white;
+  font-size: 14px;
+  appearance: none; // لإخفاء الشكل الافتراضي للـ select في بعض المتصفحات
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  &::placeholder {
+    color: #aaa;
+  }
+
+  option {
+    background-color: #2b2b2b;
+    color: white;
   }
 }

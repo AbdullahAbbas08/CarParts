@@ -935,13 +935,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
 
   // Logout function
   logout(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    localStorage.removeItem('view_mode');
-    localStorage.removeItem('pending_orders_count');
-    this.resetUserData();
-    this.showUserMenu = false;
-    this.router.navigate(['/auth/login']);
+    this.auth.clearAuthData()
   }
 
   // Get user initials for avatar fallback

@@ -14,7 +14,6 @@ export class SignUpComponent implements OnInit {
 
   roles = [
     { id: UserTypeEnum.Client, label: 'عميل (Client)' },
-    { id: UserTypeEnum.Merchant, label: 'تاجر (Merchant)' },
     { id: UserTypeEnum.ShippingCompany, label: 'شركة شحن (Shipping Company)' },
   ];
 
