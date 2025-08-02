@@ -343,7 +343,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiMerchantInsertMerchantPost(id: number | undefined, code: string | null | undefined, status: MerchantStatus | null | undefined, shopName: string | undefined, slug: string | undefined, description: string | undefined, shortDescription: string | undefined, locationOnMap: string | undefined, address: string | undefined, latitude: number | null | undefined, longitude: number | null | undefined, rating: number | undefined, ratingCount: number | undefined, mobileNo: string | undefined, whatsAppMobileNo: string | undefined, email: string | null | undefined, governorateId: number | null | undefined, cityId: number | null | undefined, isFavoriteMerchant: boolean | undefined, commercialRegistrationNumber: string | undefined, nationalIdNumber: string | undefined, businessHours: string | undefined, logo: string | null | undefined, commercialRegistrationImage: string | null | undefined, nationalIdImage: string | null | undefined, nationalIdImageForm: FileParameter | undefined, logoForm: FileParameter | undefined, commercialRegistrationImageForm: FileParameter | undefined, membersJson: string | null | undefined, members: MemberDTO[] | null | undefined, city_Id: number | undefined, city_NameAr: string | undefined, city_NameEn: string | undefined, governorate_Id: number | undefined, governorate_Name: string | undefined, governorate_CreatedByUserId: number | null | undefined, governorate_CreatedOn: Date | null | undefined, governorate_CreatedByUser_Id: number | undefined, governorate_CreatedByUser_NationalId: string | undefined, governorate_CreatedByUser_UserName: string | null | undefined, governorate_CreatedByUser_FullName: string | null | undefined, governorate_CreatedByUser_Email: string | null | undefined, governorate_CreatedByUser_PasswordHash: string | null | undefined, governorate_CreatedByUser_Photo: string | null | undefined, governorate_CreatedByUser_UserType: UserTypeEnum | null | undefined, governorate_CreatedByUser_PhoneNumber: string | null | undefined, governorate_CreatedByUser_Address: string | null | undefined, governorate_CreatedByUser_IsActive: boolean | null | undefined, governorate_UpdatedBy: number | null | undefined, governorate_UpdatedOn: Date | null | undefined, governorate_UpdatedByUser_Id: number | undefined, governorate_UpdatedByUser_NationalId: string | undefined, governorate_UpdatedByUser_UserName: string | null | undefined, governorate_UpdatedByUser_FullName: string | null | undefined, governorate_UpdatedByUser_Email: string | null | undefined, governorate_UpdatedByUser_PasswordHash: string | null | undefined, governorate_UpdatedByUser_Photo: string | null | undefined, governorate_UpdatedByUser_UserType: UserTypeEnum | null | undefined, governorate_UpdatedByUser_PhoneNumber: string | null | undefined, governorate_UpdatedByUser_Address: string | null | undefined, governorate_UpdatedByUser_IsActive: boolean | null | undefined, governorate_Cities: CityDTO[] | undefined, createdOn: Date | null | undefined, categoriesJson: string | null | undefined, categoriesDTO: CategoryDTO[] | null | undefined): Observable<MerchantDTO> {
+    apiMerchantInsertMerchantPost(id: number | undefined, code: string | null | undefined, status: MerchantStatus | null | undefined, shopName: string | undefined, slug: string | undefined, description: string | undefined, shortDescription: string | undefined, locationOnMap: string | undefined, address: string | undefined, latitude: number | null | undefined, longitude: number | null | undefined, rating: number | undefined, ratingCount: number | undefined, mobileNo: string | undefined, whatsAppMobileNo: string | undefined, email: string | null | undefined, governorateId: number | null | undefined, cityId: number | null | undefined, isFavoriteMerchant: boolean | undefined, commercialRegistrationNumber: string | undefined, nationalIdNumber: string | undefined, businessHours: string | undefined, logo: string | null | undefined, commercialRegistrationImage: string | null | undefined, nationalIdImage: string | null | undefined, nationalIdImageForm: FileParameter | undefined, logoForm: FileParameter | undefined, commercialRegistrationImageForm: FileParameter | undefined, membersJson: string | null | undefined, members: MemberDTO[] | null | undefined, city_Id: number | undefined, city_NameAr: string | undefined, city_NameEn: string | undefined, governorate_Id: number | undefined, governorate_Name: string | undefined, governorate_CreatedByUserId: number | null | undefined, governorate_CreatedOn: Date | null | undefined, governorate_CreatedByUser_Id: number | undefined, governorate_CreatedByUser_NationalId: string | null | undefined, governorate_CreatedByUser_UserName: string | null | undefined, governorate_CreatedByUser_FullName: string | null | undefined, governorate_CreatedByUser_Email: string | null | undefined, governorate_CreatedByUser_Password: string | null | undefined, governorate_CreatedByUser_Photo: string | null | undefined, governorate_CreatedByUser_UserType: UserTypeEnum | null | undefined, governorate_CreatedByUser_PhoneNumber: string | null | undefined, governorate_CreatedByUser_Address: string | null | undefined, governorate_CreatedByUser_IsActive: boolean | null | undefined, governorate_UpdatedBy: number | null | undefined, governorate_UpdatedOn: Date | null | undefined, governorate_UpdatedByUser_Id: number | undefined, governorate_UpdatedByUser_NationalId: string | null | undefined, governorate_UpdatedByUser_UserName: string | null | undefined, governorate_UpdatedByUser_FullName: string | null | undefined, governorate_UpdatedByUser_Email: string | null | undefined, governorate_UpdatedByUser_Password: string | null | undefined, governorate_UpdatedByUser_Photo: string | null | undefined, governorate_UpdatedByUser_UserType: UserTypeEnum | null | undefined, governorate_UpdatedByUser_PhoneNumber: string | null | undefined, governorate_UpdatedByUser_Address: string | null | undefined, governorate_UpdatedByUser_IsActive: boolean | null | undefined, governorate_Cities: CityDTO[] | undefined, createdOn: Date | null | undefined, categoriesJson: string | null | undefined, categoriesDTO: CategoryDTO[] | null | undefined): Observable<MerchantDTO> {
         let url_ = this.baseUrl + "/api/Merchant/InsertMerchant";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -472,9 +472,7 @@ export class SwaggerClient {
             throw new Error("The parameter 'governorate_CreatedByUser_Id' cannot be null.");
         else
             content_.append("Governorate.CreatedByUser.Id", governorate_CreatedByUser_Id.toString());
-        if (governorate_CreatedByUser_NationalId === null || governorate_CreatedByUser_NationalId === undefined)
-            throw new Error("The parameter 'governorate_CreatedByUser_NationalId' cannot be null.");
-        else
+        if (governorate_CreatedByUser_NationalId !== null && governorate_CreatedByUser_NationalId !== undefined)
             content_.append("Governorate.CreatedByUser.NationalId", governorate_CreatedByUser_NationalId.toString());
         if (governorate_CreatedByUser_UserName !== null && governorate_CreatedByUser_UserName !== undefined)
             content_.append("Governorate.CreatedByUser.UserName", governorate_CreatedByUser_UserName.toString());
@@ -482,8 +480,8 @@ export class SwaggerClient {
             content_.append("Governorate.CreatedByUser.FullName", governorate_CreatedByUser_FullName.toString());
         if (governorate_CreatedByUser_Email !== null && governorate_CreatedByUser_Email !== undefined)
             content_.append("Governorate.CreatedByUser.Email", governorate_CreatedByUser_Email.toString());
-        if (governorate_CreatedByUser_PasswordHash !== null && governorate_CreatedByUser_PasswordHash !== undefined)
-            content_.append("Governorate.CreatedByUser.PasswordHash", governorate_CreatedByUser_PasswordHash.toString());
+        if (governorate_CreatedByUser_Password !== null && governorate_CreatedByUser_Password !== undefined)
+            content_.append("Governorate.CreatedByUser.Password", governorate_CreatedByUser_Password.toString());
         if (governorate_CreatedByUser_Photo !== null && governorate_CreatedByUser_Photo !== undefined)
             content_.append("Governorate.CreatedByUser.Photo", governorate_CreatedByUser_Photo.toString());
         if (governorate_CreatedByUser_UserType !== null && governorate_CreatedByUser_UserType !== undefined)
@@ -502,9 +500,7 @@ export class SwaggerClient {
             throw new Error("The parameter 'governorate_UpdatedByUser_Id' cannot be null.");
         else
             content_.append("Governorate.UpdatedByUser.Id", governorate_UpdatedByUser_Id.toString());
-        if (governorate_UpdatedByUser_NationalId === null || governorate_UpdatedByUser_NationalId === undefined)
-            throw new Error("The parameter 'governorate_UpdatedByUser_NationalId' cannot be null.");
-        else
+        if (governorate_UpdatedByUser_NationalId !== null && governorate_UpdatedByUser_NationalId !== undefined)
             content_.append("Governorate.UpdatedByUser.NationalId", governorate_UpdatedByUser_NationalId.toString());
         if (governorate_UpdatedByUser_UserName !== null && governorate_UpdatedByUser_UserName !== undefined)
             content_.append("Governorate.UpdatedByUser.UserName", governorate_UpdatedByUser_UserName.toString());
@@ -512,8 +508,8 @@ export class SwaggerClient {
             content_.append("Governorate.UpdatedByUser.FullName", governorate_UpdatedByUser_FullName.toString());
         if (governorate_UpdatedByUser_Email !== null && governorate_UpdatedByUser_Email !== undefined)
             content_.append("Governorate.UpdatedByUser.Email", governorate_UpdatedByUser_Email.toString());
-        if (governorate_UpdatedByUser_PasswordHash !== null && governorate_UpdatedByUser_PasswordHash !== undefined)
-            content_.append("Governorate.UpdatedByUser.PasswordHash", governorate_UpdatedByUser_PasswordHash.toString());
+        if (governorate_UpdatedByUser_Password !== null && governorate_UpdatedByUser_Password !== undefined)
+            content_.append("Governorate.UpdatedByUser.Password", governorate_UpdatedByUser_Password.toString());
         if (governorate_UpdatedByUser_Photo !== null && governorate_UpdatedByUser_Photo !== undefined)
             content_.append("Governorate.UpdatedByUser.Photo", governorate_UpdatedByUser_Photo.toString());
         if (governorate_UpdatedByUser_UserType !== null && governorate_UpdatedByUser_UserType !== undefined)
@@ -580,7 +576,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiMerchantPut(idPath: number, idFormData: number | undefined, code: string | null | undefined, status: MerchantStatus | null | undefined, shopName: string | undefined, slug: string | undefined, description: string | undefined, shortDescription: string | undefined, locationOnMap: string | undefined, address: string | undefined, latitude: number | null | undefined, longitude: number | null | undefined, rating: number | undefined, ratingCount: number | undefined, mobileNo: string | undefined, whatsAppMobileNo: string | undefined, email: string | null | undefined, governorateId: number | null | undefined, cityId: number | null | undefined, isFavoriteMerchant: boolean | undefined, commercialRegistrationNumber: string | undefined, nationalIdNumber: string | undefined, businessHours: string | undefined, logo: string | null | undefined, commercialRegistrationImage: string | null | undefined, nationalIdImage: string | null | undefined, nationalIdImageForm: FileParameter | undefined, logoForm: FileParameter | undefined, commercialRegistrationImageForm: FileParameter | undefined, membersJson: string | null | undefined, members: MemberDTO[] | null | undefined, city_Id: number | undefined, city_NameAr: string | undefined, city_NameEn: string | undefined, governorate_Id: number | undefined, governorate_Name: string | undefined, governorate_CreatedByUserId: number | null | undefined, governorate_CreatedOn: Date | null | undefined, governorate_CreatedByUser_Id: number | undefined, governorate_CreatedByUser_NationalId: string | undefined, governorate_CreatedByUser_UserName: string | null | undefined, governorate_CreatedByUser_FullName: string | null | undefined, governorate_CreatedByUser_Email: string | null | undefined, governorate_CreatedByUser_PasswordHash: string | null | undefined, governorate_CreatedByUser_Photo: string | null | undefined, governorate_CreatedByUser_UserType: UserTypeEnum | null | undefined, governorate_CreatedByUser_PhoneNumber: string | null | undefined, governorate_CreatedByUser_Address: string | null | undefined, governorate_CreatedByUser_IsActive: boolean | null | undefined, governorate_UpdatedBy: number | null | undefined, governorate_UpdatedOn: Date | null | undefined, governorate_UpdatedByUser_Id: number | undefined, governorate_UpdatedByUser_NationalId: string | undefined, governorate_UpdatedByUser_UserName: string | null | undefined, governorate_UpdatedByUser_FullName: string | null | undefined, governorate_UpdatedByUser_Email: string | null | undefined, governorate_UpdatedByUser_PasswordHash: string | null | undefined, governorate_UpdatedByUser_Photo: string | null | undefined, governorate_UpdatedByUser_UserType: UserTypeEnum | null | undefined, governorate_UpdatedByUser_PhoneNumber: string | null | undefined, governorate_UpdatedByUser_Address: string | null | undefined, governorate_UpdatedByUser_IsActive: boolean | null | undefined, governorate_Cities: CityDTO[] | undefined, createdOn: Date | null | undefined, categoriesJson: string | null | undefined, categoriesDTO: CategoryDTO[] | null | undefined): Observable<MerchantDTO> {
+    apiMerchantPut(idPath: number, idFormData: number | undefined, code: string | null | undefined, status: MerchantStatus | null | undefined, shopName: string | undefined, slug: string | undefined, description: string | undefined, shortDescription: string | undefined, locationOnMap: string | undefined, address: string | undefined, latitude: number | null | undefined, longitude: number | null | undefined, rating: number | undefined, ratingCount: number | undefined, mobileNo: string | undefined, whatsAppMobileNo: string | undefined, email: string | null | undefined, governorateId: number | null | undefined, cityId: number | null | undefined, isFavoriteMerchant: boolean | undefined, commercialRegistrationNumber: string | undefined, nationalIdNumber: string | undefined, businessHours: string | undefined, logo: string | null | undefined, commercialRegistrationImage: string | null | undefined, nationalIdImage: string | null | undefined, nationalIdImageForm: FileParameter | undefined, logoForm: FileParameter | undefined, commercialRegistrationImageForm: FileParameter | undefined, membersJson: string | null | undefined, members: MemberDTO[] | null | undefined, city_Id: number | undefined, city_NameAr: string | undefined, city_NameEn: string | undefined, governorate_Id: number | undefined, governorate_Name: string | undefined, governorate_CreatedByUserId: number | null | undefined, governorate_CreatedOn: Date | null | undefined, governorate_CreatedByUser_Id: number | undefined, governorate_CreatedByUser_NationalId: string | null | undefined, governorate_CreatedByUser_UserName: string | null | undefined, governorate_CreatedByUser_FullName: string | null | undefined, governorate_CreatedByUser_Email: string | null | undefined, governorate_CreatedByUser_Password: string | null | undefined, governorate_CreatedByUser_Photo: string | null | undefined, governorate_CreatedByUser_UserType: UserTypeEnum | null | undefined, governorate_CreatedByUser_PhoneNumber: string | null | undefined, governorate_CreatedByUser_Address: string | null | undefined, governorate_CreatedByUser_IsActive: boolean | null | undefined, governorate_UpdatedBy: number | null | undefined, governorate_UpdatedOn: Date | null | undefined, governorate_UpdatedByUser_Id: number | undefined, governorate_UpdatedByUser_NationalId: string | null | undefined, governorate_UpdatedByUser_UserName: string | null | undefined, governorate_UpdatedByUser_FullName: string | null | undefined, governorate_UpdatedByUser_Email: string | null | undefined, governorate_UpdatedByUser_Password: string | null | undefined, governorate_UpdatedByUser_Photo: string | null | undefined, governorate_UpdatedByUser_UserType: UserTypeEnum | null | undefined, governorate_UpdatedByUser_PhoneNumber: string | null | undefined, governorate_UpdatedByUser_Address: string | null | undefined, governorate_UpdatedByUser_IsActive: boolean | null | undefined, governorate_Cities: CityDTO[] | undefined, createdOn: Date | null | undefined, categoriesJson: string | null | undefined, categoriesDTO: CategoryDTO[] | null | undefined): Observable<MerchantDTO> {
         let url_ = this.baseUrl + "/api/Merchant/{id}";
         if (idPath === undefined || idPath === null)
             throw new Error("The parameter 'idPath' must be defined.");
@@ -712,9 +708,7 @@ export class SwaggerClient {
             throw new Error("The parameter 'governorate_CreatedByUser_Id' cannot be null.");
         else
             content_.append("Governorate.CreatedByUser.Id", governorate_CreatedByUser_Id.toString());
-        if (governorate_CreatedByUser_NationalId === null || governorate_CreatedByUser_NationalId === undefined)
-            throw new Error("The parameter 'governorate_CreatedByUser_NationalId' cannot be null.");
-        else
+        if (governorate_CreatedByUser_NationalId !== null && governorate_CreatedByUser_NationalId !== undefined)
             content_.append("Governorate.CreatedByUser.NationalId", governorate_CreatedByUser_NationalId.toString());
         if (governorate_CreatedByUser_UserName !== null && governorate_CreatedByUser_UserName !== undefined)
             content_.append("Governorate.CreatedByUser.UserName", governorate_CreatedByUser_UserName.toString());
@@ -722,8 +716,8 @@ export class SwaggerClient {
             content_.append("Governorate.CreatedByUser.FullName", governorate_CreatedByUser_FullName.toString());
         if (governorate_CreatedByUser_Email !== null && governorate_CreatedByUser_Email !== undefined)
             content_.append("Governorate.CreatedByUser.Email", governorate_CreatedByUser_Email.toString());
-        if (governorate_CreatedByUser_PasswordHash !== null && governorate_CreatedByUser_PasswordHash !== undefined)
-            content_.append("Governorate.CreatedByUser.PasswordHash", governorate_CreatedByUser_PasswordHash.toString());
+        if (governorate_CreatedByUser_Password !== null && governorate_CreatedByUser_Password !== undefined)
+            content_.append("Governorate.CreatedByUser.Password", governorate_CreatedByUser_Password.toString());
         if (governorate_CreatedByUser_Photo !== null && governorate_CreatedByUser_Photo !== undefined)
             content_.append("Governorate.CreatedByUser.Photo", governorate_CreatedByUser_Photo.toString());
         if (governorate_CreatedByUser_UserType !== null && governorate_CreatedByUser_UserType !== undefined)
@@ -742,9 +736,7 @@ export class SwaggerClient {
             throw new Error("The parameter 'governorate_UpdatedByUser_Id' cannot be null.");
         else
             content_.append("Governorate.UpdatedByUser.Id", governorate_UpdatedByUser_Id.toString());
-        if (governorate_UpdatedByUser_NationalId === null || governorate_UpdatedByUser_NationalId === undefined)
-            throw new Error("The parameter 'governorate_UpdatedByUser_NationalId' cannot be null.");
-        else
+        if (governorate_UpdatedByUser_NationalId !== null && governorate_UpdatedByUser_NationalId !== undefined)
             content_.append("Governorate.UpdatedByUser.NationalId", governorate_UpdatedByUser_NationalId.toString());
         if (governorate_UpdatedByUser_UserName !== null && governorate_UpdatedByUser_UserName !== undefined)
             content_.append("Governorate.UpdatedByUser.UserName", governorate_UpdatedByUser_UserName.toString());
@@ -752,8 +744,8 @@ export class SwaggerClient {
             content_.append("Governorate.UpdatedByUser.FullName", governorate_UpdatedByUser_FullName.toString());
         if (governorate_UpdatedByUser_Email !== null && governorate_UpdatedByUser_Email !== undefined)
             content_.append("Governorate.UpdatedByUser.Email", governorate_UpdatedByUser_Email.toString());
-        if (governorate_UpdatedByUser_PasswordHash !== null && governorate_UpdatedByUser_PasswordHash !== undefined)
-            content_.append("Governorate.UpdatedByUser.PasswordHash", governorate_UpdatedByUser_PasswordHash.toString());
+        if (governorate_UpdatedByUser_Password !== null && governorate_UpdatedByUser_Password !== undefined)
+            content_.append("Governorate.UpdatedByUser.Password", governorate_UpdatedByUser_Password.toString());
         if (governorate_UpdatedByUser_Photo !== null && governorate_UpdatedByUser_Photo !== undefined)
             content_.append("Governorate.UpdatedByUser.Photo", governorate_UpdatedByUser_Photo.toString());
         if (governorate_UpdatedByUser_UserType !== null && governorate_UpdatedByUser_UserType !== undefined)
@@ -2574,6 +2566,66 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
+    apiFileUploadFilePost(file: FileParameter | undefined, fileTypeEnum: FileTypeEnum | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/File/UploadFile?";
+        if (fileTypeEnum === null)
+            throw new Error("The parameter 'fileTypeEnum' cannot be null.");
+        else if (fileTypeEnum !== undefined)
+            url_ += "fileTypeEnum=" + encodeURIComponent("" + fileTypeEnum) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (file === null || file === undefined)
+            throw new Error("The parameter 'file' cannot be null.");
+        else
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiFileUploadFilePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiFileUploadFilePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processApiFileUploadFilePost(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     apiLookupGetLookupGet(lookupName: string | undefined, searchTerm: string | null | undefined): Observable<LookupDTO[]> {
         let url_ = this.baseUrl + "/api/Lookup/GetLookup?";
         if (lookupName === null)
@@ -3626,11 +3678,11 @@ export interface IMemberDTO {
 
 export class UserDTO implements IUserDTO {
     id!: number;
-    nationalId!: string;
+    nationalId?: string | undefined;
     userName?: string | undefined;
     fullName?: string | undefined;
     email?: string | undefined;
-    passwordHash?: string | undefined;
+    password?: string | undefined;
     photo?: string | undefined;
     userType?: UserTypeEnum | undefined;
     phoneNumber?: string | undefined;
@@ -3653,7 +3705,7 @@ export class UserDTO implements IUserDTO {
             this.userName = _data["userName"];
             this.fullName = _data["fullName"];
             this.email = _data["email"];
-            this.passwordHash = _data["passwordHash"];
+            this.password = _data["password"];
             this.photo = _data["photo"];
             this.userType = _data["userType"];
             this.phoneNumber = _data["phoneNumber"];
@@ -3676,7 +3728,7 @@ export class UserDTO implements IUserDTO {
         data["userName"] = this.userName;
         data["fullName"] = this.fullName;
         data["email"] = this.email;
-        data["passwordHash"] = this.passwordHash;
+        data["password"] = this.password;
         data["photo"] = this.photo;
         data["userType"] = this.userType;
         data["phoneNumber"] = this.phoneNumber;
@@ -3688,11 +3740,11 @@ export class UserDTO implements IUserDTO {
 
 export interface IUserDTO {
     id: number;
-    nationalId: string;
+    nationalId?: string | undefined;
     userName?: string | undefined;
     fullName?: string | undefined;
     email?: string | undefined;
-    passwordHash?: string | undefined;
+    password?: string | undefined;
     photo?: string | undefined;
     userType?: UserTypeEnum | undefined;
     phoneNumber?: string | undefined;
@@ -4218,7 +4270,7 @@ export class AuthDto implements IAuthDto {
     userTypeName!: string;
     roleId?: number | undefined;
     roleName?: string | undefined;
-    permissions?: PermissionDTO[] | undefined;
+    permissions?: string[] | undefined;
 
     constructor(data?: IAuthDto) {
         if (data) {
@@ -4248,7 +4300,7 @@ export class AuthDto implements IAuthDto {
             if (Array.isArray(_data["permissions"])) {
                 this.permissions = [] as any;
                 for (let item of _data["permissions"])
-                    this.permissions!.push(PermissionDTO.fromJS(item));
+                    this.permissions!.push(item);
             }
         }
     }
@@ -4279,7 +4331,7 @@ export class AuthDto implements IAuthDto {
         if (Array.isArray(this.permissions)) {
             data["permissions"] = [];
             for (let item of this.permissions)
-                data["permissions"].push(item.toJSON());
+                data["permissions"].push(item);
         }
         return data;
     }
@@ -4300,55 +4352,7 @@ export interface IAuthDto {
     userTypeName: string;
     roleId?: number | undefined;
     roleName?: string | undefined;
-    permissions?: PermissionDTO[] | undefined;
-}
-
-export class PermissionDTO implements IPermissionDTO {
-    id!: number;
-    permissionNameAr!: string;
-    permissionNameEn!: string;
-    permissionCode!: string;
-
-    constructor(data?: IPermissionDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.permissionNameAr = _data["permissionNameAr"];
-            this.permissionNameEn = _data["permissionNameEn"];
-            this.permissionCode = _data["permissionCode"];
-        }
-    }
-
-    static fromJS(data: any): PermissionDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new PermissionDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["permissionNameAr"] = this.permissionNameAr;
-        data["permissionNameEn"] = this.permissionNameEn;
-        data["permissionCode"] = this.permissionCode;
-        return data;
-    }
-}
-
-export interface IPermissionDTO {
-    id: number;
-    permissionNameAr: string;
-    permissionNameEn: string;
-    permissionCode: string;
+    permissions?: string[] | undefined;
 }
 
 export class LoginViewModel implements ILoginViewModel {
@@ -4400,6 +4404,7 @@ export class RegisterViewModel implements IRegisterViewModel {
     photo?: string | undefined;
     address?: string | undefined;
     userType!: UserTypeEnum;
+    roleId?: number | undefined;
 
     constructor(data?: IRegisterViewModel) {
         if (data) {
@@ -4420,6 +4425,7 @@ export class RegisterViewModel implements IRegisterViewModel {
             this.photo = _data["photo"];
             this.address = _data["address"];
             this.userType = _data["userType"];
+            this.roleId = _data["roleId"];
         }
     }
 
@@ -4440,6 +4446,7 @@ export class RegisterViewModel implements IRegisterViewModel {
         data["photo"] = this.photo;
         data["address"] = this.address;
         data["userType"] = this.userType;
+        data["roleId"] = this.roleId;
         return data;
     }
 }
@@ -4453,6 +4460,7 @@ export interface IRegisterViewModel {
     photo?: string | undefined;
     address?: string | undefined;
     userType: UserTypeEnum;
+    roleId?: number | undefined;
 }
 
 export class VisitorViewModel implements IVisitorViewModel {
@@ -4712,6 +4720,11 @@ export interface IDataSourceResultOfCityDTO {
     additionalValue: number;
 }
 
+export enum FileTypeEnum {
+    Parts = 1,
+    Users = 2,
+}
+
 export class LookupDTO implements ILookupDTO {
     id!: any;
     text!: string;
@@ -4889,6 +4902,54 @@ export interface IDataSourceResultOfPermissionDTO {
     data: PermissionDTO[];
     count: number;
     additionalValue: number;
+}
+
+export class PermissionDTO implements IPermissionDTO {
+    id!: number;
+    permissionNameAr!: string;
+    permissionNameEn!: string;
+    permissionCode!: string;
+
+    constructor(data?: IPermissionDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.permissionNameAr = _data["permissionNameAr"];
+            this.permissionNameEn = _data["permissionNameEn"];
+            this.permissionCode = _data["permissionCode"];
+        }
+    }
+
+    static fromJS(data: any): PermissionDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new PermissionDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["permissionNameAr"] = this.permissionNameAr;
+        data["permissionNameEn"] = this.permissionNameEn;
+        data["permissionCode"] = this.permissionCode;
+        return data;
+    }
+}
+
+export interface IPermissionDTO {
+    id: number;
+    permissionNameAr: string;
+    permissionNameEn: string;
+    permissionCode: string;
 }
 
 export class DataSourceResultOfRoleDTO implements IDataSourceResultOfRoleDTO {

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, Validat
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO, LookupDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -62,16 +62,18 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   isAddingCategory = false;
   
   // Roles list for dropdown
-  roles = [
-    { value: 'manager', label: 'مدير' },
-    { value: 'sales_rep', label: 'مندوب مبيعات' },
-    { value: 'cashier', label: 'كاشير' },
-    { value: 'technician', label: 'فني' },
-    { value: 'warehouse_keeper', label: 'أمين مخزن' },
-    { value: 'customer_service', label: 'خدمة عملاء' },
-    { value: 'accountant', label: 'محاسب' },
-    { value: 'assistant', label: 'مساعد' }
-  ];
+  // roles = [
+  //   { value: 'manager', label: 'مدير' },
+  //   { value: 'sales_rep', label: 'مندوب مبيعات' },
+  //   { value: 'cashier', label: 'كاشير' },
+  //   { value: 'technician', label: 'فني' },
+  //   { value: 'warehouse_keeper', label: 'أمين مخزن' },
+  //   { value: 'customer_service', label: 'خدمة عملاء' },
+  //   { value: 'accountant', label: 'محاسب' },
+  //   { value: 'assistant', label: 'مساعد' }
+  // ];
+
+  roles: LookupDTO[] = [];
   
   private subscriptions = new Subscription();
 
@@ -173,6 +175,9 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     this.editForm.statusChanges.subscribe(() => {
       // Trigger change detection for step navigation buttons
     });
+
+    // Load Roles
+    this.LoadRoles();
   }
 
   ngOnDestroy(): void {
@@ -838,7 +843,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           userDTO.userName = member.username || '';
           userDTO.fullName = member.name || '';
           userDTO.email = member.email || '';
-          userDTO.passwordHash = member.password || ''; // سيتم hash في الـ backend
+          userDTO.password = member.password || ''; // سيتم hash في الـ backend
           userDTO.phoneNumber = member.phone || '';
           userDTO.userType = UserTypeEnum.Merchant; // نوع المستخدم: بائع
           userDTO.isActive = true;
@@ -1246,7 +1251,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
       UserName: userDTO.userName || '',
       FullName: userDTO.fullName || '',
       Email: userDTO.email || '',
-      PasswordHash: userDTO.passwordHash || '',
+      Password: userDTO.password || '',
       Photo: userDTO.photo || '',
       UserType: userDTO.userType || UserTypeEnum.Merchant,
       PhoneNumber: userDTO.phoneNumber || '',
@@ -1681,4 +1686,14 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     return imageData;
   }
 
+  LoadRoles(){
+    this.swaggerClient.apiLookupGetLookupGet('roles', null).subscribe({
+      next: (res: LookupDTO[]) => {
+        this.roles = res;
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    });
+  }
 }

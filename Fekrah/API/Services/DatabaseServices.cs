@@ -351,5 +351,22 @@ namespace API.Services
             dbContext.Set<Category>().AddRange(categories);
             await dbContext.SaveChangesAsync();
         }
+
+        public static async Task SeedRoles(DatabaseContext dbContext)
+        {
+            if (dbContext == null) return;
+            if (await dbContext.Set<Role>().AnyAsync()) return;
+
+            var roles = new List<Role>
+            {
+                new Role{RoleNameAr = "مدير", RoleNameEn="manager", IsActive = true},
+                new Role{RoleNameAr = "فني", RoleNameEn="technical", IsActive = true},
+                new Role{RoleNameAr = "أمين مخزن", RoleNameEn="workhouse keeper", IsActive = true},
+                new Role{RoleNameAr = "مندوب مبيعات", RoleNameEn="sales manager", IsActive = true},
+            };
+
+            dbContext.Set<Role>().AddRange(roles);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -595,7 +595,7 @@
                                             style="color: #dc3545; font-size: 1.2em; font-weight: bold;">*</span></label>
                                     <select formControlName="position" class="modern-input">
                                         <option value="">اختر الدور</option>
-                                        <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}
+                                        <option *ngFor="let role of roles" [value]="role.id">{{ role.text }}
                                         </option>
                                     </select>
                                 </div>

@@ -24,6 +24,7 @@ namespace Api.Services
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IFileService, FileService>();
         }
 
         public static void RegisterRepositoriesConfiguration(this IServiceCollection services)

@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MerchantData\" />
+    <Folder Include="Images\MerchantData\" />
   </ItemGroup>
 
 </Project>
