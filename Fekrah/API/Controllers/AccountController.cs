@@ -26,5 +26,22 @@ namespace API.Controllers
 
         [HttpPost("RegisterNewVisitor")]
         public async Task<AuthDto> RegisterNewVisitor(VisitorViewModel visitorViewModel) => await _accountService.RegisterNewVisitor(visitorViewModel);
+
+
+        [HttpPatch("SetUserActiveStatus/{id}")]
+        public IActionResult SetUserActiveStatus(int id, [FromQuery] bool isActive)
+        {
+            try
+            {
+                var user = _accountService.SetUserActiveStatus(id, isActive);
+                if (user == null)
+                    return NotFound();
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update user status.");
+            }
+        }
     }
 }

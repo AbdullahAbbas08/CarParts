@@ -1,27 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { UserManagementService } from './manage-users/user-management.service';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
+  // Statistics
+  totalUsers = 1247;
+  totalMerchants = 89;
+  totalOrders = 3421;
+  monthlyGrowth = 12.5;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private userService: UserManagementService
+  ) { }
 
   ngOnInit(): void {
+    this.loadStatistics();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadStatistics(): void {
+    // Load user statistics
+    this.userService.getUserStatistics()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (stats) => {
+          this.totalUsers = stats.totalUsers;
+        },
+        error: (error) => {
+          console.error('Error loading user statistics:', error);
+        }
+      });
   }
 
   // Navigation Methods
   navigateToUsers(): void {
     console.log('🏃‍♂️ Navigating to user management...');
-    // TODO: Implement user management navigation
-    // this.router.navigate(['/admin/users']);
-    this.showComingSoon('إدارة المستخدمين');
+    this.router.navigate(['/admin/users']);
   }
-
-
 
   navigateToOrders(): void {
     console.log('📦 Navigating to order management...');
@@ -39,23 +68,19 @@ export class AdminComponent implements OnInit {
 
   // Statistics Methods
   getTotalUsers(): number {
-    // TODO: Implement actual user count from API
-    return 1247;
+    return this.totalUsers;
   }
 
   getMerchantsCount(): number {
-    // TODO: Implement actual merchant count from API
-    return 89;
+    return this.totalMerchants;
   }
 
   getTotalOrders(): number {
-    // TODO: Implement actual order count from API
-    return 3421;
+    return this.totalOrders;
   }
 
   getMonthlyGrowth(): number {
-    // TODO: Implement actual growth calculation from API
-    return 12.5;
+    return this.monthlyGrowth;
   }
 
   // Helper Methods

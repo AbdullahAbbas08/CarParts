@@ -14,5 +14,6 @@ namespace Bussiness.Interfaces
         Task<AuthDto> Login(LoginViewModel loginViewModel);
         Task<AuthDto> RegisterNewUser(RegisterViewModel registerViewModel);
         Task<AuthDto> RegisterNewVisitor(VisitorViewModel visitorViewModel);
+        UserDTO SetUserActiveStatus(int id, bool isActive);
     }
 }

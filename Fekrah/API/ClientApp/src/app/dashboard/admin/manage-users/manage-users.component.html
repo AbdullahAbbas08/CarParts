@@ -1,0 +1,725 @@
+<!-- User Management Component with Modern Arabic Design -->
+<div class="user-management" style="font-family: 'Cairo', sans-serif; direction: rtl; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+  
+  <!-- Header Section -->
+  <div class="management-header" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding: 2rem;">
+    <div class="container-fluid">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav" style="margin-bottom: 1rem;">
+        <ol class="breadcrumb" style="display: flex; align-items: center; gap: 1rem; margin: 0; padding: 0; list-style: none; color: rgba(255, 255, 255, 0.8);">
+          <li class="breadcrumb-item">
+            <a routerLink="/admin" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-shield-alt"></i>
+              لوحة الإدارة
+            </a>
+          </li>
+          <li class="breadcrumb-separator" style="color: rgba(255, 255, 255, 0.6);">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item active" style="color: white; font-weight: 600;">
+            <i class="fas fa-users" style="margin-left: 0.5rem;"></i>
+            إدارة المستخدمين
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Title and Actions -->
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="page-title">
+          <h1 style="color: white; font-size: 2.5rem; font-weight: 800; margin: 0; text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
+            <i class="fas fa-users" style="margin-left: 1rem; color: #ffd700;"></i>
+            إدارة المستخدمين
+          </h1>
+          <p style="color: rgba(255, 255, 255, 0.9); margin: 0.5rem 0 0 0;">إدارة شاملة لجميع المستخدمين في النظام</p>
+        </div>
+        
+        <div class="header-actions" style="display: flex; gap: 1rem;">
+          <button 
+            class="btn btn-primary" 
+            (click)="openCreateModal()"
+            style="background: linear-gradient(135deg, #11998e, #38ef7d); border: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);">
+            <i class="fas fa-plus" style="margin-left: 0.5rem;"></i>
+            إضافة مستخدم جديد
+          </button>
+          
+          <button 
+            class="btn btn-outline-light" 
+            (click)="exportUsers()"
+            style="border: 2px solid rgba(255, 255, 255, 0.3); padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; backdrop-filter: blur(10px);">
+            <i class="fas fa-download" style="margin-left: 0.5rem;"></i>
+            تصدير البيانات
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Statistics Cards - Full Width -->
+  <div class="statistics-section" style="padding: 2rem;">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="stats-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+            
+            <!-- Total Users Card -->
+            <div class="stat-card modern-stat-card" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid #e5e7eb; transition: transform 0.3s ease;">
+              <div class="stat-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
+                <i class="fas fa-users" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 2.2rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0;">{{ statistics.totalUsers }}</h4>
+              <p style="margin: 0; color: #64748b; font-weight: 500;">إجمالي المستخدمين</p>
+            </div>
+            
+            <!-- Admin Users Card -->
+            <div class="stat-card modern-stat-card" style="background: linear-gradient(135deg, #fef7ec, #fed7aa); border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid #fed7aa; transition: transform 0.3s ease;">
+              <div class="stat-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #f59e0b, #f97316); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                <i class="fas fa-user-shield" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 2.2rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0;">{{ statistics.adminUsers }}</h4>
+              <p style="margin: 0; color: #64748b; font-weight: 500;">المديرين</p>
+            </div>
+            
+            <!-- Merchant Users Card -->
+            <div class="stat-card modern-stat-card" style="background: linear-gradient(135deg, #f0f9ff, #bae6fd); border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid #bae6fd; transition: transform 0.3s ease;">
+              <div class="stat-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #06b6d4, #0891b2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
+                <i class="fas fa-store" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 2.2rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0;">{{ statistics.merchantUsers }}</h4>
+              <p style="margin: 0; color: #64748b; font-weight: 500;">التجار</p>
+            </div>
+            
+            <!-- Client Users Card -->
+            <div class="stat-card modern-stat-card" style="background: linear-gradient(135deg, #f0fdf4, #bbf7d0); border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid #bbf7d0; transition: transform 0.3s ease;">
+              <div class="stat-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                <i class="fas fa-user-friends" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 2.2rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0;">{{ statistics.clientUsers }}</h4>
+              <p style="margin: 0; color: #64748b; font-weight: 500;">العملاء</p>
+            </div>
+            
+            <!-- Shipping Users Card -->
+            <div class="stat-card modern-stat-card" style="background: linear-gradient(135deg, #fdf4ff, #e9d5ff); border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid #e9d5ff; transition: transform 0.3s ease;">
+              <div class="stat-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #8b5cf6, #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+                <i class="fas fa-truck" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 2.2rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0;">{{ statistics.shippingUsers }}</h4>
+              <p style="margin: 0; color: #64748b; font-weight: 500;">شركات الشحن والسائقين</p>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Search and Filter Section -->
+  <div class="search-section" style="padding: 0 2rem 2rem;">
+    <div class="container-fluid">
+      <div class="search-card premium-search" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(25px); border-radius: 25px; padding: 2.5rem; border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden;">
+        
+        <!-- Background Pattern -->
+        <div class="search-pattern" style="position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 2px, transparent 2px); background-size: 30px 30px; opacity: 0.3; animation: float 6s ease-in-out infinite;"></div>
+        
+        <form [formGroup]="searchForm" class="elegant-form">
+          <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+              <label class="form-label premium-label" style="color: white; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                <i class="fas fa-search" style="color: #ffd700;"></i>
+                البحث السريع
+              </label>
+              <div class="input-group premium-input-group" style="position: relative;">
+               
+                <input 
+                  type="text" 
+                  class="form-control premium-input" 
+                  formControlName="searchTerm"
+                  placeholder="ابحث بالاسم أو رقم الهاتف..."
+                  style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); color: white; border-radius: 0 15px 15px 0; padding: 1rem 1.5rem; font-weight: 500; backdrop-filter: blur(15px); transition: all 0.3s ease;">
+                   <span class="input-group-text premium-input-icon" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1)); border: 2px solid rgba(255, 215, 0, 0.3); color: #ffd700; border-radius: 15px 0 0 15px; backdrop-filter: blur(15px);">
+                  <i class="fas fa-search" style="font-size: 1.1rem;"></i>
+                </span>
+                <div class="input-glow" style="position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #45b7d1); border-radius: 15px; opacity: 0; transition: opacity 0.3s ease; z-index: -1;"></div>
+              </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label premium-label" style="color: white; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                <i class="fas fa-users-cog" style="color: #ffd700;"></i>
+                نوع المستخدم
+              </label>
+              <select 
+                class="form-select premium-select" 
+                formControlName="userType"
+                (change)="onFilterChange()"
+                style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); color: white; border-radius: 15px; padding: 1rem 1.5rem; font-weight: 500; backdrop-filter: blur(15px); transition: all 0.3s ease;">
+                <option value="all" style="background: #1f2937; color: white;">جميع الأنواع</option>
+                <option [value]="UserTypeEnum.Admin" style="background: #1f2937; color: white;">مدير</option>
+                <option [value]="UserTypeEnum.Client" style="background: #1f2937; color: white;">عميل</option>
+                <option [value]="UserTypeEnum.Merchant" style="background: #1f2937; color: white;">تاجر</option>
+                <option [value]="UserTypeEnum.ShippingCompany" style="background: #1f2937; color: white;">شركة شحن</option>
+              </select>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label premium-label" style="color: white; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                <i class="fas fa-toggle-on" style="color: #ffd700;"></i>
+                الحالة
+              </label>
+              <select 
+                class="form-select premium-select" 
+                formControlName="status"
+                (change)="onFilterChange()"
+                style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); color: white; border-radius: 15px; padding: 1rem 1.5rem; font-weight: 500; backdrop-filter: blur(15px); transition: all 0.3s ease;">
+                <option value="all" style="background: #1f2937; color: white;">جميع الحالات</option>
+                <option value="active" style="background: #1f2937; color: white;">نشط</option>
+                <option value="inactive" style="background: #1f2937; color: white;">غير نشط</option>
+              </select>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label premium-label" style="color: white; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                <i class="fas fa-list-ol" style="color: #ffd700;"></i>
+                عدد النتائج
+              </label>
+              <select 
+                class="form-select premium-select" 
+                [value]="pageSize"
+                (change)="onPageSizeChange($event)"
+                style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); color: white; border-radius: 15px; padding: 1rem 1.5rem; font-weight: 500; backdrop-filter: blur(15px); transition: all 0.3s ease;">
+                <option value="10" style="background: #1f2937; color: white;">10</option>
+                <option value="25" style="background: #1f2937; color: white;">25</option>
+                <option value="50" style="background: #1f2937; color: white;">50</option>
+                <option value="100" style="background: #1f2937; color: white;">100</option>
+              </select>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label premium-label" style="color: white; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                <i class="fas fa-magic" style="color: #ffd700;"></i>
+                إجراءات سريعة
+              </label>
+              <div class="quick-actions" style="display: flex; gap: 0.5rem;">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-light btn-sm quick-action-btn" 
+                  (click)="clearFilters()"
+                  style="border: 2px solid rgba(255, 255, 255, 0.3); padding: 1rem; border-radius: 12px; backdrop-filter: blur(15px); transition: all 0.3s ease; flex: 1;"
+                  title="مسح الفلاتر">
+                  <i class="fas fa-eraser"></i>
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-outline-light btn-sm quick-action-btn" 
+                  (click)="refreshData()"
+                  style="border: 2px solid rgba(255, 255, 255, 0.3); padding: 1rem; border-radius: 12px; backdrop-filter: blur(15px); transition: all 0.3s ease; flex: 1;"
+                  title="تحديث البيانات">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modern Users Table Section -->
+  <div class="table-section" style="padding: 0 2rem 2rem;">
+    <div class="container-fluid">
+      <div class="modern-table-container" style="background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); overflow: hidden; border: 1px solid #e5e7eb;">
+        
+        <!-- Table Header -->
+        <div class="table-header d-flex justify-content-between align-items-center" style="background: #f8fafc; padding: 1.5rem 2rem; border-bottom: 1px solid #e5e7eb;">
+          <div class="header-info">
+            <h3 style="margin: 0; color: #1e293b; font-weight: 600; font-size: 1.3rem;">
+              <i class="fas fa-users" style="margin-left: 0.5rem; color: #6366f1;"></i>
+              قائمة المستخدمين
+            </h3>
+            <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.9rem;">إجمالي {{ totalCount }} مستخدم</p>
+          </div>
+          
+          <div class="table-actions" style="display: flex; gap: 1rem; align-items: center;">
+            <!-- Quick Status Actions Dropdown -->
+            <div class="dropdown">
+              <button 
+                class="btn btn-outline-info btn-sm dropdown-toggle" 
+                type="button" 
+                id="statusActionsDropdown" 
+                data-bs-toggle="dropdown" 
+                aria-expanded="false"
+                style="border-radius: 8px; padding: 0.5rem 1rem; border: 1px solid #06b6d4; color: #06b6d4; background: white;">
+                <i class="fas fa-user-cog" style="margin-left: 0.25rem;"></i>
+                إدارة الحالة
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="statusActionsDropdown" style="border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <li>
+                  <h6 class="dropdown-header" style="color: #374151; font-weight: 600;">
+                    <i class="fas fa-info-circle" style="margin-left: 0.25rem; color: #06b6d4;"></i>
+                    إجراءات سريعة
+                  </h6>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" (click)="showActiveUsersOnly()" style="color: #16a34a; padding: 0.5rem 1rem; cursor: pointer;">
+                    <i class="fas fa-users" style="margin-left: 0.5rem;"></i>
+                    عرض المستخدمين النشطين فقط
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" (click)="showInactiveUsersOnly()" style="color: #dc2626; padding: 0.5rem 1rem; cursor: pointer;">
+                    <i class="fas fa-user-slash" style="margin-left: 0.5rem;"></i>
+                    عرض المستخدمين غير النشطين فقط
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" (click)="showAllUsers()" style="color: #374151; padding: 0.5rem 1rem; cursor: pointer;">
+                    <i class="fas fa-list" style="margin-left: 0.5rem;"></i>
+                    عرض جميع المستخدمين
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <span class="dropdown-item-text" style="font-size: 0.8rem; color: #6b7280; padding: 0.25rem 1rem;">
+                    استخدم الأزرار في كل صف للتحكم الفردي
+                  </span>
+                </li>
+              </ul>
+            </div>
+            
+            <button 
+              class="btn btn-outline-primary btn-sm" 
+              (click)="refreshData()"
+              style="border-radius: 8px; padding: 0.5rem 1rem; border: 1px solid #6366f1; color: #6366f1; background: white;">
+              <i class="fas fa-sync-alt" style="margin-left: 0.25rem;"></i>
+              تحديث
+            </button>
+            <button 
+              class="btn btn-outline-secondary btn-sm" 
+              (click)="exportUsers()"
+              style="border-radius: 8px; padding: 0.5rem 1rem; border: 1px solid #6b7280; color: #6b7280; background: white;">
+              <i class="fas fa-download" style="margin-left: 0.25rem;"></i>
+              تصدير
+            </button>
+          </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-container" style="display: flex; justify-content: center; align-items: center; padding: 4rem; background: white;">
+          <div class="loading-content" style="text-align: center;">
+            <div class="spinner-border" style="color: #6366f1; width: 3rem; height: 3rem; margin-bottom: 1rem;"></div>
+            <p style="color: #6b7280; margin: 0;">جاري تحميل البيانات...</p>
+          </div>
+        </div>
+
+        <!-- Modern Table -->
+        <div *ngIf="!loading" class="table-wrapper">
+          <table class="table modern-data-table" style="margin: 0; width: 100%;">
+            <thead style="background: #f8fafc; border-bottom: 1px solid #e5e7eb;">
+              <tr>
+                <th style="padding: 1rem 1.5rem; color: #374151; font-weight: 600; font-size: 0.875rem; text-align: right; border-bottom: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-id-card" style="color: #6366f1; font-size: 0.875rem;"></i>
+                    الاسم الكامل
+                  </div>
+                </th>
+                <th style="padding: 1rem 1.5rem; color: #374151; font-weight: 600; font-size: 0.875rem; text-align: right; border-bottom: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-user" style="color: #6366f1; font-size: 0.875rem;"></i>
+                    اسم المستخدم
+                  </div>
+                </th>
+                <th style="padding: 1rem 1.5rem; color: #374151; font-weight: 600; font-size: 0.875rem; text-align: right; border-bottom: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-phone" style="color: #6366f1; font-size: 0.875rem;"></i>
+                    رقم الهاتف
+                  </div>
+                </th>
+                <th style="padding: 1rem 1.5rem; color: #374151; font-weight: 600; font-size: 0.875rem; text-align: right; border-bottom: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-users-cog" style="color: #6366f1; font-size: 0.875rem;"></i>
+                    نوع المستخدم
+                  </div>
+                </th>
+                <th style="padding: 1rem 1.5rem; color: #374151; font-weight: 600; font-size: 0.875rem; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i class="fas fa-toggle-on" style="color: #6366f1; font-size: 0.875rem;"></i>
+                    الحالة
+                  </div>
+                </th>
+                <th style="padding: 1rem 1.5rem; color: #374151; font-weight: 600; font-size: 0.875rem; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i class="fas fa-cogs" style="color: #6366f1; font-size: 0.875rem;"></i>
+                    الإجراءات
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredUsers; trackBy: trackByUserId; let i = index" 
+                  style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s ease;"
+                 >
+                
+                <!-- Full Name Cell -->
+                <td style="padding: 1rem 1.5rem; vertical-align: middle;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <img *ngIf="user.photo" [src]="user.photo" [alt]="user.fullName" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                      <i *ngIf="!user.photo" class="fas fa-user" style="color: white; font-size: 1rem;"></i>
+                    </div>
+                    <div class="user-info">
+                      <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem; line-height: 1.4;">{{ user.fullName }}</div>
+                      <div style="font-size: 0.8rem; color: #64748b;">ID: #{{ user.id }}</div>
+                    </div>
+                  </div>
+                </td>
+                
+                <!-- Username Cell -->
+                <td style="padding: 1rem 1.5rem; vertical-align: middle;">
+                  <div style="font-weight: 500; color: #374151; font-size: 0.9rem;">{{ user.userName }}</div>
+                </td>
+                
+                <!-- Phone Cell -->
+                <td style="padding: 1rem 1.5rem; vertical-align: middle;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; flex-shrink: 0;"></div>
+                    <a [href]="'tel:' + user.phoneNumber" style="color: #374151; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+                      {{ user.phoneNumber }}
+                    </a>
+                  </div>
+                </td>
+                
+                <!-- User Type Cell -->
+                <td style="padding: 1rem 1.5rem; vertical-align: middle;">
+                  <span class="badge user-type-badge" 
+                        [style.background]="getUserTypeColor(user.userType)"
+                        style="padding: 0.5rem 0.75rem; border-radius: 12px; font-weight: 500; font-size: 0.8rem; color: white; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <i [class]="getUserTypeIcon(user.userType)" style="font-size: 0.75rem;"></i>
+                    {{ getUserTypeDisplayName(user.userType) }}
+                  </span>
+                </td>
+                
+                <!-- Status Cell -->
+                <td style="padding: 1rem 1.5rem; vertical-align: middle; text-align: center;">
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                    <span class="badge status-badge" 
+                          [style.background]="user.isActive ? '#10b981' : '#ef4444'"
+                          [style.color]="'white'"
+                          style="padding: 0.5rem 0.75rem; border-radius: 12px; font-weight: 500; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                      <div [style.background]="user.isActive ? '#dcfce7' : '#fee2e2'" 
+                           style="width: 6px; height: 6px; border-radius: 50%;"></div>
+                      {{ getStatusText(user.isActive) }}
+                    </span>
+                    <small style="color: #6b7280; font-size: 0.7rem;">
+                      {{ user.isActive ? 'يمكن الوصول' : 'محظور الوصول' }}
+                    </small>
+                  </div>
+                </td>
+                
+                <!-- Actions Cell -->
+                <td style="padding: 1rem 1.5rem; vertical-align: middle; text-align: center;">
+                  <div class="action-buttons" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                    <!-- Edit Button -->
+                    <button 
+                      class="btn btn-sm" 
+                      (click)="openEditModal(user)"
+                      style="background: #eff6ff; color: #3b82f6; border: 1px solid #dbeafe; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.8rem; transition: all 0.2s ease;"
+                      title="تعديل">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    
+                    <!-- Enable/Disable Button -->
+                    <button 
+                      class="btn btn-sm" 
+                      (click)="toggleUserStatus(user)"
+                      [style.background]="user.isActive ? '#fef2f2' : '#f0fdf4'"
+                      [style.color]="user.isActive ? '#ef4444' : '#16a34a'"
+                      [style.border]="user.isActive ? '1px solid #fecaca' : '1px solid #bbf7d0'"
+                      style="border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.8rem; transition: all 0.2s ease;"
+                      [title]="user.isActive ? 'إلغاء تفعيل المستخدم' : 'تفعيل المستخدم'">
+                      <i [class]="user.isActive ? 'fas fa-user-slash' : 'fas fa-user-check'"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <button 
+                      class="btn btn-sm" 
+                      (click)="confirmDelete(user)"
+                      data-bs-toggle="modal" 
+                      data-bs-target="#deleteConfirmModal"
+                      style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.8rem; transition: all 0.2s ease;"
+                      title="حذف">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              
+              <!-- Empty State -->
+              <tr *ngIf="filteredUsers.length === 0 && !loading">
+                <td colspan="6" style="padding: 3rem; text-align: center; background: #f8fafc;">
+                  <div class="empty-state">
+                    <i class="fas fa-users" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                    <h5 style="color: #6b7280; margin-bottom: 0.5rem;">لا توجد نتائج</h5>
+                    <p style="color: #9ca3af; margin: 0; font-size: 0.9rem;">لم يتم العثور على أي مستخدمين بناءً على المعايير المحددة</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Modern Pagination -->
+        <div *ngIf="!loading && totalPages > 1" class="pagination-container" style="padding: 1.5rem 2rem; border-top: 1px solid #e5e7eb; background: #f8fafc; display: flex; justify-content: between; align-items: center;">
+          <div class="pagination-info" style="color: #64748b; font-size: 0.9rem;">
+            عرض {{ (currentPage - 1) * pageSize + 1 }} إلى {{ Math.min(currentPage * pageSize, totalCount) }} من {{ totalCount }} نتيجة
+          </div>
+          
+          <nav aria-label="صفحات النتائج">
+            <div class="pagination-controls" style="display: flex; gap: 0.5rem; align-items: center;">
+              <button 
+                class="pagination-btn" 
+                (click)="onPageChange(currentPage - 1)" 
+                [disabled]="currentPage === 1"
+                style="background: white; border: 1px solid #d1d5db; color: #374151; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; transition: all 0.2s ease; cursor: pointer;"
+                [style.opacity]="currentPage === 1 ? '0.5' : '1'"
+                [style.cursor]="currentPage === 1 ? 'not-allowed' : 'pointer'">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+              
+              <span *ngFor="let page of getPaginationPages()" 
+                    class="pagination-page"
+                    [class.active]="page === currentPage">
+                <button 
+                  (click)="onPageChange(page)"
+                  [style.background]="page === currentPage ? '#6366f1' : 'white'"
+                  [style.color]="page === currentPage ? 'white' : '#374151'"
+                  [style.border]="page === currentPage ? '1px solid #6366f1' : '1px solid #d1d5db'"
+                  style="border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; font-weight: 500; min-width: 40px; transition: all 0.2s ease; cursor: pointer;">
+                  {{ page }}
+                </button>
+              </span>
+              
+              <button 
+                class="pagination-btn" 
+                (click)="onPageChange(currentPage + 1)"
+                [disabled]="currentPage === totalPages"
+                style="background: white; border: 1px solid #d1d5db; color: #374151; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; transition: all 0.2s ease; cursor: pointer;"
+                [style.opacity]="currentPage === totalPages ? '0.5' : '1'"
+                [style.cursor]="currentPage === totalPages ? 'not-allowed' : 'pointer'">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" [class.show]="isModalOpen" [style.display]="isModalOpen ? 'block' : 'none'">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding: 1.5rem;">
+        <h5 class="modal-title" style="color: #1f2937; font-weight: 700;">
+          <i class="fas fa-user" style="margin-left: 0.5rem; color: #667eea;"></i>
+          {{ modalMode === 'create' ? 'إضافة مستخدم جديد' : 'تعديل بيانات المستخدم' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      
+      <div class="modal-body" style="padding: 1.5rem;">
+        <form [formGroup]="userForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" style="color: #374151; font-weight: 600;">اسم المستخدم *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="userName"
+                [class.is-invalid]="isFieldInvalid('userName')"
+                placeholder="أدخل اسم المستخدم"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+              <div *ngIf="isFieldInvalid('userName')" class="invalid-feedback">
+                {{ getFieldError('userName') }}
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" style="color: #374151; font-weight: 600;">الاسم الكامل *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="fullName"
+                [class.is-invalid]="isFieldInvalid('fullName')"
+                placeholder="أدخل الاسم الكامل"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+              <div *ngIf="isFieldInvalid('fullName')" class="invalid-feedback">
+                {{ getFieldError('fullName') }}
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" style="color: #374151; font-weight: 600;">البريد الإلكتروني *</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                formControlName="email"
+                [class.is-invalid]="isFieldInvalid('email')"
+                placeholder="أدخل البريد الإلكتروني"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+              <div *ngIf="isFieldInvalid('email')" class="invalid-feedback">
+                {{ getFieldError('email') }}
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" style="color: #374151; font-weight: 600;">رقم الهاتف *</label>
+              <input 
+                type="tel" 
+                class="form-control" 
+                formControlName="phoneNumber"
+                [class.is-invalid]="isFieldInvalid('phoneNumber')"
+                placeholder="أدخل رقم الهاتف"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+              <div *ngIf="isFieldInvalid('phoneNumber')" class="invalid-feedback">
+                {{ getFieldError('phoneNumber') }}
+              </div>
+            </div>
+            
+            <div class="col-md-6" *ngIf="modalMode === 'create'">
+              <label class="form-label" style="color: #374151; font-weight: 600;">كلمة المرور *</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                formControlName="password"
+                [class.is-invalid]="isFieldInvalid('password')"
+                placeholder="أدخل كلمة المرور"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+              <div *ngIf="isFieldInvalid('password')" class="invalid-feedback">
+                {{ getFieldError('password') }}
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" style="color: #374151; font-weight: 600;">الهوية الوطنية</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="nationalId"
+                placeholder="أدخل رقم الهوية الوطنية"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" style="color: #374151; font-weight: 600;">نوع المستخدم *</label>
+              <select 
+                class="form-select" 
+                formControlName="userType"
+                [class.is-invalid]="isFieldInvalid('userType')"
+                style="border-radius: 10px; padding: 0.75rem 1rem;">
+                <option [value]="UserTypeEnum.Client">عميل</option>
+                <option [value]="UserTypeEnum.Merchant">تاجر</option>
+                <option [value]="UserTypeEnum.Admin">مدير</option>
+                <option [value]="UserTypeEnum.ShippingCompany">شركة شحن</option>
+              </select>
+              <div *ngIf="isFieldInvalid('userType')" class="invalid-feedback">
+                {{ getFieldError('userType') }}
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-check" style="margin-top: 2rem;">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  formControlName="isActive"
+                  id="isActiveCheck"
+                  style="transform: scale(1.2);">
+                <label class="form-check-label" for="isActiveCheck" style="color: #374151; font-weight: 600; margin-right: 0.5rem;">
+                  مستخدم نشط
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <label class="form-label" style="color: #374151; font-weight: 600;">العنوان</label>
+              <textarea 
+                class="form-control" 
+                formControlName="address"
+                rows="3"
+                placeholder="أدخل العنوان"
+                style="border-radius: 10px; padding: 0.75rem 1rem; resize: vertical;"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer" style="border-top: 1px solid rgba(0, 0, 0, 0.1); padding: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="closeModal()"
+          style="padding: 0.75rem 1.5rem; border-radius: 10px;">
+          إلغاء
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="saveUser()"
+          [disabled]="!userForm.valid"
+          style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0.75rem 1.5rem; border-radius: 10px;">
+          <i class="fas fa-save" style="margin-left: 0.5rem;"></i>
+          {{ modalMode === 'create' ? 'إضافة' : 'حفظ التغييرات' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 20px;">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(0, 0, 0, 0.1);">
+        <h5 class="modal-title" style="color: #dc2626; font-weight: 700;">
+          <i class="fas fa-exclamation-triangle" style="margin-left: 0.5rem;"></i>
+          تأكيد الحذف
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      
+      <div class="modal-body" style="padding: 1.5rem;">
+        <p style="color: #374151; margin-bottom: 1rem;">هل أنت متأكد من رغبتك في حذف المستخدم؟</p>
+        <div *ngIf="userToDelete" class="user-info" style="background: #f3f4f6; padding: 1rem; border-radius: 10px;">
+          <strong style="color: #1f2937;">{{ userToDelete.fullName }}</strong>
+          <br>
+          <small style="color: #6b7280;">{{ userToDelete.email }}</small>
+        </div>
+        <p style="color: #dc2626; margin-top: 1rem; font-size: 0.9rem;">
+          <i class="fas fa-warning" style="margin-left: 0.5rem;"></i>
+          تحذير: هذا الإجراء لا يمكن التراجع عنه
+        </p>
+      </div>
+      
+      <div class="modal-footer" style="border-top: 1px solid rgba(0, 0, 0, 0.1); display: flex; gap: 1rem; justify-content: flex-end;">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          data-bs-dismiss="modal"
+          (click)="cancelDelete()"
+          style="padding: 0.75rem 1.5rem; border-radius: 10px;">
+          إلغاء
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger" 
+          (click)="deleteUser()"
+          data-bs-dismiss="modal"
+          style="padding: 0.75rem 1.5rem; border-radius: 10px;">
+          <i class="fas fa-trash" style="margin-left: 0.5rem;"></i>
+          حذف
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

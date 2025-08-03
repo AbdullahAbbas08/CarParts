@@ -866,7 +866,7 @@ export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
         const user = JSON.parse(userData);
         this.isLoggedIn = true;
         this.userName = user.name || user.username || 'المستخدم';
-        this.userAvatar = user.avatar || '';
+        this.userAvatar = user.avatar || '../../../../assets/default-avatar.jpg';
         this.userType = user.type || 'customer';
         this.isMerchant = this.userType === 'merchant';
         this.isDriver = this.userType === 'driver';

@@ -83,7 +83,7 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
             localStorage.setItem('currentMerchantId', merchant.id.toString());
           }
         },
-        error: (error) => {
+        error: (error:any) => {
           console.error('Error loading merchant:', error);
           this.errorMessage = 'حدث خطأ أثناء تحميل بيانات المتجر';
           this.isLoading = false;

@@ -365,17 +365,29 @@
             <div class="user-avatar" (click)="toggleUserMenu()">
               <img [src]="userAvatar" [alt]="userName" *ngIf="userAvatar" class="avatar-image">
               <div class="avatar-fallback" *ngIf="!userAvatar">{{ getUserInitials() }}</div>
-              <span class="user-name desktop-only">{{ user.userName }}</span>
+              <span class="user-name desktop-only">{{ user.fullName }}</span>
               <i class="fas fa-chevron-down dropdown-arrow"></i>
             </div>
             <div class="user-dropdown" [class.show]="showUserMenu">
               <!-- Navigation Section for Merchants/Drivers/Admins -->
               <div class="dropdown-section navigation-section" *ngIf="isMerchant || isDriver || isAdmin">
-                <div class="section-header">
+                <!-- <div class="section-header">
                   <i class="fas fa-th-large"></i>
                   <span>التنقل</span>
-                </div>
+                </div> -->
                 
+                  <!-- Profile Section -->
+              <div class="dropdown-section profile-section">
+                <a routerLink="/profile" class="dropdown-item" (click)="closeMobileMenus()">
+                  <i class="fas fa-user"></i>
+                  <span>الملف الشخصي</span>
+                </a>
+                <a routerLink="/my-orders" class="dropdown-item" *ngIf="!isMerchant && !isDriver" (click)="closeMobileMenus()">
+                  <i class="fas fa-shopping-bag"></i>
+                  <span>طلباتي</span>
+                </a>
+              </div>
+ <div class="dropdown-divider"></div>
                 <!-- Admin Navigation -->
                 <ng-container *ngIf="isAdmin">
                   <a routerLink="/admin" class="dropdown-item nav-item" (click)="closeMobileMenus()">
@@ -387,7 +399,7 @@
                     <span>إدارة التجار</span>
                     <div class="nav-badge" *ngIf="getMerchantNotificationCount() > 0">{{ getMerchantNotificationCount() }}</div>
                   </a>
-                  <a routerLink="/admin/orders" class="dropdown-item nav-item" (click)="closeMobileMenus()">
+                  <a routerLink="/order-mgr" class="dropdown-item nav-item" (click)="closeMobileMenus()">
                     <i class="fas fa-clipboard-list"></i>
                     <span>إدارة الطلبات</span>
                     <div class="nav-badge" *ngIf="getOrderNotificationCount() > 0">{{ getOrderNotificationCount() }}</div>
@@ -456,20 +468,10 @@
                   </a>
                 </ng-container>
                 
-                <div class="dropdown-divider"></div>
+               
               </div>
               
-              <!-- Profile Section -->
-              <div class="dropdown-section profile-section">
-                <a routerLink="/profile" class="dropdown-item" (click)="closeMobileMenus()">
-                  <i class="fas fa-user"></i>
-                  <span>الملف الشخصي</span>
-                </a>
-                <a routerLink="/my-orders" class="dropdown-item" *ngIf="!isMerchant && !isDriver" (click)="closeMobileMenus()">
-                  <i class="fas fa-shopping-bag"></i>
-                  <span>طلباتي</span>
-                </a>
-              </div>
+            
               
               <!-- Mode Switch Section -->
               <div class="dropdown-section mode-section" *ngIf="isMerchant || isDriver">

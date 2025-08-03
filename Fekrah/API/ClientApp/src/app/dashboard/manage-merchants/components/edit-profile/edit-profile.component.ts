@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, Validat
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO, MemberDTO } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
+import { SwaggerClient, MerchantDTO, GovernorateLookupDto, CityLookupDto, UserTypeEnum, UserDTO, CategoryDTO, MemberDTO, LookupDTO } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -960,10 +960,10 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           
           // Handle password: only send if provided (for new members or password changes)
           if (member.password && member.password.trim()) {
-            userDTO.passwordHash = member.password; // سيتم hash في الـ backend
+            userDTO.password = member.password; // سيتم hash في الـ backend
           } else {
             // In update mode, empty password means keep existing password
-            userDTO.passwordHash = this.isUpdateMode() ? '' : member.password || '';
+            userDTO.password = this.isUpdateMode() ? '' : member.password || '';
           }
           
           userDTO.phoneNumber = member.phone || '';

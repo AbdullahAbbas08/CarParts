@@ -22,6 +22,7 @@ const routes: Routes = [
   { path: 'addCart', loadChildren: () => import('./core/add-to-cart/add-to-cart.module').then(m => m.AddToCartModule) },
   { path: 'footer', loadChildren: () => import('./Shared/layout/footer/footer.module').then(m => m.FooterModule) },
   { path: 'merchant', loadChildren: () => import('./dashboard/manage-merchants/manage-merchants.module').then(m => m.ManageMerchantsModule) },
+  { path: 'admin/users', loadChildren: () => import('./dashboard/manage-users/manage-users.module').then(m => m.ManageUsersModule) },
   { path: 'order-mgr', loadChildren: () => import('./dashboard/order-manager/order-manager.module').then(m => m.OrderManagerModule) },
 
   { path: 'seller', loadChildren: () => import('./core/features/seller/seller-page.module').then(m => m.SellerModule) },

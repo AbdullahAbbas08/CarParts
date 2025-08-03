@@ -20,6 +20,7 @@ import { LoaderComponent } from './Shared/components/loader/loader.component';
 import { environment } from '../environments/environment';
 import { ToastrModule } from 'ngx-toastr';
 import { AdminComponent } from './dashboard/admin.component';
+import { UserManagementService } from './dashboard/manage-users/user-management.service';
 registerLocaleData(localeAr);
 
 @NgModule({
@@ -63,6 +64,7 @@ registerLocaleData(localeAr);
       multi: true
     },
     SwaggerClient,
+    UserManagementService,
     { provide: LOCALE_ID, useValue: 'ar-EG' }
   ],
   bootstrap: [AppComponent]

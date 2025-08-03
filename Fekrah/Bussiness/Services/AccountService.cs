@@ -181,6 +181,15 @@ namespace Bussiness.Services
             };
         }
 
+        public UserDTO SetUserActiveStatus(int id, bool isActive)
+        {
+            var user = _UnitOfWork.Repository<User>().GetById(id);
+            if (user == null)
+                return null;
+            user.IsActive = isActive;
+            _UnitOfWork.SaveChanges();
+            return _Mapper.Map<UserDTO>(user);
+        }
 
         private string GetSha256Hash(string input)
         {
