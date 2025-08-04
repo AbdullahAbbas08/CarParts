@@ -72,6 +72,8 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setupSubscriptions();
     this.loadUsers();
     this.loadStatistics();
+
+    
   }
 
   ngOnDestroy(): void {
@@ -87,6 +89,7 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     // Re-enable body interaction when component is destroyed
     document.body.style.overflow = '';
     document.body.style.pointerEvents = '';
+    
   }
 
   ngAfterViewInit(): void {
@@ -289,28 +292,30 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  confirmDelete(user: UserDTO): void {
-    console.log('confirmDelete called with user:', user);
-    this.userToDelete = user;
-    console.log('userToDelete set to:', this.userToDelete);
-    
-   
-    
-    // Initialize Swiper after DOM is updated
-    setTimeout(() => {
-      console.log('Initializing delete swiper...');
-      this.initializeDeleteSwiper();
-      
-      // Re-enable pointer events for the overlay
-      const overlay = document.querySelector('.delete-confirmation-overlay') as HTMLElement;
-      if (overlay) {
-        console.log('Overlay found and pointer events enabled');
-        overlay.style.pointerEvents = 'auto';
-      } else {
-        console.log('Overlay NOT found!');
-      }
-    }, 100);
-  }
+confirmDelete(user: UserDTO): void {
+  console.log('confirmDelete called with user:', user);
+  this.userToDelete = user;
+  console.log('userToDelete set to:', this.userToDelete);
+
+  // ✨ امنع السكرول على body
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    console.log('Initializing delete swiper...');
+    this.initializeDeleteSwiper();
+
+    const overlay = document.querySelector('.delete-confirmation-overlay') as HTMLElement;
+    if (overlay) {
+      console.log('Overlay found and pointer events enabled');
+      overlay.style.pointerEvents = 'auto';
+    } else {
+      console.log('Overlay NOT found!');
+    }
+  }, 100);
+}
+
 
   private initializeDeleteSwiper(): void {
     console.log('initializeDeleteSwiper called');
@@ -387,19 +392,19 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  cancelDelete(): void {
-    // Clean up Swiper instance
-    if (this.deleteSwiper) {
-      this.deleteSwiper.destroy(true, true);
-      this.deleteSwiper = null;
-    }
-    
-    // Re-enable body scroll and interaction
-    document.body.style.overflow = '';
-    document.body.style.pointerEvents = '';
-    
-    this.userToDelete = null;
+cancelDelete(): void {
+  if (this.deleteSwiper) {
+    this.deleteSwiper.destroy(true, true);
+    this.deleteSwiper = null;
   }
+
+  // ✅ إعادة تفعيل السكرول
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+
+  this.userToDelete = null;
+}
+
 
   // User Status Management
   toggleUserStatus(user: UserDTO): void {

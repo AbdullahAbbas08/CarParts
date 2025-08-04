@@ -59,3 +59,9 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
+
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh; // يمنع أي سكول خفي على body
+}
