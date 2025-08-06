@@ -458,208 +458,355 @@
   </div>
 </div>
 
-<!-- User Modal insert update user -->
+<!-- ✨ Enhanced User Modal - إضافة/تعديل مستخدم ✨ -->
+<!-- Modal Backdrop with Blur Effect - Outside modal container -->
+<div class="modal-backdrop-custom" *ngIf="isModalOpen" (click)="closeModal()"></div>
+
 <div class="modal fade" id="userModal" tabindex="-1" [class.show]="isModalOpen" [style.display]="isModalOpen ? 'block' : 'none'">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;">
-      <div class="modal-header" style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding: 1.5rem;">
-        <h5 class="modal-title" style="color: #1f2937; font-weight: 700;">
-          <i class="fas fa-user" style="margin-left: 0.5rem; color: #667eea;"></i>
-          {{ modalMode === 'create' ? 'إضافة مستخدم جديد' : 'تعديل بيانات المستخدم' }}
-        </h5>
-        <button type="button" class="btn-close" (click)="closeModal()"></button>
+  <div class="modal-dialog modal-xl">
+    <div class="modern-modal-content">
+      
+      <!-- 🎨 Decorative Header with Gradient -->
+      <div class="modal-header-enhanced">
+        <div class="modal-title">
+          <!-- Dynamic Icon with Animation -->
+          <div class="header-icon">
+            <i [class]="modalMode === 'create' ? 'fas fa-user-plus' : 'fas fa-user-edit'"></i>
+          </div>
+          
+          <div>
+            <div>
+              {{ modalMode === 'create' ? '✨ إضافة مستخدم جديد' : '🔧 تعديل بيانات المستخدم' }}
+            </div>
+            <div>
+              {{ modalMode === 'create' ? 'أضف مستخدم جديد للنظام' : 'قم بتحديث بيانات المستخدم' }}
+            </div>
+          </div>
+        </div>
+        
+        <button type="button" 
+                class="btn-close-enhanced" 
+                (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
       
-      <div class="modal-body" style="padding: 1.5rem;">
+      <!-- 📝 Enhanced Form Body -->
+      <div class="modal-body-enhanced">
         <form [formGroup]="userForm">
           <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" style="color: #374151; font-weight: 600;">اسم المستخدم *</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                formControlName="userName"
-                [class.is-invalid]="isFieldInvalid('userName')"
-                placeholder="أدخل اسم المستخدم"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-              <div *ngIf="isFieldInvalid('userName')" class="invalid-feedback">
-                {{ getFieldError('userName') }}
-              </div>
-            </div>
             
-            <div class="col-md-6">
-              <label class="form-label" style="color: #374151; font-weight: 600;">الاسم الكامل *</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                formControlName="fullName"
-                [class.is-invalid]="isFieldInvalid('fullName')"
-                placeholder="أدخل الاسم الكامل"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-              <div *ngIf="isFieldInvalid('fullName')" class="invalid-feedback">
-                {{ getFieldError('fullName') }}
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <label class="form-label" style="color: #374151; font-weight: 600;">البريد الإلكتروني *</label>
-              <input 
-                type="email" 
-                class="form-control" 
-                formControlName="email"
-                [class.is-invalid]="isFieldInvalid('email')"
-                placeholder="أدخل البريد الإلكتروني"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-              <div *ngIf="isFieldInvalid('email')" class="invalid-feedback">
-                {{ getFieldError('email') }}
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <label class="form-label" style="color: #374151; font-weight: 600;">رقم الهاتف *</label>
-              <input 
-                type="tel" 
-                class="form-control" 
-                formControlName="phoneNumber"
-                [class.is-invalid]="isFieldInvalid('phoneNumber')"
-                placeholder="أدخل رقم الهاتف"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-              <div *ngIf="isFieldInvalid('phoneNumber')" class="invalid-feedback">
-                {{ getFieldError('phoneNumber') }}
-              </div>
-            </div>
-            
-            <div class="col-md-6" *ngIf="modalMode === 'create'">
-              <label class="form-label" style="color: #374151; font-weight: 600;">كلمة المرور *</label>
-              <input 
-                type="password" 
-                class="form-control" 
-                formControlName="password"
-                [class.is-invalid]="isFieldInvalid('password')"
-                placeholder="أدخل كلمة المرور"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-              <div *ngIf="isFieldInvalid('password')" class="invalid-feedback">
-                {{ getFieldError('password') }}
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <label class="form-label" style="color: #374151; font-weight: 600;">الهوية الوطنية</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                formControlName="nationalId"
-                placeholder="أدخل رقم الهوية الوطنية"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-            </div>
-            
-            <div class="col-md-6">
-              <label class="form-label" style="color: #374151; font-weight: 600;">نوع المستخدم *</label>
-              <select 
-                class="form-select" 
-                formControlName="userType"
-                [class.is-invalid]="isFieldInvalid('userType')"
-                style="border-radius: 10px; padding: 0.75rem 1rem;">
-                <option [value]="UserTypeEnum.Client">عميل</option>
-                <option [value]="UserTypeEnum.Merchant">تاجر</option>
-                <option [value]="UserTypeEnum.Admin">مدير</option>
-                <option [value]="UserTypeEnum.ShippingCompany">شركة شحن</option>
-              </select>
-              <div *ngIf="isFieldInvalid('userType')" class="invalid-feedback">
-                {{ getFieldError('userType') }}
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="form-check" style="margin-top: 2rem;">
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  formControlName="isActive"
-                  id="isActiveCheck"
-                  style="transform: scale(1.2);">
-                <label class="form-check-label" for="isActiveCheck" style="color: #374151; font-weight: 600; margin-right: 0.5rem;">
-                  مستخدم نشط
+            <!-- Row 1: Username, Full Name, Email -->
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon username-icon">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  اسم المستخدم *
                 </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="text" 
+                    class="form-control enhanced-input username-input" 
+                    formControlName="userName"
+                    [class.is-invalid]="isFieldInvalid('userName')"
+                    placeholder="اسم المستخدم">
+                  <div class="input-icon-left">
+                    <i class="fas fa-at"></i>
+                  </div>
+                </div>
+                <div *ngIf="isFieldInvalid('userName')" class="invalid-feedback">
+                  {{ getFieldError('userName') }}
+                </div>
               </div>
             </div>
             
-            <div class="col-12">
-              <label class="form-label" style="color: #374151; font-weight: 600;">العنوان</label>
-              <textarea 
-                class="form-control" 
-                formControlName="address"
-                rows="3"
-                placeholder="أدخل العنوان"
-                style="border-radius: 10px; padding: 0.75rem 1rem; resize: vertical;"></textarea>
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon fullname-icon">
+                    <i class="fas fa-id-card"></i>
+                  </div>
+                  الاسم الكامل *
+                </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="text" 
+                    class="form-control enhanced-input fullname-input" 
+                    formControlName="fullName"
+                    [class.is-invalid]="isFieldInvalid('fullName')"
+                    placeholder="الاسم الكامل">
+                  <div class="input-icon-left">
+                    <i class="fas fa-signature"></i>
+                  </div>
+                </div>
+                <div *ngIf="isFieldInvalid('fullName')" class="invalid-feedback">
+                  {{ getFieldError('fullName') }}
+                </div>
+              </div>
             </div>
+            
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon email-icon">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  البريد الإلكتروني *
+                </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="email" 
+                    class="form-control enhanced-input email-input" 
+                    formControlName="email"
+                    [class.is-invalid]="isFieldInvalid('email')"
+                    placeholder="البريد الإلكتروني">
+                  <div class="input-icon-left">
+                    <i class="fas fa-mail-bulk"></i>
+                  </div>
+                </div>
+                <div *ngIf="isFieldInvalid('email')" class="invalid-feedback">
+                  {{ getFieldError('email') }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 2: Phone, Password (if create), National ID -->
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon phone-icon">
+                    <i class="fas fa-phone"></i>
+                  </div>
+                  رقم الهاتف *
+                </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="tel" 
+                    class="form-control enhanced-input phone-input" 
+                    formControlName="phoneNumber"
+                    [class.is-invalid]="isFieldInvalid('phoneNumber')"
+                    placeholder="رقم الهاتف">
+                  <div class="input-icon-left">
+                    <i class="fas fa-mobile-alt"></i>
+                  </div>
+                </div>
+                <div *ngIf="isFieldInvalid('phoneNumber')" class="invalid-feedback">
+                  {{ getFieldError('phoneNumber') }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4" *ngIf="modalMode === 'create'">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon password-icon">
+                    <i class="fas fa-key"></i>
+                  </div>
+                  كلمة المرور *
+                </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="password" 
+                    class="form-control enhanced-input password-input" 
+                    formControlName="password"
+                    [class.is-invalid]="isFieldInvalid('password')"
+                    placeholder="كلمة المرور">
+                  <div class="input-icon-left">
+                    <i class="fas fa-lock"></i>
+                  </div>
+                </div>
+                <div *ngIf="isFieldInvalid('password')" class="invalid-feedback">
+                  {{ getFieldError('password') }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon national-id-icon">
+                    <i class="fas fa-id-badge"></i>
+                  </div>
+                  الهوية الوطنية
+                </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="text" 
+                    class="form-control enhanced-input national-id-input" 
+                    formControlName="nationalId"
+                    placeholder="رقم الهوية">
+                  <div class="input-icon-left">
+                    <i class="fas fa-fingerprint"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 3: User Type, Status Checkbox, Address -->
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon user-type-icon">
+                    <i class="fas fa-users-cog"></i>
+                  </div>
+                  نوع المستخدم *
+                </label>
+                <div class="select-with-icon">
+                  <select 
+                    class="form-select enhanced-select" 
+                    formControlName="userType"
+                    [class.is-invalid]="isFieldInvalid('userType')">
+                    <option [value]="UserTypeEnum.Client">👥 عميل</option>
+                    <option [value]="UserTypeEnum.Merchant">🏪 تاجر</option>
+                    <option [value]="UserTypeEnum.Admin">🛡️ مدير</option>
+                    <option [value]="UserTypeEnum.ShippingCompany">🚚 شحن</option>
+                  </select>
+                  <!-- <div class="input-icon-left">
+                    <i class="fas fa-layer-group"></i>
+                  </div> -->
+                </div>
+                <div *ngIf="isFieldInvalid('userType')" class="invalid-feedback">
+                  {{ getFieldError('userType') }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon status-icon">
+                    <i class="fas fa-toggle-on"></i>
+                  </div>
+                  حالة المستخدم
+                </label>
+                <div class="custom-checkbox-wrapper">
+                  <div [style.opacity]="userForm.get('isActive')?.value ? '1' : '0'"></div>
+                  
+                  <div>
+                    <!-- <div class="checkbox-icon">
+                      <i [class]="userForm.get('isActive')?.value ? 'fas fa-check' : 'fas fa-times'"></i>
+                    </div> -->
+                    
+                    <div>
+                      <label class="form-check-label" for="isActiveCheck">
+                        {{ userForm.get('isActive')?.value ? 'مستخدم نشط ✅' : 'مستخدم غير نشط ❌' }}
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    formControlName="isActive"
+                    id="isActiveCheck">
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="enhanced-form-group">
+                <label class="enhanced-form-label">
+                  <div class="field-icon address-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                  العنوان
+                </label>
+                <div class="input-with-icon">
+                  <input 
+                    type="text" 
+                    class="form-control enhanced-input address-input" 
+                    formControlName="address"
+                    placeholder="العنوان">
+                  <div class="input-icon-left">
+                    <i class="fas fa-home"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Address Field -->
           </div>
         </form>
       </div>
       
-      <div class="modal-footer" style="border-top: 1px solid rgba(0, 0, 0, 0.1); padding: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+      <!-- 🎯 Enhanced Modal Footer -->
+      <div class="modal-footer-enhanced">
+        <!-- Cancel Button -->
         <button 
           type="button" 
-          class="btn btn-secondary" 
-          (click)="closeModal()"
-          style="padding: 0.75rem 1.5rem; border-radius: 10px;">
+          class="btn-cancel-enhanced" 
+          (click)="closeModal()">
+          <i class="fas fa-times"></i>
           إلغاء
         </button>
+        
+        <!-- Save Button -->
         <button 
           type="button" 
-          class="btn btn-primary" 
+          class="btn-save-enhanced" 
           (click)="saveUser()"
           [disabled]="!userForm.valid"
-          style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0.75rem 1.5rem; border-radius: 10px;">
-          <i class="fas fa-save" style="margin-left: 0.5rem;"></i>
-          {{ modalMode === 'create' ? 'إضافة' : 'حفظ التغييرات' }}
+          [style.opacity]="userForm.valid ? '1' : '0.6'"
+          [style.cursor]="userForm.valid ? 'pointer' : 'not-allowed'">
+          <!-- Loading Spinner (Hidden by default) -->
+          <div class="save-spinner"></div>
+          
+          <!-- Save Icon -->
+          <i class="fas fa-save save-icon"></i>
+          
+          <!-- Button Text -->
+          <span class="save-text">
+            {{ modalMode === 'create' ? '✨ إضافة المستخدم' : '💾 حفظ التغييرات' }}
+          </span>
+          
+          <!-- Success Icon (Hidden by default) -->
+          <i class="fas fa-check save-success"></i>
         </button>
       </div>
     </div>
   </div>
 </div>
-
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
   <div class="modal-dialog">
-    <div class="modal-content" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 20px;">
-      <div class="modal-header" style="border-bottom: 1px solid rgba(0, 0, 0, 0.1);">
-        <h5 class="modal-title" style="color: #dc2626; font-weight: 700;">
-          <i class="fas fa-exclamation-triangle" style="margin-left: 0.5rem;"></i>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-exclamation-triangle"></i>
           تأكيد الحذف
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       
-      <div class="modal-body" style="padding: 1.5rem;">
-        <p style="color: #374151; margin-bottom: 1rem;">هل أنت متأكد من رغبتك في حذف المستخدم؟</p>
-        <div *ngIf="userToDelete" class="user-info" style="background: #f3f4f6; padding: 1rem; border-radius: 10px;">
-          <strong style="color: #1f2937;">{{ userToDelete.fullName }}</strong>
+      <div class="modal-body">
+        <p>هل أنت متأكد من رغبتك في حذف المستخدم؟</p>
+        <div *ngIf="userToDelete" class="user-info">
+          <strong>{{ userToDelete.fullName }}</strong>
           <br>
-          <small style="color: #6b7280;">{{ userToDelete.email }}</small>
+          <small>{{ userToDelete.email }}</small>
         </div>
-        <p style="color: #dc2626; margin-top: 1rem; font-size: 0.9rem;">
-          <i class="fas fa-warning" style="margin-left: 0.5rem;"></i>
+        <p>
+          <i class="fas fa-warning"></i>
           تحذير: هذا الإجراء لا يمكن التراجع عنه
         </p>
       </div>
       
-      <div class="modal-footer" style="border-top: 1px solid rgba(0, 0, 0, 0.1); display: flex; gap: 1rem; justify-content: flex-end;">
+      <div class="modal-footer">
         <button 
           type="button" 
           class="btn btn-secondary" 
           data-bs-dismiss="modal"
-          (click)="cancelDelete()"
-          style="padding: 0.75rem 1.5rem; border-radius: 10px;">
+          (click)="cancelDelete()">
           إلغاء
         </button>
         <button 
           type="button" 
           class="btn btn-danger" 
           (click)="deleteUser()"
-          data-bs-dismiss="modal"
-          style="padding: 0.75rem 1.5rem; border-radius: 10px;">
-          <i class="fas fa-trash" style="margin-left: 0.5rem;"></i>
+          data-bs-dismiss="modal">
+          <i class="fas fa-trash"></i>
           حذف
         </button>
       </div>
@@ -668,76 +815,74 @@
 </div>
 
 <!-- Delete Confirmation Swiper -->
-<div *ngIf="userToDelete" class="delete-confirmation-overlay " >
-  <div class="delete-swiper-container" style="width: 90%; max-width: 500px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); margin: auto; position: relative; transform: translateY(0); z-index: 1000000 !important;">
+<div *ngIf="userToDelete" class="delete-confirmation-overlay">
+  <div class="delete-swiper-container">
     
     <!-- Swiper Wrapper -->
-    <div class="swiper delete-confirmation-swiper" style="height: auto; z-index: 1000001 !important;">
-      <div class="swiper-wrapper" style="z-index: 1000002 !important;">
+    <div class="swiper delete-confirmation-swiper">
+      <div class="swiper-wrapper">
         
         <!-- Slide 1: Warning -->
-        <div class="swiper-slide" style="padding: 2rem; text-align: center; background: linear-gradient(135deg, #fef2f2, #fee2e2); min-height: 400px; display: flex; flex-direction: column; justify-content: center; z-index: 1000003 !important;">
-          <div class="warning-icon" style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
-            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: white;"></i>
+        <div class="swiper-slide">
+          <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
           </div>
-          <h3 style="color: #dc2626; font-weight: 700; margin-bottom: 1rem;">تحذير!</h3>
-          <p style="color: #374151; font-size: 1.1rem; margin-bottom: 1.5rem;">أنت على وشك حذف مستخدم من النظام</p>
-          <div class="swipe-indicator" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #6b7280;">
-            <i class="fas fa-arrow-left" style="animation: slideLeft 1.5s infinite;"></i>
-            <span style="font-size: 0.9rem;">اسحب للمتابعة</span>
+          <h3>تحذير!</h3>
+          <p>أنت على وشك حذف مستخدم من النظام</p>
+          <div class="swipe-indicator">
+            <i class="fas fa-arrow-left"></i>
+            <span>اسحب للمتابعة</span>
           </div>
         </div>
         
         <!-- Slide 2: User Info -->
-        <div class="swiper-slide" style="padding: 2rem; background: linear-gradient(135deg, #fff7ed, #fed7aa); min-height: 400px; display: flex; flex-direction: column; justify-content: center; z-index: 1000003 !important;">
-          <div class="user-details-card" style="text-align: center;">
-            <div class="user-avatar-large" style="width: 100px; height: 100px; margin: 0 auto 1.5rem; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);">
-              <img *ngIf="userToDelete.photo" [src]="userToDelete.photo" [alt]="userToDelete.fullName" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-              <i *ngIf="!userToDelete.photo" class="fas fa-user" style="color: white; font-size: 2.5rem;"></i>
+        <div class="swiper-slide">
+          <div class="user-details-card">
+            <div class="user-avatar-large">
+              <img *ngIf="userToDelete.photo" [src]="userToDelete.photo" [alt]="userToDelete.fullName">
+              <i *ngIf="!userToDelete.photo" class="fas fa-user"></i>
             </div>
             
-            <h4 style="color: #1e293b; font-weight: 700; margin-bottom: 0.5rem;">{{ userToDelete.fullName }}</h4>
-            <p style="color: #6b7280; margin-bottom: 1rem;">{{ userToDelete.email }}</p>
+            <h4>{{ userToDelete.fullName }}</h4>
+            <p>{{ userToDelete.email }}</p>
             
-            <div class="user-type-badge-large" style="display: inline-block; padding: 0.75rem 1.5rem; border-radius: 15px; background: linear-gradient(135deg, #f59e0b, #f97316); color: white; font-weight: 600; margin-bottom: 1.5rem;">
-              <i [class]="getUserTypeIcon(userToDelete.userType)" style="margin-left: 0.5rem;"></i>
+            <div class="user-type-badge-large">
+              <i [class]="getUserTypeIcon(userToDelete.userType)"></i>
               {{ getUserTypeDisplayName(userToDelete.userType) }}
             </div>
             
-            <div class="swipe-indicator" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #6b7280;">
-              <i class="fas fa-arrow-left" style="animation: slideLeft 1.5s infinite;"></i>
-              <span style="font-size: 0.9rem;">اسحب للتأكيد النهائي</span>
+            <div class="swipe-indicator">
+              <i class="fas fa-arrow-left"></i>
+              <span>اسحب للتأكيد النهائي</span>
             </div>
           </div>
         </div>
         
         <!-- Slide 3: Final Confirmation -->
-        <div class="swiper-slide" style="padding: 2rem; text-align: center; background: linear-gradient(135deg, #fef2f2, #fecaca); min-height: 400px; display: flex; flex-direction: column; justify-content: center; z-index: 1000003 !important;">
-          <div class="final-warning" style="margin-bottom: 2rem;">
-            <div class="danger-icon" style="width: 100px; height: 100px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #dc2626, #b91c1c); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: shake 0.5s infinite;">
-              <i class="fas fa-trash-alt" style="font-size: 2.5rem; color: white;"></i>
+        <div class="swiper-slide">
+          <div class="final-warning">
+            <div class="danger-icon">
+              <i class="fas fa-trash-alt"></i>
             </div>
             
-            <h3 style="color: #dc2626; font-weight: 700; margin-bottom: 1rem;">تأكيد الحذف النهائي</h3>
-            <p style="color: #374151; margin-bottom: 0.5rem;">هذا الإجراء <strong>لا يمكن التراجع عنه</strong></p>
-            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 2rem;">سيتم حذف جميع بيانات المستخدم نهائياً</p>
+            <h3>تأكيد الحذف النهائي</h3>
+            <p>هذا الإجراء <strong>لا يمكن التراجع عنه</strong></p>
+            <p>سيتم حذف جميع بيانات المستخدم نهائياً</p>
           </div>
           
           <!-- Action Buttons -->
-          <div class="confirmation-actions" style="display: flex; gap: 1rem; justify-content: center; z-index: 1000004 !important;">
+          <div class="confirmation-actions">
             <button 
               class="btn btn-outline-secondary" 
-              (click)="cancelDelete()"
-              style="padding: 1rem 2rem; border-radius: 15px; font-weight: 600; border: 2px solid #6b7280; color: #6b7280; background: white; transition: all 0.3s ease; z-index: 1000005 !important;">
-              <i class="fas fa-times" style="margin-left: 0.5rem;"></i>
+              (click)="cancelDelete()">
+              <i class="fas fa-times"></i>
               إلغاء
             </button>
             
             <button 
               class="btn btn-danger" 
-              (click)="deleteUser()"
-              style="padding: 1rem 2rem; border-radius: 15px; font-weight: 600; background: linear-gradient(135deg, #dc2626, #b91c1c); border: none; color: white; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3); transition: all 0.3s ease; z-index: 1000005 !important;">
-              <i class="fas fa-trash" style="margin-left: 0.5rem;"></i>
+              (click)="deleteUser()">
+              <i class="fas fa-trash"></i>
               حذف نهائي
             </button>
           </div>
@@ -746,18 +891,17 @@
       </div>
       
       <!-- Swiper Pagination -->
-      <div class="swiper-pagination" style="position: relative; margin-top: 1rem; padding-bottom: 1rem; z-index: 1000003 !important;"></div>
+      <div class="swiper-pagination"></div>
       
       <!-- Swiper Navigation -->
-      <div class="swiper-button-next" style="color: #6366f1; font-size: 1.5rem; z-index: 1000003 !important;"></div>
-      <div class="swiper-button-prev" style="color: #6366f1; font-size: 1.5rem; z-index: 1000003 !important;"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
     </div>
     
     <!-- Close Button -->
     <button 
       class="close-swiper-btn" 
-      (click)="cancelDelete()"
-      style="position: absolute; top: 1rem; left: 1rem; width: 40px; height: 40px; border-radius: 50%; background: rgba(107, 114, 128, 0.1); border: none; color: #6b7280; font-size: 1.2rem; z-index: 1000004 !important; backdrop-filter: blur(10px); transition: all 0.3s ease;">
+      (click)="cancelDelete()">
       <i class="fas fa-times"></i>
     </button>
   </div>

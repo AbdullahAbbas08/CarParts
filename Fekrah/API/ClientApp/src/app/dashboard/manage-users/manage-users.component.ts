@@ -245,6 +245,14 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
     this.userForm.get('password')?.updateValueAndValidity();
     this.isModalOpen = true;
+    
+    // التمرير التلقائي إلى أعلى الصفحة لإظهار الـ modal
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth' 
+      });
+    }, 100);
   }
 
   openEditModal(user: UserDTO): void {
@@ -254,6 +262,14 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userForm.get('password')?.clearValidators();
     this.userForm.get('password')?.updateValueAndValidity();
     this.isModalOpen = true;
+    
+    // التمرير التلقائي إلى أعلى الصفحة لإظهار الـ modal
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth' 
+      });
+    }, 100);
   }
 
   closeModal(): void {
@@ -262,9 +278,12 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userForm.reset();
   }
 
-  // CRUD operations
+  // CRUD operations with enhanced UI feedback
   saveUser(): void {
     if (this.userForm.valid) {
+      // Show loading state
+      this.showSaveLoadingState(true);
+      
       const formValue = this.userForm.value;
       const userData: UserDTO = new UserDTO(formValue);
 
@@ -274,21 +293,70 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
       operation.pipe(takeUntil(this.destroy$)).subscribe({
         next: (result) => {
+          // Show success state
+          this.showSaveSuccessState();
+          
           const message = this.modalMode === 'create' 
-            ? 'تم إنشاء المستخدم بنجاح'
-            : 'تم تحديث المستخدم بنجاح';
+            ? '✨ تم إنشاء المستخدم بنجاح'
+            : '💾 تم تحديث المستخدم بنجاح';
           this.showNotification(message, 'success');
-          this.closeModal();
-          this.loadUsers();
-          this.loadStatistics();
+          
+          // Close modal after a brief delay to show success state
+          setTimeout(() => {
+            this.closeModal();
+            this.loadUsers();
+            this.loadStatistics();
+          }, 1000);
         },
         error: (error) => {
-          this.showNotification('حدث خطأ في حفظ البيانات', 'error');
+          // Reset button state on error
+          this.showSaveLoadingState(false);
+          this.showNotification('❌ حدث خطأ في حفظ البيانات', 'error');
           console.error('Error saving user:', error);
         }
       });
     } else {
       this.markFormGroupTouched(this.userForm);
+      this.showNotification('⚠️ يرجى تصحيح الأخطاء في النموذج', 'info');
+    }
+  }
+
+  private showSaveLoadingState(loading: boolean): void {
+    const saveBtn = document.querySelector('.btn-save-enhanced') as HTMLElement;
+    const spinner = document.querySelector('.save-spinner') as HTMLElement;
+    const icon = document.querySelector('.save-icon') as HTMLElement;
+    const text = document.querySelector('.save-text') as HTMLElement;
+    
+    if (saveBtn && spinner && icon && text) {
+      if (loading) {
+        saveBtn.style.cursor = 'not-allowed';
+        spinner.style.display = 'block';
+        icon.style.display = 'none';
+        text.textContent = 'جارِ الحفظ...';
+        saveBtn.setAttribute('disabled', 'true');
+      } else {
+        saveBtn.style.cursor = 'pointer';
+        spinner.style.display = 'none';
+        icon.style.display = 'block';
+        text.textContent = this.modalMode === 'create' ? '✨ إضافة المستخدم' : '💾 حفظ التغييرات';
+        saveBtn.removeAttribute('disabled');
+      }
+    }
+  }
+
+  private showSaveSuccessState(): void {
+    const saveBtn = document.querySelector('.btn-save-enhanced') as HTMLElement;
+    const spinner = document.querySelector('.save-spinner') as HTMLElement;
+    const icon = document.querySelector('.save-icon') as HTMLElement;
+    const successIcon = document.querySelector('.save-success') as HTMLElement;
+    const text = document.querySelector('.save-text') as HTMLElement;
+    
+    if (saveBtn && spinner && icon && successIcon && text) {
+      spinner.style.display = 'none';
+      icon.style.display = 'none';
+      successIcon.style.display = 'block';
+      text.textContent = '✅ تم الحفظ بنجاح!';
+      saveBtn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
     }
   }
 
@@ -496,29 +564,113 @@ cancelDelete(): void {
     });
   }
 
-  private showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
+  private showNotification(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info'): void {
     const toast = document.createElement('div');
+    
+    // Enhanced notification with beautiful styling
+    const alertClass = type === 'success' ? 'success' : 
+                      type === 'error' ? 'danger' : 
+                      type === 'warning' ? 'warning' : 'info';
+    
+    const iconClass = type === 'success' ? 'check-circle' : 
+                     type === 'error' ? 'times-circle' : 
+                     type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+    
+    const gradient = type === 'success' ? 'linear-gradient(135deg, #10b981, #047857)' : 
+                    type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 
+                    type === 'warning' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 
+                    'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+    
     toast.innerHTML = `
-      <div class="alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show" role="alert">
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <div class="enhanced-notification" style="
+        background: white;
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        border-left: 4px solid transparent;
+        background-image: ${gradient};
+        background-clip: padding-box;
+        color: #1f2937;
+        animation: notificationSlideIn 0.4s ease-out;
+        position: relative;
+        overflow: hidden;
+      ">
+        <!-- Background Pattern -->
+        <div style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: white;
+          margin: 4px 0 0 4px;
+          border-radius: 14px;
+        "></div>
+        
+        <!-- Content -->
+        <div style="position: relative; z-index: 2; display: flex; align-items: center; gap: 0.75rem;">
+          <div style="
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: ${gradient};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+          ">
+            <i class="fas fa-${iconClass}" style="color: white; font-size: 0.9rem;"></i>
+          </div>
+          
+          <div style="flex: 1;">
+            <div style="font-weight: 600; font-size: 0.95rem; color: #1f2937;">
+              ${message}
+            </div>
+          </div>
+          
+          <button type="button" onclick="this.closest('.enhanced-notification-container').remove()" style="
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          " onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+            <i class="fas fa-times" style="font-size: 0.75rem;"></i>
+          </button>
+        </div>
       </div>
     `;
     
+    toast.className = 'enhanced-notification-container';
     toast.style.cssText = `
       position: fixed;
       top: 20px;
       right: 20px;
-      z-index: 10000;
-      min-width: 300px;
+      z-index: 100000;
+      min-width: 350px;
+      max-width: 450px;
     `;
     
     document.body.appendChild(toast);
     
+    // Auto remove after 5 seconds
     setTimeout(() => {
       if (document.body.contains(toast)) {
-        document.body.removeChild(toast);
+        toast.style.animation = 'notificationSlideOut 0.3s ease-in forwards';
+        setTimeout(() => {
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
+          }
+        }, 300);
       }
     }, 5000);
   }
