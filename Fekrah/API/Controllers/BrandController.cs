@@ -8,9 +8,9 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CarsModelController : _BaseController<CarsModel, CarsModelDto>
+    public class BrandController : _BaseController<Brand, BrandDTO>
     {
-        public CarsModelController(ICarsModelService carsModelService) : base(carsModelService)
+        public BrandController(ICarsModelService carsModelService) : base(carsModelService)
         {
             
         }

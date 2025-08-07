@@ -19,7 +19,7 @@ namespace Bussiness.Profilers
                 .ReverseMap()
                 .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.CategoriesDTO));
             CreateMap<Part, PartDTO>().ReverseMap();
-            CreateMap<CarsModel, CarsModelDto>().ReverseMap();
+            CreateMap<Brand, BrandDTO>().ReverseMap();
             CreateMap<City, CityDTO>().ReverseMap();
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Governorate, GovernorateDTO>().ReverseMap();

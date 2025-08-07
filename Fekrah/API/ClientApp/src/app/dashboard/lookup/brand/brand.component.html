@@ -1,0 +1,389 @@
+<div class="brand-dashboard">
+  <!-- Background Overlay -->
+  <div class="dashboard-background"></div>
+  
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a routerLink="/dashboard">
+              <i class="fas fa-home"></i>
+              الرئيسية
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item">
+            <a routerLink="/dashboard/lookup">
+              <i class="fas fa-search"></i>
+              البحث والتصنيفات
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item active">
+            <i class="fas fa-car"></i>
+            إدارة العلامات التجارية
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Title -->
+      <div class="page-title">
+        <h1>
+          <i class="fas fa-car"></i>
+          إدارة العلامات التجارية
+        </h1>
+        <p>إدارة وتنظيم العلامات التجارية للسيارات وشعاراتها</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="dashboard-content">
+    <div class="container">
+      
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card brands-stat">
+          <div class="stat-icon">
+            <i class="fas fa-car"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ statistics.totalBrands }}</h3>
+            <p>إجمالي العلامات التجارية</p>
+            <div class="stat-trend">
+              <i class="fas fa-arrow-up"></i>
+              <span>نشط</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stat-card models-stat">
+          <div class="stat-icon">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ getTotalModels() }}</h3>
+            <p>إجمالي الموديلات</p>
+            <div class="stat-trend">
+              <i class="fas fa-arrow-up"></i>
+              <span>متصل</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stat-card active-stat">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ brands.length }}</h3>
+            <p>المعروضة حالياً</p>
+            <div class="stat-trend">
+              <i class="fas fa-eye"></i>
+              <span>مرئية</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="action-bar">
+        <div class="action-left">
+          <button type="button" class="btn-primary" (click)="openCreateModal()">
+            <i class="fas fa-plus"></i>
+            إضافة علامة تجارية جديدة
+          </button>
+          <button type="button" class="btn-secondary" (click)="refreshData()" [disabled]="loading">
+            <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+            تحديث البيانات
+          </button>
+        </div>
+        <div class="action-right">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" 
+                   [formControl]="searchTermControl" 
+                   placeholder="البحث في العلامات التجارية..." 
+                   class="search-input">
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Data Card -->
+      <div class="data-card">
+        <div class="card-header">
+          <h2>
+            <i class="fas fa-list"></i>
+            قائمة العلامات التجارية
+          </h2>
+          <div class="card-controls">
+            <span class="data-count">
+              عرض {{ brands.length }} من أصل {{ totalCount }} علامة تجارية
+            </span>
+            <div class="view-options">
+              <label for="pageSize">العرض:</label>
+              <select id="pageSize" (change)="onPageSizeChange($event)" class="size-selector">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Loading State -->
+          <div *ngIf="loading" class="loading-state">
+            <div class="loading-animation">
+              <div class="spinner"></div>
+              <p>جاري تحميل العلامات التجارية...</p>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!loading && brands.length === 0" class="empty-state">
+            <div class="empty-animation">
+              <i class="fas fa-car"></i>
+            </div>
+            <h3>لا توجد علامات تجارية</h3>
+            <p>ابدأ بإضافة أول علامة تجارية لسيارتك</p>
+            <button type="button" class="btn-primary" (click)="openCreateModal()">
+              <i class="fas fa-plus"></i>
+              إضافة علامة تجارية
+            </button>
+          </div>
+
+          <!-- Data Grid -->
+          <div *ngIf="!loading && brands.length > 0" class="brands-grid">
+            <div *ngFor="let brand of brands; trackBy: trackByBrandId; let i = index" 
+                 class="brand-card" 
+                 [class.even]="i % 2 === 0">
+              
+              <!-- Brand Logo -->
+              <div class="brand-logo-section">
+                <div class="logo-container">
+                  <img *ngIf="brand.imageUrl" 
+                       [src]="brand.imageUrl" 
+                       [alt]="brand.name" 
+                       class="brand-logo">
+                  <div *ngIf="!brand.imageUrl" class="no-logo">
+                    <i class="fas fa-image"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Brand Info -->
+              <div class="brand-info">
+                <h3 class="brand-name">{{ brand.name }}</h3>
+                <div class="brand-details">
+                  <div class="detail-item">
+                    <i class="fas fa-code"></i>
+                    <span>الكود: {{ brand.code }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-car-side"></i>
+                    <span>الموديلات: {{ brand.modelTypes?.length || 0 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Brand Actions -->
+              <div class="brand-actions">
+                <button type="button" 
+                        class="action-btn edit-btn" 
+                        (click)="openEditModal(brand)"
+                        title="تعديل العلامة التجارية">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" 
+                        class="action-btn delete-btn" 
+                        (click)="confirmDelete(brand)"
+                        title="حذف العلامة التجارية">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="card-footer" *ngIf="!loading && brands.length > 0">
+          <div class="pagination-info">
+            <span>الصفحة {{ currentPage }} من {{ totalPages }}</span>
+          </div>
+          <div class="pagination-controls">
+            <button type="button" 
+                    class="pagination-btn" 
+                    [disabled]="currentPage === 1"
+                    (click)="onPageChange(1)">
+              <i class="fas fa-angle-double-right"></i>
+            </button>
+            <button type="button" 
+                    class="pagination-btn" 
+                    [disabled]="currentPage === 1"
+                    (click)="onPageChange(currentPage - 1)">
+              <i class="fas fa-angle-right"></i>
+            </button>
+            
+            <div class="page-numbers">
+              <button type="button" 
+                      *ngFor="let page of getPaginationPages()"
+                      class="page-btn"
+                      [class.active]="page === currentPage"
+                      (click)="onPageChange(page)">
+                {{ page }}
+              </button>
+            </div>
+
+            <button type="button" 
+                    class="pagination-btn" 
+                    [disabled]="currentPage === totalPages"
+                    (click)="onPageChange(currentPage + 1)">
+              <i class="fas fa-angle-left"></i>
+            </button>
+            <button type="button" 
+                    class="pagination-btn" 
+                    [disabled]="currentPage === totalPages"
+                    (click)="onPageChange(totalPages)">
+              <i class="fas fa-angle-double-left"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modern Create/Edit Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modern-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-car"></i>
+        <h3>{{ modalMode === 'create' ? 'إضافة علامة تجارية جديدة' : 'تعديل العلامة التجارية' }}</h3>
+      </div>
+      <button type="button" class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="brandForm" (ngSubmit)="saveBrand()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">
+              <i class="fas fa-tag"></i>
+              اسم العلامة التجارية
+            </label>
+            <input type="text" 
+                   id="name" 
+                   formControlName="name" 
+                   class="form-input"
+                   [class.error]="isFieldInvalid('name')"
+                   placeholder="أدخل اسم العلامة التجارية">
+            <div class="error-message" *ngIf="isFieldInvalid('name')">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ getFieldError('name') }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="code">
+              <i class="fas fa-code"></i>
+              الكود المميز
+            </label>
+            <input type="text" 
+                   id="code" 
+                   formControlName="code" 
+                   class="form-input"
+                   [class.error]="isFieldInvalid('code')"
+                   placeholder="أدخل الكود المميز">
+            <div class="error-message" *ngIf="isFieldInvalid('code')">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ getFieldError('code') }}
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="imageUrl">
+              <i class="fas fa-image"></i>
+              رابط الشعار
+            </label>
+            <input type="url" 
+                   id="imageUrl" 
+                   formControlName="imageUrl" 
+                   class="form-input"
+                   placeholder="https://example.com/logo.png">
+            <div class="form-hint">
+              <i class="fas fa-info-circle"></i>
+              اختياري - يمكنك إضافة رابط شعار العلامة التجارية
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+        إلغاء
+      </button>
+      <button type="button" 
+              class="btn-save" 
+              (click)="saveBrand()"
+              [disabled]="brandForm.invalid">
+        <i class="fas fa-check"></i>
+        {{ modalMode === 'create' ? 'إضافة العلامة التجارية' : 'حفظ التغييرات' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="brandToDelete" (click)="cancelDelete()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>تأكيد حذف العلامة التجارية</h3>
+      </div>
+    </div>
+    
+    <div class="modal-body">
+      <div class="confirmation-content">
+        <div class="warning-icon">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <h4>هل أنت متأكد من الحذف؟</h4>
+        <p>سيتم حذف العلامة التجارية:</p>
+        <div class="brand-info">
+          <strong>{{ brandToDelete?.name }}</strong>
+          <span>{{ brandToDelete?.code }}</span>
+        </div>
+        <div class="warning-note">
+          <i class="fas fa-exclamation-circle"></i>
+          لا يمكن التراجع عن هذا الإجراء
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="cancelDelete()">
+        <i class="fas fa-arrow-right"></i>
+        العودة
+      </button>
+      <button type="button" class="btn-delete" (click)="deleteUser()">
+        <i class="fas fa-trash"></i>
+        تأكيد الحذف
+      </button>
+    </div>
+  </div>
+</div>

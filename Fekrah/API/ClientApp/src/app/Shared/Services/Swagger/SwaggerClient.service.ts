@@ -2026,8 +2026,8 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCarsModelGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCarsModelDto> {
-        let url_ = this.baseUrl + "/api/CarsModel/GetAll?";
+    apiBrandGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfBrandDTO> {
+        let url_ = this.baseUrl + "/api/Brand/GetAll?";
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
@@ -2049,20 +2049,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiCarsModelGetAllGet(response_);
+            return this.processApiBrandGetAllGet(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiCarsModelGetAllGet(response_ as any);
+                    return this.processApiBrandGetAllGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DataSourceResultOfCarsModelDto>;
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfBrandDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DataSourceResultOfCarsModelDto>;
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfBrandDTO>;
         }));
     }
 
-    protected processApiCarsModelGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfCarsModelDto> {
+    protected processApiBrandGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfBrandDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2073,7 +2073,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DataSourceResultOfCarsModelDto.fromJS(resultData200);
+            result200 = DataSourceResultOfBrandDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2084,8 +2084,8 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCarsModelGetDetailsGet(id: number | undefined): Observable<CarsModelDto> {
-        let url_ = this.baseUrl + "/api/CarsModel/GetDetails?";
+    apiBrandGetDetailsGet(id: number | undefined): Observable<BrandDTO> {
+        let url_ = this.baseUrl + "/api/Brand/GetDetails?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -2101,20 +2101,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiCarsModelGetDetailsGet(response_);
+            return this.processApiBrandGetDetailsGet(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiCarsModelGetDetailsGet(response_ as any);
+                    return this.processApiBrandGetDetailsGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CarsModelDto>;
+                    return _observableThrow(e) as any as Observable<BrandDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CarsModelDto>;
+                return _observableThrow(response_) as any as Observable<BrandDTO>;
         }));
     }
 
-    protected processApiCarsModelGetDetailsGet(response: HttpResponseBase): Observable<CarsModelDto> {
+    protected processApiBrandGetDetailsGet(response: HttpResponseBase): Observable<BrandDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2125,7 +2125,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CarsModelDto.fromJS(resultData200);
+            result200 = BrandDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2136,8 +2136,8 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCarsModelInsertPost(entity: CarsModelDto): Observable<CarsModelDto> {
-        let url_ = this.baseUrl + "/api/CarsModel/Insert";
+    apiBrandInsertPost(entity: BrandDTO): Observable<BrandDTO> {
+        let url_ = this.baseUrl + "/api/Brand/Insert";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(entity);
@@ -2153,20 +2153,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiCarsModelInsertPost(response_);
+            return this.processApiBrandInsertPost(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiCarsModelInsertPost(response_ as any);
+                    return this.processApiBrandInsertPost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CarsModelDto>;
+                    return _observableThrow(e) as any as Observable<BrandDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CarsModelDto>;
+                return _observableThrow(response_) as any as Observable<BrandDTO>;
         }));
     }
 
-    protected processApiCarsModelInsertPost(response: HttpResponseBase): Observable<CarsModelDto> {
+    protected processApiBrandInsertPost(response: HttpResponseBase): Observable<BrandDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2177,7 +2177,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CarsModelDto.fromJS(resultData200);
+            result200 = BrandDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2188,8 +2188,8 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCarsModelUpdatePost(entity: CarsModelDto): Observable<CarsModelDto> {
-        let url_ = this.baseUrl + "/api/CarsModel/Update";
+    apiBrandUpdatePost(entity: BrandDTO): Observable<BrandDTO> {
+        let url_ = this.baseUrl + "/api/Brand/Update";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(entity);
@@ -2205,20 +2205,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiCarsModelUpdatePost(response_);
+            return this.processApiBrandUpdatePost(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiCarsModelUpdatePost(response_ as any);
+                    return this.processApiBrandUpdatePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CarsModelDto>;
+                    return _observableThrow(e) as any as Observable<BrandDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CarsModelDto>;
+                return _observableThrow(response_) as any as Observable<BrandDTO>;
         }));
     }
 
-    protected processApiCarsModelUpdatePost(response: HttpResponseBase): Observable<CarsModelDto> {
+    protected processApiBrandUpdatePost(response: HttpResponseBase): Observable<BrandDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2229,7 +2229,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CarsModelDto.fromJS(resultData200);
+            result200 = BrandDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2240,8 +2240,8 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiCarsModelDeletePost(id: number | undefined): Observable<CarsModelDto> {
-        let url_ = this.baseUrl + "/api/CarsModel/Delete?";
+    apiBrandDeletePost(id: number | undefined): Observable<BrandDTO> {
+        let url_ = this.baseUrl + "/api/Brand/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -2257,20 +2257,20 @@ export class SwaggerClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiCarsModelDeletePost(response_);
+            return this.processApiBrandDeletePost(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processApiCarsModelDeletePost(response_ as any);
+                    return this.processApiBrandDeletePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CarsModelDto>;
+                    return _observableThrow(e) as any as Observable<BrandDTO>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CarsModelDto>;
+                return _observableThrow(response_) as any as Observable<BrandDTO>;
         }));
     }
 
-    protected processApiCarsModelDeletePost(response: HttpResponseBase): Observable<CarsModelDto> {
+    protected processApiBrandDeletePost(response: HttpResponseBase): Observable<BrandDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2281,7 +2281,7 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CarsModelDto.fromJS(resultData200);
+            result200 = BrandDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2891,6 +2891,272 @@ export class SwaggerClient {
             else {
                 result200 = <any>null;
             }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiModelTypeGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfModelTypeDTO> {
+        let url_ = this.baseUrl + "/api/ModelType/GetAll?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiModelTypeGetAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiModelTypeGetAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfModelTypeDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfModelTypeDTO>;
+        }));
+    }
+
+    protected processApiModelTypeGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfModelTypeDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfModelTypeDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiModelTypeGetDetailsGet(id: number | undefined): Observable<ModelTypeDTO> {
+        let url_ = this.baseUrl + "/api/ModelType/GetDetails?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiModelTypeGetDetailsGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiModelTypeGetDetailsGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ModelTypeDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ModelTypeDTO>;
+        }));
+    }
+
+    protected processApiModelTypeGetDetailsGet(response: HttpResponseBase): Observable<ModelTypeDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ModelTypeDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiModelTypeInsertPost(entity: ModelTypeDTO): Observable<ModelTypeDTO> {
+        let url_ = this.baseUrl + "/api/ModelType/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiModelTypeInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiModelTypeInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ModelTypeDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ModelTypeDTO>;
+        }));
+    }
+
+    protected processApiModelTypeInsertPost(response: HttpResponseBase): Observable<ModelTypeDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ModelTypeDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiModelTypeUpdatePost(entity: ModelTypeDTO): Observable<ModelTypeDTO> {
+        let url_ = this.baseUrl + "/api/ModelType/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiModelTypeUpdatePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiModelTypeUpdatePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ModelTypeDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ModelTypeDTO>;
+        }));
+    }
+
+    protected processApiModelTypeUpdatePost(response: HttpResponseBase): Observable<ModelTypeDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ModelTypeDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiModelTypeDeletePost(id: number | undefined): Observable<ModelTypeDTO> {
+        let url_ = this.baseUrl + "/api/ModelType/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiModelTypeDeletePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiModelTypeDeletePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ModelTypeDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ModelTypeDTO>;
+        }));
+    }
+
+    protected processApiModelTypeDeletePost(response: HttpResponseBase): Observable<ModelTypeDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ModelTypeDTO.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -4672,12 +4938,12 @@ export interface IDataSourceResultOfUserDTO {
     additionalValue: number;
 }
 
-export class DataSourceResultOfCarsModelDto implements IDataSourceResultOfCarsModelDto {
-    data!: CarsModelDto[];
+export class DataSourceResultOfBrandDTO implements IDataSourceResultOfBrandDTO {
+    data!: BrandDTO[];
     count!: number;
     additionalValue!: number;
 
-    constructor(data?: IDataSourceResultOfCarsModelDto) {
+    constructor(data?: IDataSourceResultOfBrandDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4694,16 +4960,16 @@ export class DataSourceResultOfCarsModelDto implements IDataSourceResultOfCarsMo
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(CarsModelDto.fromJS(item));
+                    this.data!.push(BrandDTO.fromJS(item));
             }
             this.count = _data["count"];
             this.additionalValue = _data["additionalValue"];
         }
     }
 
-    static fromJS(data: any): DataSourceResultOfCarsModelDto {
+    static fromJS(data: any): DataSourceResultOfBrandDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfCarsModelDto();
+        let result = new DataSourceResultOfBrandDTO();
         result.init(data);
         return result;
     }
@@ -4721,17 +4987,96 @@ export class DataSourceResultOfCarsModelDto implements IDataSourceResultOfCarsMo
     }
 }
 
-export interface IDataSourceResultOfCarsModelDto {
-    data: CarsModelDto[];
+export interface IDataSourceResultOfBrandDTO {
+    data: BrandDTO[];
     count: number;
     additionalValue: number;
 }
 
-export class CarsModelDto implements ICarsModelDto {
+export class BrandDTO implements IBrandDTO {
     id!: number;
     name!: string;
+    code!: string;
+    imageUrl!: string;
+    parts!: PartDTO[];
+    modelTypes!: ModelTypeDTO[];
 
-    constructor(data?: ICarsModelDto) {
+    constructor(data?: IBrandDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.parts = [];
+            this.modelTypes = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.imageUrl = _data["imageUrl"];
+            if (Array.isArray(_data["parts"])) {
+                this.parts = [] as any;
+                for (let item of _data["parts"])
+                    this.parts!.push(PartDTO.fromJS(item));
+            }
+            if (Array.isArray(_data["modelTypes"])) {
+                this.modelTypes = [] as any;
+                for (let item of _data["modelTypes"])
+                    this.modelTypes!.push(ModelTypeDTO.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BrandDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new BrandDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["imageUrl"] = this.imageUrl;
+        if (Array.isArray(this.parts)) {
+            data["parts"] = [];
+            for (let item of this.parts)
+                data["parts"].push(item.toJSON());
+        }
+        if (Array.isArray(this.modelTypes)) {
+            data["modelTypes"] = [];
+            for (let item of this.modelTypes)
+                data["modelTypes"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBrandDTO {
+    id: number;
+    name: string;
+    code: string;
+    imageUrl: string;
+    parts: PartDTO[];
+    modelTypes: ModelTypeDTO[];
+}
+
+export class ModelTypeDTO implements IModelTypeDTO {
+    id!: number;
+    name!: string;
+    brandId!: number;
+    year!: number;
+    brandName!: string;
+
+    constructor(data?: IModelTypeDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4744,12 +5089,15 @@ export class CarsModelDto implements ICarsModelDto {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.brandId = _data["brandId"];
+            this.year = _data["year"];
+            this.brandName = _data["brandName"];
         }
     }
 
-    static fromJS(data: any): CarsModelDto {
+    static fromJS(data: any): ModelTypeDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new CarsModelDto();
+        let result = new ModelTypeDTO();
         result.init(data);
         return result;
     }
@@ -4758,13 +5106,19 @@ export class CarsModelDto implements ICarsModelDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["brandId"] = this.brandId;
+        data["year"] = this.year;
+        data["brandName"] = this.brandName;
         return data;
     }
 }
 
-export interface ICarsModelDto {
+export interface IModelTypeDTO {
     id: number;
     name: string;
+    brandId: number;
+    year: number;
+    brandName: string;
 }
 
 export class DataSourceResultOfCityDTO implements IDataSourceResultOfCityDTO {
@@ -4877,6 +5231,7 @@ export interface IUploadDTO {
 export enum FileTypeEnum {
     Parts = 1,
     Users = 2,
+    Brands = 3,
 }
 
 export class LookupDTO implements ILookupDTO {
@@ -5001,6 +5356,61 @@ export interface ICityLookupDto {
     id: number;
     nameAr: string;
     governorateId: number;
+}
+
+export class DataSourceResultOfModelTypeDTO implements IDataSourceResultOfModelTypeDTO {
+    data!: ModelTypeDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfModelTypeDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(ModelTypeDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfModelTypeDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfModelTypeDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfModelTypeDTO {
+    data: ModelTypeDTO[];
+    count: number;
+    additionalValue: number;
 }
 
 export class DataSourceResultOfPermissionDTO implements IDataSourceResultOfPermissionDTO {

@@ -1,7 +1,6 @@
 ﻿using Bussiness.IService;
 using Data.DTOs;
 using Data.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

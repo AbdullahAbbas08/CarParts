@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Interfaces
 {
-    public interface ICarsModelService : _IBusinessService<CarsModel, CarsModelDto>
+    public interface ICarsModelService : _IBusinessService<Brand, BrandDTO>
     {
     }
 }

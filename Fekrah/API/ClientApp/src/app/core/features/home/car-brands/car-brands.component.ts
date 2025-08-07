@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import Swiper from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import { CarsModelDto, DataSourceResultOfCarsModelDto, SwaggerClient } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
-import { LoaderService } from '../../../../Shared/Services/Loader.service';
+import { LoaderService  } from '../../../../Shared/Services/Loader.service';
+import { BrandDTO, DataSourceResultOfBrandDTO, SwaggerClient } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-car-brands',
@@ -10,7 +10,7 @@ import { LoaderService } from '../../../../Shared/Services/Loader.service';
   styleUrls: ['./car-brands.component.scss']
 })
 export class CarBrandsComponent implements OnInit {
-  carBrands:CarsModelDto[] = [];
+  carBrands:BrandDTO[] = [];
   constructor(private swagger: SwaggerClient,private loaderService: LoaderService) {}
   ngOnInit() {
                      new Swiper('.swiper', {
@@ -57,7 +57,7 @@ export class CarBrandsComponent implements OnInit {
   }
   getAllCarBrands(){
           this.loaderService.show(); 
-        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfCarsModelDto) => {
+        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
         if(res){
            this.carBrands = res.data;
            this.loaderService.hide(); 

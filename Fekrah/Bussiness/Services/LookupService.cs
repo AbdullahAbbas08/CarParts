@@ -74,7 +74,7 @@ namespace Bussiness.Services
                         }).ToList();
                     break;
                 case "carsmodel":
-                    result = _unitOfWork.Repository<CarsModel>()
+                    result = _unitOfWork.Repository<Brand>()
                         .GetAll()
                         .Where(s => string.IsNullOrEmpty(searchTerm) || s.Name.Contains(searchTerm))
                         .Select(c => new LookupDTO

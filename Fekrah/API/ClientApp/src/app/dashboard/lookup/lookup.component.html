@@ -1,0 +1,137 @@
+<div class="lookup-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a routerLink="/">
+              <i class="fas fa-home"></i>
+              الرئيسية
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item">
+            <a routerLink="/admin">
+              <i class="fas fa-shield-alt"></i>
+              الإدارة
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item active">
+            <i class="fas fa-car"></i>
+            البحث والتصنيفات
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Title -->
+      <div class="page-title">
+        <h1>
+          <i class="fas fa-car"></i>
+          إدارة البحث والتصنيفات
+        </h1>
+        <p>
+          إدارة العلامات التجارية وموديلات السيارات والتصنيفات الأساسية
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="dashboard-content">
+    <div class="container">
+      
+      <!-- Lookup Cards Grid -->
+      <div class="admin-grid">
+        
+        <!-- Brands Management Card -->
+        <div class="admin-card brands-card" (click)="navigateToBrands()">
+          
+          <!-- Background Pattern -->
+          <div class="card-pattern"></div>
+          
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-car"></i>
+            </div>
+            
+            <h3>إدارة العلامات التجارية</h3>
+            <p>إدارة وتنظيم العلامات التجارية للسيارات وشعاراتها والبيانات المرتبطة بها</p>
+            
+            <div class="card-action">
+              <span>العلامات التجارية</span>
+              <i class="fas fa-arrow-left"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Model Types Management Card -->
+        <div class="admin-card model-types-card" (click)="navigateToModelTypes()">
+          
+          <!-- Background Pattern -->
+          <div class="card-pattern"></div>
+          
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-car-side"></i>
+            </div>
+            
+            <h3>إدارة موديلات السيارات</h3>
+            <p>إدارة وتنظيم موديلات السيارات والسنوات المختلفة وربطها بالعلامات التجارية</p>
+            
+            <div class="card-action">
+              <span>موديلات السيارات</span>
+              <i class="fas fa-arrow-left"></i>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Stats Section -->
+      <div class="quick-stats">
+        <h2>
+          إحصائيات سريعة
+        </h2>
+        
+        <div class="stats-grid">
+          
+          <div class="stat-card">
+            <i class="fas fa-car"></i>
+            <h4>{{totalBrands}}</h4>
+            <p>إجمالي العلامات التجارية</p>
+          </div>
+          
+          <div class="stat-card">
+            <i class="fas fa-car-side"></i>
+            <h4>{{totalModelTypes}}</h4>
+            <p>إجمالي الموديلات</p>
+          </div>
+          
+          <div class="stat-card">
+            <i class="fas fa-calendar"></i>
+            <h4>{{getCurrentYear()}}</h4>
+            <p>السنة الحالية</p>
+          </div>
+          
+          <div class="stat-card">
+            <i class="fas fa-chart-line"></i>
+            <h4>{{getActiveCount()}}</h4>
+            <p>التصنيفات النشطة</p>
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!-- Router Outlet for Child Components -->
+<!-- <router-outlet></router-outlet> -->

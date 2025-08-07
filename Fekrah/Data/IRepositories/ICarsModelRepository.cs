@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.IRepositories
 {
-    public interface ICarsModelRepository : IGeneraicRepository<CarsModel>
+    public interface ICarsModelRepository : IGeneraicRepository<Brand>
     {
     }
 }

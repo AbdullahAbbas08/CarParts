@@ -24,7 +24,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.CarModelType)
-            .ThenInclude(p => p.CarsModel)
+            .ThenInclude(p => p.Brand)
             .Include(p => p.CountryOfManufacture)
             .AsSplitQuery()
             .Where(p => string.IsNullOrEmpty(searchTerm) || p.Name.Contains(searchTerm))
@@ -57,8 +57,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 MerchantName = p.Merchant?.ShopName,
                 CarModelTypeId = p.CarModelTypeId,
                 CarModelTypeName = p.CarModelType?.Name,
-                CarModelId = p.CarModelType.CarsModelId,
-                CarModelName = p.CarModelType.CarsModel?.Name,
+                CarModelId = p.CarModelType.BrandId,
+                CarModelName = p.CarModelType.Brand?.Name,
                 CountryOfManufactureId = p.CountryOfManufactureId,
                 CountryOfManufactureName = p.CountryOfManufacture.Name,
                 Count = p.Count
@@ -79,7 +79,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.CarModelType)
-            .ThenInclude(p => p.CarsModel)
+            .ThenInclude(p => p.Brand)
             .Include(p => p.CountryOfManufacture)
             .AsSplitQuery()
             .FirstOrDefault(p => p.Id == (int)id);
@@ -111,8 +111,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             MerchantName = part.Merchant?.ShopName,
             CarModelTypeId = part.CarModelTypeId,
             CarModelTypeName = part.CarModelType?.Name,
-            CarModelId = part.CarModelType.CarsModelId,
-            CarModelName = part.CarModelType.CarsModel?.Name,
+            CarModelId = part.CarModelType.BrandId,
+            CarModelName = part.CarModelType.Brand?.Name,
             CountryOfManufactureId = part.CountryOfManufactureId,
             CountryOfManufactureName = part.CountryOfManufacture.Name,
             Count = part.Count
@@ -155,9 +155,9 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
         var allFilteredParts = _UnitOfWork.Repository<Part>()
             .GetAll()
             .Include(p => p.CarModelType)
-            .ThenInclude(c => c.CarsModel)
+            .ThenInclude(c => c.Brand)
             .Include(c => c.CountryOfManufacture)
-            .Where(p => (part.CarModel == 0 || p.CarModelType.CarsModelId == part.CarModel) &&
+            .Where(p => (part.CarModel == 0 || p.CarModelType.BrandId == part.CarModel) &&
                         (part.CarModelType == 0 || p.CarModelTypeId == part.CarModelType) &&
                         (part.YearOfManufactureFrom == 0 || p.YearOfManufacture >= part.YearOfManufactureFrom) &&
                         (part.YearOfManufactureTo == 0 || p.YearOfManufacture <= part.YearOfManufactureTo) &&
@@ -201,8 +201,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 MerchantName = p.Merchant?.ShopName,
                 CarModelTypeId = p.CarModelTypeId,
                 CarModelTypeName = p.CarModelType?.Name,
-                CarModelId = p.CarModelType.CarsModelId,
-                CarModelName = p.CarModelType.CarsModel?.Name,
+                CarModelId = p.CarModelType.BrandId,
+                CarModelName = p.CarModelType.Brand?.Name,
                 CountryOfManufactureId = p.CountryOfManufactureId,
                 CountryOfManufactureName = p.CountryOfManufacture.Name,
                 Count = p.Count

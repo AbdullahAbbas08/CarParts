@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DataSourceResultOfCarsModelDto, SwaggerClient } from '../../../Shared/Services/Swagger/SwaggerClient.service';
+import { DataSourceResultOfBrandDTO, SwaggerClient } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-all-brands',
@@ -116,7 +116,7 @@ allCarBrands:any[]= []
     console.log('Selected brand:', brand);
   }
   getAllCarBrands(){
-        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfCarsModelDto) => {
+        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
         if(res){
            this.allCarBrands = res.data;
            this.filteredBrands = res.data

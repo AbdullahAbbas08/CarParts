@@ -53,6 +53,11 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/users']);
   }
 
+  navigateToLookup(): void {
+    console.log('🔍 Navigating to lookup management...');
+    this.router.navigate(['/admin/lookup']);
+  }
+
   navigateToOrders(): void {
     console.log('📦 Navigating to order management...');
     // TODO: Implement order management navigation

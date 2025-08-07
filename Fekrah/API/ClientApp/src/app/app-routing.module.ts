@@ -24,6 +24,7 @@ const routes: Routes = [
   { path: 'merchant', loadChildren: () => import('./dashboard/manage-merchants/manage-merchants.module').then(m => m.ManageMerchantsModule) },
   { path: 'products', loadChildren: () => import('./dashboard/products/products.module').then(m => m.ProductsModule) },
   { path: 'admin/users', loadChildren: () => import('./dashboard/manage-users/manage-users.module').then(m => m.ManageUsersModule) },
+  { path: 'admin/lookup', loadChildren: () => import('./dashboard/lookup/lookup.module').then(m => m.LookupModule) },
   { path: 'order-mgr', loadChildren: () => import('./dashboard/order-manager/order-manager.module').then(m => m.OrderManagerModule) },
 
   { path: 'seller', loadChildren: () => import('./core/features/seller/seller-page.module').then(m => m.SellerModule) },

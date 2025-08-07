@@ -12,23 +12,23 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Services
 {
-    public class CarsModelService : _BusinessService<CarsModel, CarsModelDto>, ICarsModelService
+    public class CarsModelService : _BusinessService<Brand, BrandDTO>, ICarsModelService
     {
         public CarsModelService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
             
         }
 
-        public override DataSourceResult<CarsModelDto> GetAll(int pageSize, int page, string? searchTerm = null)
+        public override DataSourceResult<BrandDTO> GetAll(int pageSize, int page, string? searchTerm = null)
         {
-            var allCarsModel = _UnitOfWork.Repository<CarsModel>()
+            var allCarsModel = _UnitOfWork.Repository<Brand>()
                 .GetAll()
                 .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm))
                 .ToList();
 
-            List<CarsModelDto> result = _Mapper.Map<List<CarsModelDto>>(allCarsModel.Take(((page - 1) * pageSize)..(page * pageSize)));
+            List<BrandDTO> result = _Mapper.Map<List<BrandDTO>>(allCarsModel.Take(((page - 1) * pageSize)..(page * pageSize)));
 
-            return new DataSourceResult<CarsModelDto>
+            return new DataSourceResult<BrandDTO>
             {
                 Data = result,
                 Count = allCarsModel.Count

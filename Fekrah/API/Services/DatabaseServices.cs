@@ -368,5 +368,165 @@ namespace API.Services
             dbContext.Set<Role>().AddRange(roles);
             await dbContext.SaveChangesAsync();
         }
+
+        public static async Task SeedBrands(DatabaseContext dbContext)
+        {
+            if (dbContext == null) return;
+            if (await dbContext.Set<Brand>().AnyAsync()) return;
+
+            var brands = new List<Brand>
+            {
+                new Brand { Name = "تويوتا", Code = "TOYOTA", ImageUrl = "" },
+                new Brand { Name = "هيونداي", Code = "HYUNDAI", ImageUrl = "" },
+                new Brand { Name = "كيا", Code = "KIA", ImageUrl = "" },
+                new Brand { Name = "شيفروليه", Code = "CHEVROLET", ImageUrl = "" },
+                new Brand { Name = "نيسان", Code = "NISSAN", ImageUrl = "" },
+                new Brand { Name = "ميتسوبيشي", Code = "MITSUBISHI", ImageUrl = "" },
+                new Brand { Name = "فورد", Code = "FORD", ImageUrl = "" },
+                new Brand { Name = "بي إم دبليو", Code = "BMW", ImageUrl = "" },
+                new Brand { Name = "مرسيدس", Code = "MERCEDES", ImageUrl = "" },
+                new Brand { Name = "رينو", Code = "RENAULT", ImageUrl = "" },
+                new Brand { Name = "هوندا", Code = "HONDA", ImageUrl = "" },
+                new Brand { Name = "أوبل", Code = "OPEL", ImageUrl = "" },
+                new Brand { Name = "جيلي", Code = "GEELY", ImageUrl = "" },
+                new Brand { Name = "سوزوكي", Code = "SUZUKI", ImageUrl = "" },
+                new Brand { Name = "بيجو", Code = "PEUGEOT", ImageUrl = "" },
+                new Brand { Name = "سكودا", Code = "SKODA", ImageUrl = "" },
+                new Brand { Name = "فولكس فاجن", Code = "VOLKSWAGEN", ImageUrl = "" },
+                new Brand { Name = "جيب", Code = "JEEP", ImageUrl = "" },
+                new Brand { Name = "داسيا", Code = "DACIA", ImageUrl = "" },
+                new Brand { Name = "سيات", Code = "SEAT", ImageUrl = "" },
+                new Brand { Name = "شيري", Code = "CHERY", ImageUrl = "" },
+                new Brand { Name = "BYD", Code = "BYD", ImageUrl = "" },
+                new Brand { Name = "MG", Code = "MG", ImageUrl = "" },
+                new Brand { Name = "لادا", Code = "LADA", ImageUrl = "" },
+                new Brand { Name = "سانج يونج", Code = "SSANGYONG", ImageUrl = "" },
+                new Brand { Name = "فاو", Code = "FAW", ImageUrl = "" },
+                new Brand { Name = "بروتون", Code = "PROTON", ImageUrl = "" },
+                new Brand { Name = "إم جي", Code = "EMG", ImageUrl = "" },
+                new Brand { Name = "سوبارو", Code = "SUBARU", ImageUrl = "" },
+                new Brand { Name = "هونداي", Code = "HYUNDAI2", ImageUrl = "" },
+                new Brand { Name = "تسلا", Code = "TESLA", ImageUrl = "" },
+                new Brand { Name = "أودي", Code = "AUDI", ImageUrl = "" },
+                new Brand { Name = "بورش", Code = "PORSCHE", ImageUrl = "" },
+                new Brand { Name = "مازدا", Code = "MAZDA", ImageUrl = "" },
+                new Brand { Name = "كرايسلر", Code = "CHRYSLER", ImageUrl = "" },
+                new Brand { Name = "إيسوزو", Code = "ISUZU", ImageUrl = "" },
+                new Brand { Name = "سيتروين", Code = "CITROEN", ImageUrl = "" },
+                new Brand { Name = "دايو", Code = "DAEWOO", ImageUrl = "" },
+                new Brand { Name = "فيات", Code = "FIAT", ImageUrl = "" },
+                new Brand { Name = "رام", Code = "RAM", ImageUrl = "" },
+                new Brand { Name = "لينكولن", Code = "LINCOLN", ImageUrl = "" },
+                new Brand { Name = "سوزوكي2", Code = "SUZUKI2", ImageUrl = "" },
+                new Brand { Name = "هامر", Code = "HUMMER", ImageUrl = "" },
+                new Brand { Name = "إنفينيتي", Code = "INFINITI", ImageUrl = "" },
+                new Brand { Name = "أكورا", Code = "ACURA", ImageUrl = "" },
+                new Brand { Name = "بيوك", Code = "BUICK", ImageUrl = "" },
+                new Brand { Name = "كاديلاك", Code = "CADILLAC", ImageUrl = "" },
+                new Brand { Name = "دودج", Code = "DODGE", ImageUrl = "" },
+                new Brand { Name = "فولفو", Code = "VOLVO", ImageUrl = "" },
+                new Brand { Name = "ميني", Code = "MINI", ImageUrl = "" },
+                new Brand { Name = "روفر", Code = "ROVER", ImageUrl = "" },
+                new Brand { Name = "سوزوكي3", Code = "SUZUKI3", ImageUrl = "" },
+                new Brand { Name = "هونداي3", Code = "HYUNDAI3", ImageUrl = "" },
+                new Brand { Name = "بي إم دبليو2", Code = "BMW2", ImageUrl = "" },
+                new Brand { Name = "مرسيدس2", Code = "MERCEDES2", ImageUrl = "" },
+                new Brand { Name = "تويوتا2", Code = "TOYOTA2", ImageUrl = "" }
+            };
+            dbContext.Set<Brand>().AddRange(brands);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public static async Task SeedModelTypes(DatabaseContext dbContext)
+        {
+            if (dbContext == null) return;
+            if (await dbContext.Set<ModelType>().AnyAsync()) return;
+
+            var brandModels = new Dictionary<string, List<string>>
+            {
+                { "تويوتا", new List<string> { "كورولا", "ياريس", "كامري", "أفالون", "RAV4", "لاند كروزر", "برادو", "هايلكس", "فورتشنر", "C-HR", "سوبرا", "أفانزا", "رش" } },
+                { "هيونداي", new List<string> { "النترا", "أكسنت", "سوناتا", "أزيرا", "توسان", "سانتافي", "كونا", "باليسيد", "i10", "i20", "i30", "فيراكروز", "كريتا" } },
+                { "كيا", new List<string> { "سيراتو", "ريو", "أوبتيما", "K5", "K3", "ستينجر", "سبورتاج", "سورينتو", "تيلورايد", "بيكانتو", "سول", "نيرو", "سيلتوس" } },
+                { "شيفروليه", new List<string> { "أوبترا", "لانوس", "افيو", "كروز", "ماليبو", "كابتيفا", "تاهو", "سيلفرادو", "كامارو", "إكوينوكس", "سبارك", "سونيك" } },
+                { "نيسان", new List<string> { "صني", "سنترا", "ألتيما", "ماكسيما", "قشقاي", "إكس تريل", "باترول", "تييدا", "جوك", "كيكس", "مورانو", "باثفايندر" } },
+                { "ميتسوبيشي", new List<string> { "لانسر", "أتراج", "باجيرو", "أوتلاندر", "إكليبس كروس", "ميراج", "اكسباندر" } },
+                { "فورد", new List<string> { "فييستا", "فوكس", "فيوجن", "توروس", "موستانج", "إسكيب", "إكسبلورر", "إكسبيديشن", "F-150", "إيدج", "إيكوسبورت" } },
+                { "بي إم دبليو", new List<string> { "الفئة الأولى", "الفئة الثانية", "الفئة الثالثة", "الفئة الرابعة", "الفئة الخامسة", "الفئة السادسة", "الفئة السابعة", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z4" } },
+                { "مرسيدس", new List<string> { "A-Class", "C-Class", "E-Class", "S-Class", "CLA", "CLS", "GLA", "GLB", "GLC", "GLE", "GLS", "G-Class", "AMG GT" } },
+                { "رينو", new List<string> { "لوجان", "سانديرو", "ميجان", "داستر", "كابتشر", "كادجار", "كوليوس", "كليو", "زووي" } },
+                { "هوندا", new List<string> { "سيفيك", "أكورد", "CR-V", "HR-V", "بايلوت", "أوديسي", "سيتي", "جاز" } },
+                { "أوبل", new List<string> { "استرا", "كورسا", "انسيجنيا", "موكا", "كروس لاند", "جراند لاند", "زافيرا", "كاسكادا" } },
+                { "جيلي", new List<string> { "امجراند", "كولراي", "ازكارا", "اكس7", "بينراي", "جي سي6", "توجيلا" } },
+                { "سوزوكي", new List<string> { "سويفت", "ألتو", "فيتارا", "ديزاير", "إرتيجا", "بالينو", "سياز", "جيمني", "إسبريسو" } },
+                { "بيجو", new List<string> { "208", "301", "508", "2008", "3008", "5008", "بارتنر", "ترافلر" } },
+                { "سكودا", new List<string> { "اوكتافيا", "سوبيرب", "سكالا", "كاميك", "كاروك", "كودياك", "فابيا", "رابيد" } },
+                { "فولكس فاجن", new List<string> { "جولف", "باسات", "تيجوان", "طوارق", "أرتيون", "جيتا", "بولو", "تي روك", "تيرامونت" } },
+                { "جيب", new List<string> { "رانجلر", "شيروكي", "كومباس", "جراند شيروكي", "رينيجيد", "جلاديتور" } },
+                { "داسيا", new List<string> { "داستر", "سانديرو", "لوغان", "لودجي" } },
+                { "سيات", new List<string> { "ليون", "إبيزا", "أتيكا", "أرونا", "تاراكو" } },
+                { "شيري", new List<string> { "تيجو 3", "تيجو 4 برو", "تيجو 7", "تيجو 8", "اريزو 5", "اريزو 6 برو" } },
+                { "BYD", new List<string> { "F3", "S5", "L3", "سونج بلس", "دولفين" } },
+                { "MG", new List<string> { "MG 5", "MG 6", "ZS", "HS", "RX5", "RX8", "GT" } },
+                { "لادا", new List<string> { "جرانتا", "فيستا", "نيفا", "لارجوس" } },
+                { "سانج يونج", new List<string> { "كوراندو", "تيفولي", "XLV", "ريكتسون" } },
+                { "فاو", new List<string> { "بيستورن T77", "بيستورن B70" } },
+                { "بروتون", new List<string> { "بيرسونا", "ساجا", "X70", "X50" } },
+                { "سوبارو", new List<string> { "امبريزا", "ليجاسي", "فورستر", "أوتباك", "XV", "WRX" } },
+                { "تسلا", new List<string> { "موديل S", "موديل 3", "موديل X", "موديل Y" } },
+                { "أودي", new List<string> { "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q5", "Q7", "Q8", "e-tron" } },
+                { "بورش", new List<string> { "911", "718 كايمن", "718 بوكستر", "كايين", "ماكان", "باناميرا", "تايكان" } },
+                { "مازدا", new List<string> { "مازدا 2", "مازda 3", "مازدا 6", "CX-3", "CX-30", "CX-5", "CX-9" } },
+                { "كرايسلر", new List<string> { "300", "باسيفيكا", "فويجر" } },
+                { "إيسوزو", new List<string> { "ديماكس", "MU-X" } },
+                { "سيتروين", new List<string> { "C3", "C4", "C5 إيركروس", "C-Elysée" } },
+                { "دايو", new List<string> { "لانوس", "نوبيرا", "ماتيز", "جنترا" } },
+                { "فيات", new List<string> { "500", "500X", "تيبو", "بونتو", "دوبلو" } },
+                { "رام", new List<string> { "1500", "2500", "TRX" } },
+                { "لينكولن", new List<string> { "نافيجيتور", "أفياتور", "كورسير", "نوتيلوس" } },
+                { "هامر", new List<string> { "H1", "H2", "H3", "EV" } },
+                { "إنفينيتي", new List<string> { "Q50", "Q60", "QX50", "QX55", "QX60", "QX80" } },
+                { "أكورا", new List<string> { "ILX", "TLX", "RDX", "MDX", "NSX" } },
+                { "بيوك", new List<string> { "إنكور", "إنفيجن", "إنكليف" } },
+                { "كاديلاك", new List<string> { "CT4", "CT5", "XT4", "XT5", "XT6", "اسكاليد" } },
+                { "دودج", new List<string> { "تشارجر", "تشالنجر", "دورانجو", "هورنيت" } },
+                { "فولفو", new List<string> { "S60", "S90", "V60", "V90", "XC40", "XC60", "XC90" } },
+                { "ميني", new List<string> { "كوبر", "كلوبمان", "كونتريمان" } },
+                { "روفر", new List<string> { "رينج روفر", "رينج روفر سبورت", "رينج روفر فيلار", "رينج روفر إيفوك", "ديسكفري", "ديفندر" } }
+            };
+
+            var brands = await dbContext.Set<Brand>().ToListAsync();
+            var modelTypes = new List<ModelType>();
+            var currentYear = DateTime.Now.Year;
+            foreach (var brand in brands)
+            {
+                if (brandModels.TryGetValue(brand.Name, out var models))
+                {
+                    foreach (var model in models)
+                    {
+                        modelTypes.Add(new ModelType
+                        {
+                            Name = model,
+                            Year = currentYear,
+                            BrandId = brand.Id
+                        });
+                    }
+                }
+                else
+                {
+                    // إذا لم يوجد موديلات محددة، أضف موديلات عامة بالسنوات
+                    for (int i = 0; i < 5; i++)
+                    {
+                        modelTypes.Add(new ModelType
+                        {
+                            Name = $"{brand.Name} موديل {currentYear - i}",
+                            Year = currentYear - i,
+                            BrandId = brand.Id
+                        });
+                    }
+                }
+            }
+            dbContext.Set<ModelType>().AddRange(modelTypes);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
