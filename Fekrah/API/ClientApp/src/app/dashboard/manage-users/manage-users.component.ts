@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, AfterViewInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -61,7 +61,8 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private userService: UserManagementService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private renderer: Renderer2
   ) {
     this.userForm = this.createUserForm();
     this.searchForm = this.createSearchForm();
@@ -84,6 +85,11 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.deleteSwiper) {
       this.deleteSwiper.destroy(true, true);
       this.deleteSwiper = null;
+    }
+    
+    // Ensure body scrolling is restored if component is destroyed while modal is open
+    if (this.isModalOpen) {
+      this.renderer.removeClass(document.body, 'modal-open');
     }
     
     // Re-enable body interaction when component is destroyed
@@ -246,13 +252,8 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userForm.get('password')?.updateValueAndValidity();
     this.isModalOpen = true;
     
-    // التمرير التلقائي إلى أعلى الصفحة لإظهار الـ modal
-    setTimeout(() => {
-      window.scrollTo({ 
-        top: 0, 
-        behavior: 'smooth' 
-      });
-    }, 100);
+    // Prevent body scrolling when modal is open
+    this.renderer.addClass(document.body, 'modal-open');
   }
 
   openEditModal(user: UserDTO): void {
@@ -262,6 +263,9 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userForm.get('password')?.clearValidators();
     this.userForm.get('password')?.updateValueAndValidity();
     this.isModalOpen = true;
+    
+    // Prevent body scrolling when modal is open
+    this.renderer.addClass(document.body, 'modal-open');
     
     // التمرير التلقائي إلى أعلى الصفحة لإظهار الـ modal
     setTimeout(() => {
@@ -276,6 +280,9 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isModalOpen = false;
     this.selectedUser = null;
     this.userForm.reset();
+    
+    // Restore body scrolling when modal is closed
+    this.renderer.removeClass(document.body, 'modal-open');
   }
 
   // CRUD operations with enhanced UI feedback
@@ -361,9 +368,7 @@ export class ManageUsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 confirmDelete(user: UserDTO): void {
-  console.log('confirmDelete called with user:', user);
   this.userToDelete = user;
-  console.log('userToDelete set to:', this.userToDelete);
 
   // ✨ امنع السكرول على body
   document.body.style.overflow = 'hidden';

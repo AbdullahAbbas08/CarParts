@@ -1,7 +1,11 @@
-/* Admin Dashboard Enhanced Styles */
+/* Admin Dashboard Complete Styles */
 
 .admin-dashboard {
   position: relative;
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  direction: rtl;
   
   /* Background enhancements */
   &::before {
@@ -18,11 +22,146 @@
   }
 }
 
-/* Card hover effects */
+/* Dashboard Header */
+.dashboard-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb */
+.breadcrumb-nav {
+  margin-bottom: 2rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.breadcrumb-item {
+  a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    
+    i {
+      font-size: 1rem;
+    }
+  }
+  
+  &.active {
+    color: white;
+    font-weight: 600;
+    
+    i {
+      margin-left: 0.5rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+.breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.6);
+  
+  i {
+    font-size: 0.8rem;
+  }
+}
+
+/* Page Title */
+.page-title {
+  text-align: center;
+  color: white;
+  
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    
+    i {
+      margin-left: 1rem;
+      color: #ffd700;
+    }
+  }
+  
+  p {
+    font-size: 1.2rem;
+    margin: 0;
+    opacity: 0.9;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  padding: 4rem 2rem;
+}
+
+/* Admin Cards Grid */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Admin Cards */
 .admin-card {
+  border-radius: 20px;
+  padding: 2.5rem;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   
+  &.users-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+  
+  &.merchants-card {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+  }
+  
+  &.orders-card {
+    background: linear-gradient(135deg, #ff6b6b, #feca57);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+  }
+  
+  &.products-card {
+    background: linear-gradient(135deg, #8e44ad, #3498db);
+    box-shadow: 0 10px 30px rgba(142, 68, 173, 0.3);
+  }
+  
+  &.reports-card {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    color: #2c3e50;
+    box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
+  }
+  
   &:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    
     .card-pattern {
       opacity: 0.6;
       transform: scale(1.1);
@@ -42,8 +181,131 @@
   }
 }
 
-/* Glassmorphism effect for stats */
+/* Card Pattern */
+.card-pattern {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+  background-size: 20px 20px;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+  
+  .reports-card & {
+    background: radial-gradient(circle, rgba(44, 62, 80, 0.1) 2px, transparent 2px);
+  }
+}
+
+/* Card Content */
+.card-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Card Icon */
+.card-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+  
+  .reports-card & {
+    background: rgba(44, 62, 80, 0.1);
+  }
+  
+  i {
+    font-size: 2rem;
+    color: #ffd700;
+    
+    .reports-card & {
+      color: #2c3e50;
+    }
+  }
+}
+
+/* Card Text */
+.admin-card {
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+  }
+  
+  p {
+    opacity: 0.9;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+    
+    .reports-card & {
+      opacity: 0.8;
+    }
+  }
+}
+
+/* Card Action */
+.card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  span {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    
+    .reports-card & {
+      opacity: 0.7;
+    }
+  }
+  
+  i {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    transition: transform 0.3s ease;
+    
+    .reports-card & {
+      opacity: 0.7;
+    }
+  }
+}
+
+/* Quick Stats */
+.quick-stats {
+  margin-top: 4rem;
+  
+  h2 {
+    text-align: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Stat Card */
 .stat-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   
   &:hover {
@@ -53,6 +315,24 @@
     i {
       transform: scale(1.2);
     }
+  }
+  
+  i {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  h4 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0.5rem 0;
+  }
+  
+  p {
+    margin: 0;
+    opacity: 0.9;
   }
 }
 
@@ -65,6 +345,8 @@
   &:hover {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    color: #ffd700 !important;
+    transform: translateX(5px);
   }
 }
 
@@ -94,7 +376,21 @@
 
 /* Responsive typography */
 @media (max-width: 768px) {
+  .admin-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .page-title h1 {
+    font-size: 2rem !important;
+  }
+  
   .admin-card {
+    padding: 2rem !important;
+    
     h3 {
       font-size: 1.3rem;
     }
@@ -118,11 +414,18 @@
       font-size: 1.5rem;
     }
   }
+  
+  .dashboard-header {
+    padding: 1.5rem !important;
+  }
+  
+  .dashboard-content {
+    padding: 2rem 1rem !important;
+  }
 }
 
-/* Dark mode support (if needed) */
-@media (prefers-color-scheme: dark) {
-  .admin-dashboard {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
   }
 }

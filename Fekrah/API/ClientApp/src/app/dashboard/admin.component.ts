@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   totalUsers = 1247;
   totalMerchants = 89;
   totalOrders = 3421;
+  totalProducts = 5634;
   monthlyGrowth = 12.5;
 
   constructor(
@@ -73,6 +74,10 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   getMerchantsCount(): number {
     return this.totalMerchants;
+  }
+
+  getProductsCount(): number {
+    return this.totalProducts;
   }
 
   getTotalOrders(): number {

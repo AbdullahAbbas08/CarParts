@@ -1,35 +1,35 @@
 <!-- Admin Dashboard with Beautiful Design -->
-<div class="admin-dashboard" style="font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; direction: rtl;">
+<div class="admin-dashboard">
   
   <!-- Header Section -->
-  <div class="dashboard-header" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding: 2rem;">
-    <div class="container" style="max-width: 1200px; margin: 0 auto;">
+  <div class="dashboard-header">
+    <div class="container">
       <!-- Breadcrumb -->
-      <nav class="breadcrumb-nav" style="margin-bottom: 2rem;">
-        <ol class="breadcrumb" style="display: flex; align-items: center; gap: 1rem; margin: 0; padding: 0; list-style: none; color: rgba(255, 255, 255, 0.8);">
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a routerLink="/" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
-              <i class="fas fa-home" style="font-size: 1rem;"></i>
+            <a routerLink="/">
+              <i class="fas fa-home"></i>
               الرئيسية
             </a>
           </li>
-          <li class="breadcrumb-separator" style="color: rgba(255, 255, 255, 0.6);">
-            <i class="fas fa-chevron-left" style="font-size: 0.8rem;"></i>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
           </li>
-          <li class="breadcrumb-item active" style="color: white; font-weight: 600;">
-            <i class="fas fa-cogs" style="margin-left: 0.5rem; font-size: 1rem;"></i>
+          <li class="breadcrumb-item active">
+            <i class="fas fa-cogs"></i>
             الإدارة
           </li>
         </ol>
       </nav>
 
       <!-- Page Title -->
-      <div class="page-title" style="text-align: center; color: white;">
-        <h1 style="font-size: 3rem; font-weight: 800; margin: 0 0 1rem 0; text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
-          <i class="fas fa-shield-alt" style="margin-left: 1rem; color: #ffd700;"></i>
+      <div class="page-title">
+        <h1>
+          <i class="fas fa-shield-alt"></i>
           لوحة الإدارة
         </h1>
-        <p style="font-size: 1.2rem; margin: 0; opacity: 0.9; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+        <p>
           إدارة شاملة لجميع أجزاء النظام
         </p>
       </div>
@@ -37,96 +37,113 @@
   </div>
 
   <!-- Main Content -->
-  <div class="dashboard-content" style="padding: 4rem 2rem;">
-    <div class="container" style="max-width: 1200px; margin: 0 auto;">
+  <div class="dashboard-content">
+    <div class="container">
       
       <!-- Admin Cards Grid -->
-      <div class="admin-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+      <div class="admin-grid">
         
         <!-- User Management Card -->
-        <div class="admin-card users-card" (click)="navigateToUsers()" 
-             style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px; padding: 2.5rem; color: white; cursor: pointer; position: relative; overflow: hidden; border: 2px solid transparent; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+        <div class="admin-card users-card" (click)="navigateToUsers()">
           
           <!-- Background Pattern -->
-          <div class="card-pattern" style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px); background-size: 20px 20px; opacity: 0.3;"></div>
+          <div class="card-pattern"></div>
           
-          <div class="card-content" style="position: relative; z-index: 2;">
-            <div class="card-icon" style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; backdrop-filter: blur(10px);">
-              <i class="fas fa-users" style="font-size: 2rem; color: #ffd700;"></i>
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-users"></i>
             </div>
             
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0 0 1rem 0;">إدارة المستخدمين</h3>
-            <p style="opacity: 0.9; margin: 0 0 1.5rem 0; line-height: 1.6;">إدارة حسابات المستخدمين والصلاحيات والأدوار المختلفة</p>
+            <h3>إدارة المستخدمين</h3>
+            <p>إدارة حسابات المستخدمين والصلاحيات والأدوار المختلفة</p>
             
-            <div class="card-action" style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.9rem; opacity: 0.8;">إدارة شاملة</span>
-              <i class="fas fa-arrow-left" style="font-size: 1.2rem; opacity: 0.8;"></i>
+            <div class="card-action">
+              <span>إدارة شاملة</span>
+              <i class="fas fa-arrow-left"></i>
             </div>
           </div>
         </div>
 
         <!-- Merchant Management Card -->
-        <div class="admin-card merchants-card" routerLink="/merchant" 
-             style="background: linear-gradient(135deg, #11998e, #38ef7d); border-radius: 20px; padding: 2.5rem; color: white; cursor: pointer; position: relative; overflow: hidden; border: 2px solid transparent; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);">
+        <div class="admin-card merchants-card" routerLink="/merchant">
           
           <!-- Background Pattern -->
-          <div class="card-pattern" style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px); background-size: 20px 20px; opacity: 0.3;"></div>
+          <div class="card-pattern"></div>
           
-          <div class="card-content" style="position: relative; z-index: 2;">
-            <div class="card-icon" style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; backdrop-filter: blur(10px);">
-              <i class="fas fa-store" style="font-size: 2rem; color: #ffd700;"></i>
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-store"></i>
             </div>
             
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0 0 1rem 0;">إدارة التجار</h3>
-            <p style="opacity: 0.9; margin: 0 0 1.5rem 0; line-height: 1.6;">إدارة حسابات التجار والمتاجر والموافقات والحالات</p>
+            <h3>إدارة التجار</h3>
+            <p>إدارة حسابات التجار والمتاجر والموافقات والحالات</p>
             
-            <div class="card-action" style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.9rem; opacity: 0.8;">{{ getMerchantsCount() }} تاجر</span>
-              <i class="fas fa-arrow-left" style="font-size: 1.2rem; opacity: 0.8;"></i>
+            <div class="card-action">
+              <span>{{ getMerchantsCount() }} تاجر</span>
+              <i class="fas fa-arrow-left"></i>
             </div>
           </div>
         </div>
 
         <!-- Order Management Card -->
-        <div class="admin-card orders-card"  routerLink="/order-mgr"
-             style="background: linear-gradient(135deg, #ff6b6b, #feca57); border-radius: 20px; padding: 2.5rem; color: white; cursor: pointer; position: relative; overflow: hidden; border: 2px solid transparent; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);">
+        <div class="admin-card orders-card" routerLink="/order-mgr">
           
           <!-- Background Pattern -->
-          <div class="card-pattern" style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px); background-size: 20px 20px; opacity: 0.3;"></div>
+          <div class="card-pattern"></div>
           
-          <div class="card-content" style="position: relative; z-index: 2;">
-            <div class="card-icon" style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; backdrop-filter: blur(10px);">
-              <i class="fas fa-shopping-cart" style="font-size: 2rem; color: #ffd700;"></i>
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-shopping-cart"></i>
             </div>
             
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0 0 1rem 0;">إدارة الطلبات</h3>
-            <p style="opacity: 0.9; margin: 0 0 1.5rem 0; line-height: 1.6;">متابعة ومراجعة جميع الطلبات وحالات التسليم</p>
+            <h3>إدارة الطلبات</h3>
+            <p>متابعة ومراجعة جميع الطلبات وحالات التسليم</p>
             
-            <div class="card-action" style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.9rem; opacity: 0.8;">طلبات جديدة</span>
-              <i class="fas fa-arrow-left" style="font-size: 1.2rem; opacity: 0.8;"></i>
+            <div class="card-action">
+              <span>طلبات جديدة</span>
+              <i class="fas fa-arrow-left"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Management Card -->
+        <div class="admin-card products-card" routerLink="/products">
+          
+          <!-- Background Pattern -->
+          <div class="card-pattern"></div>
+          
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-cogs"></i>
+            </div>
+            
+            <h3>إدارة قطع الغيار</h3>
+            <p>إدارة وتنظيم قطع الغيار والمنتجات والفلاتر المتقدمة</p>
+            
+            <div class="card-action">
+              <span>{{ getProductsCount() }} منتج</span>
+              <i class="fas fa-arrow-left"></i>
             </div>
           </div>
         </div>
 
         <!-- Reports & Analytics Card -->
-        <div class="admin-card reports-card" (click)="navigateToReports()" 
-             style="background: linear-gradient(135deg, #a8edea, #fed6e3); color: #2c3e50; border-radius: 20px; padding: 2.5rem; cursor: pointer; position: relative; overflow: hidden; border: 2px solid transparent; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);">
+        <div class="admin-card reports-card" (click)="navigateToReports()">
           
           <!-- Background Pattern -->
-          <div class="card-pattern" style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle, rgba(44, 62, 80, 0.1) 2px, transparent 2px); background-size: 20px 20px; opacity: 0.3;"></div>
+          <div class="card-pattern"></div>
           
-          <div class="card-content" style="position: relative; z-index: 2;">
-            <div class="card-icon" style="width: 80px; height: 80px; background: rgba(44, 62, 80, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; backdrop-filter: blur(10px);">
-              <i class="fas fa-chart-bar" style="font-size: 2rem; color: #2c3e50;"></i>
+          <div class="card-content">
+            <div class="card-icon">
+              <i class="fas fa-chart-bar"></i>
             </div>
             
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0 0 1rem 0;">التقارير والإحصائيات</h3>
-            <p style="opacity: 0.8; margin: 0 0 1.5rem 0; line-height: 1.6;">تقارير مفصلة وإحصائيات شاملة عن أداء النظام</p>
+            <h3>التقارير والإحصائيات</h3>
+            <p>تقارير مفصلة وإحصائيات شاملة عن أداء النظام</p>
             
-            <div class="card-action" style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.9rem; opacity: 0.7;">تحليلات متقدمة</span>
-              <i class="fas fa-arrow-left" style="font-size: 1.2rem; opacity: 0.7;"></i>
+            <div class="card-action">
+              <span>تحليلات متقدمة</span>
+              <i class="fas fa-arrow-left"></i>
             </div>
           </div>
         </div>
@@ -134,35 +151,41 @@
       </div>
 
       <!-- Quick Stats Section -->
-      <div class="quick-stats" style="margin-top: 4rem;">
-        <h2 style="text-align: center; color: white; font-size: 2rem; font-weight: 700; margin-bottom: 2rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+      <div class="quick-stats">
+        <h2>
           إحصائيات سريعة
         </h2>
         
-        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+        <div class="stats-grid">
           
-          <div class="stat-card" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); border-radius: 15px; padding: 1.5rem; text-align: center; color: white; border: 1px solid rgba(255, 255, 255, 0.2);">
-            <i class="fas fa-users" style="font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem;"></i>
-            <h4 style="font-size: 2rem; font-weight: 800; margin: 0.5rem 0;">{{ getTotalUsers() }}</h4>
-            <p style="margin: 0; opacity: 0.9;">إجمالي المستخدمين</p>
+          <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <h4>{{ getTotalUsers() }}</h4>
+            <p>إجمالي المستخدمين</p>
           </div>
           
-          <div class="stat-card" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); border-radius: 15px; padding: 1.5rem; text-align: center; color: white; border: 1px solid rgba(255, 255, 255, 0.2);">
-            <i class="fas fa-store" style="font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem;"></i>
-            <h4 style="font-size: 2rem; font-weight: 800; margin: 0.5rem 0;">{{ getMerchantsCount() }}</h4>
-            <p style="margin: 0; opacity: 0.9;">إجمالي التجار</p>
+          <div class="stat-card">
+            <i class="fas fa-store"></i>
+            <h4>{{ getMerchantsCount() }}</h4>
+            <p>إجمالي التجار</p>
           </div>
           
-          <div class="stat-card" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); border-radius: 15px; padding: 1.5rem; text-align: center; color: white; border: 1px solid rgba(255, 255, 255, 0.2);">
-            <i class="fas fa-shopping-cart" style="font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem;"></i>
-            <h4 style="font-size: 2rem; font-weight: 800; margin: 0.5rem 0;">{{ getTotalOrders() }}</h4>
-            <p style="margin: 0; opacity: 0.9;">إجمالي الطلبات</p>
+          <div class="stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <h4>{{ getTotalOrders() }}</h4>
+            <p>إجمالي الطلبات</p>
           </div>
           
-          <div class="stat-card" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); border-radius: 15px; padding: 1.5rem; text-align: center; color: white; border: 1px solid rgba(255, 255, 255, 0.2);">
-            <i class="fas fa-chart-line" style="font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem;"></i>
-            <h4 style="font-size: 2rem; font-weight: 800; margin: 0.5rem 0;">{{ getMonthlyGrowth() }}%</h4>
-            <p style="margin: 0; opacity: 0.9;">النمو الشهري</p>
+          <div class="stat-card">
+            <i class="fas fa-cogs"></i>
+            <h4>{{ getProductsCount() }}</h4>
+            <p>إجمالي قطع الغيار</p>
+          </div>
+          
+          <div class="stat-card">
+            <i class="fas fa-chart-line"></i>
+            <h4>{{ getMonthlyGrowth() }}%</h4>
+            <p>النمو الشهري</p>
           </div>
           
         </div>
@@ -171,55 +194,3 @@
     </div>
   </div>
 </div>
-
-<style>
-/* Hover Effects for Cards */
-.admin-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.admin-card:hover .card-icon {
-  transform: scale(1.1);
-}
-
-/* Breadcrumb Hover */
-.breadcrumb-item a:hover {
-  color: #ffd700 !important;
-  transform: translateX(5px);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .admin-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
-  .page-title h1 {
-    font-size: 2rem !important;
-  }
-  
-  .admin-card {
-    padding: 2rem !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .dashboard-header {
-    padding: 1.5rem !important;
-  }
-  
-  .dashboard-content {
-    padding: 2rem 1rem !important;
-  }
-}
-</style>

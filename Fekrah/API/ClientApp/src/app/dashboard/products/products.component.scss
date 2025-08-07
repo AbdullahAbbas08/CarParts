@@ -671,38 +671,98 @@ $font-family-primary: "Cairo", Arial, sans-serif;
   }
 }
 
-// Quick Add Modal
-// Quick Add Modal (تعديلات)
+// Global styles for modal (should be in a global stylesheet ideally)
+:host ::ng-deep body.modal-open {
+  overflow: hidden;
+  padding-right: 0; // Prevent scrollbar jump
+}
+
+// Quick Add Modal - Fixed and Centered
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(30, 30, 50, 0.75); // ظل خلفية داكن
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 50, 0.8);
   display: flex;
   justify-content: center;
-  align-items: center; // للتوسيط العمودي
-  z-index: 1050;
-  padding: 0; // إزالة الحشوة حتى لا يظهر تمرير
-  overflow: hidden; // منع ظهور أي scroll
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+  backdrop-filter: blur(5px);
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .modal-content {
-  background: #ffffff; // خلفية بيضاء للنافذة نفسها
-  border-radius: 24px; // تقوس زوايا النافذة
-  width: 60vw; // جعل العرض 80% من عرض الشاشة
-  max-height: 90vh; // لمنع فتحة النافذة من أن تكون أطول من ارتفاع الشاشة
-  overflow-y: auto; // إذا احتوى المحتوى على ارتفاع أعلى من 90vh، سيظهر الـ scroll داخل المحتوى فقط
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); // ظل خفيف حول النافذة
-  margin: 0; // للتأكد من التوسيط المطلق ضمن الـ flex container
-
-  overflow: auto; /* السماح بالتمرير داخل الحاوية */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 800px;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  margin: 0;
+  position: relative;
+  animation: modalSlideIn 0.3s ease-out;
+  
+  // Custom scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: rgba(79, 70, 229, 0.3) transparent;
+  
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(79, 70, 229, 0.3);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 70, 229, 0.5);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Responsive modal styles
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+  
+  .modal-content {
+    max-height: calc(100vh - 1rem);
+    border-radius: 16px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.25rem;
+  }
+  
+  .modal-content {
+    max-height: calc(100vh - 0.5rem);
+    border-radius: 12px;
   }
 }
 

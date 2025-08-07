@@ -15,11 +15,11 @@ export interface MessageOptions {
 
 
 @Component({
-  selector: 'app-merchant',
-  templateUrl: './merchant.component.html',
-  styleUrl: './merchant.component.scss'
+  selector: 'app-products',
+  templateUrl: './products.component.html',
+  styleUrl: './products.component.scss'
 })
-export class MerchantComponent {
+export class ProductsComponent {
   @ViewChild('searchInput') searchInput!: ElementRef;
   @ViewChild('advancedFilterPanel') advancedFilterPanel!: ElementRef;
   @ViewChild('activeFiltersContainer') activeFiltersContainer!: ElementRef;
@@ -88,6 +88,10 @@ export class MerchantComponent {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    // Ensure body scrolling is re-enabled if component is destroyed while modal is open
+    if (this.showQuickAddModal) {
+      this.renderer.removeClass(document.body, 'modal-open');
+    }
   }
 
   // تحسين دالة toggleAdvancedSearch
@@ -582,10 +586,14 @@ export class MerchantComponent {
 
   openQuickAddModal(): void {
     this.showQuickAddModal = true;
+    // Prevent body scrolling when modal is open
+    this.renderer.addClass(document.body, 'modal-open');
   }
 
   closeQuickAddModal(): void {
     this.showQuickAddModal = false;
+    // Re-enable body scrolling when modal is closed
+    this.renderer.removeClass(document.body, 'modal-open');
   }
 
   onPartAdded(formData: any): void {

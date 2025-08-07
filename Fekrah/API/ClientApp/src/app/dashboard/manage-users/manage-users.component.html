@@ -118,7 +118,7 @@
       <div class="search-card premium-search" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(25px); border-radius: 25px; padding: 2.5rem; border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden;">
         
         <!-- Background Pattern -->
-        <div class="search-pattern" style="position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 2px, transparent 2px); background-size: 30px 30px; opacity: 0.3; animation: float 6s ease-in-out infinite;"></div>
+        <div class="search-pattern" style="position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 2px, transparent 2px); background-size: 30px 30px; opacity: 0.3; animation: float 6s ease-in-out infinite; pointer-events: none;"></div>
         
         <form [formGroup]="searchForm" class="elegant-form">
           <div class="row g-4">
@@ -138,7 +138,7 @@
                    <span class="input-group-text premium-input-icon" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1)); border: 2px solid rgba(255, 215, 0, 0.3); color: #ffd700; border-radius: 15px 0 0 15px; backdrop-filter: blur(15px);">
                   <i class="fas fa-search" style="font-size: 1.1rem;"></i>
                 </span>
-                <div class="input-glow" style="position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #45b7d1); border-radius: 15px; opacity: 0; transition: opacity 0.3s ease; z-index: -1;"></div>
+                <div class="input-glow" style="position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #45b7d1); border-radius: 15px; opacity: 0; transition: opacity 0.3s ease; z-index: -1; pointer-events: none;"></div>
               </div>
             </div>
             
@@ -456,13 +456,16 @@
       </div>
     </div>
   </div>
+
+   
 </div>
 
 <!-- ✨ Enhanced User Modal - إضافة/تعديل مستخدم ✨ -->
 <!-- Modal Backdrop with Blur Effect - Outside modal container -->
 <div class="modal-backdrop-custom" *ngIf="isModalOpen" (click)="closeModal()"></div>
 
-<div class="modal fade" id="userModal" tabindex="-1" [class.show]="isModalOpen" [style.display]="isModalOpen ? 'block' : 'none'">
+<!-- User Modal - Only rendered when isModalOpen is true -->
+<div class="modal fade show" *ngIf="isModalOpen" id="userModal" tabindex="-1" style="display: block;">
   <div class="modal-dialog modal-xl">
     <div class="modern-modal-content">
       
@@ -768,8 +771,8 @@
     </div>
   </div>
 </div>
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+<!-- Delete Confirmation Modal - Only rendered when userToDelete exists -->
+<div class="modal fade show" *ngIf="userToDelete" id="deleteConfirmModal" tabindex="-1" style="display: block;">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -906,3 +909,5 @@
     </button>
   </div>
 </div>
+
+

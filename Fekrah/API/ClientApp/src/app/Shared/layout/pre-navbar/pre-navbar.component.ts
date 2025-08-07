@@ -90,7 +90,7 @@ export class PreNavbarComponent implements OnInit, OnDestroy {
     { route: '/dashboard/overview', icon: 'fas fa-th-large', label: 'نظرة شاملة', isOverview: true },
     { route: '/dashboard/super', icon: 'fas fa-tachometer-alt', label: 'لوحة التحكم' },
     { route: '/order-mgr/merchant-orders', icon: 'fas fa-clipboard-list', label: 'الطلبات', hasBadge: true, badgeCount: () => this.pendingOrdersCount },
-    { route: '/dashboard/merchant', icon: 'fas fa-box', label: 'المنتجات' }
+    { route: '/products', icon: 'fas fa-box', label: 'المنتجات' }
   ];
 
   // Driver Nav - Enhanced for شركة الشحن

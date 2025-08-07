@@ -1291,41 +1291,68 @@
   }
 }
 
-/* Modal Backdrop Custom */
+// Global styles to prevent body scrolling when modal is open
+:host ::ng-deep body.modal-open {
+  overflow: hidden;
+  padding-right: 0;
+}
+
+/* Modal Backdrop Custom - Fixed and Centered */
 .modal-backdrop-custom {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
-  z-index: 1040;
+  z-index: 9998;
   animation: fadeIn 0.3s ease-out;
-  cursor: pointer; // Allow closing by clicking backdrop
+  cursor: pointer;
+  overflow: hidden;
 }
 
-/* Modal Container */
+/* Modal Container - Fixed and Centered */
 .modal {
-  z-index: 1050 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
   
   &.show {
-    display: block !important;
+    display: flex !important;
   }
+
 }
 
-/* Modal Dialog */
+/* Modal Dialog - Responsive and Centered */
 .modal-dialog {
+  position: relative !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 900px !important;
+  max-height: calc(100vh - 2rem) !important;
+  transform: none !important;
+  z-index: 10000 !important;
+  
   &.modal-xl {
-    z-index: 1060 !important;
-    position: relative;
-    max-width: 1200px;
-    margin: 1rem auto;
-    pointer-events: auto; // Ensure dialog content is clickable
+    max-width: 1000px !important;
   }
 }
 
-/* Modern Modal Content */
+/* Modern Modal Content - Fixed and Scrollable */
 .modern-modal-content {
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
   backdrop-filter: blur(20px);
@@ -1339,8 +1366,12 @@
   animation: modalSlideIn 0.4s ease-out;
   transform-origin: center center;
   position: relative;
-  z-index: 1070 !important;
+  z-index: 10001 !important;
   pointer-events: auto;
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
   
   // Ensure all interactive elements are clickable
   input, button, select, textarea, a, [role="button"], .btn, .form-control, .enhanced-input {
@@ -1449,9 +1480,33 @@
   }
 }
 
-/* ========== Modal Body Enhanced ========== */
+/* ========== Modal Body Enhanced - Scrollable ========== */
 .modal-body-enhanced {
   padding: 2rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  max-height: calc(100vh - 300px);
+  
+  // Custom scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+  }
 
   /* Enhanced Form Group */
   .enhanced-form-group {

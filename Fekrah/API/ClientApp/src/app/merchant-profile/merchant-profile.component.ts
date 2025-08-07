@@ -105,7 +105,7 @@ export class MerchantProfileComponent implements OnInit, OnDestroy {
 
   navigateToProducts(): void {
     // Navigate to products list page
-    this.router.navigate(['/dashboard/merchant']);
+    this.router.navigate(['/products']);
   }
 
   addAttachment(): void {
