@@ -2,6 +2,7 @@
 using Data.DTOs;
 using Data.Models;
 using Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AccountController : _BaseController<User, UserDTO>
     {
         private readonly IAccountService _accountService;

@@ -1,11 +1,13 @@
 ﻿using Bussiness.Helpers;
 using Bussiness.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class _BaseController<TDbEntity, TDetailsDTO> : ControllerBase where TDbEntity : class
     {
         private readonly _IBusinessService<TDbEntity, TDetailsDTO> _IBusinessServices;

@@ -3,7 +3,6 @@ using Data.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-[AllowAnonymous]
 [Route("api/[controller]")]
 [ApiController]
 public class MerchantController : _BaseController<Merchant, MerchantDTO>
