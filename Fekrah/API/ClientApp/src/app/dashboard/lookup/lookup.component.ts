@@ -35,7 +35,7 @@ export class LookupComponent implements OnInit {
     this.isLoadingStats = true;
     
     // Load brands count
-    this.swaggerClient.apiCarsModelGetAllGet(1, 1, '').subscribe({
+    this.swaggerClient.apiBrandGetAllGet(1, 1, '').subscribe({
       next: (response: DataSourceResultOfBrandDTO) => {
         this.totalBrands = response.count || 0;
         this.checkStatsLoadComplete();
@@ -47,7 +47,7 @@ export class LookupComponent implements OnInit {
     });
 
     // Load model types count by getting brands with their model types
-    this.swaggerClient.apiCarsModelGetAllGet(100, 1, '').subscribe({
+    this.swaggerClient.apiBrandGetAllGet(100, 1, '').subscribe({
       next: (response: DataSourceResultOfBrandDTO) => {
         let modelTypesCount = 0;
         if (response.data) {

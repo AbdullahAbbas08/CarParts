@@ -5072,9 +5072,11 @@ export interface IBrandDTO {
 export class ModelTypeDTO implements IModelTypeDTO {
     id!: number;
     name!: string;
-    brandId!: number;
     year!: number;
-    brandName!: string;
+    brandId!: number;
+    brand!: BrandDTO;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
 
     constructor(data?: IModelTypeDTO) {
         if (data) {
@@ -5083,15 +5085,20 @@ export class ModelTypeDTO implements IModelTypeDTO {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.brand = new BrandDTO();
+        }
     }
 
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
-            this.brandId = _data["brandId"];
             this.year = _data["year"];
-            this.brandName = _data["brandName"];
+            this.brandId = _data["brandId"];
+            this.brand = _data["brand"] ? BrandDTO.fromJS(_data["brand"]) : new BrandDTO();
+            this.createdByUserId = _data["createdByUserId"];
+            this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
         }
     }
 
@@ -5106,9 +5113,11 @@ export class ModelTypeDTO implements IModelTypeDTO {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["brandId"] = this.brandId;
         data["year"] = this.year;
-        data["brandName"] = this.brandName;
+        data["brandId"] = this.brandId;
+        data["brand"] = this.brand ? this.brand.toJSON() : <any>undefined;
+        data["createdByUserId"] = this.createdByUserId;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -5116,9 +5125,11 @@ export class ModelTypeDTO implements IModelTypeDTO {
 export interface IModelTypeDTO {
     id: number;
     name: string;
-    brandId: number;
     year: number;
-    brandName: string;
+    brandId: number;
+    brand: BrandDTO;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
 }
 
 export class DataSourceResultOfCityDTO implements IDataSourceResultOfCityDTO {

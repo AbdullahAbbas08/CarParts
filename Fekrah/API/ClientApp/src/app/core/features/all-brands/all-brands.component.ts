@@ -116,7 +116,7 @@ allCarBrands:any[]= []
     console.log('Selected brand:', brand);
   }
   getAllCarBrands(){
-        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
+        this.swagger.apiBrandGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
         if(res){
            this.allCarBrands = res.data;
            this.filteredBrands = res.data

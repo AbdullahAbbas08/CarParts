@@ -105,7 +105,7 @@ export class BrandComponent implements OnInit, OnDestroy {
   // Data loading methods
   loadBrands(): void {
     this.loading = true;
-    this.swagger.apiCarsModelGetAllGet(this.pageSize, this.currentPage, this.searchTerm)
+    this.swagger.apiBrandGetAllGet(this.pageSize, this.currentPage, this.searchTerm)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: DataSourceResultOfBrandDTO) => {
@@ -123,7 +123,7 @@ export class BrandComponent implements OnInit, OnDestroy {
   }
 
   loadStatistics(): void {
-    this.swagger.apiCarsModelGetAllGet(1, 1, undefined)
+    this.swagger.apiBrandGetAllGet(1, 1, undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: DataSourceResultOfBrandDTO) => {
@@ -175,7 +175,7 @@ export class BrandComponent implements OnInit, OnDestroy {
       const brandData: BrandDTO = new BrandDTO(formValue);
 
       if (this.modalMode === 'create') {
-        this.swagger.apiCarsModelInsertPost(brandData)
+        this.swagger.apiBrandInsertPost(brandData)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (result: any) => {
@@ -188,7 +188,7 @@ export class BrandComponent implements OnInit, OnDestroy {
             }
           });
       } else {
-        this.swagger.apiCarsModelUpdatePost(brandData)
+        this.swagger.apiBrandUpdatePost(brandData)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (result: any) => {
@@ -209,7 +209,7 @@ export class BrandComponent implements OnInit, OnDestroy {
 
   deleteUser(): void {
     if (this.brandToDelete && this.brandToDelete.id) {
-      this.swagger.apiCarsModelDeletePost(this.brandToDelete.id)
+      this.swagger.apiBrandDeletePost(this.brandToDelete.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: any) => {

@@ -57,7 +57,7 @@ export class CarBrandsComponent implements OnInit {
   }
   getAllCarBrands(){
           this.loaderService.show(); 
-        this.swagger.apiCarsModelGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
+        this.swagger.apiBrandGetAllGet(10,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
         if(res){
            this.carBrands = res.data;
            this.loaderService.hide(); 

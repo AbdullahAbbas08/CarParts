@@ -127,7 +127,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   loadBrands(): void {
     this.brandsLoading = true;
     // Using SwaggerClient API: api/CarsModel/GetAll to get brands data
-    this.swagger.apiCarsModelGetAllGet(1000, 1, undefined)
+    this.swagger.apiBrandGetAllGet(1000, 1, undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: DataSourceResultOfBrandDTO) => {
@@ -143,24 +143,12 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
 
   loadModelTypes(): void {
     this.loading = true;
-    // Using SwaggerClient API: api/CarsModel/GetAll to get brands with their model types
+    // Using SwaggerClient API: api/ModelType/GetAll to get model types directly
     this.swagger.apiModelTypeGetAllGet(this.pageSize * 10, 1, this.searchTerm || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result: DataSourceResultOfBrandDTO) => {
-          const allBrands = result.data || [];
-          let allModelTypes: ModelTypeDTO[] = [];
-          
-          // Extract all model types from brands
-          allBrands.forEach(brand => {
-            if (brand.modelTypes && brand.modelTypes.length > 0) {
-              brand.modelTypes.forEach(modelType => {
-                // Ensure brandName is set for display purposes
-                modelType.brandName = brand.name;
-                allModelTypes.push(modelType);
-              });
-            }
-          });
+        next: (result: any) => {
+          const allModelTypes: ModelTypeDTO[] = result.data || [];
           
           // Apply filters
           this.modelTypes = this.applyFilters(allModelTypes);
@@ -189,7 +177,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
       const searchTerm = this.searchTerm.toLowerCase();
       filtered = filtered.filter(mt => 
         mt.name?.toLowerCase().includes(searchTerm) ||
-        mt.brandName?.toLowerCase().includes(searchTerm) ||
+        mt.brand.name?.toLowerCase().includes(searchTerm) ||
         mt.year?.toString().includes(searchTerm)
       );
     }
@@ -204,7 +192,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
 
   loadStatistics(): void {
     // Using SwaggerClient API: api/CarsModel/GetAll to load statistics from all brands
-    this.swagger.apiCarsModelGetAllGet(1000, 1, undefined)
+    this.swagger.apiBrandGetAllGet(1000, 1, undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: DataSourceResultOfBrandDTO) => {
@@ -276,7 +264,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   private createModelType(modelTypeData: any): void {
     // To create a model type, we need to add it to the parent brand's modelTypes array
     // First, get the brand details using SwaggerClient API
-    this.swagger.apiCarsModelGetDetailsGet(modelTypeData.brandId)
+    this.swagger.apiBrandGetDetailsGet(modelTypeData.brandId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (brand: BrandDTO) => {
@@ -290,13 +278,13 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
             name: modelTypeData.name,
             brandId: modelTypeData.brandId,
             year: modelTypeData.year,
-            brandName: brand.name
+            brand: brand
           });
           
           brand.modelTypes.push(newModelType);
           
           // Update the brand with the new model type using SwaggerClient API
-          this.swagger.apiCarsModelUpdatePost(brand)
+          this.swagger.apiBrandUpdatePost(brand)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (updatedBrand: BrandDTO) => {
@@ -321,7 +309,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   private updateModelType(modelTypeData: any): void {
     if (this.selectedModelType) {
       // To update a model type, we need to update it in the parent brand's modelTypes array
-      this.swagger.apiCarsModelGetDetailsGet(modelTypeData.brandId)
+      this.swagger.apiBrandGetDetailsGet(modelTypeData.brandId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (brand: BrandDTO) => {
@@ -334,11 +322,11 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
                 name: modelTypeData.name,
                 brandId: modelTypeData.brandId,
                 year: modelTypeData.year,
-                brandName: brand.name
+                brand: brand
               });
               
               // Update the brand with the modified model type using SwaggerClient API
-              this.swagger.apiCarsModelUpdatePost(brand)
+              this.swagger.apiBrandUpdatePost(brand)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                   next: (updatedBrand: BrandDTO) => {
@@ -377,7 +365,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
       // First, find the brand that contains this model type
       const brandId = this.modelTypeToDelete.brandId;
       
-      this.swagger.apiCarsModelGetDetailsGet(brandId)
+      this.swagger.apiBrandGetDetailsGet(brandId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (brand: BrandDTO) => {
@@ -386,7 +374,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
               brand.modelTypes = brand.modelTypes.filter(mt => mt.id !== this.modelTypeToDelete!.id);
               
               // Update the brand with the removed model type using SwaggerClient API
-              this.swagger.apiCarsModelUpdatePost(brand)
+              this.swagger.apiBrandUpdatePost(brand)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                   next: (updatedBrand: BrandDTO) => {

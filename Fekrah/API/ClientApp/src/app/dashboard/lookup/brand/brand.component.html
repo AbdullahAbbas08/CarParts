@@ -161,54 +161,119 @@
             </button>
           </div>
 
-          <!-- Data Grid -->
-          <div *ngIf="!loading && brands.length > 0" class="brands-grid">
-            <div *ngFor="let brand of brands; trackBy: trackByBrandId; let i = index" 
-                 class="brand-card" 
-                 [class.even]="i % 2 === 0">
-              
-              <!-- Brand Logo -->
-              <div class="brand-logo-section">
-                <div class="logo-container">
-                  <img *ngIf="brand.imageUrl" 
-                       [src]="brand.imageUrl" 
-                       [alt]="brand.name" 
-                       class="brand-logo">
-                  <div *ngIf="!brand.imageUrl" class="no-logo">
-                    <i class="fas fa-image"></i>
+          <!-- Beautiful Data Table -->
+          <div *ngIf="!loading && brands.length > 0" class="beautiful-table-container">
+            
+            <!-- Table Header -->
+            <div class="table-header">
+              <div class="header-cell icon-header">
+                <i class="fas fa-image"></i>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-car"></i>
+                <span>اسم العلامة التجارية</span>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-car-side"></i>
+                <span>عدد الموديلات</span>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-info-circle"></i>
+                <span>تفاصيل إضافية</span>
+              </div>
+              <div class="header-cell actions-header">
+                <i class="fas fa-cogs"></i>
+                <span>الإجراءات</span>
+              </div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="table-body">
+              <div *ngFor="let brand of brands; trackBy: trackByBrandId; let i = index" 
+                   class="table-row" 
+                   [class.even-row]="i % 2 === 0"
+                   [class.odd-row]="i % 2 !== 0">
+                
+                <!-- Brand Logo -->
+                <div class="table-cell icon-cell">
+                  <div class="brand-logo-wrapper">
+                    <div class="logo-container gradient-bg">
+                      <img *ngIf="brand.imageUrl" 
+                           [src]="brand.imageUrl" 
+                           [alt]="brand.name" 
+                           class="brand-logo">
+                      <div *ngIf="!brand.imageUrl" class="no-logo">
+                        <i class="fas fa-car"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Brand Name -->
+                <div class="table-cell name-cell">
+                  <div class="name-content">
+                    <h3 class="brand-name">{{ brand.name }}</h3>
+                  </div>
+                </div>
+
+                <!-- Model Count -->
+                <div class="table-cell models-cell">
+                  <div class="models-display">
+                    <div class="models-number">{{ brand.modelTypes?.length || 0 }}</div>
+                    <div class="models-label">
+                      <span *ngIf="(brand.modelTypes?.length || 0) > 10" class="popular-badge">شائع</span>
+                      <span *ngIf="(brand.modelTypes?.length || 0) <= 10 && (brand.modelTypes?.length || 0) > 5" class="standard-badge">عادي</span>
+                      <span *ngIf="(brand.modelTypes?.length || 0) <= 5" class="limited-badge">محدود</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="table-cell details-cell">
+                  <div class="details-content">
+                    <div class="detail-chip">
+                      <i class="fas fa-check-circle"></i>
+                      <span>نشط</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="table-cell actions-cell">
+                  <div class="action-buttons">
+                    <button type="button" 
+                            class="action-btn edit-btn modern-btn" 
+                            (click)="openEditModal(brand)"
+                            title="تعديل العلامة التجارية">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" 
+                            class="action-btn delete-btn modern-btn" 
+                            (click)="confirmDelete(brand)"
+                            title="حذف العلامة التجارية">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button type="button" 
+                            class="action-btn view-btn modern-btn" 
+                            title="عرض الموديلات">
+                      <i class="fas fa-list"></i>
+                    </button>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Brand Info -->
-              <div class="brand-info">
-                <h3 class="brand-name">{{ brand.name }}</h3>
-                <div class="brand-details">
-                  <div class="detail-item">
-                    <i class="fas fa-code"></i>
-                    <span>الكود: {{ brand.code }}</span>
-                  </div>
-                  <div class="detail-item">
-                    <i class="fas fa-car-side"></i>
-                    <span>الموديلات: {{ brand.modelTypes?.length || 0 }}</span>
-                  </div>
+            <!-- Table Footer with Stats -->
+            <div class="table-footer">
+              <div class="footer-stats">
+                <div class="stat-item">
+                  <i class="fas fa-car"></i>
+                  <span>{{ brands.length }} علامة تجارية معروضة</span>
                 </div>
-              </div>
-
-              <!-- Brand Actions -->
-              <div class="brand-actions">
-                <button type="button" 
-                        class="action-btn edit-btn" 
-                        (click)="openEditModal(brand)"
-                        title="تعديل العلامة التجارية">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button type="button" 
-                        class="action-btn delete-btn" 
-                        (click)="confirmDelete(brand)"
-                        title="حذف العلامة التجارية">
-                  <i class="fas fa-trash"></i>
-                </button>
+                <div class="stat-item">
+                  <i class="fas fa-cogs"></i>
+                  <span>{{ getTotalModels() }} إجمالي الموديلات</span>
+                </div>
               </div>
             </div>
           </div>

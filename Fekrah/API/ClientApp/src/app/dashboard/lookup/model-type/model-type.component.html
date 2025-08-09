@@ -172,49 +172,128 @@
             </button>
           </div>
 
-          <!-- Data Grid -->
-          <div *ngIf="!loading && filteredModelTypes.length > 0" class="models-grid">
-            <div *ngFor="let modelType of filteredModelTypes; trackBy: trackByModelTypeId; let i = index" 
-                 class="model-card" 
-                 [class.even]="i % 2 === 0">
-              
-              <!-- Model Icon -->
-              <div class="model-icon-section">
-                <div class="icon-container">
-                  <i class="fas fa-car-side"></i>
-                  <span class="model-year">{{ modelType.year }}</span>
+          <!-- Beautiful Data Table -->
+          <div *ngIf="!loading && filteredModelTypes.length > 0" class="beautiful-table-container">
+            
+            <!-- Table Header -->
+            <div class="table-header">
+              <div class="header-cell icon-header">
+                <i class="fas fa-image"></i>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-car-side"></i>
+                <span>اسم الموديل</span>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-car"></i>
+                <span>العلامة التجارية</span>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-calendar-alt"></i>
+                <span>سنة الإنتاج</span>
+              </div>
+              <div class="header-cell">
+                <i class="fas fa-info-circle"></i>
+                <span>تفاصيل إضافية</span>
+              </div>
+              <div class="header-cell actions-header">
+                <i class="fas fa-cogs"></i>
+                <span>الإجراءات</span>
+              </div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="table-body">
+              <div *ngFor="let modelType of filteredModelTypes; trackBy: trackByModelTypeId; let i = index" 
+                   class="table-row" 
+                   [class.even-row]="i % 2 === 0"
+                   [class.odd-row]="i % 2 !== 0">
+                
+                <!-- Model Icon -->
+                <div class="table-cell icon-cell">
+                  <div class="model-icon-wrapper">
+                    <div class="icon-container gradient-bg">
+                      <i class="fas fa-car-side"></i>
+                      <div class="year-badge">{{ modelType.year }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Model Name -->
+                <div class="table-cell name-cell">
+                  <div class="name-content">
+                    <h3 class="model-name">{{ modelType.name }}</h3>
+                  </div>
+                </div>
+
+                <!-- Brand Info -->
+                <div class="table-cell brand-cell">
+                  <div class="brand-info">
+                    <div class="brand-badge">
+                      <i class="fas fa-star"></i>
+                      <span>{{ modelType.brand.name || getBrandName(modelType.brandId) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Year Info -->
+                <div class="table-cell year-cell">
+                  <div class="year-display">
+                    <div class="year-number">{{ modelType.year }}</div>
+                    <div class="year-label">
+                      <span *ngIf="modelType.year >= 2020" class="modern-badge">حديث</span>
+                      <span *ngIf="modelType.year < 2020 && modelType.year >= 2010" class="standard-badge">عادي</span>
+                      <span *ngIf="modelType.year < 2010" class="classic-badge">كلاسيك</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="table-cell details-cell">
+                  <div class="details-content">
+                    <div class="detail-chip">
+                      <i class="fas fa-database"></i>
+                      <span>متاح</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="table-cell actions-cell">
+                  <div class="action-buttons">
+                    <button type="button" 
+                            class="action-btn edit-btn modern-btn" 
+                            (click)="openEditModal(modelType)"
+                            title="تعديل الموديل">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" 
+                            class="action-btn delete-btn modern-btn" 
+                            (click)="confirmDelete(modelType)"
+                            title="حذف الموديل">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button type="button" 
+                            class="action-btn view-btn modern-btn" 
+                            title="عرض التفاصيل">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Model Info -->
-              <div class="model-info">
-                <h3 class="model-name">{{ modelType.name }}</h3>
-                <div class="model-details">
-                  <div class="detail-item">
-                    <i class="fas fa-car"></i>
-                    <span>العلامة: {{ modelType.brandName || getBrandName(modelType.brandId) }}</span>
-                  </div>
-                  <div class="detail-item">
-                    <i class="fas fa-calendar"></i>
-                    <span>السنة: {{ modelType.year }}</span>
-                  </div>
+            <!-- Table Footer with Stats -->
+            <div class="table-footer">
+              <div class="footer-stats">
+                <div class="stat-item">
+                  <i class="fas fa-list"></i>
+                  <span>{{ filteredModelTypes.length }} موديل معروض</span>
                 </div>
-              </div>
-
-              <!-- Model Actions -->
-              <div class="model-actions">
-                <button type="button" 
-                        class="action-btn edit-btn" 
-                        (click)="openEditModal(modelType)"
-                        title="تعديل الموديل">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button type="button" 
-                        class="action-btn delete-btn" 
-                        (click)="confirmDelete(modelType)"
-                        title="حذف الموديل">
-                  <i class="fas fa-trash"></i>
-                </button>
+                <div class="stat-item">
+                  <i class="fas fa-database"></i>
+                  <span>{{ totalCount }} إجمالي الموديلات</span>
+                </div>
               </div>
             </div>
           </div>
@@ -387,7 +466,7 @@
         <p>سيتم حذف الموديل:</p>
         <div class="model-info">
           <strong>{{ modelTypeToDelete?.name }}</strong>
-          <span>{{ modelTypeToDelete?.year }} - {{ modelTypeToDelete?.brandName || getBrandName(modelTypeToDelete?.brandId || 0) }}</span>
+          <span>{{ modelTypeToDelete?.year }} - {{ modelTypeToDelete?.brand?.name || getBrandName(modelTypeToDelete?.brandId || 0) }}</span>
         </div>
         <div class="warning-note">
           <i class="fas fa-exclamation-circle"></i>
