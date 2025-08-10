@@ -48,5 +48,28 @@ namespace Bussiness.Services
 
             return base.Insert(entity);
         }
+
+        public bool ActiveOrDeactiveBrand(int brandId, bool action)
+        {
+            try
+            {
+                bool result = false;
+
+                var currentBrand = _UnitOfWork.Repository<Brand>()
+                    .GetById(brandId);
+
+                if (currentBrand is null)
+                    return result;
+
+                currentBrand.IsActive = action;
+                result = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace Bussiness.Interfaces
 {
     public interface IBrandService : _IBusinessService<Brand, BrandDTO>
     {
+        bool ActiveOrDeactiveBrand(int brandId, bool action);
     }
 }
