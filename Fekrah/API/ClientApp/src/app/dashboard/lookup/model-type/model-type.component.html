@@ -348,8 +348,24 @@
 </div>
 
 <!-- Modern Create/Edit Modal -->
-<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
-  <div class="modern-modal" (click)="$event.stopPropagation()">
+<div class="modal-overlay" 
+     *ngIf="isModalOpen" 
+     (click)="closeModal()"
+     [style.position]="'fixed'"
+     [style.top]="'0'"
+     [style.left]="'0'"
+     [style.right]="'0'"
+     [style.bottom]="'0'"
+     [style.z-index]="'999999'"
+     [style.width]="'100vw'"
+     [style.height]="'100vh'"
+     [style.display]="'flex'"
+     [style.align-items]="'center'"
+     [style.justify-content]="'center'">
+  <div class="modern-modal" 
+       (click)="$event.stopPropagation()"
+       [style.margin]="'0'"
+       [style.position]="'relative'">
     <div class="modal-header">
       <div class="modal-title">
         <i class="fas fa-car-side"></i>
@@ -448,8 +464,24 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal-overlay" *ngIf="modelTypeToDelete" (click)="cancelDelete()">
-  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+<div class="modal-overlay" 
+     *ngIf="modelTypeToDelete" 
+     (click)="cancelDelete()"
+     [style.position]="'fixed'"
+     [style.top]="'0'"
+     [style.left]="'0'"
+     [style.right]="'0'"
+     [style.bottom]="'0'"
+     [style.z-index]="'999999'"
+     [style.width]="'100vw'"
+     [style.height]="'100vh'"
+     [style.display]="'flex'"
+     [style.align-items]="'center'"
+     [style.justify-content]="'center'">
+  <div class="confirmation-modal" 
+       (click)="$event.stopPropagation()"
+       [style.margin]="'0'"
+       [style.position]="'relative'">
     <div class="modal-header">
       <div class="modal-title danger">
         <i class="fas fa-exclamation-triangle"></i>

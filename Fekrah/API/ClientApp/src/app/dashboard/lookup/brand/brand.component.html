@@ -378,18 +378,22 @@
           </div>
 
           <div class="form-group full-width">
-            <label for="imageUrl">
+            <label for="logoFile">
               <i class="fas fa-image"></i>
-              رابط الشعار
+              شعار العلامة التجارية
             </label>
-            <input type="url" 
-                   id="imageUrl" 
-                   formControlName="imageUrl" 
+            <input type="file" 
+                   id="logoFile" 
+                   accept="image/*"
                    class="form-input"
-                   placeholder="https://example.com/logo.png">
+                   (change)="onFileSelected($event)">
             <div class="form-hint">
               <i class="fas fa-info-circle"></i>
-              اختياري - يمكنك إضافة رابط شعار العلامة التجارية
+              اختر صورة الشعار الخاص بالعلامة التجارية (PNG, JPG, JPEG)
+            </div>
+            <div *ngIf="selectedFileName" class="file-selected">
+              <i class="fas fa-file-image"></i>
+              {{ selectedFileName }}
             </div>
           </div>
         </div>
@@ -404,9 +408,16 @@
       <button type="button" 
               class="btn-save" 
               (click)="saveBrand()"
-              [disabled]="brandForm.invalid">
-        <i class="fas fa-check"></i>
-        {{ modalMode === 'create' ? 'إضافة العلامة التجارية' : 'حفظ التغييرات' }}
+              [disabled]="brandForm.invalid || loading || uploadLoading">
+        <i class="fas" [ngClass]="{
+          'fa-spinner fa-spin': loading || uploadLoading,
+          'fa-check': !loading && !uploadLoading
+        }"></i>
+        <span *ngIf="uploadLoading">جاري رفع الصورة...</span>
+        <span *ngIf="loading && !uploadLoading">جاري الحفظ...</span>
+        <span *ngIf="!loading && !uploadLoading">
+          {{ modalMode === 'create' ? 'إضافة العلامة التجارية' : 'حفظ التغييرات' }}
+        </span>
       </button>
     </div>
   </div>

@@ -4998,8 +4998,11 @@ export class BrandDTO implements IBrandDTO {
     name!: string;
     code!: string;
     imageUrl!: string;
-    parts!: PartDTO[];
-    modelTypes!: ModelTypeDTO[];
+    partsCount?: number | undefined;
+    modelTypesCount?: number | undefined;
+    isActive?: boolean | undefined;
+    parts?: PartDTO[] | undefined;
+    modelTypes?: ModelTypeDTO[] | undefined;
 
     constructor(data?: IBrandDTO) {
         if (data) {
@@ -5007,10 +5010,6 @@ export class BrandDTO implements IBrandDTO {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
-        }
-        if (!data) {
-            this.parts = [];
-            this.modelTypes = [];
         }
     }
 
@@ -5020,6 +5019,9 @@ export class BrandDTO implements IBrandDTO {
             this.name = _data["name"];
             this.code = _data["code"];
             this.imageUrl = _data["imageUrl"];
+            this.partsCount = _data["partsCount"];
+            this.modelTypesCount = _data["modelTypesCount"];
+            this.isActive = _data["isActive"];
             if (Array.isArray(_data["parts"])) {
                 this.parts = [] as any;
                 for (let item of _data["parts"])
@@ -5046,6 +5048,9 @@ export class BrandDTO implements IBrandDTO {
         data["name"] = this.name;
         data["code"] = this.code;
         data["imageUrl"] = this.imageUrl;
+        data["partsCount"] = this.partsCount;
+        data["modelTypesCount"] = this.modelTypesCount;
+        data["isActive"] = this.isActive;
         if (Array.isArray(this.parts)) {
             data["parts"] = [];
             for (let item of this.parts)
@@ -5065,8 +5070,11 @@ export interface IBrandDTO {
     name: string;
     code: string;
     imageUrl: string;
-    parts: PartDTO[];
-    modelTypes: ModelTypeDTO[];
+    partsCount?: number | undefined;
+    modelTypesCount?: number | undefined;
+    isActive?: boolean | undefined;
+    parts?: PartDTO[] | undefined;
+    modelTypes?: ModelTypeDTO[] | undefined;
 }
 
 export class ModelTypeDTO implements IModelTypeDTO {

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { BrandDTO, DataSourceResultOfBrandDTO, SwaggerClient } from '../../../Shared/Services/Swagger/SwaggerClient.service';
+import { BrandDTO, DataSourceResultOfBrandDTO, SwaggerClient, FileTypeEnum, FileParameter } from '../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-brand',
@@ -26,6 +26,11 @@ export class BrandComponent implements OnInit, OnDestroy {
   
   // Search and filters
   searchTerm = '';
+  
+  // File handling
+  selectedFile: File | null = null;
+  selectedFileName = '';
+  uploadLoading = false;
   
   // Forms
   brandForm: FormGroup;
@@ -145,8 +150,11 @@ export class BrandComponent implements OnInit, OnDestroy {
     });
     this.isModalOpen = true;
     
-    // Prevent body scrolling when modal is open
+    // Prevent body scrolling and ensure modal viewport positioning
     this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
   }
 
   openEditModal(brand: BrandDTO): void {
@@ -155,56 +163,190 @@ export class BrandComponent implements OnInit, OnDestroy {
     this.brandForm.patchValue(brand);
     this.isModalOpen = true;
     
-    // Prevent body scrolling when modal is open
+    // Prevent body scrolling and ensure modal viewport positioning
     this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
   }
 
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedBrand = null;
     this.brandForm.reset();
+    this.resetFileSelection();
     
-    // Restore body scrolling when modal is closed
+    // Restore body scrolling and positioning when modal is closed
     this.renderer.removeClass(document.body, 'modal-open');
+    this.renderer.removeStyle(document.body, 'position');
+    this.renderer.removeStyle(document.body, 'width');
+    this.renderer.removeStyle(document.body, 'overflow');
+  }
+
+  // File handling methods
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('يرجى اختيار ملف صورة صالح');
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('حجم الملف يجب أن يكون أقل من 5 ميجابايت');
+        return;
+      }
+      
+      this.selectedFile = file;
+      this.selectedFileName = file.name;
+    } else {
+      this.selectedFile = null;
+      this.selectedFileName = '';
+    }
+  }
+
+  private uploadFile(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!this.selectedFile) {
+        reject('No file selected');
+        return;
+      }
+
+      const fileParameter: FileParameter = {
+        data: this.selectedFile,
+        fileName: this.selectedFile.name
+      };
+
+      this.uploadLoading = true;
+      
+      this.swagger.apiFileUploadFilePost(fileParameter, FileTypeEnum.Brands)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (uploadResult) => {
+            this.uploadLoading = false;
+            if (uploadResult.successfully_Uploaded && uploadResult.fileName) {
+              resolve(uploadResult.fileName);
+            } else {
+              reject(uploadResult.message || 'فشل في رفع الملف');
+            }
+          },
+          error: (error) => {
+            this.uploadLoading = false;
+            console.error('Error uploading file:', error);
+            reject('حدث خطأ في رفع الملف');
+          }
+        });
+    });
   }
 
   // CRUD operations
   saveBrand(): void {
     if (this.brandForm.valid) {
-      const formValue = this.brandForm.value;
-      const brandData: BrandDTO = new BrandDTO(formValue);
-
+      this.loading = true;
+      
       if (this.modalMode === 'create') {
-        this.swagger.apiBrandInsertPost(brandData)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (result: any) => {
-              this.loadBrands();
-              this.loadStatistics();
-              this.closeModal();
-            },
-            error: (error: any) => {
-              console.error('Error creating brand:', error);
-            }
-          });
+        // For create mode, upload file first if selected, then create brand
+        if (this.selectedFile) {
+          this.uploadFile()
+            .then((uploadedFileName) => {
+              // File uploaded successfully, now create brand with the uploaded file name
+              this.createBrandWithImage(uploadedFileName);
+            })
+            .catch((error) => {
+              this.loading = false;
+              alert(error);
+            });
+        } else {
+          // No file selected, create brand without image
+          this.createBrandWithImage('');
+        }
       } else {
-        this.swagger.apiBrandUpdatePost(brandData)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (result: any) => {
-              this.loadBrands();
-              this.closeModal();
-            },
-            error: (error: any) => {
-              console.error('Error updating brand:', error);
-            }
-          });
+        // For edit mode, handle file upload if new file is selected
+        if (this.selectedFile) {
+          this.uploadFile()
+            .then((uploadedFileName) => {
+              this.updateBrandWithImage(uploadedFileName);
+            })
+            .catch((error) => {
+              this.loading = false;
+              alert(error);
+            });
+        } else {
+          // No new file selected, update brand with existing image URL
+          this.updateBrandWithImage(this.brandForm.get('imageUrl')?.value || '');
+        }
       }
+    }
+  }
+
+  private createBrandWithImage(imageUrl: string): void {
+    const formValue = this.brandForm.value;
+    const brandData: BrandDTO = new BrandDTO({
+      ...formValue,
+      imageUrl: imageUrl
+    });
+
+    this.swagger.apiBrandInsertPost(brandData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: any) => {
+          this.loading = false;
+          this.loadBrands();
+          this.loadStatistics();
+          this.closeModal();
+          this.resetFileSelection();
+        },
+        error: (error: any) => {
+          this.loading = false;
+          console.error('Error creating brand:', error);
+          alert('فشل في إنشاء العلامة التجارية');
+        }
+      });
+  }
+
+  private updateBrandWithImage(imageUrl: string): void {
+    const formValue = this.brandForm.value;
+    const brandData: BrandDTO = new BrandDTO({
+      ...formValue,
+      imageUrl: imageUrl
+    });
+
+    this.swagger.apiBrandUpdatePost(brandData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: any) => {
+          this.loading = false;
+          this.loadBrands();
+          this.closeModal();
+          this.resetFileSelection();
+        },
+        error: (error: any) => {
+          this.loading = false;
+          console.error('Error updating brand:', error);
+          alert('فشل في تحديث العلامة التجارية');
+        }
+      });
+  }
+
+  private resetFileSelection(): void {
+    this.selectedFile = null;
+    this.selectedFileName = '';
+    const fileInput = document.getElementById('logoFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   }
 
   confirmDelete(brand: BrandDTO): void {
     this.brandToDelete = brand;
+    
+    // Prevent body scrolling and ensure modal viewport positioning
+    this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
   }
 
   deleteUser(): void {
@@ -227,6 +369,12 @@ export class BrandComponent implements OnInit, OnDestroy {
 
   cancelDelete(): void {
     this.brandToDelete = null;
+    
+    // Restore body scrolling and positioning when modal is closed
+    this.renderer.removeClass(document.body, 'modal-open');
+    this.renderer.removeStyle(document.body, 'position');
+    this.renderer.removeStyle(document.body, 'width');
+    this.renderer.removeStyle(document.body, 'overflow');
   }
 
   // Utility methods

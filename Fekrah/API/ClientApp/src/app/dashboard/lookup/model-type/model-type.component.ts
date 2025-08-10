@@ -224,8 +224,11 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
     });
     this.isModalOpen = true;
     
-    // Prevent body scrolling when modal is open
+    // Prevent body scrolling and ensure modal viewport positioning
     this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
   }
 
   openEditModal(modelType: ModelTypeDTO): void {
@@ -234,8 +237,11 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
     this.modelTypeForm.patchValue(modelType);
     this.isModalOpen = true;
     
-    // Prevent body scrolling when modal is open
+    // Prevent body scrolling and ensure modal viewport positioning
     this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
   }
 
   closeModal(): void {
@@ -243,8 +249,11 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
     this.selectedModelType = null;
     this.modelTypeForm.reset();
     
-    // Restore body scrolling when modal is closed
+    // Restore body scrolling and positioning when modal is closed
     this.renderer.removeClass(document.body, 'modal-open');
+    this.renderer.removeStyle(document.body, 'position');
+    this.renderer.removeStyle(document.body, 'width');
+    this.renderer.removeStyle(document.body, 'overflow');
   }
 
   // CRUD operations using SwaggerClient API
@@ -355,6 +364,12 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
 
   confirmDelete(modelType: ModelTypeDTO): void {
     this.modelTypeToDelete = modelType;
+    
+    // Prevent body scrolling and ensure modal viewport positioning
+    this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
   }
 
   deleteModelType(): void {
@@ -406,6 +421,12 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
 
   cancelDelete(): void {
     this.modelTypeToDelete = null;
+    
+    // Restore body scrolling and positioning when modal is closed
+    this.renderer.removeClass(document.body, 'modal-open');
+    this.renderer.removeStyle(document.body, 'position');
+    this.renderer.removeStyle(document.body, 'width');
+    this.renderer.removeStyle(document.body, 'overflow');
   }
 
   // Utility methods
