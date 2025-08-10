@@ -665,10 +665,31 @@
                       color: #7f8c8d;
                       border: 1px solid #e9ecef;
                       width: fit-content;
+                      transition: all 0.3s ease;
 
                       i {
                         color: #3498db;
                         font-size: 0.7rem;
+                      }
+
+                      &.active-chip {
+                        background: rgba(39, 174, 96, 0.1);
+                        color: #27ae60;
+                        border-color: rgba(39, 174, 96, 0.3);
+
+                        i {
+                          color: #27ae60;
+                        }
+                      }
+
+                      &.inactive-chip {
+                        background: rgba(231, 76, 60, 0.1);
+                        color: #e74c3c;
+                        border-color: rgba(231, 76, 60, 0.3);
+
+                        i {
+                          color: #e74c3c;
+                        }
                       }
                     }
                   }
@@ -724,6 +745,40 @@
                         &:hover {
                           transform: translateY(-3px);
                           box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+                        }
+                      }
+
+                      &.activate-btn {
+                        background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+                        color: white !important;
+                        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3) !important;
+                        border: 2px solid #27ae60 !important;
+
+                        &:hover {
+                          transform: translateY(-3px) !important;
+                          box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4) !important;
+                          background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+                        }
+                        
+                        i {
+                          color: white !important;
+                        }
+                      }
+
+                      &.deactivate-btn {
+                        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+                        color: white !important;
+                        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3) !important;
+                        border: 2px solid #f39c12 !important;
+
+                        &:hover {
+                          transform: translateY(-3px) !important;
+                          box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4) !important;
+                          background: linear-gradient(135deg, #e67e22, #f39c12) !important;
+                        }
+                        
+                        i {
+                          color: white !important;
                         }
                       }
                     }
@@ -1412,4 +1467,70 @@
   
   /* Ensure it's always at document level */
   inset: 0 !important;
+}
+
+/* Specific styles for activate/deactivate buttons - HIGH SPECIFICITY */
+.brand-dashboard .data-card .card-body .beautiful-table-container .table-body .table-row .actions-cell .action-buttons {
+  
+  .action-btn.activate-btn.modern-btn {
+    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+    color: white !important;
+    border: 2px solid #27ae60 !important;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3) !important;
+    
+    &:hover {
+      background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+      transform: translateY(-3px) !important;
+      box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4) !important;
+    }
+    
+    i {
+      color: white !important;
+      font-size: 1rem !important;
+    }
+  }
+  
+  .action-btn.deactivate-btn.modern-btn {
+    background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+    color: white !important;
+    border: 2px solid #f39c12 !important;
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3) !important;
+    
+    &:hover {
+      background: linear-gradient(135deg, #e67e22, #f39c12) !important;
+      transform: translateY(-3px) !important;
+      box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4) !important;
+    }
+    
+    i {
+      color: white !important;
+      font-size: 1rem !important;
+    }
+  }
+}
+
+/* Status chip styles - HIGH SPECIFICITY */
+.brand-dashboard .data-card .card-body .beautiful-table-container .table-body .table-row .details-cell .details-content {
+  
+  .detail-chip.active-chip {
+    background: rgba(39, 174, 96, 0.15) !important;
+    color: #27ae60 !important;
+    border: 2px solid rgba(39, 174, 96, 0.4) !important;
+    font-weight: 600 !important;
+    
+    i {
+      color: #27ae60 !important;
+    }
+  }
+  
+  .detail-chip.inactive-chip {
+    background: rgba(231, 76, 60, 0.15) !important;
+    color: #e74c3c !important;
+    border: 2px solid rgba(231, 76, 60, 0.4) !important;
+    font-weight: 600 !important;
+    
+    i {
+      color: #e74c3c !important;
+    }
+  }
 }

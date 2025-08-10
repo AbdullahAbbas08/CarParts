@@ -114,7 +114,13 @@ export class BrandComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: DataSourceResultOfBrandDTO) => {
-          this.brands = result.data || [];
+          this.brands = (result.data || []).map(brand => {
+            const mappedBrand = new BrandDTO(brand);
+            if (mappedBrand.imageUrl) {
+              mappedBrand.imageUrl = `./assets/Brands/${mappedBrand.imageUrl}`;
+            }
+            return mappedBrand;
+          });
           this.filteredBrands = [...this.brands];
           this.totalCount = result.count || 0;
           this.totalPages = Math.ceil(this.totalCount / this.pageSize);
@@ -278,6 +284,41 @@ export class BrandComponent implements OnInit, OnDestroy {
           this.updateBrandWithImage(this.brandForm.get('imageUrl')?.value || '');
         }
       }
+    }
+  }
+
+  toggleBrandStatus(brand: BrandDTO): void {
+    if (!brand || !brand.id) return;
+    
+    const newStatus = !brand.isActive;
+    const actionText = newStatus ? 'تفعيل' : 'إلغاء تفعيل';
+    
+    if (confirm(`هل أنت متأكد من ${actionText} العلامة التجارية "${brand.name}"؟`)) {
+      this.loading = true;
+      
+      // Create updated brand object
+      const updatedBrand = new BrandDTO({
+        ...brand,
+        isActive: newStatus,
+        // Remove the mapped image path to send only filename to API
+        imageUrl: brand.imageUrl?.replace('./assets/Brands/', '') || ''
+      });
+      
+      this.swagger.apiBrandUpdatePost(updatedBrand)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: any) => {
+            this.loading = false;
+            // Update local brand status
+            brand.isActive = newStatus;
+            console.log(`Brand "${brand.name}" ${newStatus ? 'activated' : 'deactivated'} successfully`);
+          },
+          error: (error: any) => {
+            this.loading = false;
+            console.error('Error updating brand status:', error);
+            alert(`فشل في ${actionText} العلامة التجارية`);
+          }
+        });
     }
   }
 
@@ -445,5 +486,15 @@ export class BrandComponent implements OnInit, OnDestroy {
   // Helper method for template
   getTotalModels(): number {
     return this.brands.reduce((total, brand) => total + (brand.modelTypes?.length || 0), 0);
+  }
+
+  // Image loading handlers for debugging
+  onImageError(event: any, brand: BrandDTO): void {
+    console.error('Failed to load image for brand:', brand.name, 'URL:', brand.imageUrl);
+    event.target.style.display = 'none';
+  }
+
+  onImageLoad(event: any, brand: BrandDTO): void {
+    console.log('Successfully loaded image for brand:', brand.name, 'URL:', brand.imageUrl);
   }
 }
