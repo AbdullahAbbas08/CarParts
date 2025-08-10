@@ -270,18 +270,18 @@
                               cursor: pointer !important;
                               transition: all 0.3s ease !important;
                             "
-                            [style.background]="!brand.isActive ? 
+                            [style.background]="brand.isActive ? 
                               'linear-gradient(135deg, #27ae60, #2ecc71) !important' :
                               'linear-gradient(135deg, #f39c12, #e67e22) !important'"
-                            [style.border-color]="!brand.isActive ? 
+                            [style.border-color]="brand.isActive ? 
                               '#27ae60 !important' :
                               '#f39c12 !important'"
                             (click)="toggleBrandStatus(brand)"
-                            [title]="brand.isActive ? 'إلغاء تفعيل العلامة التجارية' : 'تفعيل العلامة التجارية'">
+                            [title]="!brand.isActive ? 'إلغاء تفعيل العلامة التجارية' : 'تفعيل العلامة التجارية'">
                       <i class="fas" 
                          [ngClass]="{
-                           'fa-check-circle': !brand.isActive,
-                           'fa-times-circle': brand.isActive
+                           'fa-check-circle': brand.isActive,
+                           'fa-times-circle': !brand.isActive
                          }"
                          style="color: white !important; font-size: 1rem !important;"></i>
                     </button>
