@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -7,7 +7,8 @@ import { BrandDTO, DataSourceResultOfBrandDTO, SwaggerClient, FileTypeEnum, File
 @Component({
   selector: 'app-brand',
   templateUrl: './brand.component.html',
-  styleUrls: ['./brand.component.scss']
+  styleUrls: ['./brand.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class BrandComponent implements OnInit, OnDestroy {
   
@@ -41,6 +42,8 @@ export class BrandComponent implements OnInit, OnDestroy {
   modalMode: 'create' | 'edit' = 'create';
   selectedBrand: BrandDTO | null = null;
   brandToDelete: BrandDTO | null = null;
+  brandToToggle: BrandDTO | null = null;
+  toggleAction: 'activate' | 'deactivate' = 'activate';
   
   // Statistics
   statistics = {
@@ -290,36 +293,62 @@ export class BrandComponent implements OnInit, OnDestroy {
   toggleBrandStatus(brand: BrandDTO): void {
     if (!brand || !brand.id) return;
     
-    const newStatus = !brand.isActive;
+    this.brandToToggle = brand;
+    this.toggleAction = brand.isActive ? 'deactivate' : 'activate';
+    
+    // Force modal to display at viewport level by manipulating body
+    this.renderer.addClass(document.body, 'modal-open');
+    this.renderer.setStyle(document.body, 'position', 'fixed');
+    this.renderer.setStyle(document.body, 'width', '100%');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
+    
+    // Scroll to top to ensure modal appears centered
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+  }
+
+  confirmToggleStatus(): void {
+    if (!this.brandToToggle) return;
+    
+    const newStatus = !this.brandToToggle.isActive;
     const actionText = newStatus ? 'تفعيل' : 'إلغاء تفعيل';
     
-    if (confirm(`هل أنت متأكد من ${actionText} العلامة التجارية "${brand.name}"؟`)) {
-      this.loading = true;
-      
-      // Create updated brand object
-      const updatedBrand = new BrandDTO({
-        ...brand,
-        isActive: newStatus,
-        // Remove the mapped image path to send only filename to API
-        imageUrl: brand.imageUrl?.replace('./assets/Brands/', '') || ''
-      });
-      
-      this.swagger.apiBrandUpdatePost(updatedBrand)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result: any) => {
-            this.loading = false;
-            // Update local brand status
-            brand.isActive = newStatus;
-            console.log(`Brand "${brand.name}" ${newStatus ? 'activated' : 'deactivated'} successfully`);
-          },
-          error: (error: any) => {
-            this.loading = false;
-            console.error('Error updating brand status:', error);
+    this.loading = true;
+    
+    // Use the dedicated API for activate/deactivate
+    this.swagger.apiBrandActiveOrDeactiveBrandPost(this.brandToToggle.id, newStatus)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: boolean) => {
+          this.loading = false;
+          if (result) {
+            // Update local brand status on success
+            this.brandToToggle!.isActive = newStatus;
+            console.log(`Brand "${this.brandToToggle!.name}" ${newStatus ? 'activated' : 'deactivated'} successfully`);
+          } else {
+            console.error('API returned false for brand status update');
             alert(`فشل في ${actionText} العلامة التجارية`);
           }
-        });
-    }
+          this.cancelToggle();
+        },
+        error: (error: any) => {
+          this.loading = false;
+          console.error('Error updating brand status:', error);
+          alert(`فشل في ${actionText} العلامة التجارية`);
+          this.cancelToggle();
+        }
+      });
+  }
+
+  cancelToggle(): void {
+    this.brandToToggle = null;
+    this.toggleAction = 'activate';
+    
+    // Restore body scrolling and positioning when modal is closed
+    this.renderer.removeClass(document.body, 'modal-open');
+    this.renderer.removeStyle(document.body, 'position');
+    this.renderer.removeStyle(document.body, 'width');
+    this.renderer.removeStyle(document.body, 'overflow');
   }
 
   private createBrandWithImage(imageUrl: string): void {

@@ -107,11 +107,13 @@
         </div>
         <div class="action-right">
           <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" 
-                   [formControl]="searchTermControl" 
-                   placeholder="البحث في العلامات التجارية..." 
-                   class="search-input">
+            <div class="search-input-container">
+              <input type="text" 
+                     [formControl]="searchTermControl" 
+                     placeholder="البحث في العلامات التجارية..." 
+                     class="search-input">
+              <i class="fas fa-search search-icon"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -268,12 +270,12 @@
                               cursor: pointer !important;
                               transition: all 0.3s ease !important;
                             "
-                            [style.background]="brand.isActive ? 
-                              'linear-gradient(135deg, #f39c12, #e67e22) !important' :
-                              'linear-gradient(135deg, #27ae60, #2ecc71) !important'"
-                            [style.border-color]="brand.isActive ? 
-                              '#f39c12 !important' :
-                              '#27ae60 !important'"
+                            [style.background]="!brand.isActive ? 
+                              'linear-gradient(135deg, #27ae60, #2ecc71) !important' :
+                              'linear-gradient(135deg, #f39c12, #e67e22) !important'"
+                            [style.border-color]="!brand.isActive ? 
+                              '#27ae60 !important' :
+                              '#f39c12 !important'"
                             (click)="toggleBrandStatus(brand)"
                             [title]="brand.isActive ? 'إلغاء تفعيل العلامة التجارية' : 'تفعيل العلامة التجارية'">
                       <i class="fas" 
@@ -501,6 +503,78 @@
       <button type="button" class="btn-delete" (click)="deleteUser()">
         <i class="fas fa-trash"></i>
         تأكيد الحذف
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle Status Confirmation Modal -->
+<div class="modal-overlay" 
+     *ngIf="brandToToggle" 
+     (click)="cancelToggle()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" [ngClass]="{
+        'activate': toggleAction === 'activate',
+        'deactivate': toggleAction === 'deactivate'
+      }">
+        <i class="fas" [ngClass]="{
+          'fa-check-circle': toggleAction === 'activate',
+          'fa-times-circle': toggleAction === 'deactivate'
+        }"></i>
+        <h3>{{ toggleAction === 'activate' ? 'تأكيد تفعيل العلامة التجارية' : 'تأكيد إلغاء تفعيل العلامة التجارية' }}</h3>
+      </div>
+    </div>
+    
+    <div class="modal-body">
+      <div class="confirmation-content">
+        <div class="toggle-icon" [ngClass]="{
+          'activate-icon': toggleAction === 'activate',
+          'deactivate-icon': toggleAction === 'deactivate'
+        }">
+          <i class="fas" [ngClass]="{
+            'fa-check-circle': toggleAction === 'activate',
+            'fa-times-circle': toggleAction === 'deactivate'
+          }"></i>
+        </div>
+        <h4>{{ toggleAction === 'activate' ? 'هل أنت متأكد من التفعيل؟' : 'هل أنت متأكد من إلغاء التفعيل؟' }}</h4>
+        <p>{{ toggleAction === 'activate' ? 'سيتم تفعيل العلامة التجارية:' : 'سيتم إلغاء تفعيل العلامة التجارية:' }}</p>
+        <div class="brand-info">
+          <strong>{{ brandToToggle?.name }}</strong>
+          <span>{{ brandToToggle?.code }}</span>
+        </div>
+        <div class="info-note" [ngClass]="{
+          'activate-note': toggleAction === 'activate',
+          'deactivate-note': toggleAction === 'deactivate'
+        }">
+          <i class="fas fa-info-circle"></i>
+          <span *ngIf="toggleAction === 'activate'">ستصبح العلامة التجارية مرئية للمستخدمين</span>
+          <span *ngIf="toggleAction === 'deactivate'">ستصبح العلامة التجارية غير مرئية للمستخدمين</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="cancelToggle()">
+        <i class="fas fa-arrow-right"></i>
+        العودة
+      </button>
+      <button type="button" 
+              class="btn-toggle"
+              [ngClass]="{
+                'btn-activate': toggleAction === 'activate',
+                'btn-deactivate': toggleAction === 'deactivate'
+              }"
+              (click)="confirmToggleStatus()"
+              [disabled]="loading">
+        <i class="fas" [ngClass]="{
+          'fa-spinner fa-spin': loading,
+          'fa-check': !loading && toggleAction === 'activate',
+          'fa-times': !loading && toggleAction === 'deactivate'
+        }"></i>
+        <span *ngIf="!loading && toggleAction === 'activate'">تأكيد التفعيل</span>
+        <span *ngIf="!loading && toggleAction === 'deactivate'">تأكيد إلغاء التفعيل</span>
+        <span *ngIf="loading">جاري المعالجة...</span>
       </button>
     </div>
   </div>

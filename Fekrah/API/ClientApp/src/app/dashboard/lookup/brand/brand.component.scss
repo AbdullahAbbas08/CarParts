@@ -5,6 +5,15 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   direction: rtl;
   font-family: 'Cairo', sans-serif;
+  
+  /* CRITICAL: Prevent modal positioning issues */
+  contain: none !important;
+  transform: none !important;
+  z-index: auto !important;
+  overflow: visible !important;
+  
+  /* Ensure modals can break out */
+  isolation: auto !important;
 
   /* Background Enhancement */
   .dashboard-background {
@@ -262,35 +271,56 @@
       .action-right {
         .search-box {
           position: relative;
+          width: 100%;
+          max-width: 500px; // Increased from 300px to 500px
           
-          i {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.6);
-            z-index: 1;
-          }
-
-          .search-input {
-            padding: 1rem 3rem 1rem 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            min-width: 300px;
-            transition: all 0.3s ease;
-
-            &::placeholder {
+          .search-input-container {
+            position: relative;
+            width: 100%;
+            
+            .search-icon {
+              position: absolute;
+              right: 1rem;
+              top: 50%;
+              transform: translateY(-50%);
               color: rgba(255, 255, 255, 0.6);
+              z-index: 2;
+              pointer-events: none;
+              transition: all 0.3s ease;
             }
 
-            &:focus {
-              outline: none;
-              border-color: #3498db;
-              box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-              background: rgba(255, 255, 255, 0.15);
+            .search-input {
+              width: 100%;
+              padding: 1rem 3rem 1rem 1rem;
+              border: 2px solid rgba(255, 255, 255, 0.2);
+              border-radius: 12px;
+              background: rgba(255, 255, 255, 0.1);
+              color: white;
+              font-size: 1rem;
+              transition: all 0.3s ease;
+              backdrop-filter: blur(10px);
+
+              &::placeholder {
+                color: rgba(255, 255, 255, 0.6);
+              }
+
+              &:focus {
+                outline: none;
+                border-color: #3498db;
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+              }
+              
+              &:focus + .search-icon {
+                color: #3498db;
+                transform: translateY(-50%) scale(1.1);
+              }
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.15);
+                border-color: rgba(255, 255, 255, 0.3);
+              }
             }
           }
         }
@@ -990,66 +1020,88 @@
   
 
 
-/* Modern Modal Styles */
+/* GLOBAL OVERRIDE: Force modal to document root level - NO ENCAPSULATION */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  backdrop-filter: blur(10px);
-  animation: fadeIn 0.3s ease;
-  overflow-y: auto;
-  padding: 2rem 1rem;
-  box-sizing: border-box;
+  /* CRITICAL: Force modal to document root level */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important; /* Maximum possible z-index */
   
-  /* Force viewport positioning */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
+  /* Background and visual styling */
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+  animation: fadeIn 0.3s ease !important;
+  
+  /* PERFECT CENTERING - Break out of component constraints */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: row !important;
+  
+  /* Enable scrolling when content overflows */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  
+  /* Ensure proper spacing */
+  padding: 2rem 1rem !important;
+  box-sizing: border-box !important;
+  
+  /* Reset any inherited transforms or positioning */
+  transform: none !important;
+  -webkit-transform: none !important;
   margin: 0 !important;
-  inset: 0 !important;
   
-  /* Override any parent positioning contexts */
+  /* Break out of any parent stacking contexts */
   contain: none !important;
   isolation: isolate !important;
   
-  /* Ensure modal stays centered even with tall content */
-  &::before {
-    content: '';
-    flex: 1;
-    min-height: 2rem;
-  }
-  
-  &::after {
-    content: '';
-    flex: 1;
-    min-height: 2rem;
-  }
+  /* Ensure it covers the entire viewport */
+  inset: 0 !important;
 
   .modern-modal, .confirmation-modal {
-    background: white;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 600px;
-    max-height: calc(100vh - 4rem);
-    overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-    animation: slideUp 0.4s ease;
-    margin: 0;
-    position: relative;
-    flex-shrink: 0;
+    /* MODAL CONTENT CONTAINER */
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25) !important;
+    animation: slideUp 0.4s ease !important;
     
-    /* Ensure modal doesn't get compressed */
-    min-height: auto;
-    display: flex;
-    flex-direction: column;
+    /* Responsive sizing */
+    width: 90% !important;
+    max-width: 600px !important;
+    min-width: 400px !important;
+    max-height: calc(100vh - 4rem) !important;
+    
+    /* Flexible height based on content */
+    height: auto !important;
+    min-height: auto !important;
+    
+    /* Ensure modal is properly positioned */
+    position: relative !important;
+    margin: 0 !important;
+    
+    /* Prevent modal from being compressed */
+    flex-shrink: 0 !important;
+    
+    /* Modal structure */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    
+    /* Specific styling for confirmation modal */
+    &.confirmation-modal {
+      max-width: 500px !important;
+      min-width: 400px !important;
+      
+      @media (max-width: 768px) {
+        min-width: 300px !important;
+        width: 95% !important;
+      }
+    }
 
     .modal-header {
       background: linear-gradient(135deg, #3498db, #2980b9);
@@ -1061,6 +1113,14 @@
 
       &.danger {
         background: linear-gradient(135deg, #e74c3c, #c0392b);
+      }
+
+      &.activate {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+      }
+
+      &.deactivate {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
       }
 
       .modal-title {
@@ -1100,10 +1160,13 @@
     }
 
     .modal-body {
-      padding: 2rem;
-      flex: 1;
-      overflow-y: auto;
-      max-height: calc(100vh - 200px);
+      padding: 2rem !important;
+      flex: 1 !important;
+      overflow-y: auto !important;
+      max-height: calc(100vh - 200px) !important;
+      
+      /* Ensure proper scrolling within modal */
+      -webkit-overflow-scrolling: touch !important;
 
       .form-grid {
         display: grid;
@@ -1236,6 +1299,26 @@
           font-size: 2rem;
         }
 
+        .toggle-icon {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 2rem auto;
+          color: white;
+          font-size: 2rem;
+
+          &.activate-icon {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+          }
+
+          &.deactivate-icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+          }
+        }
+
         h4 {
           color: #2c3e50;
           margin-bottom: 1rem;
@@ -1280,6 +1363,27 @@
             font-size: 0.8rem;
           }
         }
+
+        .info-note {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          font-style: italic;
+
+          &.activate-note {
+            color: #27ae60;
+          }
+
+          &.deactivate-note {
+            color: #f39c12;
+          }
+
+          i {
+            font-size: 0.8rem;
+          }
+        }
       }
     }
 
@@ -1292,7 +1396,7 @@
       gap: 1rem;
       flex-shrink: 0;
 
-      .btn-cancel, .btn-save, .btn-delete {
+      .btn-cancel, .btn-save, .btn-delete, .btn-toggle {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -1336,6 +1440,33 @@
         &:hover {
           background: linear-gradient(135deg, #c0392b, #a93226);
           transform: translateY(-2px);
+        }
+      }
+
+      .btn-toggle {
+        &.btn-activate {
+          background: linear-gradient(135deg, #27ae60, #2ecc71);
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #229954, #27ae60);
+            transform: translateY(-2px);
+          }
+        }
+
+        &.btn-deactivate {
+          background: linear-gradient(135deg, #f39c12, #e67e22);
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #e67e22, #d68910);
+            transform: translateY(-2px);
+          }
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
       }
     }
@@ -1437,36 +1568,153 @@
   }
 }
 
-/* Global modal styles to prevent body scrolling when modal is open */
-:host ::ng-deep body.modal-open {
-  overflow: hidden;
-  height: 100%;
+/* GLOBAL MODAL OVERRIDE - Break Angular ViewEncapsulation */
+:host {
+  .modal-overlay {
+    /* Force positioning to document root */
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    
+    /* Perfect centering */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Background */
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    
+    /* Override any parent constraints */
+    transform: none !important;
+    contain: none !important;
+    isolation: isolate !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    
+    /* Modal content */
+    .confirmation-modal,
+    .modern-modal {
+      position: relative !important;
+      margin: 0 !important;
+      transform: none !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+    }
+  }
 }
 
-/* Additional modal centering improvements - FORCE VIEWPORT POSITIONING */
+/* CRITICAL: Global modal override to break Angular encapsulation */
+:host ::ng-deep .modal-overlay,
 .modal-overlay {
-  /* Force break out of any parent constraints */
+  /* Force modal to be at document level, not component level */
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  z-index: 999999 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   width: 100vw !important;
   height: 100vh !important;
+  z-index: 2147483647 !important; /* Maximum z-index */
+  
+  /* Break out of component container */
   margin: 0 !important;
   padding: 0 !important;
   transform: none !important;
+  clip: unset !important;
+  overflow: visible !important;
   
-  /* Reset any parent transforms or positioning */
+  /* Perfect viewport centering */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  /* Background */
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+  
+  /* Modal content positioning */
+  .modern-modal,
+  .confirmation-modal {
+    position: relative !important;
+    margin: auto !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+  }
+}
+
+/* ULTIMATE OVERRIDE: Global document-level modal positioning */
+body .modal-overlay,
+html .modal-overlay,
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+  
+  /* Force break out of any parent context */
+  transform: none !important;
   contain: none !important;
-  isolation: isolate !important;
-  
-  /* Ensure it's always at document level */
-  inset: 0 !important;
+  clip: unset !important;
+  overflow: visible !important;
+}
+
+/* BODY SCROLL MANAGEMENT - Prevent background scroll when modal open */
+:host ::ng-deep {
+  &.modal-open,
+  &.modal-open body {
+    overflow: hidden !important;
+    height: 100% !important;
+    position: fixed !important;
+    width: 100% !important;
+  }
+}
+
+/* RESPONSIVE MODAL ADJUSTMENTS */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 1rem 0.5rem !important;
+    
+    .modern-modal, 
+    .confirmation-modal {
+      width: 95% !important;
+      max-width: 500px !important;
+      min-width: 280px !important;
+      margin: 0 !important;
+      max-height: calc(100vh - 2rem) !important;
+      
+      .modal-body {
+        max-height: calc(70vh - 8rem) !important;
+        padding: 1.5rem !important;
+      }
+      
+      .modal-header {
+        padding: 1.5rem !important;
+        
+        .modal-title h3 {
+          font-size: 1.1rem !important;
+        }
+      }
+    }
+  }
 }
 
 /* Specific styles for activate/deactivate buttons - HIGH SPECIFICITY */
@@ -1531,6 +1779,49 @@
     
     i {
       color: #e74c3c !important;
+    }
+  }
+}
+
+/* Responsive Design for Search Box */
+@media (max-width: 768px) {
+  .brand-dashboard .dashboard-content .container .action-bar .action-right .search-box {
+    max-width: 100% !important;
+    width: 100% !important;
+    
+    .search-input-container .search-input {
+      font-size: 0.9rem !important;
+      padding: 0.8rem 2.5rem 0.8rem 0.8rem !important;
+    }
+    
+    .search-input-container .search-icon {
+      right: 0.8rem !important;
+      font-size: 0.9rem !important;
+    }
+  }
+  
+  .brand-dashboard .dashboard-content .container .action-bar {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    
+    .action-left,
+    .action-right {
+      width: 100% !important;
+      justify-content: center !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-dashboard .dashboard-content .container .action-bar .action-right .search-box {
+    .search-input-container .search-input {
+      font-size: 0.8rem !important;
+      padding: 0.7rem 2.2rem 0.7rem 0.7rem !important;
+    }
+    
+    .search-input-container .search-icon {
+      right: 0.7rem !important;
+      font-size: 0.8rem !important;
     }
   }
 }
