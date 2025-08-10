@@ -4,6 +4,7 @@ using Bussiness.Interfaces;
 using Data;
 using Data.DTOs;
 using Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace Bussiness.Services
             
             var allCarsModel = _UnitOfWork.Repository<Brand>()
                 .GetAll()
+                .Include(b => b.ModelTypes)
                 .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm))
                 .OrderByDescending(c => c.Id)
                 .ToList();
