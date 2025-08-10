@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Bussiness.Interfaces
 {
-    public interface ICarsModelService : _IBusinessService<Brand, BrandDTO>
+    public interface IBrandService : _IBusinessService<Brand, BrandDTO>
     {
+        bool ActiveOrDeactiveBrand(int brandId, bool action);
     }
 }

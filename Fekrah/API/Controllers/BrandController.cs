@@ -12,9 +12,27 @@ namespace API.Controllers
     [ApiController]
     public class BrandController : _BaseController<Brand, BrandDTO>
     {
-        public BrandController(ICarsModelService carsModelService) : base(carsModelService)
+        private readonly IBrandService _brandService;
+
+        public BrandController(IBrandService brandService) : base(brandService)
         {
-            
+            _brandService = brandService;
         }
+
+
+        /// <summary>
+        /// Activates or deactivates a brand.
+        /// </summary>
+        /// <param name="brandId">The unique identifier of the brand to update.</param>
+        /// <param name="action">
+        /// Determines the action to perform:  
+        /// - true → Activate the brand  
+        /// - false → Deactivate the brand
+        /// </param>
+        /// <returns>
+        /// true if the operation succeeded, otherwise false.
+        /// </returns>
+        [HttpPost("ActiveOrDeactiveBrand")]
+        public bool ActiveOrDeactiveBrand(int brandId, bool action) => _brandService.ActiveOrDeactiveBrand(brandId, action);
     }
 }
