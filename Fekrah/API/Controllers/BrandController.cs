@@ -12,7 +12,7 @@ namespace API.Controllers
     [ApiController]
     public class BrandController : _BaseController<Brand, BrandDTO>
     {
-        public BrandController(ICarsModelService carsModelService) : base(carsModelService)
+        public BrandController(IBrandService brandService) : base(brandService)
         {
             
         }
