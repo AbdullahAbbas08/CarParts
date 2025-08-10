@@ -25,12 +25,8 @@
         public User? UpdatedByUser { get; set; }
 
         [NotMapped]
-        public int PartsCount => Parts?.Count ?? 0;
-
-        [NotMapped]
         public int ModelTypesCount => ModelTypes?.Count ?? 0;
 
-        public ICollection<Part> Parts { get; set; }
         public ICollection<ModelType> ModelTypes { get; set; }
     }
 }

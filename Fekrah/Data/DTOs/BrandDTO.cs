@@ -8,7 +8,6 @@
         public string Code { get; set; }
 
         public string ImageUrl { get; set; }
-        public int? PartsCount { get; set; }
         public int? ModelTypesCount { get; set; }
         public bool? IsActive { get; set; }
 
