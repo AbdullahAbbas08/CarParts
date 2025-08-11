@@ -35,62 +35,55 @@
   margin: 0 auto;
 }
 
-/* Breadcrumb */
-.breadcrumb-nav {
-  margin-bottom: 2rem;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.breadcrumb-item {
-  a {
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      color: #ffd700 !important;
-      transform: translateX(5px);
+    /* Breadcrumb */
+    .breadcrumb-nav {
+      margin-bottom: 2rem;
+      
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: rgba(255, 255, 255, 0.8);
+        
+        .breadcrumb-item {
+          a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.1);
+              color: #ffd700;
+              transform: translateX(5px);
+            }
+          }
+          
+          &.active {
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+          }
+        }
+        
+        .breadcrumb-separator {
+          color: rgba(255, 255, 255, 0.6);
+          
+          i {
+            font-size: 0.8rem;
+          }
+        }
+      }
     }
-    
-    i {
-      font-size: 1rem;
-    }
-  }
-  
-  &.active {
-    color: white;
-    font-weight: 600;
-    
-    i {
-      margin-left: 0.5rem;
-      font-size: 1rem;
-    }
-  }
-}
-
-.breadcrumb-separator {
-  color: rgba(255, 255, 255, 0.6);
-  
-  i {
-    font-size: 0.8rem;
-  }
-}
 
 /* Page Title */
 .page-title {

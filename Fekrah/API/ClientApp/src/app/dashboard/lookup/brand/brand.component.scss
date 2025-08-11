@@ -483,7 +483,7 @@
           /* Table Header */
           .table-header {
             display: grid;
-            grid-template-columns: 100px 2fr 1fr 1.5fr 150px;
+            grid-template-columns: 80px 2fr 1fr 1.5fr 130px;
             background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
             padding: 0;
@@ -491,12 +491,12 @@
             overflow: hidden;
 
             .header-cell {
-              padding: 1.5rem 1rem;
+              padding: 1rem 0.8rem;
               display: flex;
               align-items: center;
               gap: 0.5rem;
               font-weight: 600;
-              font-size: 0.95rem;
+              font-size: 0.9rem;
               border-left: 1px solid rgba(255, 255, 255, 0.1);
               position: relative;
               transition: all 0.3s ease;
@@ -526,7 +526,7 @@
           .table-body {
             .table-row {
               display: grid;
-              grid-template-columns: 100px 2fr 1fr 1.5fr 150px;
+              grid-template-columns: 80px 2fr 1fr 1.5fr 130px;
               align-items: center;
               border-bottom: 1px solid #f1f3f4;
               transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -564,7 +564,7 @@
               }
 
               .table-cell {
-                padding: 1.25rem 1rem;
+                padding: 0.75rem 1rem;
                 position: relative;
 
                 /* Icon Cell - Brand Logo */
@@ -576,9 +576,9 @@
                     position: relative;
                     
                     .logo-container {
-                      width: 60px;
-                      height: 60px;
-                      border-radius: 15px;
+                      width: 45px;
+                      height: 45px;
+                      border-radius: 12px;
                       overflow: hidden;
                       border: 3px solid #f1f3f4;
                       display: flex;
@@ -623,8 +623,8 @@
                     position: relative;
                     
                     .brand-name {
-                      font-size: 1.3rem;
-                      font-weight: 700;
+                      font-size: 1.1rem;
+                      font-weight: 600;
                       color: #2c3e50;
                       margin: 0;
                       position: relative;
@@ -903,10 +903,10 @@
               gap: 0.5rem;
 
               .action-btn {
-                width: 40px;
-                height: 40px;
+                width: 32px;
+                height: 32px;
                 border: none;
-                border-radius: 10px;
+                border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;

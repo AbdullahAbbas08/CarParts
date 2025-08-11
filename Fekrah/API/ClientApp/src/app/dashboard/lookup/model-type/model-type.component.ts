@@ -29,6 +29,8 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   // Search and filters
   searchTerm = '';
   selectedBrandId: number | null = null;
+  selectedYear: number | null = null;
+  availableYears: number[] = [];
   
   // Forms
   modelTypeForm: FormGroup;
@@ -57,6 +59,10 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
     return this.searchForm.get('brandFilter') as FormControl;
   }
 
+  get yearFilterControl(): FormControl {
+    return this.searchForm.get('yearFilter') as FormControl;
+  }
+
   constructor(
     private swagger: SwaggerClient,
     private fb: FormBuilder,
@@ -67,6 +73,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeAvailableYears();
     this.setupSubscriptions();
     this.loadBrands();
     this.loadModelTypes();
@@ -95,7 +102,8 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   private createSearchForm(): FormGroup {
     return this.fb.group({
       searchTerm: [''],
-      brandFilter: [null]
+      brandFilter: [null],
+      yearFilter: [null]
     });
   }
 
@@ -117,7 +125,20 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
     this.searchForm.get('brandFilter')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
-        this.selectedBrandId = value;
+        console.log('Brand filter changed:', value, typeof value);
+        // Convert string value to number for proper comparison
+        this.selectedBrandId = value ? parseInt(value) : null;
+        this.currentPage = 1;
+        this.loadModelTypes();
+      });
+
+    // Year filter subscription
+    this.searchForm.get('yearFilter')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        console.log('Year filter changed:', value, typeof value);
+        // Convert string value to number for proper comparison
+        this.selectedYear = value ? parseInt(value) : null;
         this.currentPage = 1;
         this.loadModelTypes();
       });
@@ -144,15 +165,21 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   loadModelTypes(): void {
     this.loading = true;
     // Using SwaggerClient API: api/ModelType/GetAll to get model types directly
-    this.swagger.apiModelTypeGetAllGet(this.pageSize * 10, 1, this.searchTerm || undefined)
+    // Fetch all records when filters are applied, otherwise use pagination
+    const hasFilters = this.selectedBrandId || this.selectedYear;
+    const fetchSize = hasFilters ? 10000 : this.pageSize; // Get all records when filtering
+    
+    this.swagger.apiModelTypeGetAllGet(fetchSize, 1, this.searchTerm || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: any) => {
           const allModelTypes: ModelTypeDTO[] = result.data || [];
           
+          // Extract available years from all model types
+          this.extractAvailableYears(allModelTypes);
+          
           // Apply filters
           this.modelTypes = this.applyFilters(allModelTypes);
-          this.filteredModelTypes = [...this.modelTypes];
           
           // Apply pagination
           this.totalCount = this.modelTypes.length;
@@ -170,6 +197,13 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   }
 
   private applyFilters(modelTypes: ModelTypeDTO[]): ModelTypeDTO[] {
+    console.log('Applying filters:', {
+      totalModelTypes: modelTypes.length,
+      selectedBrandId: this.selectedBrandId,
+      selectedYear: this.selectedYear,
+      searchTerm: this.searchTerm
+    });
+    
     let filtered = [...modelTypes];
     
     // Apply search filter
@@ -177,17 +211,76 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
       const searchTerm = this.searchTerm.toLowerCase();
       filtered = filtered.filter(mt => 
         mt.name?.toLowerCase().includes(searchTerm) ||
-        mt.brand.name?.toLowerCase().includes(searchTerm) ||
+        mt?.brand?.name?.toLowerCase().includes(searchTerm) ||
         mt.year?.toString().includes(searchTerm)
       );
+      console.log('After search filter:', filtered.length);
     }
     
     // Apply brand filter
     if (this.selectedBrandId) {
+      const beforeBrandFilter = filtered.length;
       filtered = filtered.filter(mt => mt.brandId === this.selectedBrandId);
+      console.log('After brand filter:', {
+        before: beforeBrandFilter,
+        after: filtered.length,
+        selectedBrandId: this.selectedBrandId
+      });
     }
     
+    // Apply year filter
+    if (this.selectedYear) {
+      const beforeYearFilter = filtered.length;
+      // Ensure both sides are numbers for comparison
+      const targetYear = typeof this.selectedYear === 'string' ? parseInt(this.selectedYear) : this.selectedYear;
+      filtered = filtered.filter(mt => {
+        const modelYear = typeof mt.year === 'string' ? parseInt(mt.year) : mt.year;
+        return modelYear === targetYear;
+      });
+      console.log('After year filter:', {
+        before: beforeYearFilter,
+        after: filtered.length,
+        selectedYear: this.selectedYear,
+        targetYear: targetYear
+      });
+    }
+    
+    console.log('Final filtered results:', filtered.length);
     return filtered;
+  }
+
+  private extractAvailableYears(modelTypes: ModelTypeDTO[]): void {
+    // If no model types provided, initialize with a comprehensive year range
+    if (!modelTypes || modelTypes.length === 0) {
+      this.initializeAvailableYears();
+      return;
+    }
+
+    const yearsSet = new Set<number>();
+    modelTypes.forEach(mt => {
+      if (mt.year) {
+        yearsSet.add(mt.year);
+      }
+    });
+    
+    // If we have years from data, use them. Otherwise, use the full range
+    if (yearsSet.size > 0) {
+      this.availableYears = Array.from(yearsSet).sort((a, b) => b - a); // Sort in descending order
+    } else {
+      this.initializeAvailableYears();
+    }
+  }
+
+  private initializeAvailableYears(): void {
+    // Initialize with a comprehensive range of years from 1980 to 2030
+    const currentYear = new Date().getFullYear();
+    const startYear = 1980;
+    const endYear = 2030;
+    
+    this.availableYears = [];
+    for (let year = endYear; year >= startYear; year--) {
+      this.availableYears.push(year);
+    }
   }
 
   loadStatistics(): void {
@@ -271,45 +364,25 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   }
 
   private createModelType(modelTypeData: any): void {
-    // To create a model type, we need to add it to the parent brand's modelTypes array
-    // First, get the brand details using SwaggerClient API
-    this.swagger.apiBrandGetDetailsGet(modelTypeData.brandId)
+    // Use the dedicated ModelType create API - only set BrandId, let server handle Brand
+    const newModelType = {
+      id: 0, // Will be assigned by the server
+      name: modelTypeData.name,
+      brandId: modelTypeData.brandId,
+      year: modelTypeData.year
+    } as ModelTypeDTO;
+    
+    this.swagger.apiModelTypeInsertPost(newModelType)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (brand: BrandDTO) => {
-          // Add the new model type to the brand's modelTypes array
-          if (!brand.modelTypes) {
-            brand.modelTypes = [];
-          }
-          
-          const newModelType = new ModelTypeDTO({
-            id: 0, // Will be assigned by the server
-            name: modelTypeData.name,
-            brandId: modelTypeData.brandId,
-            year: modelTypeData.year,
-            brand: brand
-          });
-          
-          brand.modelTypes.push(newModelType);
-          
-          // Update the brand with the new model type using SwaggerClient API
-          this.swagger.apiBrandUpdatePost(brand)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (updatedBrand: BrandDTO) => {
-                console.log('Model type created successfully');
-                this.savingModelType = false;
-                this.closeModal();
-                this.refreshData();
-              },
-              error: (error: any) => {
-                console.error('Error creating model type:', error);
-                this.savingModelType = false;
-              }
-            });
+        next: (createdModelType: ModelTypeDTO) => {
+          console.log('Model type created successfully:', createdModelType);
+          this.savingModelType = false;
+          this.closeModal();
+          this.refreshData();
         },
         error: (error: any) => {
-          console.error('Error getting brand details:', error);
+          console.error('Error creating model type:', error);
           this.savingModelType = false;
         }
       });
@@ -317,45 +390,25 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
 
   private updateModelType(modelTypeData: any): void {
     if (this.selectedModelType) {
-      // To update a model type, we need to update it in the parent brand's modelTypes array
-      this.swagger.apiBrandGetDetailsGet(modelTypeData.brandId)
+      // Use the dedicated ModelType update API - only set BrandId, let server handle Brand
+      const updatedModelType = {
+        id: this.selectedModelType.id,
+        name: modelTypeData.name,
+        brandId: modelTypeData.brandId,
+        year: modelTypeData.year
+      } as ModelTypeDTO;
+      
+      this.swagger.apiModelTypeUpdatePost(updatedModelType)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (brand: BrandDTO) => {
-            // Find and update the model type in the brand's modelTypes array
-            const modelTypeIndex = brand.modelTypes?.findIndex(mt => mt.id === this.selectedModelType!.id);
-            
-            if (modelTypeIndex !== undefined && modelTypeIndex !== -1 && brand.modelTypes) {
-              brand.modelTypes[modelTypeIndex] = new ModelTypeDTO({
-                id: this.selectedModelType!.id,
-                name: modelTypeData.name,
-                brandId: modelTypeData.brandId,
-                year: modelTypeData.year,
-                brand: brand
-              });
-              
-              // Update the brand with the modified model type using SwaggerClient API
-              this.swagger.apiBrandUpdatePost(brand)
-                .pipe(takeUntil(this.destroy$))
-                .subscribe({
-                  next: (updatedBrand: BrandDTO) => {
-                    console.log('Model type updated successfully');
-                    this.savingModelType = false;
-                    this.closeModal();
-                    this.refreshData();
-                  },
-                  error: (error: any) => {
-                    console.error('Error updating model type:', error);
-                    this.savingModelType = false;
-                  }
-                });
-            } else {
-              console.error('Model type not found in brand');
-              this.savingModelType = false;
-            }
+          next: (updatedModelType: ModelTypeDTO) => {
+            console.log('Model type updated successfully:', updatedModelType);
+            this.savingModelType = false;
+            this.closeModal();
+            this.refreshData();
           },
           error: (error: any) => {
-            console.error('Error getting brand details:', error);
+            console.error('Error updating model type:', error);
             this.savingModelType = false;
           }
         });
@@ -373,49 +426,31 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
   }
 
   deleteModelType(): void {
-    if (this.modelTypeToDelete && !this.deletingModelType) {
+    if (this.modelTypeToDelete !=null && !this.deletingModelType) {
+      console.log('Attempting to delete model type:', this.modelTypeToDelete);
       this.deletingModelType = true;
       
-      // To delete a model type, we need to remove it from the parent brand's modelTypes array
-      // First, find the brand that contains this model type
-      const brandId = this.modelTypeToDelete.brandId;
-      
-      this.swagger.apiBrandGetDetailsGet(brandId)
+      // Use the dedicated ModelType delete API
+      this.swagger.apiModelTypeDeletePost(this.modelTypeToDelete.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (brand: BrandDTO) => {
-            // Remove the model type from the brand's modelTypes array
-            if (brand.modelTypes) {
-              brand.modelTypes = brand.modelTypes.filter(mt => mt.id !== this.modelTypeToDelete!.id);
-              
-              // Update the brand with the removed model type using SwaggerClient API
-              this.swagger.apiBrandUpdatePost(brand)
-                .pipe(takeUntil(this.destroy$))
-                .subscribe({
-                  next: (updatedBrand: BrandDTO) => {
-                    console.log('Model type deleted successfully');
-                    this.deletingModelType = false;
-                    this.cancelDelete();
-                    this.refreshData();
-                  },
-                  error: (error: any) => {
-                    console.error('Error deleting model type:', error);
-                    this.deletingModelType = false;
-                    this.cancelDelete();
-                  }
-                });
-            } else {
-              console.error('Brand has no model types');
-              this.deletingModelType = false;
-              this.cancelDelete();
-            }
+          next: (deletedModelType: ModelTypeDTO) => {
+            console.log('Model type deleted successfully:', deletedModelType);
+            this.deletingModelType = false;
+            this.cancelDelete();
+            this.refreshData();
           },
           error: (error: any) => {
-            console.error('Error getting brand details:', error);
+            console.error('Error deleting model type:', error);
             this.deletingModelType = false;
             this.cancelDelete();
           }
         });
+    } else {
+      console.log('Delete conditions not met:', {
+        modelTypeToDelete: this.modelTypeToDelete,
+        deletingModelType: this.deletingModelType
+      });
     }
   }
 
@@ -471,6 +506,7 @@ export class ModelTypeComponent implements OnInit, OnDestroy {
     this.searchForm.reset();
     this.searchTerm = '';
     this.selectedBrandId = null;
+    this.selectedYear = null;
     this.currentPage = 1;
     this.loadModelTypes();
   }

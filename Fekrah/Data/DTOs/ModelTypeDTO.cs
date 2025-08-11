@@ -8,7 +8,7 @@
         public int Year { get; set; }
         public int BrandId { get; set; }
 
-        public BrandDTO Brand { get; set; }
+        public BrandDTO? Brand { get; set; }
 
         public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }

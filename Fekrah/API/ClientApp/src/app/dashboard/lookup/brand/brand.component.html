@@ -5,11 +5,11 @@
   <!-- Header Section -->
   <div class="dashboard-header">
     <div class="container">
-      <!-- Breadcrumb -->
+       <!-- Breadcrumb -->
       <nav class="breadcrumb-nav">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a routerLink="/dashboard">
+            <a routerLink="/">
               <i class="fas fa-home"></i>
               الرئيسية
             </a>
@@ -18,9 +18,18 @@
             <i class="fas fa-chevron-left"></i>
           </li>
           <li class="breadcrumb-item">
-            <a routerLink="/dashboard/lookup">
-              <i class="fas fa-search"></i>
-              البحث والتصنيفات
+            <a routerLink="/admin">
+              <i class="fas fa-shield-alt"></i>
+              الإدارة
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item active">
+            <a routerLink="/admin/lookup">
+              <i class="fas fa-car"></i>
+              <span class="px-2">إدارة الأساسيات</span>
             </a>
           </li>
           <li class="breadcrumb-separator">
@@ -261,9 +270,9 @@
                               background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
                               color: white !important;
                               border: 2px solid #27ae60 !important;
-                              width: 38px !important;
-                              height: 38px !important;
-                              border-radius: 10px !important;
+                              width: 32px !important;
+                              height: 32px !important;
+                              border-radius: 8px !important;
                               display: flex !important;
                               align-items: center !important;
                               justify-content: center !important;
@@ -283,7 +292,7 @@
                            'fa-check-circle': brand.isActive,
                            'fa-times-circle': !brand.isActive
                          }"
-                         style="color: white !important; font-size: 1rem !important;"></i>
+                         style="color: white !important; font-size: 0.85rem !important;"></i>
                     </button>
                     <button type="button" 
                             class="action-btn edit-btn modern-btn" 

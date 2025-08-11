@@ -6,12 +6,14 @@ import { BrandComponent } from './brand/brand.component';
 import { ModelTypeComponent } from './model-type/model-type.component';
 import { SharedModule } from 'src/app/Shared/shared.module';
 import { LookupRoutingModule } from './lookup-routing.module';
+import { LookupComponent } from './lookup.component';
 
 
 @NgModule({
   declarations: [
     BrandComponent,
-    ModelTypeComponent
+    ModelTypeComponent,
+    LookupComponent
   ],
   imports: [
     CommonModule,

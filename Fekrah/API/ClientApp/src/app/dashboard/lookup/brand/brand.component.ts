@@ -283,8 +283,10 @@ export class BrandComponent implements OnInit, OnDestroy {
               alert(error);
             });
         } else {
-          // No new file selected, update brand with existing image URL
-          this.updateBrandWithImage(this.brandForm.get('imageUrl')?.value || '');
+          // No new file selected, update brand with existing image URL (extract filename only)
+          const existingImageUrl = this.brandForm.get('imageUrl')?.value || '';
+          const filenameOnly = this.extractFilenameFromPath(existingImageUrl);
+          this.updateBrandWithImage(filenameOnly);
         }
       }
     }
@@ -525,5 +527,14 @@ export class BrandComponent implements OnInit, OnDestroy {
 
   onImageLoad(event: any, brand: BrandDTO): void {
     console.log('Successfully loaded image for brand:', brand.name, 'URL:', brand.imageUrl);
+  }
+
+  // Utility method to extract filename from full path
+  private extractFilenameFromPath(fullPath: string): string {
+    if (!fullPath) return '';
+    
+    // Remove path prefixes like "./assets/Brands/" or "assets/Brands/"
+    const filename = fullPath.replace(/^\.?\/?(assets\/Brands\/)?/i, '');
+    return filename;
   }
 }

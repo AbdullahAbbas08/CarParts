@@ -1,7 +1,7 @@
 <div class="model-type-dashboard">
   <!-- Background Overlay -->
   <div class="dashboard-background"></div>
-  
+
   <!-- Header Section -->
   <div class="dashboard-header">
     <div class="container">
@@ -9,7 +9,7 @@
       <nav class="breadcrumb-nav">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a routerLink="/dashboard">
+            <a routerLink="/">
               <i class="fas fa-home"></i>
               الرئيسية
             </a>
@@ -18,9 +18,18 @@
             <i class="fas fa-chevron-left"></i>
           </li>
           <li class="breadcrumb-item">
-            <a routerLink="/dashboard/lookup">
-              <i class="fas fa-search"></i>
-              البحث والتصنيفات
+            <a routerLink="/admin">
+              <i class="fas fa-shield-alt"></i>
+              الإدارة
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item active">
+            <a routerLink="/admin/lookup">
+              <i class="fas fa-car"></i>
+              <span class="px-2">إدارة الأساسيات</span>
             </a>
           </li>
           <li class="breadcrumb-separator">
@@ -33,11 +42,12 @@
         </ol>
       </nav>
 
+
       <!-- Page Title -->
       <div class="page-title">
         <h1>
-          <i class="fas fa-car-side"></i>
           إدارة موديلات السيارات
+          <i class="fas fa-car-side"></i>
         </h1>
         <p>إدارة وتنظيم موديلات السيارات للعلامات التجارية المختلفة</p>
       </div>
@@ -47,7 +57,7 @@
   <!-- Main Content -->
   <div class="dashboard-content">
     <div class="container">
-      
+
       <!-- Statistics Cards -->
       <div class="stats-grid">
         <div class="stat-card models-stat">
@@ -63,7 +73,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="stat-card brands-stat">
           <div class="stat-icon">
             <i class="fas fa-car"></i>
@@ -77,7 +87,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="stat-card filtered-stat">
           <div class="stat-icon">
             <i class="fas fa-filter"></i>
@@ -94,35 +104,129 @@
       </div>
 
       <!-- Action Bar -->
-      <div class="action-bar">
-        <div class="action-left">
-          <button type="button" class="btn-primary" (click)="openCreateModal()">
-            <i class="fas fa-plus"></i>
-            إضافة موديل جديد
-          </button>
-          <button type="button" class="btn-secondary" (click)="refreshData()" [disabled]="loading">
-            <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
-            تحديث البيانات
-          </button>
-        </div>
-        <div class="action-right">
-          <div class="filters-row">
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input type="text" 
-                     [formControl]="searchTermControl" 
-                     placeholder="البحث في الموديلات..." 
-                     class="search-input">
+      <div class="action-bar redesigned-action-bar">
+        <div class="container-fluid">
+          <div class="row action-container">
+
+            <!-- Left Section: Filters (col-9) - FORCE LEFT SIDE -->
+            <div class="col-12 col-md-9 order-md-first filters-section">
+              <div class="filters-grid">
+                <!-- Filter Row - Brand & Year Filters -->
+                <div class="row mb-3">
+                  <!-- Brand Filter (col-6) -->
+                  <div class="col-12 col-md-6">
+                    <div class="filter-container half-width">
+                      <div class="select-wrapper">
+                        <select [formControl]="brandFilterControl" class="filter-select modern-select">
+                          <option value="">جميع العلامات التجارية</option>
+                          <option *ngFor="let brand of brands" [value]="brand.id">
+                            {{ brand.name }}
+                          </option>
+                        </select>
+                        <div class="select-icons">
+                          <button type="button" class="clear-select-btn" *ngIf="brandFilterControl.value"
+                            (click)="brandFilterControl.setValue('')">
+                            <i class="fas fa-times"></i>
+                          </button>
+                          <i class="fas fa-car filter-icon"></i>
+                          <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Year Filter (col-6) -->
+                  <div class="col-12 col-md-6 ">
+                    <div class="filter-container half-width px-3">
+                      <div class="select-wrapper">
+                        <select [formControl]="yearFilterControl" class="filter-select modern-select">
+                          <option value="">جميع السنوات</option>
+                          <option *ngFor="let year of availableYears" [value]="year" [attr.data-year]="year">
+                            {{ year }}
+                          </option>
+                        </select>
+                        <div class="select-icons">
+                          <button type="button" class="clear-select-btn" *ngIf="yearFilterControl.value"
+                            (click)="yearFilterControl.setValue('')">
+                            <i class="fas fa-times"></i>
+                          </button>
+                          <i class="fas fa-calendar-alt filter-icon"></i>
+                          <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fixed Row 3 - Search & Clear Actions -->
+                <div class="row">
+                  <div class="col-12">
+                    <div class="search-and-actions-row">
+                      <div class="search-section">
+                        <div class="search-container">
+                          <div class="search-input-wrapper">
+                            <input type="text" [formControl]="searchTermControl"
+                              placeholder="البحث في الموديلات والعلامات التجارية..." class="search-input modern-input">
+                            <div class="input-icons">
+                              <button type="button" class="clear-search-btn" *ngIf="searchTermControl.value"
+                                (click)="searchTermControl.setValue('')">
+                                <i class="fas fa-times"></i>
+                              </button>
+                              <i class="fas fa-search search-icon"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="actions-section">
+                        <div class="active-filters-info"
+                          *ngIf="searchTermControl.value || brandFilterControl.value || yearFilterControl.value">
+                          <span class="filters-count">
+                            <i class="fas fa-filter"></i>
+                            {{ (searchTermControl.value ? 1 : 0) + (brandFilterControl.value ? 1 : 0) +
+                            (yearFilterControl.value ? 1 : 0) }} فلتر نشط
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="filter-select">
-              <i class="fas fa-car"></i>
-              <select [formControl]="brandFilterControl" class="brand-filter">
-                <option value="">جميع العلامات التجارية</option>
-                <option *ngFor="let brand of brands" [value]="brand.id">
-                  {{ brand.name }}
-                </option>
-              </select>
+
+            <!-- Right Section: Action Buttons (col-3) - FORCE RIGHT SIDE -->
+            <div class="col-12 col-md-3 order-md-last action-buttons-section ">
+              <div class="row">
+                <div class="col-12 d-flex justify-content-end">
+                  <div class="buttons-group-compact">
+                    <button type="button" class="btn-icon btn-primary" (click)="openCreateModal()"
+                      title="إضافة موديل جديد">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn-icon btn-secondary" (click)="refreshData()" [disabled]="loading"
+                      title="تحديث البيانات">
+                      <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-12 px-5">
+                  <div class="clear-filters-section-bottom">
+                    <button type="button" class="clear-all-filters-btn" (click)="clearFilters()">
+                      <i class="fas fa-times"></i>
+                      <span>مسح جميع الفلاتر</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- Spacer -->
+              <!-- <div class="button-spacer"></div> -->
+
+              <!-- Clear All Filters Button - Far Below -->
+
             </div>
+
           </div>
         </div>
       </div>
@@ -143,8 +247,11 @@
               <select id="pageSize" (change)="onPageSizeChange($event)" class="size-selector">
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
-                <option value="25">25</option>
+                <option value="20">20</option>
                 <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="1000">1000</option>
               </select>
             </div>
           </div>
@@ -174,7 +281,7 @@
 
           <!-- Beautiful Data Table -->
           <div *ngIf="!loading && filteredModelTypes.length > 0" class="beautiful-table-container">
-            
+
             <!-- Table Header -->
             <div class="table-header">
               <div class="header-cell icon-header">
@@ -204,11 +311,9 @@
 
             <!-- Table Body -->
             <div class="table-body">
-              <div *ngFor="let modelType of filteredModelTypes; trackBy: trackByModelTypeId; let i = index" 
-                   class="table-row" 
-                   [class.even-row]="i % 2 === 0"
-                   [class.odd-row]="i % 2 !== 0">
-                
+              <div *ngFor="let modelType of filteredModelTypes; trackBy: trackByModelTypeId; let i = index"
+                class="table-row" [class.even-row]="i % 2 === 0" [class.odd-row]="i % 2 !== 0">
+
                 <!-- Model Icon -->
                 <div class="table-cell icon-cell">
                   <div class="model-icon-wrapper">
@@ -231,7 +336,7 @@
                   <div class="brand-info">
                     <div class="brand-badge">
                       <i class="fas fa-star"></i>
-                      <span>{{ modelType.brand.name || getBrandName(modelType.brandId) }}</span>
+                      <span>{{ modelType.brand?.name || getBrandName(modelType.brandId) }}</span>
                     </div>
                   </div>
                 </div>
@@ -261,21 +366,15 @@
                 <!-- Actions -->
                 <div class="table-cell actions-cell">
                   <div class="action-buttons">
-                    <button type="button" 
-                            class="action-btn edit-btn modern-btn" 
-                            (click)="openEditModal(modelType)"
-                            title="تعديل الموديل">
+                    <button type="button" class="action-btn edit-btn modern-btn" (click)="openEditModal(modelType)"
+                      title="تعديل الموديل">
                       <i class="fas fa-edit"></i>
                     </button>
-                    <button type="button" 
-                            class="action-btn delete-btn modern-btn" 
-                            (click)="confirmDelete(modelType)"
-                            title="حذف الموديل">
+                    <button type="button" class="action-btn delete-btn modern-btn" (click)="confirmDelete(modelType)"
+                      title="حذف الموديل">
                       <i class="fas fa-trash-alt"></i>
                     </button>
-                    <button type="button" 
-                            class="action-btn view-btn modern-btn" 
-                            title="عرض التفاصيل">
+                    <button type="button" class="action-btn view-btn modern-btn" title="عرض التفاصيل">
                       <i class="fas fa-eye"></i>
                     </button>
                   </div>
@@ -305,39 +404,27 @@
             <span>الصفحة {{ currentPage }} من {{ totalPages }}</span>
           </div>
           <div class="pagination-controls">
-            <button type="button" 
-                    class="pagination-btn" 
-                    [disabled]="currentPage === 1"
-                    (click)="onPageChange(1)">
+            <button type="button" class="pagination-btn" [disabled]="currentPage === 1" (click)="onPageChange(1)">
               <i class="fas fa-angle-double-right"></i>
             </button>
-            <button type="button" 
-                    class="pagination-btn" 
-                    [disabled]="currentPage === 1"
-                    (click)="onPageChange(currentPage - 1)">
+            <button type="button" class="pagination-btn" [disabled]="currentPage === 1"
+              (click)="onPageChange(currentPage - 1)">
               <i class="fas fa-angle-right"></i>
             </button>
-            
+
             <div class="page-numbers">
-              <button type="button" 
-                      *ngFor="let page of getPaginationPages()"
-                      class="page-btn"
-                      [class.active]="page === currentPage"
-                      (click)="onPageChange(page)">
+              <button type="button" *ngFor="let page of getPaginationPages()" class="page-btn"
+                [class.active]="page === currentPage" (click)="onPageChange(page)">
                 {{ page }}
               </button>
             </div>
 
-            <button type="button" 
-                    class="pagination-btn" 
-                    [disabled]="currentPage === totalPages"
-                    (click)="onPageChange(currentPage + 1)">
+            <button type="button" class="pagination-btn" [disabled]="currentPage === totalPages"
+              (click)="onPageChange(currentPage + 1)">
               <i class="fas fa-angle-left"></i>
             </button>
-            <button type="button" 
-                    class="pagination-btn" 
-                    [disabled]="currentPage === totalPages"
-                    (click)="onPageChange(totalPages)">
+            <button type="button" class="pagination-btn" [disabled]="currentPage === totalPages"
+              (click)="onPageChange(totalPages)">
               <i class="fas fa-angle-double-left"></i>
             </button>
           </div>
@@ -348,24 +435,10 @@
 </div>
 
 <!-- Modern Create/Edit Modal -->
-<div class="modal-overlay" 
-     *ngIf="isModalOpen" 
-     (click)="closeModal()"
-     [style.position]="'fixed'"
-     [style.top]="'0'"
-     [style.left]="'0'"
-     [style.right]="'0'"
-     [style.bottom]="'0'"
-     [style.z-index]="'999999'"
-     [style.width]="'100vw'"
-     [style.height]="'100vh'"
-     [style.display]="'flex'"
-     [style.align-items]="'center'"
-     [style.justify-content]="'center'">
-  <div class="modern-modal" 
-       (click)="$event.stopPropagation()"
-       [style.margin]="'0'"
-       [style.position]="'relative'">
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()" [style.position]="'fixed'" [style.top]="'0'"
+  [style.left]="'0'" [style.right]="'0'" [style.bottom]="'0'" [style.z-index]="'999999'" [style.width]="'100vw'"
+  [style.height]="'100vh'" [style.display]="'flex'" [style.align-items]="'center'" [style.justify-content]="'center'">
+  <div class="modern-modal" (click)="$event.stopPropagation()" [style.margin]="'0'" [style.position]="'relative'">
     <div class="modal-header">
       <div class="modal-title">
         <i class="fas fa-car-side"></i>
@@ -375,13 +448,13 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
+
     <div class="modal-body">
       <div class="alert alert-info">
         <i class="fas fa-info-circle"></i>
         <strong>ملاحظة:</strong> عمليات إدارة الموديلات تتطلب تنفيذ خاص من خلال API العلامات التجارية.
       </div>
-      
+
       <form [formGroup]="modelTypeForm" (ngSubmit)="saveModelType()">
         <div class="form-grid">
           <div class="form-group">
@@ -389,31 +462,21 @@
               <i class="fas fa-tag"></i>
               اسم الموديل
             </label>
-            <input type="text" 
-                   id="name" 
-                   formControlName="name" 
-                   class="form-input"
-                   [class.error]="isFieldInvalid('name')"
-                   placeholder="أدخل اسم الموديل">
+            <input type="text" id="name" formControlName="name" class="form-input"
+              [class.error]="isFieldInvalid('name')" placeholder="أدخل اسم الموديل">
             <div class="error-message" *ngIf="isFieldInvalid('name')">
               <i class="fas fa-exclamation-circle"></i>
               {{ getFieldError('name') }}
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="year">
               <i class="fas fa-calendar"></i>
               السنة
             </label>
-            <input type="number" 
-                   id="year" 
-                   formControlName="year" 
-                   class="form-input"
-                   [class.error]="isFieldInvalid('year')"
-                   placeholder="أدخل السنة"
-                   min="1900"
-                   [max]="2030">
+            <input type="number" id="year" formControlName="year" class="form-input"
+              [class.error]="isFieldInvalid('year')" placeholder="أدخل السنة" min="1900" [max]="2030">
             <div class="error-message" *ngIf="isFieldInvalid('year')">
               <i class="fas fa-exclamation-circle"></i>
               {{ getFieldError('year') }}
@@ -425,10 +488,7 @@
               <i class="fas fa-car"></i>
               العلامة التجارية
             </label>
-            <select id="brandId" 
-                    formControlName="brandId" 
-                    class="form-input"
-                    [class.error]="isFieldInvalid('brandId')">
+            <select id="brandId" formControlName="brandId" class="form-input" [class.error]="isFieldInvalid('brandId')">
               <option value="">اختر العلامة التجارية</option>
               <option *ngFor="let brand of brands" [value]="brand.id">
                 {{ brand.name }}
@@ -446,16 +506,13 @@
         </div>
       </form>
     </div>
-    
+
     <div class="modal-footer">
       <button type="button" class="btn-cancel" (click)="closeModal()">
         <i class="fas fa-times"></i>
         إلغاء
       </button>
-      <button type="button" 
-              class="btn-save" 
-              (click)="saveModelType()"
-              [disabled]="modelTypeForm.invalid">
+      <button type="button" class="btn-save" (click)="saveModelType()" [disabled]="modelTypeForm.invalid">
         <i class="fas fa-check"></i>
         {{ modalMode === 'create' ? 'إضافة الموديل' : 'حفظ التغييرات' }}
       </button>
@@ -464,31 +521,18 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal-overlay" 
-     *ngIf="modelTypeToDelete" 
-     (click)="cancelDelete()"
-     [style.position]="'fixed'"
-     [style.top]="'0'"
-     [style.left]="'0'"
-     [style.right]="'0'"
-     [style.bottom]="'0'"
-     [style.z-index]="'999999'"
-     [style.width]="'100vw'"
-     [style.height]="'100vh'"
-     [style.display]="'flex'"
-     [style.align-items]="'center'"
-     [style.justify-content]="'center'">
-  <div class="confirmation-modal" 
-       (click)="$event.stopPropagation()"
-       [style.margin]="'0'"
-       [style.position]="'relative'">
+<div class="modal-overlay" *ngIf="modelTypeToDelete" (click)="cancelDelete()" [style.position]="'fixed'"
+  [style.top]="'0'" [style.left]="'0'" [style.right]="'0'" [style.bottom]="'0'" [style.z-index]="'999999'"
+  [style.width]="'100vw'" [style.height]="'100vh'" [style.display]="'flex'" [style.align-items]="'center'"
+  [style.justify-content]="'center'">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()" [style.margin]="'0'" [style.position]="'relative'">
     <div class="modal-header">
       <div class="modal-title danger">
         <i class="fas fa-exclamation-triangle"></i>
         <h3>تأكيد حذف الموديل</h3>
       </div>
     </div>
-    
+
     <div class="modal-body">
       <div class="confirmation-content">
         <div class="warning-icon">
@@ -498,7 +542,8 @@
         <p>سيتم حذف الموديل:</p>
         <div class="model-info">
           <strong>{{ modelTypeToDelete?.name }}</strong>
-          <span>{{ modelTypeToDelete?.year }} - {{ modelTypeToDelete?.brand?.name || getBrandName(modelTypeToDelete?.brandId || 0) }}</span>
+          <span>{{ modelTypeToDelete?.year }} - {{ modelTypeToDelete?.brand?.name ||
+            getBrandName(modelTypeToDelete?.brandId || 0) }}</span>
         </div>
         <div class="warning-note">
           <i class="fas fa-exclamation-circle"></i>
@@ -506,7 +551,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="modal-footer">
       <button type="button" class="btn-cancel" (click)="cancelDelete()">
         <i class="fas fa-arrow-right"></i>

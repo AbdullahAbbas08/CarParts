@@ -5135,7 +5135,7 @@ export class ModelTypeDTO implements IModelTypeDTO {
     name!: string;
     year!: number;
     brandId!: number;
-    brand!: BrandDTO;
+    brand?: BrandDTO | undefined;
     createdByUserId?: number | undefined;
     createdOn?: Date | undefined;
 
@@ -5146,9 +5146,6 @@ export class ModelTypeDTO implements IModelTypeDTO {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.brand = new BrandDTO();
-        }
     }
 
     init(_data?: any) {
@@ -5157,7 +5154,7 @@ export class ModelTypeDTO implements IModelTypeDTO {
             this.name = _data["name"];
             this.year = _data["year"];
             this.brandId = _data["brandId"];
-            this.brand = _data["brand"] ? BrandDTO.fromJS(_data["brand"]) : new BrandDTO();
+            this.brand = _data["brand"] ? BrandDTO.fromJS(_data["brand"]) : <any>undefined;
             this.createdByUserId = _data["createdByUserId"];
             this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
         }
@@ -5188,7 +5185,7 @@ export interface IModelTypeDTO {
     name: string;
     year: number;
     brandId: number;
-    brand: BrandDTO;
+    brand?: BrandDTO | undefined;
     createdByUserId?: number | undefined;
     createdOn?: Date | undefined;
 }

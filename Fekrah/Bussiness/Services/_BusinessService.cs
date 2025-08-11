@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Bussiness.Helpers;
 using Bussiness.Interfaces;
 using Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,23 +52,30 @@ namespace Bussiness.Services
 
         public virtual DataSourceResult<TDetailsDTO> GetAll(int pageSize, int page, string? searchTerm = null)
         {
-            IQueryable query = _UnitOfWork.Repository<TDbEntity>().GetAll().AsQueryable();
+            // Order all results by Id descending before further processing
+            IQueryable<TDbEntity> query = _UnitOfWork.Repository<TDbEntity>()
+                .GetAll()
+                .OrderByDescending(e => EF.Property<object>(e, "Id")); 
 
             if (typeof(TDbEntity) == typeof(TDetailsDTO))
+            {
                 return new DataSourceResult<TDetailsDTO>
                 {
                     Data = query.Cast<TDetailsDTO>(),
                     Count = query.Cast<TDetailsDTO>().Count()
                 };
+            }
 
-            //var _Data = query.ProjectTo<TDetailsDTO>(_Mapper.ConfigurationProvider).Skip((page - 1) * pageSize).Take(pageSize);
+            // Project to DTO and apply paging
+            var projectedQuery = query.ProjectTo<TDetailsDTO>(_Mapper.ConfigurationProvider);
 
             return new DataSourceResult<TDetailsDTO>
             {
-                Data = query.ProjectTo<TDetailsDTO>(_Mapper.ConfigurationProvider).Skip((page - 1) * pageSize).Take(pageSize),
-                Count = query.ProjectTo<TDetailsDTO>(_Mapper.ConfigurationProvider).Count()
+                Data = projectedQuery.Skip((page - 1) * pageSize).Take(pageSize),
+                Count = projectedQuery.Count()
             };
         }
+
 
         public virtual TDetailsDTO GetById(object id)
         {
