@@ -5055,7 +5055,6 @@ export class BrandDTO implements IBrandDTO {
     name!: string;
     code!: string;
     imageUrl!: string;
-    partsCount?: number | undefined;
     modelTypesCount?: number | undefined;
     isActive?: boolean | undefined;
     parts?: PartDTO[] | undefined;
@@ -5076,7 +5075,6 @@ export class BrandDTO implements IBrandDTO {
             this.name = _data["name"];
             this.code = _data["code"];
             this.imageUrl = _data["imageUrl"];
-            this.partsCount = _data["partsCount"];
             this.modelTypesCount = _data["modelTypesCount"];
             this.isActive = _data["isActive"];
             if (Array.isArray(_data["parts"])) {
@@ -5105,7 +5103,6 @@ export class BrandDTO implements IBrandDTO {
         data["name"] = this.name;
         data["code"] = this.code;
         data["imageUrl"] = this.imageUrl;
-        data["partsCount"] = this.partsCount;
         data["modelTypesCount"] = this.modelTypesCount;
         data["isActive"] = this.isActive;
         if (Array.isArray(this.parts)) {
@@ -5127,7 +5124,6 @@ export interface IBrandDTO {
     name: string;
     code: string;
     imageUrl: string;
-    partsCount?: number | undefined;
     modelTypesCount?: number | undefined;
     isActive?: boolean | undefined;
     parts?: PartDTO[] | undefined;
