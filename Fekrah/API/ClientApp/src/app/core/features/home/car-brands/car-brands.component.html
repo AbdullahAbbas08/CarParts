@@ -6,7 +6,7 @@
     </div>
 
     <div class="brand-types-slider">
-      <div class="swiper brand-types-swiper">
+      <div class="swiper brand-types-swiper pt-3">
         <div class="swiper-wrapper">
           <div class="swiper-slide" *ngFor="let brand of carBrands">
             <div class="brand-card" [routerLink]="['/category', brand.id]">
@@ -18,7 +18,7 @@
           </div>
         </div>
         
-        <div class="swiper-pagination brand-types-pagination"></div>
+        <div class="swiper-pagination brand-types-pagination mt-3"></div>
         <div class="swiper-button-next brand-types-button-next"></div>
         <div class="swiper-button-prev brand-types-button-prev"></div>
       </div>

@@ -17,6 +17,7 @@ export class CarBrandsComponent implements OnInit {
       modules: [Navigation, Pagination, Autoplay],
       slidesPerView: 'auto',
       spaceBetween: 15,
+      slidesPerGroup: 1,
       loop: true,
       centeredSlides: false,
       autoplay: {
@@ -33,19 +34,23 @@ export class CarBrandsComponent implements OnInit {
       },
       breakpoints: {
         320: {
-          slidesPerView: 2,
+          slidesPerView: 1,
+          slidesPerGroup: 1,
           spaceBetween: 10,
         },
         480: {
-          slidesPerView: 3,
+          slidesPerView: 2,
+          slidesPerGroup: 1,
           spaceBetween: 15,
         },
         768: {
-          slidesPerView: 4,
+          slidesPerView: 3,
+          slidesPerGroup: 1,
           spaceBetween: 20,
         },
         1024: {
-          slidesPerView: 6,
+          slidesPerView: 5,
+          slidesPerGroup: 1,
           spaceBetween: 25,
         },
       }

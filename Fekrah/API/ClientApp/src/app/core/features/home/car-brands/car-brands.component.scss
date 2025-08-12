@@ -147,7 +147,9 @@
       }
 
       .swiper-slide {
-        width: 280px !important;
+        width: 220px !important;
+        min-width: 220px !important;
+        flex-shrink: 0;
         height: auto;
         display: flex;
         justify-content: center;
@@ -229,8 +231,8 @@
 
 .brand-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 25px;
-  padding: 35px 25px;
+  border-radius: 20px;
+  padding: 25px 20px;
   text-align: center;
   box-shadow: 
     0 15px 35px rgba(0, 0, 0, 0.1),
@@ -239,8 +241,8 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  width: 280px;
-  height: 220px;
+  width: 220px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -311,13 +313,13 @@
   }
 
   .brand-image {
-    width: 90px;
-    height: 90px;
-    margin-bottom: 20px;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
     border-radius: 50%;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     box-shadow: 
-      0 8px 20px rgba(102, 126, 234, 0.15),
+      0 8px 20px rgba(46, 204, 113, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
     display: flex;
     align-items: center;
@@ -325,7 +327,7 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     z-index: 2;
-    padding: 18px;
+    padding: 20px;
     overflow: hidden;
 
     &::before {
@@ -415,7 +417,8 @@
       padding: 0 30px 40px;
 
       .swiper-slide {
-        width: 260px !important;
+        width: 200px !important;
+        min-width: 200px !important;
       }
     }
 
@@ -432,15 +435,15 @@
   }
 
   .brand-card {
-    width: 260px;
-    height: 200px;
-    padding: 30px 18px;
+    width: 200px;
+    height: 160px;
+    padding: 20px 15px;
 
     .brand-image {
-      width: 75px;
-      height: 75px;
-      margin-bottom: 18px;
-      padding: 15px;
+      width: 85px;
+      height: 85px;
+      margin-bottom: 12px;
+      padding: 18px;
     }
 
     p {
@@ -491,7 +494,8 @@
       padding: 0 20px 35px;
 
       .swiper-slide {
-        width: 240px !important;
+        width: 180px !important;
+        min-width: 180px !important;
       }
     }
 
@@ -518,15 +522,15 @@
   }
 
   .brand-card {
-    width: 240px;
-    height: 180px;
-    padding: 25px 15px;
+    width: 180px;
+    height: 150px;
+    padding: 18px 12px;
 
     .brand-image {
-      width: 65px;
-      height: 65px;
-      margin-bottom: 15px;
-      padding: 12px;
+      width: 75px;
+      height: 75px;
+      margin-bottom: 10px;
+      padding: 15px;
     }
 
     p {
@@ -586,7 +590,8 @@
       padding: 0 15px 30px;
 
       .swiper-slide {
-        width: 200px !important;
+        width: 160px !important;
+        min-width: 160px !important;
       }
     }
 
@@ -617,16 +622,16 @@
   }
 
   .brand-card {
-    width: 200px;
-    height: 160px;
-    padding: 20px 12px;
-    border-radius: 20px;
+    width: 160px;
+    height: 140px;
+    padding: 15px 10px;
+    border-radius: 18px;
 
     .brand-image {
-      width: 55px;
-      height: 55px;
-      margin-bottom: 12px;
-      padding: 10px;
+      width: 70px;
+      height: 70px;
+      margin-bottom: 8px;
+      padding: 12px;
     }
 
     p {

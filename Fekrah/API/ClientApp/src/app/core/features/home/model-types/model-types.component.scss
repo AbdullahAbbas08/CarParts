@@ -53,13 +53,13 @@
         .model-card {
           background: #ffffff;
           border-radius: 20px;
-          padding: 40px 25px;
+          padding: 30px 35px;
           text-align: center;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
           transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
-          min-height: 280px;
+          min-height: 220px;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -89,9 +89,9 @@
         }
 
         .model-icon {
-          font-size: 4rem;
+          font-size: 3.2rem;
           color: #667eea;
-          margin-bottom: 25px;
+          margin-bottom: 20px;
           transition: all 0.3s ease;
 
           i {
@@ -266,12 +266,12 @@
 
     .model-types-slider {
       .model-card {
-        padding: 30px 20px;
-        min-height: 250px;
+        padding: 25px 30px;
+        min-height: 200px;
 
         .model-icon {
-          font-size: 3rem;
-          margin-bottom: 20px;
+          font-size: 2.8rem;
+          margin-bottom: 18px;
         }
 
         .model-info {

@@ -14,6 +14,7 @@ import { CarBrandsComponent } from './car-brands/car-brands.component';
 import { PartTypesComponent } from './part-types/part-types.component';
 import { FeaturedStoresComponent } from './featured-stores/featured-stores.component';
 import { ModelTypesComponent } from './model-types/model-types.component';
+import { FullWidthBannerComponent } from './full-width-banner/full-width-banner.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ModelTypesComponent } from './model-types/model-types.component';
     CarBrandsComponent,
     PartTypesComponent,
     FeaturedStoresComponent,
-    ModelTypesComponent
+    ModelTypesComponent,
+    FullWidthBannerComponent
   ],
   imports: [
     SharedModule,
