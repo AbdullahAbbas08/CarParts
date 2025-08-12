@@ -13,47 +13,44 @@ export class CarBrandsComponent implements OnInit {
   carBrands:BrandDTO[] = [];
   constructor(private swagger: SwaggerClient,private loaderService: LoaderService) {}
   ngOnInit() {
-                     new Swiper('.swiper', {
+    new Swiper('.brand-types-swiper', {
       modules: [Navigation, Pagination, Autoplay],
       slidesPerView: 'auto',
-      spaceBetween: 2,
+      spaceBetween: 15,
       loop: true,
       centeredSlides: false,
       autoplay: {
-        delay: 3000,
+        delay: 8000,
         disableOnInteraction: false,
       },
       pagination: {
-        el: '.swiper-pagination',
+        el: '.brand-types-pagination',
         clickable: true,
       },
       navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
+        nextEl: '.brand-types-button-next',
+        prevEl: '.brand-types-button-prev',
       },
       breakpoints: {
         320: {
-          slidesPerView: 3,
-          spaceBetween: 10,  // زيادة المسافة بين الكروت هنا
-          centeredSlides: false,
+          slidesPerView: 2,
+          spaceBetween: 10,
         },
         480: {
-          slidesPerView: 4,
-          spaceBetween: 20,  // زيادة المسافة هنا أيضاً
+          slidesPerView: 3,
+          spaceBetween: 15,
         },
         768: {
-          slidesPerView: 6,
+          slidesPerView: 4,
           spaceBetween: 20,
         },
         1024: {
-          slidesPerView: 10,
-          spaceBetween: 10,
+          slidesPerView: 6,
+          spaceBetween: 25,
         },
       }
-
     });
     this.getAllCarBrands();
-
   }
   getAllCarBrands(){
           this.loaderService.show(); 
