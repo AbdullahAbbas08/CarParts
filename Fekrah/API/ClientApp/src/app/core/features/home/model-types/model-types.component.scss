@@ -181,25 +181,25 @@
       }
     }
 
-    .model-types-button-next,
-    .model-types-button-prev {
-      background: rgba(255, 255, 255, 0.9);
-      color: #667eea;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
+  }
+  .model-types-button-next,
+  .model-types-button-prev {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #667eea;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 
-      &:hover {
-        background: #ffffff;
-        transform: scale(1.1);
-      }
+    &:hover {
+      background: #ffffff;
+      transform: scale(1.1);
+    }
 
-      &::after {
-        font-size: 18px;
-        font-weight: 700;
-      }
+    &::after {
+      font-size: 18px;
+      font-weight: 700;
     }
   }
 

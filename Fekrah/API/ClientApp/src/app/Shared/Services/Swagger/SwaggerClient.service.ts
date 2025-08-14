@@ -3224,6 +3224,272 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
+    apiOfferGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfOfferDTO> {
+        let url_ = this.baseUrl + "/api/Offer/GetAll?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiOfferGetAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiOfferGetAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfOfferDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfOfferDTO>;
+        }));
+    }
+
+    protected processApiOfferGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfOfferDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfOfferDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiOfferGetDetailsGet(id: number | undefined): Observable<OfferDTO> {
+        let url_ = this.baseUrl + "/api/Offer/GetDetails?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiOfferGetDetailsGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiOfferGetDetailsGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<OfferDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<OfferDTO>;
+        }));
+    }
+
+    protected processApiOfferGetDetailsGet(response: HttpResponseBase): Observable<OfferDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OfferDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiOfferInsertPost(entity: OfferDTO): Observable<OfferDTO> {
+        let url_ = this.baseUrl + "/api/Offer/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiOfferInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiOfferInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<OfferDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<OfferDTO>;
+        }));
+    }
+
+    protected processApiOfferInsertPost(response: HttpResponseBase): Observable<OfferDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OfferDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiOfferUpdatePost(entity: OfferDTO): Observable<OfferDTO> {
+        let url_ = this.baseUrl + "/api/Offer/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiOfferUpdatePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiOfferUpdatePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<OfferDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<OfferDTO>;
+        }));
+    }
+
+    protected processApiOfferUpdatePost(response: HttpResponseBase): Observable<OfferDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OfferDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiOfferDeletePost(id: number | undefined): Observable<OfferDTO> {
+        let url_ = this.baseUrl + "/api/Offer/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiOfferDeletePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiOfferDeletePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<OfferDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<OfferDTO>;
+        }));
+    }
+
+    protected processApiOfferDeletePost(response: HttpResponseBase): Observable<OfferDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OfferDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     apiPermissionGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfPermissionDTO> {
         let url_ = this.baseUrl + "/api/Permission/GetAll?";
         if (pageSize === null)
@@ -5480,6 +5746,190 @@ export interface IDataSourceResultOfModelTypeDTO {
     data: ModelTypeDTO[];
     count: number;
     additionalValue: number;
+}
+
+export class DataSourceResultOfOfferDTO implements IDataSourceResultOfOfferDTO {
+    data!: OfferDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfOfferDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(OfferDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfOfferDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfOfferDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfOfferDTO {
+    data: OfferDTO[];
+    count: number;
+    additionalValue: number;
+}
+
+export class OfferDTO implements IOfferDTO {
+    id!: number;
+    type!: OfferTypeEnum;
+    newPrice?: number | undefined;
+    discountRate?: number | undefined;
+    fixedAmount?: number | undefined;
+    buyQuantity?: number | undefined;
+    getQuantity?: number | undefined;
+    freePartId?: number | undefined;
+    bundlePartIdsCsv?: string | undefined;
+    promoCode?: string | undefined;
+    usageLimit?: number | undefined;
+    perUserLimit?: number | undefined;
+    timesUsed?: number | undefined;
+    minOrderSubtotal?: number | undefined;
+    startAt?: Date | undefined;
+    endAt?: Date | undefined;
+    isActive!: boolean;
+    partId!: number;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+    updatedBy?: number | undefined;
+    updatedOn?: Date | undefined;
+
+    constructor(data?: IOfferDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.newPrice = _data["newPrice"];
+            this.discountRate = _data["discountRate"];
+            this.fixedAmount = _data["fixedAmount"];
+            this.buyQuantity = _data["buyQuantity"];
+            this.getQuantity = _data["getQuantity"];
+            this.freePartId = _data["freePartId"];
+            this.bundlePartIdsCsv = _data["bundlePartIdsCsv"];
+            this.promoCode = _data["promoCode"];
+            this.usageLimit = _data["usageLimit"];
+            this.perUserLimit = _data["perUserLimit"];
+            this.timesUsed = _data["timesUsed"];
+            this.minOrderSubtotal = _data["minOrderSubtotal"];
+            this.startAt = _data["startAt"] ? new Date(_data["startAt"].toString()) : <any>undefined;
+            this.endAt = _data["endAt"] ? new Date(_data["endAt"].toString()) : <any>undefined;
+            this.isActive = _data["isActive"];
+            this.partId = _data["partId"];
+            this.createdByUserId = _data["createdByUserId"];
+            this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
+            this.updatedBy = _data["updatedBy"];
+            this.updatedOn = _data["updatedOn"] ? new Date(_data["updatedOn"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): OfferDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new OfferDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["newPrice"] = this.newPrice;
+        data["discountRate"] = this.discountRate;
+        data["fixedAmount"] = this.fixedAmount;
+        data["buyQuantity"] = this.buyQuantity;
+        data["getQuantity"] = this.getQuantity;
+        data["freePartId"] = this.freePartId;
+        data["bundlePartIdsCsv"] = this.bundlePartIdsCsv;
+        data["promoCode"] = this.promoCode;
+        data["usageLimit"] = this.usageLimit;
+        data["perUserLimit"] = this.perUserLimit;
+        data["timesUsed"] = this.timesUsed;
+        data["minOrderSubtotal"] = this.minOrderSubtotal;
+        data["startAt"] = this.startAt ? this.startAt.toISOString() : <any>undefined;
+        data["endAt"] = this.endAt ? this.endAt.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["partId"] = this.partId;
+        data["createdByUserId"] = this.createdByUserId;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        data["updatedBy"] = this.updatedBy;
+        data["updatedOn"] = this.updatedOn ? this.updatedOn.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IOfferDTO {
+    id: number;
+    type: OfferTypeEnum;
+    newPrice?: number | undefined;
+    discountRate?: number | undefined;
+    fixedAmount?: number | undefined;
+    buyQuantity?: number | undefined;
+    getQuantity?: number | undefined;
+    freePartId?: number | undefined;
+    bundlePartIdsCsv?: string | undefined;
+    promoCode?: string | undefined;
+    usageLimit?: number | undefined;
+    perUserLimit?: number | undefined;
+    timesUsed?: number | undefined;
+    minOrderSubtotal?: number | undefined;
+    startAt?: Date | undefined;
+    endAt?: Date | undefined;
+    isActive: boolean;
+    partId: number;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+    updatedBy?: number | undefined;
+    updatedOn?: Date | undefined;
+}
+
+export enum OfferTypeEnum {
+    NewPrice = 1,
+    Percentage = 2,
+    FixedAmount = 3,
+    BuyXGetY = 4,
+    Bundle = 5,
+    PromoCode = 6,
 }
 
 export class DataSourceResultOfPermissionDTO implements IDataSourceResultOfPermissionDTO {

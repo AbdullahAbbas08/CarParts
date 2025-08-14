@@ -1,0 +1,480 @@
+<div class="offers-container">
+  <!-- Modern Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <i class="fas fa-tags"></i>
+          إدارة العروض
+        </h1>
+        <p class="page-subtitle">إضافة وإدارة العروض الخاصة بقطع الغيار</p>
+        <div class="stats-row">
+          <div class="stat-item">
+            <i class="fas fa-chart-line"></i>
+            <span>{{ totalCount }} عرض</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <span>محدث الآن</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Toggle View Mode Button -->
+        <div class="view-toggle">
+          <button class="toggle-btn" (click)="toggleViewMode()" [title]="isCardView ? 'عرض الكروت' : 'عرض الجدول'">
+            <i class="fas" [class]="isCardView ? 'fa-th-large' : 'fa-table'"></i>
+            {{ isCardView ? 'كروت' : 'جدول' }}
+          </button>
+        </div>
+        
+        <button class="add-btn" (click)="openAddModal()">
+          <i class="fas fa-plus"></i>
+          إضافة عرض جديد
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Filters Section -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <h2 class="filters-title">
+        <i class="fas fa-filter"></i>
+        فلاتر البحث المتقدم
+      </h2>
+      <div class="filters-toggle">
+        <button class="collapse-btn" [class.collapsed]="filtersCollapsed" (click)="toggleFilters()">
+          <span>{{ filtersCollapsed ? 'إظهار الفلاتر' : 'إخفاء الفلاتر' }}</span>
+          <i class="fas fa-chevron-up"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="filters-content" [class.collapsed]="filtersCollapsed">
+      <div class="filters-grid">
+        <!-- نوع العرض -->
+        <div class="filter-group offer-type">
+          <label class="filter-label">
+            <i class="fas fa-tags"></i>
+            نوع العرض
+          </label>
+          <select class="filter-input filter-select" [(ngModel)]="filters.offerType" name="offerType">
+            <option value="">جميع الأنواع</option>
+            <option value="1">سعر جديد</option>
+            <option value="2">خصم نسبة مئوية</option>
+            <option value="3">خصم مبلغ ثابت</option>
+            <option value="4">اشتري X خذ Y</option>
+            <option value="5">باقة قطع</option>
+            <option value="6">كود ترويجي</option>
+          </select>
+        </div>
+
+        <!-- اسم القطعة -->
+        <div class="filter-group part-search has-icon">
+          <label class="filter-label">
+            <i class="fas fa-cogs"></i>
+            اسم القطعة
+          </label>
+          <input 
+            type="text" 
+            class="filter-input"
+            placeholder="ابحث باسم القطعة..."
+            [(ngModel)]="filters.partName"
+            name="partName"
+          >
+          <i class="fas fa-cog filter-icon"></i>
+        </div>
+
+        <!-- اسم المتجر -->
+        <div class="filter-group store-search has-icon">
+          <label class="filter-label">
+            <i class="fas fa-store"></i>
+            اسم المتجر
+          </label>
+          <input 
+            type="text" 
+            class="filter-input"
+            placeholder="ابحث باسم المتجر..."
+            [(ngModel)]="filters.storeName"
+            name="storeName"
+          >
+          <i class="fas fa-store filter-icon"></i>
+        </div>
+
+        <!-- الحالة -->
+        <div class="filter-group status-filter">
+          <label class="filter-label">
+            <i class="fas fa-traffic-light"></i>
+            حالة العرض
+          </label>
+          <select class="filter-input filter-select" [(ngModel)]="filters.status" name="status">
+            <option value="">جميع الحالات</option>
+            <option value="true">نشط</option>
+            <option value="false">غير نشط</option>
+          </select>
+        </div>
+
+        <!-- تاريخ البداية والنهاية -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-calendar-range"></i>
+            فترة العرض
+          </label>
+          <div class="date-range">
+            <input 
+              type="date" 
+              class="filter-input"
+              [(ngModel)]="filters.startDate"
+              name="startDate"
+            >
+            <span class="date-separator">إلى</span>
+            <input 
+              type="date" 
+              class="filter-input"
+              [(ngModel)]="filters.endDate"
+              name="endDate"
+            >
+          </div>
+        </div>
+
+        <!-- البحث العام -->
+        <div class="filter-group has-icon">
+          <label class="filter-label">
+            <i class="fas fa-search-plus"></i>
+            البحث العام
+          </label>
+          <input 
+            type="text" 
+            class="filter-input"
+            placeholder="ابحث في جميع الحقول..."
+            [(ngModel)]="searchTerm"
+            name="searchTerm"
+            (keyup.enter)="applyFilters()"
+          >
+          <i class="fas fa-magnifying-glass filter-icon"></i>
+        </div>
+      </div>
+
+      <div class="filters-actions">
+        <div class="filter-stats">
+          <i class="fas fa-chart-bar"></i>
+          <span>{{ offers.length }} عرض من أصل {{ totalCount }}</span>
+        </div>
+        
+        <div class="filter-buttons">
+          <button class="clear-btn" (click)="clearFilters()">
+            <i class="fas fa-eraser"></i>
+            <span>مسح الفلاتر</span>
+          </button>
+          <button class="apply-btn" (click)="applyFilters()">
+            <i class="fas fa-filter"></i>
+            <span>تطبيق الفلاتر</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p>جاري التحميل...</p>
+  </div>
+
+  <!-- Offers Grid (Cards View) -->
+  <div class="offers-grid" *ngIf="!isLoading && !isCardView">
+    <div class="offer-card" *ngFor="let offer of offers; trackBy: trackByOfferId">
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="offer-type">
+          <i class="fas" [class]="getOfferTypeIcon(offer.type)"></i>
+          <span>{{ getOfferTypeLabel(offer.type) }}</span>
+        </div>
+        <div class="offer-status">
+          <span class="status-badge" [class]="getStatusBadgeClass(offer.isActive)">
+            {{ getStatusText(offer.isActive) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Card Content -->
+      <div class="card-content">
+        <h3 class="offer-title">{{ getPartName(offer.partId) }}</h3>
+        <p class="part-code">كود: {{ getPartCode(offer.partId) }} | السعر الأصلي: {{ getPartPrice(offer.partId) }} ج.م</p>
+        
+        <div class="offer-details">
+          <div class="detail-item" *ngIf="offer.newPrice">
+            <label>السعر الجديد:</label>
+            <span class="price-highlight">{{ offer.newPrice }} ج.م</span>
+          </div>
+          
+          <div class="detail-item" *ngIf="offer.discountRate">
+            <label>نسبة الخصم:</label>
+            <span class="discount-highlight">{{ offer.discountRate }}%</span>
+          </div>
+          
+          <div class="detail-item" *ngIf="offer.fixedAmount">
+            <label>مبلغ الخصم الثابت:</label>
+            <span class="discount-highlight">{{ offer.fixedAmount }} ج.م</span>
+          </div>
+          
+          <div class="detail-item" *ngIf="offer.buyQuantity && offer.getQuantity">
+            <label>اشتري / خذ:</label>
+            <span class="quantity-highlight">{{ offer.buyQuantity }} / {{ offer.getQuantity }}</span>
+          </div>
+          
+          <div class="detail-item" *ngIf="offer.bundlePartIdsCsv">
+            <label>باقة القطع:</label>
+            <span class="bundle-highlight">{{ offer.bundlePartIdsCsv.split(',').length }} قطعة</span>
+          </div>
+          
+          <div class="detail-item">
+            <label>فترة العرض:</label>
+            <span>{{ formatDate(offer.startAt) }} - {{ formatDate(offer.endAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Actions -->
+      <div class="card-actions">
+        <button class="action-btn edit-btn" (click)="openEditModal(offer)">
+          <i class="fas fa-edit"></i>
+          تعديل
+        </button>
+        <button class="action-btn delete-btn" (click)="deleteOffer(offer.id!)">
+          <i class="fas fa-trash"></i>
+          حذف
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="offers.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-tags"></i>
+      </div>
+      <h3>لا توجد عروض</h3>
+      <p>لم يتم إنشاء أي عروض بعد. انقر على "إضافة عرض جديد" لبدء إنشاء العروض.</p>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div class="table-container" *ngIf="!isLoading && isCardView">
+    <div class="table-wrapper">
+      <table class="offers-table">
+        <colgroup>
+          <col style="width: 20%;">
+          <col style="width: 10%;">
+          <col style="width: 16%;">
+          <col style="width: 20%;">
+          <col style="width: 9%;">
+          <col style="width: 9%;">
+          <col style="width: 7%;">
+          <col style="width: 9%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>اسم القطعة</th>
+            <th>كود القطعة</th>
+            <th>نوع العرض</th>
+            <th>التفاصيل</th>
+            <th>تاريخ البداية</th>
+            <th>تاريخ النهاية</th>
+            <th>الحالة</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let offer of offers; trackBy: trackByOfferId" class="table-row">
+            <td class="part-cell">
+              <div class="part-info">
+                <div class="part-name">{{ getPartName(offer.partId) }}</div>
+              </div>
+            </td>
+            <td class="code-cell">
+              <div class="part-code">{{ getPartCode(offer.partId) }}</div>
+            </td>
+            <td class="type-cell">
+              <div class="offer-type-badge" [ngClass]="getOfferTypeClass(offer.type)">
+                <i class="fas" [class]="getOfferTypeIcon(offer.type)"></i>
+                <span>{{ getOfferTypeLabel(offer.type) }}</span>
+              </div>
+            </td>
+            <td class="details-cell">
+              <div class="offer-value" [ngClass]="getOfferTypeClass(offer.type)">
+                <div *ngIf="offer.bundlePartIdsCsv" class="bundle-details">
+                  <div class="bundle-summary-tag clickable" (click)="openBundleDetailsModal(offer)">
+                    <i class="fas fa-box-open"></i>
+                    {{ offer.bundlePartIdsCsv.split(',').length }} قطع ب {{ getBundleTotalPrice(offer) }} ج.م
+                  </div>
+                </div>
+                <div *ngIf="!offer.bundlePartIdsCsv">
+                  <span *ngIf="offer.newPrice" class="price-tag">{{ offer.newPrice }} ج.م</span>
+                  <span *ngIf="offer.discountRate" class="discount-tag">{{ offer.discountRate }}%</span>
+                  <span *ngIf="offer.fixedAmount" class="discount-tag">{{ offer.fixedAmount }} ج.م خصم</span>
+                  <span *ngIf="offer.buyQuantity && offer.getQuantity" class="quantity-tag">
+                    {{ offer.buyQuantity }} + {{ offer.getQuantity }}
+                  </span>
+                  <span *ngIf="offer.promoCode" class="promo-code-tag">
+                    <i class="fas fa-ticket-alt"></i>
+                    {{ offer.promoCode }}
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td class="date-cell">{{ formatDate(offer.startAt) }}</td>
+            <td class="date-cell">{{ formatDate(offer.endAt) }}</td>
+            <td class="status-cell">
+              <div class="status-indicator">
+                <i class="fas status-icon" 
+                   [class]="offer.isActive ? 'fa-check active' : 'fa-times inactive'"></i>
+              </div>
+            </td>
+            <td class="actions-cell">
+              <div class="table-actions">
+                <button class="action-btn edit-btn" (click)="openEditModal(offer)" title="تعديل">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete-btn" (click)="deleteOffer(offer.id!)" title="حذف">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Empty Table State -->
+    <div class="empty-state" *ngIf="offers.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-table"></i>
+      </div>
+      <h3>لا توجد عروض</h3>
+      <p>لم يتم إنشاء أي عروض بعد. انقر على "إضافة عرض جديد" لبدء إنشاء العروض.</p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="!isLoading && offers.length > 0">
+    <div class="pagination-info">
+      <span>عرض {{ getDisplayedItemsStart() }} إلى {{ getDisplayedItemsEnd() }} من أصل {{ totalCount }} عرض</span>
+    </div>
+    
+    <div class="pagination-controls">
+      <button 
+        class="page-btn prev-btn" 
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+      >
+        <i class="fas fa-chevron-right"></i>
+        السابق
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of getPaginationArray()" 
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+      
+      <button 
+        class="page-btn next-btn"
+        [disabled]="currentPage >= getTotalPages()"
+        (click)="onPageChange(currentPage + 1)"
+      >
+        التالي
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Offer Component -->
+<app-add-offer
+  [isVisible]="showModal"
+  [editingOffer]="selectedOffer"
+  (closeModal)="closeModal()"
+  (offerSaved)="onOfferSaved($event)">
+</app-add-offer>
+
+<!-- Bundle Details Modal -->
+<div class="bundle-modal-overlay" *ngIf="showBundleModal" (click)="closeBundleModal()">
+  <div class="bundle-modal" (click)="$event.stopPropagation()">
+    <div class="bundle-modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-box-open"></i>
+        تفاصيل باقة القطع
+      </h3>
+      <button class="close-btn" (click)="closeBundleModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="bundle-modal-content">
+      <div class="bundle-summary">
+        <div class="summary-item">
+          <i class="fas fa-cubes"></i>
+          <span>إجمالي القطع: {{ selectedBundleParts?.length || 0 }}</span>
+        </div>
+        <div class="summary-item">
+          <i class="fas fa-calculator"></i>
+          <span>إجمالي السعر الأصلي: {{ getTotalOriginalPrice() }} ج.م</span>
+        </div>
+        <div class="summary-item discount">
+          <i class="fas fa-percentage"></i>
+          <span>قيمة الخصم: {{ getDiscountAmount() }} ج.م</span>
+        </div>
+      </div>
+      
+      <div class="parts-list">
+        <div class="parts-header">
+          <h4>قائمة القطع المشمولة بالعرض</h4>
+        </div>
+        
+        <div class="parts-grid">
+          <div *ngFor="let partId of selectedBundleParts; let i = index" 
+               class="part-card">
+            <div class="part-number">{{ i + 1 }}</div>
+            <div class="part-content">
+              <div class="part-name">{{ getPartName(+partId) }}</div>
+              <div class="part-code">كود: {{ getPartCode(+partId) }}</div>
+              <div class="price-info">
+                <div class="original-price">
+                  <span class="label">السعر الأصلي:</span>
+                  <span class="value">{{ getPartPrice(+partId) }} ج.م</span>
+                </div>
+                <div class="offer-price">
+                  <span class="label">سعر العرض:</span>
+                  <span class="value discount-price">{{ getPartOfferPrice(+partId) }} ج.م</span>
+                </div>
+                <div class="savings">
+                  <span class="label">وفر:</span>
+                  <span class="value savings-amount">{{ getPartSavings(+partId) }} ج.م</span>
+                </div>
+              </div>
+            </div>
+            <div class="part-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bundle-modal-footer">
+      <button class="close-modal-btn" (click)="closeBundleModal()">
+        <i class="fas fa-check"></i>
+        فهمت
+      </button>
+    </div>
+  </div>
+</div>
