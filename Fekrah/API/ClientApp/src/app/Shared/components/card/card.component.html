@@ -5,16 +5,43 @@
   </div>
 
   <div class="image-section">
-      <div class="image-placeholder">
-          <i class="fas fa-cog"></i>
+      <!-- Image Slider -->
+      <div class="image-slider">
+          <div class="slider-container">
+              <div class="slide active">
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="قطعة غيار" />
+              </div>
+              <div class="slide">
+                  <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="قطعة غيار - زاوية أخرى" />
+              </div>
+              <div class="slide">
+                  <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="قطعة غيار - تفصيل" />
+              </div>
+          </div>
+          
+          <!-- Navigation Dots -->
+          <div class="slider-dots">
+              <span class="dot active" data-slide="0"></span>
+              <span class="dot" data-slide="1"></span>
+              <span class="dot" data-slide="2"></span>
+          </div>
+          
+          <!-- Navigation Arrows -->
+          <button class="slider-arrow prev">
+              <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="slider-arrow next">
+              <i class="fas fa-chevron-right"></i>
+          </button>
       </div>
-      <div class="grade-badge">
+      
+      <!-- <div class="grade-badge">
           <i class="fas fa-medal"></i>
           <span>A+</span>
       </div>
       <button class="favorite-btn">
           <i class="fas fa-heart"></i>
-      </button>
+      </button> -->
       <div class="origin-badge">
           <i class="fas fa-globe"></i>
           <span>ألماني</span>
@@ -24,34 +51,18 @@
   <div class="content-section">
       <div class="part-name-section">
           <h3 class="part-title">مكابح أمامية</h3>
-          <div class="part-subtitle">فرامل سيراميك عالية الجودة</div>
-          <div class="condition-badge">
-              <i class="fas fa-star"></i>
-              <span>جديد</span>
-          </div>
-      </div>
-
-      <div class="info-grid">
-          <div class="info-card store-card">
-              <div class="info-header">
-                  <div class="info-icon store-icon"><i class="fas fa-store-alt"></i></div>
-                  <div class="info-label">المتجر</div>
+          <div class="badges-container">
+              <div class="condition-badge">
+                  <i class="fas fa-star"></i>
+                  <span>جديد</span>
               </div>
-              <div class="info-content">
-                  <span class="store-name">قطع غيار الخليج</span>
+              <div class="type-badge">
+                  <i class="fas fa-tag"></i>
+                  <span>سيراميك</span>
               </div>
-          </div>
-
-          <div class="info-card car-card">
-              <div class="info-header">
-                  <div class="info-icon car-icon"><i class="fas fa-car"></i></div>
-                  <div class="info-label">السيارة</div>
-              </div>
-              <div class="info-content">
-                  <div class="car-details">
-                      <span class="car-brand">BMW</span>
-                      <span class="car-model">X5 2020</span>
-                  </div>
+              <div class="model-badge">
+                  <i class="fas fa-car"></i>
+                  <span>BMW X5 2020</span>
               </div>
           </div>
       </div>

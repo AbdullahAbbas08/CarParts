@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
 
 interface CarPart {
   id: string;
   name: string;
   subtitle: string;
   condition: string;
+  images?: string[]; // ⬅️ جديد للصور المتعددة
   store: {
     name: string;
     phone: string;
@@ -29,10 +30,103 @@ interface CarPart {
   styleUrls: ['./card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CardComponent {
+export class CardComponent implements OnInit, OnDestroy {
   @Input() part!: CarPart;
   @Output() favoriteToggled = new EventEmitter<CarPart>();
   @Output() addToCart = new EventEmitter<CarPart>();
+
+  // Slider properties
+  currentSlide = 0;
+  autoSlideInterval: any;
+
+  constructor(
+    private elementRef: ElementRef,
+    private renderer: Renderer2
+  ) {}
+
+  ngOnInit(): void {
+    this.initializeSlider();
+    this.startAutoSlide();
+  }
+
+  ngOnDestroy(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+  }
+
+  initializeSlider(): void {
+    // Add event listeners for slider navigation
+    setTimeout(() => {
+      const dots = this.elementRef.nativeElement.querySelectorAll('.dot');
+      const prevBtn = this.elementRef.nativeElement.querySelector('.slider-arrow.prev');
+      const nextBtn = this.elementRef.nativeElement.querySelector('.slider-arrow.next');
+
+      dots.forEach((dot: HTMLElement, index: number) => {
+        this.renderer.listen(dot, 'click', () => this.goToSlide(index));
+      });
+
+      if (prevBtn) {
+        this.renderer.listen(prevBtn, 'click', () => this.previousSlide());
+      }
+
+      if (nextBtn) {
+        this.renderer.listen(nextBtn, 'click', () => this.nextSlide());
+      }
+    });
+  }
+
+  goToSlide(slideIndex: number): void {
+    this.currentSlide = slideIndex;
+    this.updateSlider();
+    this.restartAutoSlide();
+  }
+
+  nextSlide(): void {
+    this.currentSlide = (this.currentSlide + 1) % 3;
+    this.updateSlider();
+    this.restartAutoSlide();
+  }
+
+  previousSlide(): void {
+    this.currentSlide = this.currentSlide === 0 ? 2 : this.currentSlide - 1;
+    this.updateSlider();
+    this.restartAutoSlide();
+  }
+
+  private updateSlider(): void {
+    const slides = this.elementRef.nativeElement.querySelectorAll('.slide');
+    const dots = this.elementRef.nativeElement.querySelectorAll('.dot');
+
+    slides.forEach((slide: HTMLElement, index: number) => {
+      if (index === this.currentSlide) {
+        this.renderer.addClass(slide, 'active');
+      } else {
+        this.renderer.removeClass(slide, 'active');
+      }
+    });
+
+    dots.forEach((dot: HTMLElement, index: number) => {
+      if (index === this.currentSlide) {
+        this.renderer.addClass(dot, 'active');
+      } else {
+        this.renderer.removeClass(dot, 'active');
+      }
+    });
+  }
+
+  private startAutoSlide(): void {
+    this.autoSlideInterval = setInterval(() => {
+      this.nextSlide();
+    }, 4000); // Change slide every 4 seconds
+  }
+
+  private restartAutoSlide(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+    this.startAutoSlide();
+  }
 
   samplePart: CarPart = {
     id: 'part123',
