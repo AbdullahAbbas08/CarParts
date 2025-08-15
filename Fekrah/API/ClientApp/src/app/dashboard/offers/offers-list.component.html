@@ -398,7 +398,7 @@
   </div>
 </div>
 
-<!-- Add/Edit Offer Component -->
+<!-- Add/Edit Offer Component - Outside main container -->
 <app-add-offer
   [isVisible]="showModal"
   [editingOffer]="selectedOffer"
@@ -406,7 +406,7 @@
   (offerSaved)="onOfferSaved($event)">
 </app-add-offer>
 
-<!-- Bundle Details Modal -->
+<!-- Bundle Details Modal - Outside main container -->
 <div class="bundle-modal-overlay" *ngIf="showBundleModal" (click)="closeBundleModal()">
   <div class="bundle-modal" (click)="$event.stopPropagation()">
     <div class="bundle-modal-header">

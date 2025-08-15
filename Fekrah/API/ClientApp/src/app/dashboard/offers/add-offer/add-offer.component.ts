@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, Output, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SwaggerClient, OfferDTO } from '../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-add-offer',
   templateUrl: './add-offer.component.html',
-  styleUrls: ['./add-offer.component.scss']
+  styleUrls: ['./add-offer.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AddOfferComponent implements OnInit {
   @Input() isVisible: boolean = false;
