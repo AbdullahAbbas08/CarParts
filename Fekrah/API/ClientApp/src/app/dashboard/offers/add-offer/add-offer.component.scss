@@ -1180,3 +1180,58 @@
 }
 
 /* End of styles */
+
+/* PromoCode Radio Buttons Styling */
+.radio-group {
+  display: flex !important;
+  gap: 20px !important;
+  margin-top: 10px !important;
+}
+
+.radio-option {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  padding: 10px 15px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  transition: all 0.3s ease !important;
+  background: rgba(255,255,255,0.8) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.radio-option:hover {
+  border-color: #667eea !important;
+  background: rgba(102, 126, 234, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+.radio-option input[type="radio"] {
+  width: 18px !important;
+  height: 18px !important;
+  accent-color: #667eea !important;
+  margin: 0 !important;
+}
+
+.radio-option input[type="radio"]:checked + .radio-label {
+  color: #667eea !important;
+  font-weight: 600 !important;
+}
+
+.radio-label {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #2d3748 !important;
+  transition: all 0.3s ease !important;
+}
+
+.radio-option input[type="radio"]:checked {
+  transform: scale(1.1) !important;
+}
+
+.radio-option:has(input[type="radio"]:checked) {
+  border-color: #667eea !important;
+  background: rgba(102, 126, 234, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+}

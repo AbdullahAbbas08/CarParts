@@ -39,11 +39,10 @@
               [class.error]="hasError('type')"
               (change)="onTypeChange($event)"
             >
-              <option value="0">سعر جديد</option>
-              <option value="1">خصم نسبة مئوية</option>
-              <option value="2">خصم مبلغ ثابت</option>
-              <option value="3">اشتري X خذ Y</option>
-              <option value="4">باقة قطع</option>
+              <option *ngFor="let offerType of offerTypes" [value]="offerType.value">
+                <i [class]="'fas ' + offerType.icon"></i>
+                {{ offerType.label }}
+              </option>
             </select>
             <div class="error-message" *ngIf="hasError('type')">
               {{ getFieldError('type') }}
@@ -218,6 +217,86 @@
               min="1"
             />
             <small class="form-help">إذا تركته فارغاً، ستكون القطعة المجانية هي نفس قطعة الشراء</small>
+          </div>
+
+          <!-- PromoCode Fields -->
+          <div class="form-grid" *ngIf="shouldShowPromoCodeFields()">
+            <div class="form-group">
+              <label class="form-label" for="promoCode">كود البروموكود *</label>
+              <input
+                type="text"
+                id="promoCode"
+                formControlName="promoCode"
+                class="form-control"
+                [class.error]="hasError('promoCode')"
+                placeholder="مثال: SAVE20"
+                style="text-transform: uppercase;"
+              />
+              <div class="error-message" *ngIf="hasError('promoCode')">
+                {{ getFieldError('promoCode') }}
+              </div>
+              <small class="form-help">كود البروموكود الذي سيستخدمه العملاء</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="promoCodeUsageLimit">عدد مرات الاستخدام المسموح *</label>
+              <input
+                type="number"
+                id="promoCodeUsageLimit"
+                formControlName="promoCodeUsageLimit"
+                class="form-control"
+                [class.error]="hasError('promoCodeUsageLimit')"
+                placeholder="مثال: 100"
+                min="1"
+              />
+              <div class="error-message" *ngIf="hasError('promoCodeUsageLimit')">
+                {{ getFieldError('promoCodeUsageLimit') }}
+              </div>
+              <small class="form-help">العدد الأقصى لاستخدام البروموكود</small>
+            </div>
+          </div>
+
+          <!-- PromoCode Discount Type -->
+          <div class="form-group" *ngIf="shouldShowPromoCodeFields()">
+            <label class="form-label">نوع خصم البروموكود *</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input
+                  type="radio"
+                  name="promoDiscountType"
+                  value="percentage"
+                  [checked]="shouldShowDiscountRateField()"
+                  (change)="onPromoDiscountTypeChange('percentage')"
+                />
+                <span class="radio-label">خصم نسبة مئوية</span>
+              </label>
+              <label class="radio-option">
+                <input
+                  type="radio"
+                  name="promoDiscountType"
+                  value="fixed"
+                  [checked]="shouldShowFixedAmountField()"
+                  (change)="onPromoDiscountTypeChange('fixed')"
+                />
+                <span class="radio-label">خصم مبلغ ثابت</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- PromoCode Usage Count (Read-only for editing) -->
+          <div class="form-group" *ngIf="shouldShowPromoCodeFields() && editingOffer">
+            <label class="form-label">عدد مرات الاستخدام الحالية</label>
+            <input
+              type="number"
+              formControlName="promoCodeUsageCount"
+              class="form-control"
+              readonly
+              style="background-color: #f8f9fa;"
+            />
+            <small class="form-help">
+              عدد المرات التي تم استخدام البروموكود فيها
+              (متبقي: {{ (offerForm.get('promoCodeUsageLimit')?.value || 0) - (offerForm.get('promoCodeUsageCount')?.value || 0) }})
+            </small>
           </div>
 
           <!-- Bundle Field -->

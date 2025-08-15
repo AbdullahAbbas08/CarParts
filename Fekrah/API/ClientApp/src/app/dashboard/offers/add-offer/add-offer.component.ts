@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SwaggerClient, OfferDTO } from '../../../Shared/Services/Swagger/SwaggerClient.service';
+import { SwaggerClient, OfferDTO, OfferTypeEnum } from '../../../Shared/Services/Swagger/SwaggerClient.service';
 
 @Component({
   selector: 'app-add-offer',
@@ -37,11 +37,12 @@ export class AddOfferComponent implements OnInit {
   };
 
   offerTypes = [
-    { value: 0, label: 'سعر جديد', icon: 'fa-tag' },
-    { value: 1, label: 'خصم نسبة مئوية', icon: 'fa-percent' },
-    { value: 2, label: 'خصم مبلغ ثابت', icon: 'fa-dollar-sign' },
-    { value: 3, label: 'اشتري X خذ Y', icon: 'fa-gift' },
-    { value: 4, label: 'باقة قطع', icon: 'fa-box' }
+    { value: OfferTypeEnum.NewPrice, label: 'سعر جديد', icon: 'fa-tag' },
+    { value: OfferTypeEnum.Percentage, label: 'خصم نسبة مئوية', icon: 'fa-percent' },
+    { value: OfferTypeEnum.FixedAmount, label: 'خصم مبلغ ثابت', icon: 'fa-dollar-sign' },
+    { value: OfferTypeEnum.BuyXGetY, label: 'اشتري X خذ Y', icon: 'fa-gift' },
+    { value: OfferTypeEnum.Bundle, label: 'باقة قطع', icon: 'fa-box' },
+    { value: OfferTypeEnum.PromoCode, label: 'بروموكود', icon: 'fa-qrcode' }
   ];
 
   constructor(
@@ -309,7 +310,7 @@ export class AddOfferComponent implements OnInit {
     this.clearAllValidators();
     
     // Set partId validator based on type (required for all except bundle)
-    if (type !== 4) { // Not bundle
+    if (type !== OfferTypeEnum.Bundle) { // Not bundle
       this.offerForm.get('partId')?.setValidators([Validators.required]);
     } else { // Bundle type
       this.offerForm.get('partId')?.clearValidators();
@@ -318,21 +319,27 @@ export class AddOfferComponent implements OnInit {
     
     // Set validators based on type
     switch (type) {
-      case 0: // NewPrice
+      case OfferTypeEnum.NewPrice: // NewPrice
         this.offerForm.get('newPrice')?.setValidators([Validators.required, Validators.min(0.01)]);
         break;
-      case 1: // Percentage
+      case OfferTypeEnum.Percentage: // Percentage
         this.offerForm.get('discountRate')?.setValidators([Validators.required, Validators.min(0.01), Validators.max(100)]);
         break;
-      case 2: // FixedAmount
+      case OfferTypeEnum.FixedAmount: // FixedAmount
         this.offerForm.get('fixedAmount')?.setValidators([Validators.required, Validators.min(0.01)]);
         break;
-      case 3: // BuyXGetY
+      case OfferTypeEnum.BuyXGetY: // BuyXGetY
         this.offerForm.get('buyQuantity')?.setValidators([Validators.required, Validators.min(1)]);
         this.offerForm.get('getQuantity')?.setValidators([Validators.required, Validators.min(1)]);
         break;
-      case 4: // Bundle
+      case OfferTypeEnum.Bundle: // Bundle
         this.offerForm.get('bundlePartIds')?.setValidators([Validators.required]);
+        break;
+      case OfferTypeEnum.PromoCode: // PromoCode
+        this.offerForm.get('promoCode')?.setValidators([Validators.required, Validators.minLength(3)]);
+        this.offerForm.get('promoCodeUsageLimit')?.setValidators([Validators.required, Validators.min(1)]);
+        // For PromoCode, user needs to choose either percentage or fixed amount
+        // We'll handle this through the radio buttons and onPromoDiscountTypeChange
         break;
     }
     
@@ -341,7 +348,7 @@ export class AddOfferComponent implements OnInit {
   }
 
   private clearAllValidators(): void {
-    const fields = ['newPrice', 'discountRate', 'fixedAmount', 'buyQuantity', 'getQuantity', 'bundlePartIdsCsv', 'bundlePartIds'];
+    const fields = ['newPrice', 'discountRate', 'fixedAmount', 'buyQuantity', 'getQuantity', 'bundlePartIdsCsv', 'bundlePartIds', 'promoCode', 'promoCodeUsageLimit'];
     fields.forEach(field => {
       this.offerForm.get(field)?.clearValidators();
       this.offerForm.get(field)?.updateValueAndValidity();
@@ -351,7 +358,7 @@ export class AddOfferComponent implements OnInit {
   private createForm(): FormGroup {
     const form = this.fb.group({
       id: [0],
-      type: [0, Validators.required],
+      type: [OfferTypeEnum.NewPrice, Validators.required],
       partId: [null, Validators.required], // تغيير من 0 إلى null لتفعيل placeholder
       newPrice: [null],
       discountRate: [null, [Validators.min(0), Validators.max(100)]],
@@ -361,6 +368,10 @@ export class AddOfferComponent implements OnInit {
       freePartId: [null],
       bundlePartIdsCsv: [''], // Keep for backward compatibility
       bundlePartIds: [[], []], // New field for multiselect - no initial validator
+      // PromoCode fields
+      promoCode: [null],
+      promoCodeUsageLimit: [null, [Validators.min(1)]],
+      promoCodeUsageCount: [0], // Track how many times it's been used
       startAt: ['', Validators.required],
       endAt: ['', Validators.required],
       isActive: [true]
@@ -396,7 +407,7 @@ export class AddOfferComponent implements OnInit {
 
       this.offerForm.patchValue({
         id: this.editingOffer.id || 0,
-        type: this.editingOffer.type || 0,
+        type: this.editingOffer.type || OfferTypeEnum.NewPrice,
         partId: this.editingOffer.partId || null, // تغيير من 0 إلى null
         newPrice: this.editingOffer.newPrice || null,
         discountRate: this.editingOffer.discountRate || null,
@@ -406,6 +417,9 @@ export class AddOfferComponent implements OnInit {
         freePartId: this.editingOffer.freePartId || null,
         bundlePartIdsCsv: this.editingOffer.bundlePartIdsCsv || '',
         bundlePartIds: bundlePartIds, // Set the array for multiselect
+        promoCode: this.editingOffer.promoCode || null,
+        promoCodeUsageLimit: this.editingOffer.promoCodeUsageLimit || null,
+        promoCodeUsageCount: this.editingOffer.promoCodeUsageCount || 0,
         startAt: startDate,
         endAt: endDate,
         isActive: this.editingOffer.isActive !== undefined ? this.editingOffer.isActive : true
@@ -458,43 +472,68 @@ export class AddOfferComponent implements OnInit {
   // Functions to show/hide fields based on offer type
   shouldShowNewPriceField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    return type === 0;
+    return type === OfferTypeEnum.NewPrice;
   }
 
   shouldShowDiscountRateField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    return type === 1;
+    return type === OfferTypeEnum.Percentage || type === OfferTypeEnum.PromoCode;
   }
 
   shouldShowFixedAmountField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    return type === 2;
+    return type === OfferTypeEnum.FixedAmount || type === OfferTypeEnum.PromoCode;
   }
 
   shouldShowQuantityFields(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    return type === 3;
+    return type === OfferTypeEnum.BuyXGetY;
   }
 
   shouldShowBundleField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    return type === 4;
+    return type === OfferTypeEnum.Bundle;
+  }
+
+  shouldShowPromoCodeFields(): boolean {
+    const type = parseInt(this.offerForm.get('type')?.value);
+    return type === OfferTypeEnum.PromoCode;
+  }
+
+  onPromoDiscountTypeChange(discountType: string): void {
+    // Clear both discount fields first
+    this.offerForm.get('discountRate')?.setValue(null);
+    this.offerForm.get('fixedAmount')?.setValue(null);
+    
+    // Set validators based on discount type
+    if (discountType === 'percentage') {
+      this.offerForm.get('discountRate')?.setValidators([Validators.required, Validators.min(0.01), Validators.max(100)]);
+      this.offerForm.get('fixedAmount')?.clearValidators();
+    } else if (discountType === 'fixed') {
+      this.offerForm.get('fixedAmount')?.setValidators([Validators.required, Validators.min(0.01)]);
+      this.offerForm.get('discountRate')?.clearValidators();
+    }
+    
+    // Update validity
+    this.offerForm.get('discountRate')?.updateValueAndValidity();
+    this.offerForm.get('fixedAmount')?.updateValueAndValidity();
   }
 
   // Helper function for backward compatibility
   shouldShowValueField(): boolean {
     const type = this.offerForm.get('type')?.value;
-    return type === 0 || type === 1 || type === 2; // NewPrice, Percentage, FixedAmount
+    return type === OfferTypeEnum.NewPrice || type === OfferTypeEnum.Percentage || type === OfferTypeEnum.FixedAmount; // NewPrice, Percentage, FixedAmount
   }
 
   getOfferTypeDescription(): string {
     const type = this.offerForm.get('type')?.value;
     switch (type) {
-      case 0: return 'تحديد سعر جديد للقطعة';
-      case 1: return 'خصم بنسبة مئوية من السعر الأصلي';
-      case 2: return 'خصم بمبلغ ثابت من السعر الأصلي';
-      case 3: return 'عرض اشتري كمية محددة واحصل على كمية مجاناً';
-      case 4: return 'باقة من القطع المختلفة بسعر مجمع';
+      case OfferTypeEnum.NewPrice: return 'تحديد سعر جديد للقطعة';
+      case OfferTypeEnum.Percentage: return 'خصم بنسبة مئوية من السعر الأصلي';
+      case OfferTypeEnum.FixedAmount: return 'خصم بمبلغ ثابت من السعر الأصلي';
+      case OfferTypeEnum.BuyXGetY: return 'عرض اشتري كمية محددة واحصل على كمية مجاناً';
+      case OfferTypeEnum.Bundle: return 'باقة من القطع المختلفة بسعر مجمع';
+      case OfferTypeEnum.PromoCode: return 'بروموكود للخصم على قطعة محددة لعدد مرات محدود';
       default: return 'اختر نوع العرض';
     }
   }
@@ -502,9 +541,9 @@ export class AddOfferComponent implements OnInit {
   getValueFieldLabel(): string {
     const type = this.offerForm.get('type')?.value;
     switch (type) {
-      case 0: return 'السعر الجديد';
-      case 1: return 'نسبة الخصم (%)';
-      case 2: return 'مبلغ الخصم الثابت';
+      case OfferTypeEnum.NewPrice: return 'السعر الجديد';
+      case OfferTypeEnum.Percentage: return 'نسبة الخصم (%)';
+      case OfferTypeEnum.FixedAmount: return 'مبلغ الخصم الثابت';
       default: return 'القيمة';
     }
   }
@@ -512,9 +551,9 @@ export class AddOfferComponent implements OnInit {
   getValueFieldName(): string {
     const type = this.offerForm.get('type')?.value;
     switch (type) {
-      case 0: return 'newPrice';
-      case 1: return 'discountRate';
-      case 2: return 'fixedAmount';
+      case OfferTypeEnum.NewPrice: return 'newPrice';
+      case OfferTypeEnum.Percentage: return 'discountRate';
+      case OfferTypeEnum.FixedAmount: return 'fixedAmount';
       default: return 'value';
     }
   }
@@ -522,8 +561,9 @@ export class AddOfferComponent implements OnInit {
   getValueFieldPlaceholder(): string {
     const type = this.offerForm.get('type')?.value;
     switch (type) {
-      case 0: return 'مثال: 20';
-      case 1: return 'مثال: 100';
+      case OfferTypeEnum.NewPrice: return 'مثال: 150.00';
+      case OfferTypeEnum.Percentage: return 'مثال: 25';
+      case OfferTypeEnum.FixedAmount: return 'مثال: 50.00';
       default: return 'أدخل القيمة';
     }
   }
@@ -610,6 +650,8 @@ export class AddOfferComponent implements OnInit {
       freePartId: 'رقم القطعة المجانية',
       bundlePartIdsCsv: 'قطع الحزمة',
       bundlePartIds: 'قطع الحزمة',
+      promoCode: 'البروموكود',
+      promoCodeUsageLimit: 'عدد مرات الاستخدام المسموح',
       startAt: 'تاريخ البداية',
       endAt: 'تاريخ النهاية'
     };
