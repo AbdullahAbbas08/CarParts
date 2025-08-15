@@ -16,8 +16,25 @@ export class AddOfferComponent implements OnInit {
 
   offerForm: FormGroup;
   parts: any[] = []; // قائمة القطع المتاحة
-  filteredParts: any[] = []; // القطع المفلترة للبحث
+  filteredParts: any[] = []; // القطع المفلترة للبحث (سنحتفظ بها للتوافق مع الكود الحالي)
+  partOptions: any[] = []; // خيارات القطع لـ PrimeNG Dropdown
   isLoadingParts: boolean = false;
+
+  // Bundle-specific properties
+  selectedBundleParts: any[] = []; // القطع المختارة للحزمة
+  bundlePartsPrices: { [partId: number]: number } = {}; // أسعار القطع في الحزمة
+
+  // Arabic locale for PrimeNG Calendar
+  arabicLocale = {
+    firstDayOfWeek: 6,
+    dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+    dayNamesShort: ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
+    dayNamesMin: ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
+    monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+    monthNamesShort: ['ينا', 'فبر', 'مار', 'أبر', 'ماي', 'يون', 'يول', 'أغس', 'سبت', 'أكت', 'نوف', 'ديس'],
+    today: 'اليوم',
+    clear: 'مسح'
+  };
 
   offerTypes = [
     { value: 0, label: 'سعر جديد', icon: 'fa-tag' },
@@ -48,7 +65,6 @@ export class AddOfferComponent implements OnInit {
     
     // Listen to type changes to update validators and form state
     this.offerForm.get('type')?.valueChanges.subscribe(type => {
-      console.log('Type changed to:', type); // للتشخيص
       this.updateValidators(type);
     });
   }
@@ -58,11 +74,19 @@ export class AddOfferComponent implements OnInit {
     this.isLoadingParts = true;
     
     // استخدام البيانات الوهمية مباشرة لأغراض التجربة
-    console.log('Loading dummy parts data...');
     this.parts = this.getDummyParts();
     this.filteredParts = [...this.parts];
+    
+    // تحويل القطع إلى خيارات PrimeNG Dropdown
+    this.partOptions = this.parts.map(part => ({
+      label: `${part.name} (${part.code}) - ${part.price} ج.م`,
+      value: part.id,
+      name: part.name,
+      code: part.code,
+      price: part.price
+    }));
+    
     this.isLoadingParts = false;
-    console.log('Loaded', this.parts.length, 'parts');
     
     // يمكن تفعيل هذا الكود لاحقاً عندما يكون الـ API متاح
     /*
@@ -71,14 +95,27 @@ export class AddOfferComponent implements OnInit {
         next: (result: any) => {
           this.parts = result.data || [];
           this.filteredParts = [...this.parts];
+          this.partOptions = this.parts.map(part => ({
+            label: `${part.name} (${part.code}) - ${part.price} ج.م`,
+            value: part.id,
+            name: part.name,
+            code: part.code,
+            price: part.price
+          }));
           this.isLoadingParts = false;
         },
         error: (error: any) => {
-          console.error('Error loading parts:', error);
           this.isLoadingParts = false;
           // في حالة عدم وجود API للقطع، استخدم بيانات وهمية
           this.parts = this.getDummyParts();
           this.filteredParts = [...this.parts];
+          this.partOptions = this.parts.map(part => ({
+            label: `${part.name} (${part.code}) - ${part.price} ج.م`,
+            value: part.id,
+            name: part.name,
+            code: part.code,
+            price: part.price
+          }));
         }
       });
     */
@@ -164,7 +201,6 @@ export class AddOfferComponent implements OnInit {
   // فلترة القطع حسب البحث
   onPartSearch(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
-    console.log('Searching for:', searchTerm);
     
     if (!searchTerm) {
       this.filteredParts = [...this.parts];
@@ -174,8 +210,6 @@ export class AddOfferComponent implements OnInit {
         part.code.toLowerCase().includes(searchTerm)
       );
     }
-    
-    console.log('Filtered parts:', this.filteredParts.length);
   }
 
   // الحصول على اسم القطعة من الـ ID
@@ -190,9 +224,97 @@ export class AddOfferComponent implements OnInit {
     return part ? part.price : 0;
   }
 
+  // Bundle-specific methods
+  onBundlePartsChange(event: any): void {
+    const selectedPartIds = event.value || [];
+    
+    // Update selected parts array
+    this.selectedBundleParts = selectedPartIds.map((partId: number) => {
+      const part = this.parts.find(p => p.id === partId);
+      if (part) {
+        return {
+          ...part,
+          value: partId,
+          label: `${part.name} (${part.code}) - ${part.price} ج.م`
+        };
+      }
+      return null;
+    }).filter((part: any) => part !== null);
+
+    // Initialize prices with original prices
+    selectedPartIds.forEach((partId: number) => {
+      if (!this.bundlePartsPrices[partId]) {
+        const part = this.parts.find(p => p.id === partId);
+        this.bundlePartsPrices[partId] = part ? part.price : 0;
+      }
+    });
+
+    // Remove prices for unselected parts
+    Object.keys(this.bundlePartsPrices).forEach(partIdStr => {
+      const partId = parseInt(partIdStr);
+      if (!selectedPartIds.includes(partId)) {
+        delete this.bundlePartsPrices[partId];
+      }
+    });
+  }
+
+  trackByPartId(index: number, part: any): number {
+    return part.value;
+  }
+
+  getBundlePartPrice(partId: number): number {
+    return this.bundlePartsPrices[partId] || this.getPartPrice(partId);
+  }
+
+  updateBundlePartPrice(partId: number, event: any): void {
+    const price = parseFloat(event.target.value);
+    if (!isNaN(price) && price >= 0) {
+      this.bundlePartsPrices[partId] = price;
+    }
+  }
+
+  calculateBundleTotal(): number {
+    let total = 0;
+    this.selectedBundleParts.forEach(part => {
+      total += this.getBundlePartPrice(part.value);
+    });
+    return Math.round(total * 100) / 100; // Round to 2 decimal places
+  }
+
+  calculateSavings(): number {
+    let originalTotal = 0;
+    let bundleTotal = this.calculateBundleTotal();
+    
+    this.selectedBundleParts.forEach(part => {
+      originalTotal += part.price;
+    });
+    
+    return Math.max(0, Math.round((originalTotal - bundleTotal) * 100) / 100);
+  }
+
+  getSavingsPercentage(): number {
+    let originalTotal = 0;
+    this.selectedBundleParts.forEach(part => {
+      originalTotal += part.price;
+    });
+    
+    if (originalTotal === 0) return 0;
+    
+    const savings = this.calculateSavings();
+    return Math.round((savings / originalTotal) * 100);
+  }
+
   private updateValidators(type: number): void {
     // Clear all validators first
     this.clearAllValidators();
+    
+    // Set partId validator based on type (required for all except bundle)
+    if (type !== 4) { // Not bundle
+      this.offerForm.get('partId')?.setValidators([Validators.required]);
+    } else { // Bundle type
+      this.offerForm.get('partId')?.clearValidators();
+      this.offerForm.get('partId')?.updateValueAndValidity();
+    }
     
     // Set validators based on type
     switch (type) {
@@ -210,7 +332,7 @@ export class AddOfferComponent implements OnInit {
         this.offerForm.get('getQuantity')?.setValidators([Validators.required, Validators.min(1)]);
         break;
       case 4: // Bundle
-        this.offerForm.get('bundlePartIdsCsv')?.setValidators([Validators.required]);
+        this.offerForm.get('bundlePartIds')?.setValidators([Validators.required]);
         break;
     }
     
@@ -219,7 +341,7 @@ export class AddOfferComponent implements OnInit {
   }
 
   private clearAllValidators(): void {
-    const fields = ['newPrice', 'discountRate', 'fixedAmount', 'buyQuantity', 'getQuantity', 'bundlePartIdsCsv'];
+    const fields = ['newPrice', 'discountRate', 'fixedAmount', 'buyQuantity', 'getQuantity', 'bundlePartIdsCsv', 'bundlePartIds'];
     fields.forEach(field => {
       this.offerForm.get(field)?.clearValidators();
       this.offerForm.get(field)?.updateValueAndValidity();
@@ -237,7 +359,8 @@ export class AddOfferComponent implements OnInit {
       buyQuantity: [null, [Validators.min(1)]],
       getQuantity: [null, [Validators.min(1)]],
       freePartId: [null],
-      bundlePartIdsCsv: [''],
+      bundlePartIdsCsv: [''], // Keep for backward compatibility
+      bundlePartIds: [[], []], // New field for multiselect - no initial validator
       startAt: ['', Validators.required],
       endAt: ['', Validators.required],
       isActive: [true]
@@ -245,7 +368,6 @@ export class AddOfferComponent implements OnInit {
 
     // Watch for type changes to trigger field display updates
     form.get('type')?.valueChanges.subscribe(value => {
-      console.log('Form type value changed to:', value, typeof value);
       if (value !== null) {
         this.updateValidators(Number(value));
         this.cdr.detectChanges(); // Force change detection
@@ -263,6 +385,15 @@ export class AddOfferComponent implements OnInit {
       const endDate = this.editingOffer.endAt ? 
         new Date(this.editingOffer.endAt).toISOString().split('T')[0] : '';
 
+      // Convert bundlePartIdsCsv to array for multiselect
+      let bundlePartIds: number[] = [];
+      if (this.editingOffer.bundlePartIdsCsv) {
+        bundlePartIds = this.editingOffer.bundlePartIdsCsv
+          .split(',')
+          .map((id: string) => parseInt(id.trim()))
+          .filter((id: number) => !isNaN(id));
+      }
+
       this.offerForm.patchValue({
         id: this.editingOffer.id || 0,
         type: this.editingOffer.type || 0,
@@ -274,10 +405,36 @@ export class AddOfferComponent implements OnInit {
         getQuantity: this.editingOffer.getQuantity || null,
         freePartId: this.editingOffer.freePartId || null,
         bundlePartIdsCsv: this.editingOffer.bundlePartIdsCsv || '',
+        bundlePartIds: bundlePartIds, // Set the array for multiselect
         startAt: startDate,
         endAt: endDate,
         isActive: this.editingOffer.isActive !== undefined ? this.editingOffer.isActive : true
       });
+
+      // Restore bundle parts prices if available
+      if (this.editingOffer.bundlePartsPrices) {
+        try {
+          this.bundlePartsPrices = JSON.parse(this.editingOffer.bundlePartsPrices);
+        } catch (error) {
+          // If parsing fails, initialize with default prices
+          this.bundlePartsPrices = {};
+        }
+      }
+
+      // Initialize selectedBundleParts for editing
+      if (bundlePartIds.length > 0) {
+        this.selectedBundleParts = bundlePartIds.map((partId: number) => {
+          const part = this.parts.find(p => p.id === partId);
+          if (part) {
+            return {
+              ...part,
+              value: partId,
+              label: `${part.name} (${part.code}) - ${part.price} ج.م`
+            };
+          }
+          return null;
+        }).filter((part: any) => part !== null);
+      }
     }
   }
 
@@ -293,7 +450,6 @@ export class AddOfferComponent implements OnInit {
 
   onTypeChange(event: any): void {
     const type = parseInt(event.target.value);
-    console.log('Type changed via event to:', type, typeof type);
     this.offerForm.get('type')?.setValue(type);
     this.updateValidators(type);
     this.cdr.detectChanges(); // Force change detection
@@ -302,31 +458,26 @@ export class AddOfferComponent implements OnInit {
   // Functions to show/hide fields based on offer type
   shouldShowNewPriceField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    console.log('shouldShowNewPriceField - type:', type, 'result:', type === 0);
     return type === 0;
   }
 
   shouldShowDiscountRateField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    console.log('shouldShowDiscountRateField - type:', type, 'result:', type === 1);
     return type === 1;
   }
 
   shouldShowFixedAmountField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    console.log('shouldShowFixedAmountField - type:', type, 'result:', type === 2);
     return type === 2;
   }
 
   shouldShowQuantityFields(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    console.log('shouldShowQuantityFields - type:', type, 'result:', type === 3);
     return type === 3;
   }
 
   shouldShowBundleField(): boolean {
     const type = parseInt(this.offerForm.get('type')?.value);
-    console.log('shouldShowBundleField - type:', type, 'result:', type === 4);
     return type === 4;
   }
 
@@ -338,7 +489,6 @@ export class AddOfferComponent implements OnInit {
 
   getOfferTypeDescription(): string {
     const type = this.offerForm.get('type')?.value;
-    console.log('getOfferTypeDescription - current type:', type, typeof type);
     switch (type) {
       case 0: return 'تحديد سعر جديد للقطعة';
       case 1: return 'خصم بنسبة مئوية من السعر الأصلي';
@@ -396,6 +546,22 @@ export class AddOfferComponent implements OnInit {
           formData.endAt = new Date(formData.endAt).toISOString();
         }
 
+        // Convert bundle parts array to CSV string for API compatibility
+        if (formData.bundlePartIds && Array.isArray(formData.bundlePartIds)) {
+          formData.bundlePartIdsCsv = formData.bundlePartIds.join(',');
+          
+          // Add bundle parts prices information
+          const bundlePricesArray = formData.bundlePartIds.map((partId: number) => ({
+            partId: partId,
+            price: this.getBundlePartPrice(partId)
+          }));
+          
+          // You can store this in a separate field or encode it somehow
+          // For now, I'll add it as a JSON string comment or separate field
+          formData.bundlePartsPrices = JSON.stringify(this.bundlePartsPrices);
+          formData.bundleTotal = this.calculateBundleTotal();
+        }
+
         let result;
         if (this.editingOffer?.id) {
           // Update existing offer
@@ -408,7 +574,6 @@ export class AddOfferComponent implements OnInit {
         this.offerSaved.emit(result);
         this.onClose();
       } catch (error) {
-        console.error('Error saving offer:', error);
         // Handle error - you can add a toast notification here
       }
     } else {
@@ -444,9 +609,39 @@ export class AddOfferComponent implements OnInit {
       getQuantity: 'كمية المجان',
       freePartId: 'رقم القطعة المجانية',
       bundlePartIdsCsv: 'قطع الحزمة',
+      bundlePartIds: 'قطع الحزمة',
       startAt: 'تاريخ البداية',
       endAt: 'تاريخ النهاية'
     };
     return fieldNames[fieldName] || fieldName;
+  }
+
+  // Get relative time in Arabic
+  getRelativeTime(date: string | Date): string {
+    const now = new Date();
+    const createdDate = new Date(date);
+    const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+    const diffMinutes = Math.ceil(diffTime / (1000 * 60));
+
+    if (diffMinutes < 60) {
+      return `منذ ${diffMinutes} دقيقة`;
+    } else if (diffHours < 24) {
+      return `منذ ${diffHours} ساعة`;
+    } else if (diffDays === 1) {
+      return 'منذ يوم واحد';
+    } else if (diffDays < 7) {
+      return `منذ ${diffDays} أيام`;
+    } else if (diffDays < 30) {
+      const weeks = Math.floor(diffDays / 7);
+      return `منذ ${weeks} ${weeks === 1 ? 'أسبوع' : 'أسابيع'}`;
+    } else if (diffDays < 365) {
+      const months = Math.floor(diffDays / 30);
+      return `منذ ${months} ${months === 1 ? 'شهر' : 'شهور'}`;
+    } else {
+      const years = Math.floor(diffDays / 365);
+      return `منذ ${years} ${years === 1 ? 'سنة' : 'سنوات'}`;
+    }
   }
 }

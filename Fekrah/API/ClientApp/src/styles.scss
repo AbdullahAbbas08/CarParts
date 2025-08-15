@@ -5,6 +5,11 @@
 @import 'swiper/css/navigation';
 @import 'swiper/css/pagination';
 
+// Import PrimeNG CSS
+@import 'primeng/resources/themes/lara-light-blue/theme.css';
+@import 'primeng/resources/primeng.css';
+@import 'primeicons/primeicons.css';
+// @import 'styles/primeng';
 // Global Overlay Styles - Ensure it appears over everything
 .delete-confirmation-overlay {
   position: fixed !important;

@@ -11,6 +11,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
 import { OfferCardComponent } from './components/offer-card/offer-card.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { AddCategoryModalComponent } from './components/add-category-modal/add-category-modal.component';
+import { PrimeNGModule } from './primeng.module';
 
 @NgModule({
    declarations: [
@@ -28,7 +29,8 @@ import { AddCategoryModalComponent } from './components/add-category-modal/add-c
     HttpClientModule,
     RouterModule,
     NgxPaginationModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PrimeNGModule
   ],
   exports: [
     CommonModule,
@@ -41,7 +43,8 @@ import { AddCategoryModalComponent } from './components/add-category-modal/add-c
     CardComponent,
     OfferCardComponent,
     BreadcrumbComponent,
-    AddCategoryModalComponent
+    AddCategoryModalComponent,
+    PrimeNGModule
   ],
  
 })
