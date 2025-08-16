@@ -9,7 +9,7 @@
         public int Year { get; set; }
         public int BrandId { get; set; }
 
-        [ForeignKey(nameof(BrandId))]
+        [ForeignKey("BrandId")]
         public Brand Brand { get; set; }
 
         public int? CreatedByUserId { get; set; }

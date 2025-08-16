@@ -1,25 +1,34 @@
 <div class="brand-section">
-  <div class="section-header">
-    <h2 class="section-title">أختر موديل السيارة</h2>
-    <a routerLink="/brands" class="view-more-link">
-      <span>عرض المزيد</span>
-      <i class="fas fa-arrow-left"></i>
-    </a>
-  </div>
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">ماركات السيارات</h2>
+      <p class="section-subtitle">اكتشف أفضل الماركات العالمية المتاحة لدينا</p>
+    </div>
 
-  <div class="swiper">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide" *ngFor="let brand of carBrands">
-        <div class="brand-card" [routerLink]="['/category', brand.id]">
-          <div class="brand-image">
-            <img src="../../../../../assets/images/image_100_100.png" [alt]="brand.name" />
+    <div class="brand-types-slider">
+      <div class="swiper brand-types-swiper pt-3">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let brand of carBrands">
+            <div class="brand-card" [routerLink]="['/category', brand.id]">
+              <div class="brand-image">
+                <img src="../../../../../assets/images/image_100_100.png" [alt]="brand.name" />
+              </div>
+              <p>{{ brand.name }}</p>
+            </div>
           </div>
-          <p>{{ brand.name }}</p>
         </div>
+        
+        <div class="swiper-pagination brand-types-pagination mt-3"></div>
+        <!-- <div class="swiper-button-next brand-types-button-next"></div> -->
+        <div class="swiper-button-prev brand-types-button-prev"></div>
       </div>
     </div>
-    <!-- <div class="swiper-pagination"></div> -->
-    <!-- <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div> -->
+    
+    <div class="view-more-section">
+      <button class="view-more-btn" routerLink="/brands">
+        <span>عرض جميع الماركات</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
   </div>
 </div>

@@ -1,0 +1,225 @@
+// ========================================
+// Bundle Parts Configuration Styling
+// ========================================
+
+// Bundle parts configuration container
+.bundle-parts-config {
+  margin-top: 20px !important;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+  border: 2px solid #dee2e6 !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    border-color: #007bff !important;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1) !important;
+  }
+}
+
+// Configuration title
+.config-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 0 16px 0 !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  
+  i {
+    color: #007bff !important;
+    font-size: 1.2rem !important;
+  }
+}
+
+// Parts price grid
+.parts-price-grid {
+  display: grid !important;
+  gap: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+// Individual part price item
+.part-price-item {
+  background: white !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 16px !important;
+  align-items: center !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    border-color: #007bff !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1) !important;
+  }
+}
+
+// Part information section
+.part-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.part-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  
+  .part-name {
+    font-weight: 600 !important;
+    color: #495057 !important;
+    font-size: 1rem !important;
+  }
+  
+  .part-code {
+    background: #e9ecef !important;
+    color: #6c757d !important;
+    padding: 2px 8px !important;
+    border-radius: 6px !important;
+    font-size: 0.85rem !important;
+    font-family: 'Courier New', monospace !important;
+  }
+}
+
+.original-price {
+  color: #6c757d !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  
+  &::before {
+    content: "💰" !important;
+    margin-left: 6px !important;
+  }
+}
+
+// Price input group
+.price-input-group {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 6px !important;
+  min-width: 150px !important;
+}
+
+.price-label {
+  font-size: 0.85rem !important;
+  color: #6c757d !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+}
+
+.bundle-price-input {
+  width: 120px !important;
+  padding: 8px 12px !important;
+  border: 2px solid #ced4da !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  background: white !important;
+  color: #007bff !important;
+  transition: all 0.2s ease !important;
+  
+  &:focus {
+    outline: none !important;
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1) !important;
+  }
+  
+  &:hover {
+    border-color: #007bff !important;
+  }
+}
+
+.currency {
+  color: #6c757d !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  margin-right: 8px !important;
+}
+
+// Bundle total section
+.bundle-total {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  padding: 16px 20px !important;
+  border-radius: 12px !important;
+  margin-top: 16px !important;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2) !important;
+}
+
+.total-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+.total-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  
+  i {
+    font-size: 1.2rem !important;
+  }
+}
+
+.total-value {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.savings-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 0.95rem !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+  
+  i {
+    color: #ffd700 !important;
+    font-size: 1rem !important;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .parts-price-grid {
+    gap: 12px !important;
+  }
+  
+  .part-price-item {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+  
+  .price-input-group {
+    align-items: center !important;
+    width: 100% !important;
+  }
+  
+  .bundle-price-input {
+    width: 100% !important;
+    max-width: 200px !important;
+  }
+  
+  .total-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+}

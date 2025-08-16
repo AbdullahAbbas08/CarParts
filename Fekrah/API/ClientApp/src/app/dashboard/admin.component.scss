@@ -151,6 +151,48 @@
     box-shadow: 0 10px 30px rgba(142, 68, 173, 0.3);
   }
   
+  &.lookup-card {
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+  }
+  
+  &.offers-card {
+    background: linear-gradient(135deg, #ff9a56, #ff6b95);
+    box-shadow: 0 10px 30px rgba(255, 154, 86, 0.4);
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+      background-size: 20px 20px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    
+    .card-icon {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 20px rgba(255, 107, 149, 0.3);
+      
+      i {
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    &:hover {
+      box-shadow: 0 20px 40px rgba(255, 154, 86, 0.6);
+      
+      .card-icon {
+        box-shadow: 0 12px 30px rgba(255, 107, 149, 0.5);
+      }
+    }
+  }
+  
   &.reports-card {
     background: linear-gradient(135deg, #a8edea, #fed6e3);
     color: #2c3e50;

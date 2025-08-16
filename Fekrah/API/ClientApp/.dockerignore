@@ -1,25 +1,32 @@
-**/.classpath
-**/.dockerignore
-**/.env
-**/.git
-**/.gitignore
-**/.project
-**/.settings
-**/.toolstarget
-**/.vs
-**/.vscode
-**/*.*proj.user
-**/*.dbmdl
-**/*.jfm
-**/azds.yaml
-**/bin
-**/charts
-**/docker-compose*
-**/Dockerfile*
-**/node_modules
-**/npm-debug.log
-**/obj
-**/secrets.dev.yaml
-**/values.dev.yaml
-LICENSE
-README.md
+# outputs & caches
+dist/
+.angular/
+.tmp/
+.cache/
+.vite/
+.parcel-cache/
+
+# deps
+node_modules/
+
+# IDE/OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# logs & coverage
+npm-debug.log*
+yarn-error.log*
+*.log
+coverage/
+*.lcov
+
+# archives
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# env/locals
+.env*

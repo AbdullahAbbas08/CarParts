@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CarPart } from 'src/app/Shared/Models/car-card';
+import { SwaggerClient, BrandDTO, ModelTypeDTO, CategoryDTO } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
 
 // مفاتيح الفلاتر المدعومة
 type FilterKey = 'brands' | 'models' | 'years' | 'types' | 'categories' | 'condition';
@@ -16,11 +17,10 @@ export class CategoryPartsComponent implements OnInit {
   pageSize = 12;
   currentPage = 1;
   pageSizeOptions = [12, 24, 36];
-  searchText = '';
   categoryName = 'كهرباء';
-  suggestions: string[] = [];
-  searchFocused = false;
 
+  // Search Properties
+  searchTerm: string = '';
 
   itemsPerPage: number = 6;
   itemsPerPageOptions: number[] = [6, 12, 24];
@@ -51,75 +51,10 @@ export class CategoryPartsComponent implements OnInit {
       priceRange: { min: null, max: null }
     };
 
-  availableBrands = ['تويوتا', 'نيسان', 'هيونداي', 'كيا'];
-  availableModels = [
-    'كورولا',
-    'كامري',
-    'يارس',
-    'راف 4',
-    'لاند كروزر',
-    'برادو',
-    'هايلوكس',
-    'فورتشنر',
-    'أفانتي',
-    'سوناتا',
-    'إلنترا',
-    'توسان',
-    'سانتافي',
-    'سيفيك',
-    'أكورد',
-    'سي آر-في',
-    'أوديسي',
-    'سنترا',
-    'ألتيما',
-    'ماكسيما',
-    'باترول',
-    'إكس تريل',
-    'نافارا',
-    'سبورتاج',
-    'سيراتو',
-    'بيكانتو',
-    'سورينتو',
-    'ريو',
-    'CX-5',
-    'CX-9',
-    'مازدا 3',
-    'مازدا 6',
-    'تشارجر',
-    'تشالنجر',
-    'دورانجو',
-    'رام 1500',
-    'موستنج',
-    'إكسبلورر',
-    'فيوجن',
-    'فوكاس',
-    'إف-150',
-    'ماليبو',
-    'إمبالا',
-    'كابتيفا',
-    'تاهو',
-    'سوبربان',
-    'سيلفرادو',
-    'كروز',
-    'إسكاليد',
-    'جي إم سي يوكن',
-    'أكاديا',
-    'تيرين',
-    'رانجلر',
-    'جراند شيروكي',
-    'كومباس',
-    'كليو',
-    'ميغان',
-    'بيجو 301',
-    'بيجو 508',
-    'ستروين C5',
-    'سكودا أوكتافيا',
-    'سكودا سوبيرب',
-    'فولكس باسات',
-    'جيتا',
-    'تيغوان'
-  ];
-
+  // Arrays for sidebar filters
+  availableBrands = ['تويوتا', 'نيسان', 'هيونداي', 'كيا', 'مرسيدس', 'بي ام دبليو', 'أودي', 'فولكس واجن'];
+  availableModels = ['كورولا', 'كامري', 'يارس', 'راف 4', 'ألتيما', 'سنترا', 'إلنترا', 'سوناتا'];
+  availableCategories = ['قطع المحرك', 'قطع كهربائية', 'الفلاتر', 'القطع الداخلية', 'فرامل', 'إطارات', 'زيوت'];
   availableYears = [
     '2024', '2023', '2022', '2021', '2020',
     '2019', '2018', '2017', '2016', '2015',
@@ -127,19 +62,47 @@ export class CategoryPartsComponent implements OnInit {
     '2009', '2008', '2007', '2006', '2005',
     '2004', '2003', '2002', '2001', '2000'
   ];
-
   availableTypes = ['أصلي', 'تجاري'];
-  availableCategories = ['قطع المحرك', 'قطع كهربائية', 'الفلاتر', 'القطع الداخلية'];
   availableConditions = ['جديد', 'مستعمل', 'مستورد']; // ✅ الحالات المتاحة
   pagedParts!: CarPart[];
 
-  constructor() { }
+  constructor(private swaggerClient: SwaggerClient) { }
 
   ngOnInit(): void {
     this.selectedFilters.priceRange.min = 1000;
     this.selectedFilters.priceRange.max = 30000;
+    
     this.getMockData();
     this.filteredParts = [...this.allParts];
+    this.updateDisplayParts();
+  }
+
+  // Search functionality
+  onSearchChange(event: any) {
+    this.searchTerm = event.target.value;
+    this.applySearch();
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.applySearch();
+  }
+
+  private applySearch() {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      this.filteredParts = [...this.allParts];
+    } else {
+      const searchLower = this.searchTerm.toLowerCase().trim();
+      this.filteredParts = this.allParts.filter(part => 
+        part.name.toLowerCase().includes(searchLower) ||
+        part.car.brand.toLowerCase().includes(searchLower) ||
+        part.car.model.toLowerCase().includes(searchLower) ||
+        part.car.year.toString().includes(searchLower) ||
+        part.store.name.toLowerCase().includes(searchLower) ||
+        part.condition.toLowerCase().includes(searchLower) ||
+        part.grade.toLowerCase().includes(searchLower)
+      );
+    }
     this.updateDisplayParts();
   }
 
@@ -178,6 +141,12 @@ export class CategoryPartsComponent implements OnInit {
     this.updateDisplayParts();
   }
 
+  onPaginatorPageChange(event: any) {
+    this.currentPage = Math.floor(event.first / event.rows) + 1;
+    this.itemsPerPage = event.rows;
+    this.updatePagedParts();
+  }
+
   updateDisplayParts() {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
@@ -190,31 +159,6 @@ export class CategoryPartsComponent implements OnInit {
 
   onPartClick(part: any) {
     console.log('Part clicked:', part);
-  }
-
-  onSearch(event: any) {
-    const text = event.target.value.toLowerCase();
-    this.filteredParts = this.allParts.filter(part =>
-      part.name.toLowerCase().includes(text)
-    );
-
-    this.suggestions = this.allParts
-      .map(part => part.name)
-      .filter(name => name.toLowerCase().includes(text))
-      .slice(0, 5);
-
-    this.currentPage = 1;
-    this.updateDisplayParts();
-  }
-
-  selectSuggestion(suggestion: string) {
-    this.searchText = suggestion;
-    this.filteredParts = this.allParts.filter(part =>
-      part.name === suggestion
-    );
-    this.suggestions = [];
-    this.currentPage = 1;
-    this.updateDisplayParts();
   }
 
   toggleFilter(filterType: FilterKey, value: string) {

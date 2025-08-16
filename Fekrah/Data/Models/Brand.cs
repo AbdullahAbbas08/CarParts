@@ -10,6 +10,8 @@
 
         public string ImageUrl { get; set; }
 
+        public bool IsActive { get; set; }
+
         public int? CreatedByUserId { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
 
@@ -22,7 +24,9 @@
         [ForeignKey(nameof(UpdatedBy))]
         public User? UpdatedByUser { get; set; }
 
-        public ICollection<Part> Parts { get; set; }
+        [NotMapped]
+        public int ModelTypesCount => ModelTypes?.Count ?? 0;
+
         public ICollection<ModelType> ModelTypes { get; set; }
     }
 }

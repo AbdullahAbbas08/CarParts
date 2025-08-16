@@ -18,13 +18,14 @@ namespace Api.Services
             services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILookupService, LookupService>();
-            services.AddScoped<ICarsModelService, CarsModelService>();
+            services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IModelTypeService, ModelTypeService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IOfferService, OfferService>();
         }
 
         public static void RegisterRepositoriesConfiguration(this IServiceCollection services)

@@ -1,0 +1,524 @@
+<!-- Add/Edit Offer Modal -->
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <h2 class="modal-title">
+          <i class="fas" [class]="editingOffer ? 'fa-edit' : 'fa-plus-circle'"></i>
+          {{ editingOffer ? 'تعديل العرض' : 'إضافة عرض جديد' }}
+        </h2>
+        <p class="modal-subtitle">
+          {{ editingOffer ? 'قم بتعديل بيانات العرض' : 'قم بإدخال تفاصيل العرض الجديد' }}
+        </p>
+      </div>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="إغلاق">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Form Content -->
+    <form [formGroup]="offerForm" (ngSubmit)="onSubmit()" class="offer-form">
+      <div class="form-content">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            المعلومات الأساسية
+          </h3>
+          <p class="section-help">أدخل المعلومات الأساسية للعرض</p>
+          
+          <!-- نوع العرض - صف منفصل -->
+          <div class="form-group">
+            <label class="form-label" for="type">نوع العرض *</label>
+            <select
+              id="type"
+              formControlName="type"
+              class="form-control"
+              [class.error]="hasError('type')"
+              (change)="onTypeChange($event)"
+            >
+              <option *ngFor="let offerType of offerTypes" [value]="offerType.value">
+                <i [class]="'fas ' + offerType.icon"></i>
+                {{ offerType.label }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="hasError('type')">
+              {{ getFieldError('type') }}
+            </div>
+            <small class="form-help" *ngIf="getOfferTypeDescription()">
+              {{ getOfferTypeDescription() }}
+            </small>
+          </div>
+
+          <!-- اختيار القطعة - صف منفصل -->
+          <div class="form-group" *ngIf="!shouldShowBundleField()">
+            <label class="form-label" for="partId">اختيار القطعة *</label>
+            
+            <!-- PrimeNG Dropdown with Search -->
+            <p-dropdown
+              formControlName="partId"
+              [options]="partOptions"
+              placeholder="اختر القطعة..."
+              [filter]="true"
+              filterBy="label"
+              [showClear]="false"
+              optionLabel="label"
+              optionValue="value"
+              [loading]="isLoadingParts"
+              [style]="{'width': '100%'}"
+              [class]="hasError('partId') ? 'ng-invalid ng-dirty' : ''"
+              appendTo="body"
+              filterPlaceholder="البحث في القطع..."
+              emptyMessage="لا توجد نتائج"
+              emptyFilterMessage="لم يتم العثور على نتائج"
+            >
+              <ng-template pTemplate="item" let-part>
+                <div class="part-option">
+                  <span class="part-name">{{ part.name }}</span>
+                  <span class="part-code">({{ part.code }})</span>
+                  <span class="part-price">{{ part.price }} ج.م</span>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="selectedItem" let-part>
+                <div class="selected-part" *ngIf="part">
+                  {{ part.name }} ({{ part.code }}) - {{ part.price }} ج.م
+                </div>
+              </ng-template>
+            </p-dropdown>
+            
+            <!-- عرض السعر الحالي للقطعة المختارة -->
+            <div class="part-price-info" *ngIf="offerForm.get('partId')?.value && getPartPrice(offerForm.get('partId')?.value)">
+              <small class="text-info">
+                <i class="fas fa-info-circle"></i>
+                السعر الحالي: {{ getPartPrice(offerForm.get('partId')?.value) }} ج.م
+              </small>
+            </div>
+            
+            <div class="error-message" *ngIf="hasError('partId')">
+              {{ getFieldError('partId') }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Offer Details Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-percentage"></i>
+            تفاصيل العرض
+          </h3>
+          <p class="section-help">حدد قيمة العرض والتفاصيل المطلوبة حسب النوع المختار</p>
+
+          <!-- New Price Field -->
+          <div class="form-group" *ngIf="shouldShowNewPriceField()">
+            <label class="form-label" for="newPrice">السعر الجديد *</label>
+            <input
+              type="number"
+              id="newPrice"
+              formControlName="newPrice"
+              class="form-control"
+              [class.error]="hasError('newPrice')"
+              placeholder="مثال: 150.00"
+              min="0.01"
+              step="0.01"
+            />
+            <div class="error-message" *ngIf="hasError('newPrice')">
+              {{ getFieldError('newPrice') }}
+            </div>
+            <small class="form-help">السعر الجديد الذي سيتم تطبيقه على القطعة</small>
+          </div>
+
+          <!-- Discount Rate Field -->
+          <div class="form-group" *ngIf="shouldShowDiscountRateField()">
+            <label class="form-label" for="discountRate">نسبة الخصم (%) *</label>
+            <input
+              type="number"
+              id="discountRate"
+              formControlName="discountRate"
+              class="form-control"
+              [class.error]="hasError('discountRate')"
+              placeholder="مثال: 25"
+              min="0.01"
+              max="100"
+              step="0.01"
+            />
+            <div class="error-message" *ngIf="hasError('discountRate')">
+              {{ getFieldError('discountRate') }}
+            </div>
+            <small class="form-help">نسبة الخصم من السعر الأصلي (من 0.01% إلى 100%)</small>
+          </div>
+
+          <!-- Fixed Amount Field -->
+          <div class="form-group" *ngIf="shouldShowFixedAmountField()">
+            <label class="form-label" for="fixedAmount">مبلغ الخصم الثابت *</label>
+            <input
+              type="number"
+              id="fixedAmount"
+              formControlName="fixedAmount"
+              class="form-control"
+              [class.error]="hasError('fixedAmount')"
+              placeholder="مثال: 50.00"
+              min="0.01"
+              step="0.01"
+            />
+            <div class="error-message" *ngIf="hasError('fixedAmount')">
+              {{ getFieldError('fixedAmount') }}
+            </div>
+            <small class="form-help">المبلغ الثابت الذي سيتم خصمه من السعر الأصلي</small>
+          </div>
+
+          <!-- Buy X Get Y Fields -->
+          <div class="form-grid" *ngIf="shouldShowQuantityFields()">
+            <div class="form-group">
+              <label class="form-label" for="buyQuantity">كمية الشراء المطلوبة *</label>
+              <input
+                type="number"
+                id="buyQuantity"
+                formControlName="buyQuantity"
+                class="form-control"
+                [class.error]="hasError('buyQuantity')"
+                placeholder="مثال: 2"
+                min="1"
+              />
+              <div class="error-message" *ngIf="hasError('buyQuantity')">
+                {{ getFieldError('buyQuantity') }}
+              </div>
+              <small class="form-help">عدد القطع المطلوب شراؤها</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="getQuantity">كمية الحصول المجاني *</label>
+              <input
+                type="number"
+                id="getQuantity"
+                formControlName="getQuantity"
+                class="form-control"
+                [class.error]="hasError('getQuantity')"
+                placeholder="مثال: 1"
+                min="1"
+              />
+              <div class="error-message" *ngIf="hasError('getQuantity')">
+                {{ getFieldError('getQuantity') }}
+              </div>
+              <small class="form-help">عدد القطع التي سيحصل عليها العميل مجاناً</small>
+            </div>
+          </div>
+
+          <!-- Free Part ID for Buy X Get Y -->
+          <div class="form-group" *ngIf="shouldShowQuantityFields()">
+            <label class="form-label" for="freePartId">رقم القطعة المجانية (اختياري)</label>
+            <input
+              type="number"
+              id="freePartId"
+              formControlName="freePartId"
+              class="form-control"
+              placeholder="اتركه فارغاً لنفس القطعة"
+              min="1"
+            />
+            <small class="form-help">إذا تركته فارغاً، ستكون القطعة المجانية هي نفس قطعة الشراء</small>
+          </div>
+
+          <!-- PromoCode Fields -->
+          <div class="form-grid" *ngIf="shouldShowPromoCodeFields()">
+            <div class="form-group">
+              <label class="form-label" for="promoCode">كود البروموكود *</label>
+              <input
+                type="text"
+                id="promoCode"
+                formControlName="promoCode"
+                class="form-control"
+                [class.error]="hasError('promoCode')"
+                placeholder="مثال: SAVE20"
+                style="text-transform: uppercase;"
+              />
+              <div class="error-message" *ngIf="hasError('promoCode')">
+                {{ getFieldError('promoCode') }}
+              </div>
+              <small class="form-help">كود البروموكود الذي سيستخدمه العملاء</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="promoCodeUsageLimit">عدد مرات الاستخدام المسموح *</label>
+              <input
+                type="number"
+                id="promoCodeUsageLimit"
+                formControlName="promoCodeUsageLimit"
+                class="form-control"
+                [class.error]="hasError('promoCodeUsageLimit')"
+                placeholder="مثال: 100"
+                min="1"
+              />
+              <div class="error-message" *ngIf="hasError('promoCodeUsageLimit')">
+                {{ getFieldError('promoCodeUsageLimit') }}
+              </div>
+              <small class="form-help">العدد الأقصى لاستخدام البروموكود</small>
+            </div>
+          </div>
+
+          <!-- PromoCode Discount Type -->
+          <div class="form-group" *ngIf="shouldShowPromoCodeFields()">
+            <label class="form-label">نوع خصم البروموكود *</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input
+                  type="radio"
+                  name="promoDiscountType"
+                  value="percentage"
+                  [checked]="shouldShowDiscountRateField()"
+                  (change)="onPromoDiscountTypeChange('percentage')"
+                />
+                <span class="radio-label">خصم نسبة مئوية</span>
+              </label>
+              <label class="radio-option">
+                <input
+                  type="radio"
+                  name="promoDiscountType"
+                  value="fixed"
+                  [checked]="shouldShowFixedAmountField()"
+                  (change)="onPromoDiscountTypeChange('fixed')"
+                />
+                <span class="radio-label">خصم مبلغ ثابت</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- PromoCode Usage Count (Read-only for editing) -->
+          <div class="form-group" *ngIf="shouldShowPromoCodeFields() && editingOffer">
+            <label class="form-label">عدد مرات الاستخدام الحالية</label>
+            <input
+              type="number"
+              formControlName="promoCodeUsageCount"
+              class="form-control"
+              readonly
+              style="background-color: #f8f9fa;"
+            />
+            <small class="form-help">
+              عدد المرات التي تم استخدام البروموكود فيها
+              (متبقي: {{ (offerForm.get('promoCodeUsageLimit')?.value || 0) - (offerForm.get('promoCodeUsageCount')?.value || 0) }})
+            </small>
+          </div>
+
+          <!-- Bundle Field -->
+          <div class="form-group" *ngIf="shouldShowBundleField()">
+            <label class="form-label" for="bundlePartIds">اختيار قطع الحزمة وتحديد الأسعار *</label>
+            
+            <!-- PrimeNG MultiSelect for Bundle Parts -->
+            <p-multiSelect
+              formControlName="bundlePartIds"
+              [options]="partOptions"
+              placeholder="اختر القطع للحزمة..."
+              [filter]="true"
+              filterBy="label"
+              [showClear]="false"
+              optionLabel="label"
+              optionValue="value"
+              [loading]="isLoadingParts"
+              [style]="{'width': '100%'}"
+              [class]="hasError('bundlePartIds') ? 'ng-invalid ng-dirty' : ''"
+              appendTo="body"
+              filterPlaceholder="البحث في القطع..."
+              emptyMessage="لا توجد قطع متاحة"
+              emptyFilterMessage="لم يتم العثور على نتائج"
+              [showToggleAll]="true"
+              [maxSelectedLabels]="3"
+              selectedItemsLabel="قطعة مختارة"
+              (onChange)="onBundlePartsChange($event)"
+            >
+              <ng-template pTemplate="item" let-part>
+                <div class="part-option">
+                  <span class="part-name">{{ part.name }}</span>
+                  <span class="part-code">({{ part.code }})</span>
+                  <span class="part-price">{{ part.price }} ج.م</span>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="selectedItem" let-part>
+                <div class="selected-part-chip">
+                  {{ part.name }} ({{ part.code }})
+                </div>
+              </ng-template>
+            </p-multiSelect>
+            
+            <!-- Selected Parts Price Configuration -->
+            <div class="bundle-parts-config" *ngIf="selectedBundleParts && selectedBundleParts.length > 0">
+              <h4 class="config-title">
+                <i class="fas fa-coins"></i>
+                تحديد أسعار القطع في الحزمة
+              </h4>
+              <div class="parts-price-grid">
+                <div 
+                  class="part-price-item" 
+                  *ngFor="let part of selectedBundleParts; trackBy: trackByPartId"
+                >
+                  <div class="part-info">
+                    <div class="part-header">
+                      <span class="part-name">{{ part.name }}</span>
+                      <span class="part-code">({{ part.code }})</span>
+                    </div>
+                    <div class="original-price">
+                      السعر الأصلي: {{ part.price }} ج.م
+                    </div>
+                  </div>
+                  <div class="price-input-group">
+                    <label class="price-label">السعر في الحزمة</label>
+                    <input
+                      type="number"
+                      [value]="getBundlePartPrice(part.value)"
+                      (input)="updateBundlePartPrice(part.value, $event)"
+                      class="bundle-price-input"
+                      [placeholder]="part.price.toString()"
+                      min="0.01"
+                      step="0.01"
+                    />
+                    <span class="currency">ج.م</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Bundle Total -->
+              <div class="bundle-total">
+                <div class="total-row">
+                  <span class="total-label">
+                    <i class="fas fa-calculator"></i>
+                    إجمالي سعر الحزمة:
+                  </span>
+                  <span class="total-value">{{ calculateBundleTotal() }} ج.م</span>
+                </div>
+                <div class="savings-info" *ngIf="calculateSavings() > 0">
+                  <i class="fas fa-piggy-bank"></i>
+                  توفير: {{ calculateSavings() }} ج.م
+                  ({{ getSavingsPercentage() }}%)
+                </div>
+              </div>
+            </div>
+            
+            <!-- Display selected parts count -->
+            <div class="selected-parts-info" *ngIf="offerForm.get('bundlePartIds')?.value?.length > 0">
+              <small class="text-info">
+                <i class="fas fa-info-circle"></i>
+                تم اختيار {{ offerForm.get('bundlePartIds')?.value?.length }} قطعة للحزمة
+              </small>
+            </div>
+            
+            <div class="error-message" *ngIf="hasError('bundlePartIds')">
+              {{ getFieldError('bundlePartIds') }}
+            </div>
+            <small class="form-help">اختر القطع التي تريد تجميعها في حزمة واحدة وحدد سعر كل قطعة</small>
+          </div>
+        </div>
+
+        <!-- Date Settings Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-calendar-alt"></i>
+            إعدادات التاريخ
+          </h3>
+          <p class="section-help">حدد فترة صلاحية العرض</p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="startAt">تاريخ البداية *</label>
+              <p-calendar
+                formControlName="startAt"
+                [showIcon]="true"
+                [style]="{'width': '100%'}"
+                placeholder="اختر تاريخ البداية"
+                dateFormat="dd/mm/yy"
+                [class]="hasError('startAt') ? 'ng-invalid ng-dirty' : ''"
+                [showButtonBar]="true"
+                [todayButtonStyleClass]="'p-button-text'"
+                [clearButtonStyleClass]="'p-button-text'"
+                appendTo="body"
+                [locale]="arabicLocale"
+              ></p-calendar>
+              <div class="error-message" *ngIf="hasError('startAt')">
+                {{ getFieldError('startAt') }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="endAt">تاريخ النهاية *</label>
+              <p-calendar
+                formControlName="endAt"
+                [showIcon]="true"
+                [style]="{'width': '100%'}"
+                placeholder="اختر تاريخ النهاية"
+                dateFormat="dd/mm/yy"
+                [class]="hasError('endAt') ? 'ng-invalid ng-dirty' : ''"
+                [showButtonBar]="true"
+                [todayButtonStyleClass]="'p-button-text'"
+                [clearButtonStyleClass]="'p-button-text'"
+                appendTo="body"
+                [locale]="arabicLocale"
+              ></p-calendar>
+              <div class="error-message" *ngIf="hasError('endAt')">
+                {{ getFieldError('endAt') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="form-section offer-status-section">
+          <h3 class="section-title">
+            <i class="fas fa-toggle-on status-icon"></i>
+            حالة العرض
+          </h3>
+          <p class="section-help">تحكم في حالة تفعيل العرض ومعلومات إضافية</p>
+
+          <div class="status-container">
+            <!-- PrimeNG InputSwitch for Active Status - Full Row -->
+            <div class="status-toggle-group full-width">
+              <div class="toggle-switch-container">
+                <p-inputSwitch
+                  formControlName="isActive"
+                  [style]="{'width': '4rem', 'height': '2rem'}"
+                  styleClass="custom-toggle"
+                ></p-inputSwitch>
+                <div class="toggle-content">
+                  <h4 class="toggle-title">العرض نشط</h4>
+                  <p class="toggle-description">
+                    {{ offerForm.get('isActive')?.value ? 'العرض متاح للعملاء حالياً' : 'العرض غير متاح للعملاء' }}
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Status Badge -->
+              <div class="status-badge" [class.active]="offerForm.get('isActive')?.value">
+                <i class="fas" [class]="offerForm.get('isActive')?.value ? 'fa-check-circle' : 'fa-pause-circle'"></i>
+                <span>{{ offerForm.get('isActive')?.value ? 'نشط' : 'متوقف' }}</span>
+              </div>
+            </div>
+
+            <!-- Creation Date Info (for editing) -->
+            <div class="creation-info" *ngIf="editingOffer">
+              <div class="info-card">
+                <div class="info-icon">
+                  <i class="fas fa-calendar-plus"></i>
+                </div>
+                <div class="info-content">
+                  <h5 class="info-title">تاريخ الإنشاء</h5>
+                  <p class="info-date">{{ editingOffer.createdOn | date:'full':'ar-EG' }}</p>
+                  <small class="info-relative">{{ getRelativeTime(editingOffer.createdOn) }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Form Footer - Bundle Modal Style -->
+      <div class="form-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          <i class="fas fa-times"></i>
+          إلغاء
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="!offerForm.valid">
+          <i class="fas" [class]="editingOffer ? 'fa-save' : 'fa-plus'"></i>
+          {{ editingOffer ? 'حفظ التعديلات' : 'إضافة العرض' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

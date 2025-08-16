@@ -6,9 +6,10 @@ import { ModelTypeComponent } from './model-type/model-type.component';
 
 
 const routes: Routes = [
-  { path: '', component: LookupComponent },
-  { path: 'brand', component: BrandComponent },
-  { path: 'model-type', component: ModelTypeComponent }
+  { path: '', component: LookupComponent  },
+  { path: 'lookup', component: LookupComponent  },
+  { path: 'brand', component: BrandComponent ,pathMatch: 'full'},
+  { path: 'model-type', component: ModelTypeComponent ,pathMatch: 'full'}
 ];
 
 @NgModule({

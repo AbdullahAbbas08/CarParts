@@ -2,43 +2,52 @@
 <div class="category-parts-page" [class.shifted]="showSidebar">
   <!-- العنوان والبحث -->
   <header class="header">
+     <!-- Title on the far right -->
     <h1 class="page-title">
       <i class="fas fa-cogs"></i>
       {{ categoryName }}
     </h1>
 
-    <div class="search-container">
-      <input type="text" class="search-input" placeholder="ابحث عن قطعة غيار..." [(ngModel)]="searchText"
-        (input)="onSearch($event)" (focus)="searchFocused = true" (blur)="searchFocused = false">
-      <ul class="suggestions" *ngIf="suggestions.length && searchFocused">
-        <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
-          <img src="../../assets/images/icon-parts.png" alt="icon" width="24" height="24" />
-          <span>{{ suggestion }}</span>
-        </li>
-      </ul>
+    <div class="filters-container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            placeholder="ابحث عن قطع الغيار..." 
+            class="search-input"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange($event)">
+          <button 
+            *ngIf="searchTerm" 
+            class="clear-search-btn"
+            (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
+     <!-- Filter button on the far left -->
     <div class="header-actions">
       <button class="filter-btn" [class.active]="showSidebar" (click)="toggleSidebar()">
         <i class="fas fa-filter"></i>
-        فلتر
+        <span class="filter-text">فلتر</span>
         <span class="filter-count">({{ getActiveFiltersCount() }})</span>
       </button>
-
-      <select class="page-size-selector" (change)="changePageSize($event)">
-        <option *ngFor="let size of pageSizeOptions" [value]="size">
-          {{ size }} لكل صفحة
-        </option>
-      </select>
     </div>
+
+  
   </header>
   <!-- عرض القطع -->
   <section class="parts-section">
     <!-- في حالة وجود قطع -->
-    <div *ngIf="displayParts.length > 0; else noParts" class="parts-grid">
-      <app-card *ngFor="let part of displayParts; trackBy: trackByPartId" [part]="part"
-        (partClick)="onPartClick($event)">
-      </app-card>
+    <div class="parts-container">
+      <div class="parts-grid" *ngIf="displayParts.length > 0; else noParts">
+        <app-card *ngFor="let part of displayParts; trackBy: trackByPartId" [part]="part"
+          (partClick)="onPartClick($event)">
+        </app-card>
+      </div>
     </div>
 
     <!-- في حالة عدم وجود قطع -->
@@ -70,23 +79,22 @@
 
 
     <!-- الصفحات -->
-    <div class="pagination" *ngIf="displayParts.length > 0">
-      <div class="items-per-page-selector">
-        <span>عرض:</span>
-        <button *ngFor="let option of itemsPerPageOptions"
-          (click)="itemsPerPage = option; currentPage = 1; updatePagedParts()" [class.active]="itemsPerPage === option">
-          {{ option }}
-        </button>
-      </div>
-      <button class="pagination-button prev" [disabled]="currentPage === 1" (click)="prevPage()">السابق</button>
-      <div class="pagination-numbers">
-        <button class="pagination-number" *ngFor="let page of getPagesArray()"
-          (click)="page === -1 ? null : goToPage(page)" [class.active]="page === currentPage" [disabled]="page === -1">
-          {{ page === -1 ? '...' : page }}
-        </button>
-      </div>
-      <button class="pagination-button next" [disabled]="currentPage === getTotalPages()"
-        (click)="nextPage()">التالي</button>
+    <div class="pagination-container" *ngIf="displayParts.length > 0">
+      <p-paginator 
+        [rows]="itemsPerPage" 
+        [totalRecords]="filteredParts.length" 
+        [first]="(currentPage - 1) * itemsPerPage"
+        [rowsPerPageOptions]="itemsPerPageOptions"
+        (onPageChange)="onPaginatorPageChange($event)"
+        styleClass="custom-paginator"
+        [dir]="'rtl'"
+        [showFirstLastIcon]="true"
+        [showPageLinks]="true"
+        previousPageLinkIcon="pi pi-chevron-right"
+        nextPageLinkIcon="pi pi-chevron-left"
+        firstPageLinkIcon="pi pi-angle-double-right"
+        lastPageLinkIcon="pi pi-angle-double-left">
+      </p-paginator>
     </div>
   </section>
 

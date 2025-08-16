@@ -1,0 +1,428 @@
+<div class="offers-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <i class="fas fa-tags"></i>
+          إدارة العروض
+        </h1>
+        <p class="page-subtitle">إضافة وإدارة العروض الخاصة بقطع الغيار</p>
+      </div>
+      <button class="add-btn" (click)="openAddModal()">
+        <i class="fas fa-plus"></i>
+        إضافة عرض جديد
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          class="search-input"
+          placeholder="البحث في العروض..."
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+        >
+        <button class="search-btn" (click)="onSearch()">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p>جاري التحميل...</p>
+  </div>
+
+  <!-- Offers Grid -->
+  <div class="offers-grid" *ngIf="!isLoading">
+    <div class="offer-card" *ngFor="let offer of offers; trackBy: trackByOfferId">
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="offer-type">
+          <i [class]="getOfferTypeIcon(offer.type)"></i>
+          <span class="type-label">{{ getOfferTypeLabel(offer.type) }}</span>
+        </div>
+        <div class="status-badge" [class.active]="offer.isActive" [class.inactive]="!offer.isActive">
+          {{ offer.isActive ? 'نشط' : 'غير نشط' }}
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="part-info">
+          <h3 class="part-name">{{ getPartName(offer.partId) }}</h3>
+          <p class="offer-description">{{ getOfferDescription(offer) }}</p>
+        </div>
+
+        <!-- Offer Details -->
+        <div class="offer-details">
+          <div class="detail-item" *ngIf="offer.startAt">
+            <i class="fas fa-calendar-alt"></i>
+            <span>من: {{ offer.startAt | date:'yyyy-MM-dd HH:mm' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="offer.endAt">
+            <i class="fas fa-calendar-times"></i>
+            <span>إلى: {{ offer.endAt | date:'yyyy-MM-dd HH:mm' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="offer.createdOn">
+            <i class="fas fa-clock"></i>
+            <span>تاريخ الإنشاء: {{ offer.createdOn | date:'yyyy-MM-dd' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Actions -->
+      <div class="card-actions">
+        <button class="action-btn edit-btn" (click)="openEditModal(offer)">
+          <i class="fas fa-edit"></i>
+          تعديل
+        </button>
+        <button class="action-btn delete-btn" (click)="deleteOffer(offer)">
+          <i class="fas fa-trash"></i>
+          حذف
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="offers.length === 0 && !isLoading">
+      <i class="fas fa-tags"></i>
+      <h3>لا توجد عروض</h3>
+      <p>لم يتم العثور على أي عروض. ابدأ بإضافة عرض جديد.</p>
+      <button class="add-btn" (click)="openAddModal()">
+        <i class="fas fa-plus"></i>
+        إضافة العرض الأول
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 1 && !isLoading">
+    <div class="pagination">
+      <button 
+        class="page-btn prev" 
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+      >
+        <i class="fas fa-chevron-right"></i>
+        السابق
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          class="page-btn"
+          [class.active]="currentPage === i + 1"
+          (click)="onPageChange(i + 1)"
+        >
+          {{ i + 1 }}
+        </button>
+      </div>
+      
+      <button 
+        class="page-btn next" 
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+      >
+        التالي
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+    
+    <div class="pagination-info">
+      عرض {{ (currentPage - 1) * pageSize + 1 }} - {{ getDisplayedItemsEnd() }} من {{ totalCount }}
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-content">
+        <div>
+          <h2 class="modal-title">
+            <i class="fas fa-tags"></i>
+            {{ isEditMode ? 'تعديل العرض' : 'إضافة عرض جديد' }}
+          </h2>
+          <p class="modal-subtitle">{{ isEditMode ? 'قم بتعديل بيانات العرض' : 'أنشئ عرضاً مميزاً لجذب العملاء' }}</p>
+        </div>
+        <button class="close-btn" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <form [formGroup]="offerForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="form-content">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            المعلومات الأساسية
+          </h3>
+          
+          <div class="form-grid">
+            <!-- Part Selection -->
+            <div class="form-group">
+              <label class="form-label">
+                <span class="required-asterisk">*</span>
+                <i class="fas fa-cog"></i>
+                قطعة الغيار
+              </label>
+              <select formControlName="partId" class="form-control" [class.error]="isFieldRequired('partId')">
+                <option value="">اختر قطعة الغيار</option>
+                <option *ngFor="let part of parts" [value]="part.id">{{ part.name }}</option>
+              </select>
+              <div class="error-message" *ngIf="isFieldRequired('partId')">
+                يرجى اختيار قطعة الغيار
+              </div>
+              <div class="help-text">اختر القطعة التي سيطبق عليها العرض</div>
+            </div>
+
+            <!-- Offer Type -->
+            <div class="form-group">
+              <label class="form-label">
+                <span class="required-asterisk">*</span>
+                <i class="fas fa-tag"></i>
+                نوع العرض
+              </label>
+              <select formControlName="type" class="form-control" (change)="onOfferTypeChange()">
+                <option *ngFor="let option of offerTypeOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+              <div class="help-text">حدد نوع العرض المناسب</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Offer Details Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-percentage"></i>
+            تفاصيل العرض
+          </h3>
+
+          <!-- Type-specific Fields -->
+          <div class="form-grid">
+            <!-- New Price / Bundle -->
+            <div class="form-group" *ngIf="offerForm.get('type')?.value === offerTypes.NewPrice || offerForm.get('type')?.value === offerTypes.Bundle">
+              <label class="form-label">
+                <span class="required-asterisk">*</span>
+                <i class="fas fa-dollar-sign"></i>
+                {{ offerForm.get('type')?.value === offerTypes.Bundle ? 'سعر الباقة' : 'السعر الجديد' }}
+              </label>
+              <input 
+                type="number" 
+                formControlName="newPrice" 
+                class="form-control"
+                [class.error]="isFieldRequired('newPrice')"
+                placeholder="أدخل السعر بالجنيه المصري"
+                min="0"
+                step="0.01"
+              >
+              <div class="error-message" *ngIf="isFieldRequired('newPrice')">
+                يرجى إدخال السعر
+              </div>
+            </div>
+
+            <!-- Percentage Discount -->
+            <div class="form-group" *ngIf="offerForm.get('type')?.value === offerTypes.Percentage">
+              <label class="form-label">
+                <span class="required-asterisk">*</span>
+                <i class="fas fa-percent"></i>
+                نسبة الخصم
+              </label>
+              <input 
+                type="number" 
+                formControlName="discountRate" 
+                class="form-control"
+                [class.error]="isFieldRequired('discountRate')"
+                placeholder="مثال: 25 للحصول على خصم 25%"
+                min="0"
+                max="100"
+                step="0.01"
+              >
+              <div class="error-message" *ngIf="isFieldRequired('discountRate')">
+                يرجى إدخال نسبة الخصم
+              </div>
+              <div class="help-text">أدخل النسبة من 0 إلى 100</div>
+            </div>
+
+            <!-- Fixed Amount -->
+            <div class="form-group" *ngIf="offerForm.get('type')?.value === offerTypes.FixedAmount">
+              <label class="form-label">
+                <span class="required-asterisk">*</span>
+                <i class="fas fa-dollar-sign"></i>
+                مبلغ الخصم
+              </label>
+              <input 
+                type="number" 
+                formControlName="fixedAmount" 
+                class="form-control"
+                [class.error]="isFieldRequired('fixedAmount')"
+                placeholder="مبلغ الخصم بالجنيه المصري"
+                min="0"
+                step="0.01"
+              >
+              <div class="error-message" *ngIf="isFieldRequired('fixedAmount')">
+                يرجى إدخال مبلغ الخصم
+              </div>
+            </div>
+
+            <!-- Buy X Get Y Fields -->
+            <ng-container *ngIf="offerForm.get('type')?.value === offerTypes.BuyXGetY">
+              <div class="form-group">
+                <label class="form-label">
+                  <span class="required-asterisk">*</span>
+                  <i class="fas fa-shopping-cart"></i>
+                  اشتري كمية
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="buyQuantity" 
+                  class="form-control"
+                  [class.error]="isFieldRequired('buyQuantity')"
+                  placeholder="عدد القطع للشراء"
+                  min="1"
+                >
+                <div class="error-message" *ngIf="isFieldRequired('buyQuantity')">
+                  يرجى إدخال كمية الشراء
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <span class="required-asterisk">*</span>
+                  <i class="fas fa-gift"></i>
+                  احصل على كمية
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="getQuantity" 
+                  class="form-control"
+                  [class.error]="isFieldRequired('getQuantity')"
+                  placeholder="عدد القطع المجانية"
+                  min="1"
+                >
+                <div class="error-message" *ngIf="isFieldRequired('getQuantity')">
+                  يرجى إدخال الكمية المجانية
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label">
+                  <i class="fas fa-cog"></i>
+                  القطعة المجانية (اختياري)
+                </label>
+                <select formControlName="freePartId" class="form-control">
+                  <option value="">نفس القطعة الأساسية</option>
+                  <option *ngFor="let part of parts" [value]="part.id">{{ part.name }}</option>
+                </select>
+                <div class="help-text">اتركها فارغة إذا كانت نفس القطعة الأساسية</div>
+              </div>
+            </ng-container>
+
+            <!-- Bundle Fields -->
+            <div class="form-group full-width" *ngIf="offerForm.get('type')?.value === offerTypes.Bundle">
+              <label class="form-label">
+                <i class="fas fa-list"></i>
+                معرفات القطع في الباقة
+              </label>
+              <input 
+                type="text" 
+                formControlName="bundlePartIdsCsv" 
+                class="form-control"
+                placeholder="أدخل معرفات القطع مفصولة بفاصلة (مثال: 1,2,3)"
+              >
+              <div class="help-text">أدخل معرفات القطع المطلوبة في الباقة مفصولة بفواصل</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Settings Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-calendar-alt"></i>
+            الفترة الزمنية
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-calendar-alt"></i>
+                تاريخ البداية
+              </label>
+              <input 
+                type="datetime-local" 
+                formControlName="startAt" 
+                class="form-control"
+              >
+              <div class="help-text">اتركه فارغاً للبدء فوراً</div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-calendar-times"></i>
+                تاريخ الانتهاء
+              </label>
+              <input 
+                type="datetime-local" 
+                formControlName="endAt" 
+                class="form-control"
+              >
+              <div class="help-text">اتركه فارغاً للاستمرار إلى ما لا نهاية</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-toggle-on"></i>
+            حالة العرض
+          </h3>
+          
+          <label class="checkbox-container">
+            <input type="checkbox" formControlName="isActive">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">العرض نشط ومفعل</span>
+          </label>
+          <div class="help-text">يمكن تفعيل أو إلغاء تفعيل العرض في أي وقت</div>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+          <span>إلغاء</span>
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="offerForm.invalid">
+          <i class="fas fa-save"></i>
+          <span>{{ isEditMode ? 'تحديث العرض' : 'إنشاء العرض' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add/Edit Offer Component -->
+<app-add-offer
+  [isVisible]="showModal"
+  [editingOffer]="selectedOffer"
+  (closeModal)="closeModal()"
+  (offerSaved)="onOfferSaved($event)">
+</app-add-offer>

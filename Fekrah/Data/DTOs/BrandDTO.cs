@@ -8,8 +8,10 @@
         public string Code { get; set; }
 
         public string ImageUrl { get; set; }
-      
-        public ICollection<PartDTO> Parts { get; set; }
-        public ICollection<ModelTypeDTO> ModelTypes { get; set; }
+        public int? ModelTypesCount { get; set; }
+        public bool? IsActive { get; set; }
+
+        public ICollection<PartDTO>? Parts { get; set; }
+        public ICollection<ModelTypeDTO>? ModelTypes { get; set; }
     }
 }

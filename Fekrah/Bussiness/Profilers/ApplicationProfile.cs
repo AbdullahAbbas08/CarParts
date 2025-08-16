@@ -26,6 +26,8 @@ namespace Bussiness.Profilers
             CreateMap<Member, MemberDTO>().ReverseMap();
             CreateMap<Role, RoleDTO>().ReverseMap();
             CreateMap<ModelType, ModelTypeDTO>().ReverseMap();
+            // Offer mapping
+            CreateMap<Offer, OfferDTO>().ReverseMap();
         }
     }
 }

@@ -87,6 +87,9 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -327,19 +330,46 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BundlePartIdsCsv")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BuyQuantity")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset?>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<double>("DiscountRate")
+                    b.Property<double?>("DiscountRate")
                         .HasColumnType("float");
 
-                    b.Property<double>("NewPrice")
+                    b.Property<DateTimeOffset?>("EndAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<double?>("FixedAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("FreePartId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GetQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("NewPrice")
                         .HasColumnType("float");
 
                     b.Property<int>("PartId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("StartAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<int?>("UpdatedBy")
@@ -351,6 +381,8 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("FreePartId");
 
                     b.HasIndex("PartId");
 
@@ -709,9 +741,6 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CarModelTypeId")
                         .HasColumnType("int");
 
@@ -783,8 +812,6 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BrandId");
 
                     b.HasIndex("CarModelTypeId");
 
@@ -947,6 +974,11 @@ namespace Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
+                    b.HasOne("Part", "FreePart")
+                        .WithMany()
+                        .HasForeignKey("FreePartId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Part", "Part")
                         .WithMany("Offers")
                         .HasForeignKey("PartId")
@@ -958,6 +990,8 @@ namespace Data.Migrations
                         .HasForeignKey("UpdatedBy");
 
                     b.Navigation("CreatedByUser");
+
+                    b.Navigation("FreePart");
 
                     b.Navigation("Part");
 
@@ -1070,10 +1104,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Part", b =>
                 {
-                    b.HasOne("Data.Models.Brand", null)
-                        .WithMany("Parts")
-                        .HasForeignKey("BrandId");
-
                     b.HasOne("Data.Models.ModelType", "CarModelType")
                         .WithMany()
                         .HasForeignKey("CarModelTypeId")
@@ -1127,8 +1157,6 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Models.Brand", b =>
                 {
                     b.Navigation("ModelTypes");
-
-                    b.Navigation("Parts");
                 });
 
             modelBuilder.Entity("Data.Models.Governorate", b =>

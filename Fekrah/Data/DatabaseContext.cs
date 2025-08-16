@@ -37,6 +37,19 @@ public class DatabaseContext : DbContext
           .WithOne(p => p.Category)
           .HasForeignKey(p => p.CategoryId);
 
+        // Offer relationships (توضيح العلاقات لتجنب الغموض)
+        modelBuilder.Entity<Offer>()
+            .HasOne(o => o.Part)
+            .WithMany(p => p.Offers)
+            .HasForeignKey(o => o.PartId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Offer>()
+            .HasOne(o => o.FreePart)
+            .WithMany() // لا نحتاج تجميع في Part للعروض المجانية
+            .HasForeignKey(o => o.FreePartId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<UserRole>()
         .HasKey(ur => new { ur.UserId, ur.RoleId });
 

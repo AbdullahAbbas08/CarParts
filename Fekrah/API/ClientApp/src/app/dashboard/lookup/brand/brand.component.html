@@ -5,11 +5,11 @@
   <!-- Header Section -->
   <div class="dashboard-header">
     <div class="container">
-      <!-- Breadcrumb -->
+       <!-- Breadcrumb -->
       <nav class="breadcrumb-nav">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a routerLink="/dashboard">
+            <a routerLink="/">
               <i class="fas fa-home"></i>
               الرئيسية
             </a>
@@ -18,9 +18,18 @@
             <i class="fas fa-chevron-left"></i>
           </li>
           <li class="breadcrumb-item">
-            <a routerLink="/dashboard/lookup">
-              <i class="fas fa-search"></i>
-              البحث والتصنيفات
+            <a routerLink="/admin">
+              <i class="fas fa-shield-alt"></i>
+              الإدارة
+            </a>
+          </li>
+          <li class="breadcrumb-separator">
+            <i class="fas fa-chevron-left"></i>
+          </li>
+          <li class="breadcrumb-item active">
+            <a routerLink="/admin/lookup">
+              <i class="fas fa-car"></i>
+              <span class="px-2">إدارة الأساسيات</span>
             </a>
           </li>
           <li class="breadcrumb-separator">
@@ -107,11 +116,13 @@
         </div>
         <div class="action-right">
           <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" 
-                   [formControl]="searchTermControl" 
-                   placeholder="البحث في العلامات التجارية..." 
-                   class="search-input">
+            <div class="search-input-container">
+              <input type="text" 
+                     [formControl]="searchTermControl" 
+                     placeholder="البحث في العلامات التجارية..." 
+                     class="search-input">
+              <i class="fas fa-search search-icon"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -201,7 +212,9 @@
                       <img *ngIf="brand.imageUrl" 
                            [src]="brand.imageUrl" 
                            [alt]="brand.name" 
-                           class="brand-logo">
+                           class="brand-logo"
+                           (error)="onImageError($event, brand)"
+                           (load)="onImageLoad($event, brand)">
                       <div *ngIf="!brand.imageUrl" class="no-logo">
                         <i class="fas fa-car"></i>
                       </div>
@@ -231,9 +244,15 @@
                 <!-- Additional Details -->
                 <div class="table-cell details-cell">
                   <div class="details-content">
-                    <div class="detail-chip">
-                      <i class="fas fa-check-circle"></i>
-                      <span>نشط</span>
+                    <div class="detail-chip" [ngClass]="{
+                      'active-chip': brand.isActive,
+                      'inactive-chip': !brand.isActive
+                    }">
+                      <i class="fas" [ngClass]="{
+                        'fa-check-circle': brand.isActive,
+                        'fa-times-circle': !brand.isActive
+                      }"></i>
+                      <span>{{ brand.isActive ? 'نشط' : 'غير نشط' }}</span>
                     </div>
                   </div>
                 </div>
@@ -241,6 +260,40 @@
                 <!-- Actions -->
                 <div class="table-cell actions-cell">
                   <div class="action-buttons">
+                    <button type="button" 
+                            class="action-btn"
+                            [ngClass]="{
+                              'activate-btn modern-btn': !brand.isActive,
+                              'deactivate-btn modern-btn': brand.isActive
+                            }"
+                            style="
+                              background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+                              color: white !important;
+                              border: 2px solid #27ae60 !important;
+                              width: 32px !important;
+                              height: 32px !important;
+                              border-radius: 8px !important;
+                              display: flex !important;
+                              align-items: center !important;
+                              justify-content: center !important;
+                              cursor: pointer !important;
+                              transition: all 0.3s ease !important;
+                            "
+                            [style.background]="brand.isActive ? 
+                              'linear-gradient(135deg, #27ae60, #2ecc71) !important' :
+                              'linear-gradient(135deg, #f39c12, #e67e22) !important'"
+                            [style.border-color]="brand.isActive ? 
+                              '#27ae60 !important' :
+                              '#f39c12 !important'"
+                            (click)="toggleBrandStatus(brand)"
+                            [title]="!brand.isActive ? 'إلغاء تفعيل العلامة التجارية' : 'تفعيل العلامة التجارية'">
+                      <i class="fas" 
+                         [ngClass]="{
+                           'fa-check-circle': brand.isActive,
+                           'fa-times-circle': !brand.isActive
+                         }"
+                         style="color: white !important; font-size: 0.85rem !important;"></i>
+                    </button>
                     <button type="button" 
                             class="action-btn edit-btn modern-btn" 
                             (click)="openEditModal(brand)"
@@ -253,11 +306,11 @@
                             title="حذف العلامة التجارية">
                       <i class="fas fa-trash-alt"></i>
                     </button>
-                    <button type="button" 
+                    <!-- <button type="button" 
                             class="action-btn view-btn modern-btn" 
                             title="عرض الموديلات">
                       <i class="fas fa-list"></i>
-                    </button>
+                    </button> -->
                   </div>
                 </div>
               </div>
@@ -378,18 +431,22 @@
           </div>
 
           <div class="form-group full-width">
-            <label for="imageUrl">
+            <label for="logoFile">
               <i class="fas fa-image"></i>
-              رابط الشعار
+              شعار العلامة التجارية
             </label>
-            <input type="url" 
-                   id="imageUrl" 
-                   formControlName="imageUrl" 
+            <input type="file" 
+                   id="logoFile" 
+                   accept="image/*"
                    class="form-input"
-                   placeholder="https://example.com/logo.png">
+                   (change)="onFileSelected($event)">
             <div class="form-hint">
               <i class="fas fa-info-circle"></i>
-              اختياري - يمكنك إضافة رابط شعار العلامة التجارية
+              اختر صورة الشعار الخاص بالعلامة التجارية (PNG, JPG, JPEG)
+            </div>
+            <div *ngIf="selectedFileName" class="file-selected">
+              <i class="fas fa-file-image"></i>
+              {{ selectedFileName }}
             </div>
           </div>
         </div>
@@ -404,9 +461,16 @@
       <button type="button" 
               class="btn-save" 
               (click)="saveBrand()"
-              [disabled]="brandForm.invalid">
-        <i class="fas fa-check"></i>
-        {{ modalMode === 'create' ? 'إضافة العلامة التجارية' : 'حفظ التغييرات' }}
+              [disabled]="brandForm.invalid || loading || uploadLoading">
+        <i class="fas" [ngClass]="{
+          'fa-spinner fa-spin': loading || uploadLoading,
+          'fa-check': !loading && !uploadLoading
+        }"></i>
+        <span *ngIf="uploadLoading">جاري رفع الصورة...</span>
+        <span *ngIf="loading && !uploadLoading">جاري الحفظ...</span>
+        <span *ngIf="!loading && !uploadLoading">
+          {{ modalMode === 'create' ? 'إضافة العلامة التجارية' : 'حفظ التغييرات' }}
+        </span>
       </button>
     </div>
   </div>
@@ -448,6 +512,78 @@
       <button type="button" class="btn-delete" (click)="deleteUser()">
         <i class="fas fa-trash"></i>
         تأكيد الحذف
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle Status Confirmation Modal -->
+<div class="modal-overlay" 
+     *ngIf="brandToToggle" 
+     (click)="cancelToggle()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" [ngClass]="{
+        'activate': toggleAction === 'activate',
+        'deactivate': toggleAction === 'deactivate'
+      }">
+        <i class="fas" [ngClass]="{
+          'fa-check-circle': toggleAction === 'activate',
+          'fa-times-circle': toggleAction === 'deactivate'
+        }"></i>
+        <h3>{{ toggleAction === 'activate' ? 'تأكيد تفعيل العلامة التجارية' : 'تأكيد إلغاء تفعيل العلامة التجارية' }}</h3>
+      </div>
+    </div>
+    
+    <div class="modal-body">
+      <div class="confirmation-content">
+        <div class="toggle-icon" [ngClass]="{
+          'activate-icon': toggleAction === 'activate',
+          'deactivate-icon': toggleAction === 'deactivate'
+        }">
+          <i class="fas" [ngClass]="{
+            'fa-check-circle': toggleAction === 'activate',
+            'fa-times-circle': toggleAction === 'deactivate'
+          }"></i>
+        </div>
+        <h4>{{ toggleAction === 'activate' ? 'هل أنت متأكد من التفعيل؟' : 'هل أنت متأكد من إلغاء التفعيل؟' }}</h4>
+        <p>{{ toggleAction === 'activate' ? 'سيتم تفعيل العلامة التجارية:' : 'سيتم إلغاء تفعيل العلامة التجارية:' }}</p>
+        <div class="brand-info">
+          <strong>{{ brandToToggle?.name }}</strong>
+          <span>{{ brandToToggle?.code }}</span>
+        </div>
+        <div class="info-note" [ngClass]="{
+          'activate-note': toggleAction === 'activate',
+          'deactivate-note': toggleAction === 'deactivate'
+        }">
+          <i class="fas fa-info-circle"></i>
+          <span *ngIf="toggleAction === 'activate'">ستصبح العلامة التجارية مرئية للمستخدمين</span>
+          <span *ngIf="toggleAction === 'deactivate'">ستصبح العلامة التجارية غير مرئية للمستخدمين</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="cancelToggle()">
+        <i class="fas fa-arrow-right"></i>
+        العودة
+      </button>
+      <button type="button" 
+              class="btn-toggle"
+              [ngClass]="{
+                'btn-activate': toggleAction === 'activate',
+                'btn-deactivate': toggleAction === 'deactivate'
+              }"
+              (click)="confirmToggleStatus()"
+              [disabled]="loading">
+        <i class="fas" [ngClass]="{
+          'fa-spinner fa-spin': loading,
+          'fa-check': !loading && toggleAction === 'activate',
+          'fa-times': !loading && toggleAction === 'deactivate'
+        }"></i>
+        <span *ngIf="!loading && toggleAction === 'activate'">تأكيد التفعيل</span>
+        <span *ngIf="!loading && toggleAction === 'deactivate'">تأكيد إلغاء التفعيل</span>
+        <span *ngIf="loading">جاري المعالجة...</span>
       </button>
     </div>
   </div>

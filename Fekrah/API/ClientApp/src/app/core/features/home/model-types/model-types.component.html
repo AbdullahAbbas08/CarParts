@@ -1,0 +1,44 @@
+<div class="model-types-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">موديلات السيارات</h2>
+      <p class="section-subtitle">اكتشف مجموعة واسعة من موديلات السيارات المتاحة</p>
+    </div>
+    
+    <div class="model-types-slider">
+      <div class="swiper model-types-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let modelType of modelTypes">
+            <div class="model-card">
+              <div class="model-icon">
+                <i class="fas fa-car-side"></i>
+              </div>
+              <div class="model-info">
+                <h3 class="model-name">{{ modelType.name }}</h3>
+                <span class="model-year">{{ modelType.year }}</span>
+                <p class="model-brand">{{ modelType.brand?.name || 'غير محدد' }}</p>
+              </div>
+              <div class="model-overlay">
+                <button class="explore-btn">
+                  <i class="fas fa-search"></i>
+                  استكشف
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="swiper-pagination model-types-pagination"></div>
+        <div class="swiper-button-next model-types-button-next"></div>
+        <div class="swiper-button-prev model-types-button-prev"></div>
+      </div>
+    </div>
+    
+    <div class="view-more-section">
+      <button class="view-more-btn" (click)="viewMoreModelTypes()">
+        <span>عرض المزيد من الموديلات</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+</div>

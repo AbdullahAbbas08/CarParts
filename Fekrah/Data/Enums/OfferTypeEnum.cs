@@ -1,0 +1,12 @@
+namespace Data.Enums
+{
+    public enum OfferTypeEnum
+    {
+        NewPrice = 1,
+        Percentage = 2,
+        FixedAmount = 3,
+        BuyXGetY = 4,
+        Bundle = 5,
+        PromoCode = 6 
+    }
+}
