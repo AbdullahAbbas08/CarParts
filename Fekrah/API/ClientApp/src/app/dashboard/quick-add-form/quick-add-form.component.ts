@@ -321,7 +321,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.lastSubmittedPart = { ...formData };
       this.isLoading = false;
-      alert('تم حفظ القطعة بنجاح! ✅');
+      console.log('Submitted part data:', formData);
       this.resetForm();
     }, 1500);
   }

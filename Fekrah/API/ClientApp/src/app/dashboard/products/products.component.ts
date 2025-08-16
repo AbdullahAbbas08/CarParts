@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { CarPart } from '../../Shared/Models/car-card';
+import { ProductManagementService } from './product-management.service';
 
 export interface FilterOption {
   label: string;
@@ -71,7 +72,7 @@ export class ProductsComponent {
   isLoading = false;
   resultsCount = 120;
 
-  constructor(private renderer: Renderer2) {
+  constructor(private renderer: Renderer2,private productMangment:ProductManagementService) {
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -597,6 +598,7 @@ export class ProductsComponent {
   }
 
   onPartAdded(formData: any): void {
+    console.log('Part added with data:', formData);
     const carPart: CarPart = this.mapFormDataToCarPart(formData);
     this.parts.unshift(carPart);
     this.extractAvailableBrands();
@@ -646,6 +648,7 @@ export class ProductsComponent {
   private extractAvailableBrands(): void {
     const brands = new Set(this.parts.map(part => part.car.brand));
     this.availableBrands = Array.from(brands).sort();
+
   }
 
   editPart(part: CarPart): void {
@@ -674,85 +677,18 @@ export class ProductsComponent {
   }
 
   loadParts(): void {
-    this.parts = [
-      {
-        id: 'p1',
-        name: 'فلتر هواء',
-        subtitle: 'فلتر هواء أصلي للسيارات',
-        condition: 'جديد',
-        store: { name: 'مخزن أبو علي', phone: '01123456789' },
-        car: { brand: 'تويوتا', model: 'كورولا', year: '2020' },
-        price: 350,
-        priceAfterDiscount: 300,
-        discount: 50,
-        isFavorite: false,
-        hasDelivery: true,
-        hasWarranty: true,
-        grade: 'فرز أول',
-        partType: 'فلتر',
-        origin: 'اليابان',
-        image: 'https://example.com/images/air-filter.jpg',
-        thumbnails: ['https://example.com/images/air-filter1.jpg', 'https://example.com/images/air-filter2.jpg']
-      },
-      {
-        id: 'p2',
-        name: 'مراية جانبية',
-        subtitle: 'مراية جانبية كهربائية',
-        condition: 'مستعمل',
-        store: { name: 'ورشة الشرق', phone: '01098765432' },
-        car: { brand: 'هيونداي', model: 'أكسنت', year: '2018' },
-        price: 450,
-        priceAfterDiscount: 400,
-        discount: 50,
-        isFavorite: true,
-        hasDelivery: false,
-        hasWarranty: false,
-        grade: 'فرز تاني',
-        partType: 'مرايات',
-        origin: 'كوريا',
-        image: 'https://example.com/images/mirror.jpg',
-        thumbnails: ['https://example.com/images/mirror1.jpg']
-      },
-      {
-        id: 'p3',
-        name: 'بطارية سيارة',
-        subtitle: 'بطارية 12 فولت عالية الجودة',
-        condition: 'جديد',
-        store: { name: 'قطع الغيار السريعة', phone: '01234567890' },
-        car: { brand: 'نيسان', model: 'سنترا', year: '2019' },
-        price: 1200,
-        priceAfterDiscount: 1100,
-        discount: 100,
-        isFavorite: false,
-        hasDelivery: true,
-        hasWarranty: true,
-        grade: 'فرز أول',
-        partType: 'بطاريات',
-        origin: 'مصر',
-        image: 'https://example.com/images/battery.jpg',
-        thumbnails: ['https://example.com/images/battery1.jpg']
-      },
-      {
-        id: 'p4',
-        name: 'مصباح أمامي',
-        subtitle: 'مصباح LED أمامي مع ضمان سنة',
-        condition: 'جديد',
-        store: { name: 'مركز الإضاءة', phone: '01122334455' },
-        car: { brand: 'كيا', model: 'ريو', year: '2021' },
-        price: 900,
-        priceAfterDiscount: 850,
-        discount: 50,
-        isFavorite: true,
-        hasDelivery: true,
-        hasWarranty: false,
-        grade: 'فرز أول',
-        partType: 'إضاءة',
-        origin: 'ألمانيا',
-        image: 'https://example.com/images/headlight.jpg',
-        thumbnails: ['https://example.com/images/headlight1.jpg']
-      }
-    ];
-    this.applyFilters();
+      this.productMangment.getProducStatistics()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (parts) => {
+          // this.parts = parts;
+         console.log(parts)
+          // this.applyFilters();
+        },
+        error: (error) => {
+          console.error('Error loading statistics:', error);
+        }
+      });
   }
 
   trackByPartId(index: number, part: CarPart): string {
