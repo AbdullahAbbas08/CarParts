@@ -163,45 +163,16 @@ export class OffersListComponent implements OnInit {
   openAddModal(): void {
     this.selectedOffer = null;
     this.showModal = true;
-    document.body.classList.add('modal-open'); // Add modal class for positioning
-    
-    // Ensure modal is positioned correctly by forcing a reflow
-    setTimeout(() => {
-      const modalElement = document.querySelector('.modal-overlay');
-      if (modalElement) {
-        (modalElement as HTMLElement).style.position = 'fixed';
-        (modalElement as HTMLElement).style.top = '0';
-        (modalElement as HTMLElement).style.left = '0';
-        (modalElement as HTMLElement).style.width = '100vw';
-        (modalElement as HTMLElement).style.height = '100vh';
-        (modalElement as HTMLElement).style.zIndex = '999999';
-      }
-    }, 0);
   }
 
   openEditModal(offer: OfferDTO): void {
     this.selectedOffer = offer;
     this.showModal = true;
-    document.body.classList.add('modal-open'); // Add modal class for positioning
-    
-    // Ensure modal is positioned correctly by forcing a reflow
-    setTimeout(() => {
-      const modalElement = document.querySelector('.modal-overlay');
-      if (modalElement) {
-        (modalElement as HTMLElement).style.position = 'fixed';
-        (modalElement as HTMLElement).style.top = '0';
-        (modalElement as HTMLElement).style.left = '0';
-        (modalElement as HTMLElement).style.width = '100vw';
-        (modalElement as HTMLElement).style.height = '100vh';
-        (modalElement as HTMLElement).style.zIndex = '999999';
-      }
-    }, 0);
   }
 
   closeModal(): void {
     this.showModal = false;
     this.selectedOffer = null;
-    document.body.classList.remove('modal-open'); // Remove modal class
   }
 
   onOfferSaved(offer: any): void {
@@ -599,20 +570,6 @@ export class OffersListComponent implements OnInit {
     this.selectedBundleParts = offer.bundlePartIdsCsv?.split(',') || [];
     this.showBundleModal = true;
     document.body.style.overflow = 'hidden'; // Prevent body scroll
-    document.body.classList.add('modal-open'); // Add modal class for positioning
-    
-    // Ensure modal is positioned correctly by forcing a reflow
-    setTimeout(() => {
-      const modalElement = document.querySelector('.bundle-modal-overlay');
-      if (modalElement) {
-        (modalElement as HTMLElement).style.position = 'fixed';
-        (modalElement as HTMLElement).style.top = '0';
-        (modalElement as HTMLElement).style.left = '0';
-        (modalElement as HTMLElement).style.width = '100vw';
-        (modalElement as HTMLElement).style.height = '100vh';
-        (modalElement as HTMLElement).style.zIndex = '999999';
-      }
-    }, 0);
   }
 
   closeBundleModal(): void {
@@ -620,7 +577,6 @@ export class OffersListComponent implements OnInit {
     this.selectedBundleOffer = null;
     this.selectedBundleParts = [];
     document.body.style.overflow = 'auto'; // Restore body scroll
-    document.body.classList.remove('modal-open'); // Remove modal class
   }
 
   getTotalOriginalPrice(): number {
