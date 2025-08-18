@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CarPart } from 'src/app/Shared/Models/car-card';
 import { SwaggerClient, BrandDTO, ModelTypeDTO, CategoryDTO } from 'src/app/Shared/Services/Swagger/SwaggerClient.service';
+import { FilterService } from 'src/app/Shared/Services/filter.service';
 
 // مفاتيح الفلاتر المدعومة
 type FilterKey = 'brands' | 'models' | 'years' | 'types' | 'categories' | 'condition';
@@ -66,7 +67,7 @@ export class CategoryPartsComponent implements OnInit {
   availableConditions = ['جديد', 'مستعمل', 'مستورد']; // ✅ الحالات المتاحة
   pagedParts!: CarPart[];
 
-  constructor(private swaggerClient: SwaggerClient) { }
+  constructor(private swaggerClient: SwaggerClient, private filterService: FilterService) { }
 
   ngOnInit(): void {
     this.selectedFilters.priceRange.min = 1000;
@@ -75,6 +76,14 @@ export class CategoryPartsComponent implements OnInit {
     this.getMockData();
     this.filteredParts = [...this.allParts];
     this.updateDisplayParts();
+
+    // الاشتراك في حالة الشريط الجانبي
+    this.filterService.sidebarState$.subscribe(isOpen => {
+      console.log('Sidebar state changed in category-parts:', isOpen);
+      this.showSidebar = isOpen;
+    });
+
+    console.log('Category-parts component initialized with FilterService');
   }
 
   // Search functionality
@@ -123,11 +132,14 @@ export class CategoryPartsComponent implements OnInit {
   }
 
   toggleSidebar() {
-    this.showSidebar = !this.showSidebar;
+    console.log('toggleSidebar clicked in category-parts!');
+    this.filterService.toggleSidebar();
+    console.log('FilterService toggleSidebar called');
   }
 
   closeSidebar() {
-    this.showSidebar = false;
+    console.log('closeSidebar called in category-parts!');
+    this.filterService.closeSidebar();
   }
 
   changePageSize(event: any) {

@@ -97,7 +97,7 @@
 
 // المحتوى الرئيسي مع تأثير بصري
 .app-container.filter-active .main-content {
-  position: relative;
+  // position: relative;
   transition: filter 0.6s cubic-bezier(0.19, 1, 0.22, 1);
   filter: brightness(0.9);
 }
@@ -308,3 +308,43 @@
   }
 }
 
+
+
+// Special override for truly fixed elements that should escape stacking context
+.test, 
+.truly-fixed {
+  position: fixed !important;
+  z-index: 999999 !important;
+  // Force it to be positioned relative to the viewport, not any parent
+  transform: translateZ(0) !important;
+  // Ensure it's not affected by parent transforms
+  will-change: auto !important;
+  // Break out of any stacking context
+  isolation: isolate !important;
+}
+
+// Additional CSS to force viewport-relative positioning
+body .test,
+html .test {
+  position: fixed !important;
+  z-index: 999999 !important;
+}
+
+.test {
+  position: fixed !important;
+  width: 200px !important;
+  height: 200px !important;
+  top: 5px !important;
+  left: 5px !important;
+  background-color: red !important;
+  z-index: 999999 !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  border-radius: 10px !important;
+  transform: translateZ(0) !important;
+  will-change: auto !important;
+  isolation: isolate !important;
+}

@@ -4,6 +4,7 @@ import { Component, OnInit, OnDestroy, HostListener, Renderer2, ElementRef } fro
 import { Subject } from 'rxjs';
 import { FilterService } from './Shared/Services/filter.service';
 import { AuthService } from './core/features/auth/auth.service';
+import { FilterSections, SelectedFilters } from './Shared/components/filters-sidebar/filters-sidebar.component';
 
 interface UserData {
   isLoggedIn: boolean;
@@ -45,6 +46,36 @@ export class AppComponent implements OnInit, OnDestroy {
   // للتحكم في تأثيرات الانميشن
   private animationTimeout: any;
 
+  // Filter-related properties
+  filterSections: FilterSections[] = [
+    { key: 'brands', title: 'الماركات', icon: 'fa-tag' },
+    { key: 'models', title: 'الموديلات', icon: 'fa-car' },
+    { key: 'years', title: 'السنوات', icon: 'fa-calendar' },
+    { key: 'types', title: 'الأنواع', icon: 'fa-cogs' },
+    { key: 'price', title: 'السعر', icon: 'fa-dollar-sign' },
+    { key: 'categories', title: 'التصنيفات', icon: 'fa-list' },
+    { key: 'condition', title: 'الحالة', icon: 'fa-star' }
+  ];
+
+  availableBrands: string[] = ['تويوتا', 'هوندا', 'نيسان', 'مازدا', 'ميتسوبيشي', 'هيونداي', 'كيا'];
+  availableModels: string[] = ['كورولا', 'كامري', 'أكورد', 'سيفيك', 'التيما', 'سنترا'];
+  availableYears: string[] = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017'];
+  availableTypes: string[] = ['محرك', 'فرامل', 'إطارات', 'بطارية', 'زيوت', 'مرشحات'];
+  availableCategories: string[] = ['قطع أصلية', 'قطع تقليد', 'قطع مستعملة', 'إكسسوارات'];
+  availableConditions: string[] = ['جديد', 'مستعمل بحالة ممتازة', 'مستعمل بحالة جيدة', 'يحتاج إصلاح'];
+
+  selectedFilters: SelectedFilters = {
+    brands: [],
+    models: [],
+    years: [],
+    types: [],
+    categories: [],
+    condition: [],
+    priceRange: { min: 0, max: 10000 }
+  };
+
+  activeFilterSection: string = '';
+
   userData: UserData = {
     isLoggedIn: true,
     isMerchant: false,
@@ -70,6 +101,22 @@ export class AppComponent implements OnInit, OnDestroy {
     this.loadUserData();
     this.setupOrdersUpdateInterval();
     this.initializePageSetup();
+    
+    // الاشتراك في حالة الشريط الجانبي من الخدمة
+    this.filterService.sidebarState$.subscribe(isOpen => {
+      console.log('App component: Sidebar state changed to:', isOpen);
+      console.log('App component: filtersOpened BEFORE =', this.filtersOpened);
+      this.filtersOpened = isOpen;
+      console.log('App component: filtersOpened AFTER =123', this.filtersOpened);
+      
+      if (isOpen) {
+        this.applyFilterOpenStyles();
+      } else {
+        this.applyFilterCloseStyles();
+      }
+    });
+
+    console.log('App component initialized with FilterService');
   }
 
   ngOnDestroy(): void {
@@ -121,16 +168,18 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   toggleFilters(): void {
-    if (this.filtersOpened) {
-      this.closeFilters();
-    } else {
-      this.openFilters();
-    }
+    this.filterService.toggleSidebar();
   }
 
   private openFilters(): void {
-    this.filtersOpened = true;
+    this.filterService.openSidebar();
+  }
 
+  closeFilters(): void {
+    this.filterService.closeSidebar();
+  }
+
+  private applyFilterOpenStyles(): void {
     // إضافة class للـ body
     this.renderer.addClass(document.body, 'filter-open');
 
@@ -147,9 +196,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(document.body, 'width', '100%');
     }
 
-    // إظهار رسالة التعطيل (اختياري)
-    // this.showDisabledMessage = true;
-
     // تأثير تأخير لسلاسة الانميشن
     this.animationTimeout = setTimeout(() => {
       this.renderer.addClass(document.body, 'filter-animation-complete');
@@ -159,8 +205,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.trackFilterUsage('opened');
   }
 
-  closeFilters(): void {
-    this.filtersOpened = false;
+  private applyFilterCloseStyles(): void {
     this.showDisabledMessage = false;
 
     // إزالة classes
@@ -328,6 +373,38 @@ export class AppComponent implements OnInit, OnDestroy {
         this.closeFilters();
       }
     }
+  }
+
+  // Filter-related methods
+  toggleFilterSection(sectionKey: string): void {
+    this.activeFilterSection = this.activeFilterSection === sectionKey ? '' : sectionKey;
+  }
+
+  toggleFilter(event: {type: string, value: string}): void {
+    const { type, value } = event;
+    const filterArray = this.selectedFilters[type as keyof SelectedFilters] as string[];
+    
+    if (Array.isArray(filterArray)) {
+      const index = filterArray.indexOf(value);
+      if (index > -1) {
+        filterArray.splice(index, 1);
+      } else {
+        filterArray.push(value);
+      }
+    }
+  }
+
+  clearAllFilters(): void {
+    this.selectedFilters = {
+      brands: [],
+      models: [],
+      years: [],
+      types: [],
+      categories: [],
+      condition: [],
+      priceRange: { min: 0, max: 10000 }
+    };
+    this.activeFilterSection = '';
   }
 
   // إعداد بيانات اختبار للأدمن

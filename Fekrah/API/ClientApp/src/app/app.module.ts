@@ -21,6 +21,7 @@ import { environment } from '../environments/environment';
 import { ToastrModule } from 'ngx-toastr';
 import { AdminComponent } from './dashboard/admin.component';
 import { UserManagementService } from './dashboard/manage-users/user-management.service';
+import { SharedModule } from './Shared/shared.module';
 registerLocaleData(localeAr);
 
 @NgModule({
@@ -46,6 +47,7 @@ registerLocaleData(localeAr);
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
+    SharedModule
 
   ],
   exports: [

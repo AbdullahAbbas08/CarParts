@@ -8,22 +8,33 @@
   <!-- ✅ محتوى الصفحة الرئيسية -->
 <main class="main-content position-relative">
 
-  <router-outlet></router-outlet>
 </main>
+<router-outlet></router-outlet>
 
   <!-- ✅ الفوتر -->
   <app-footer></app-footer>
 
 </div>
 
-<!-- ✅ Sidebar الفلتر - خارج الحاوي الرئيسي -->
-<div class="filters-sidebar" [class.open]="filtersOpened" (click)="$event.stopPropagation()">
-  <app-parts-filter
-    [isOpen]="filtersOpened"
-    (filtersChanged)="handleFilters($event)"
-    (closeFilter)="closeFilters()">
-  </app-parts-filter>
-</div>
+<!-- ✅ Sidebar الفلتر الجديد - خارج الحاوي الرئيسي -->
+<app-filters-sidebar
+  [showSidebar]="filtersOpened"
+  [filterSections]="filterSections"
+  [availableBrands]="availableBrands"
+  [availableModels]="availableModels"
+  [availableYears]="availableYears"
+  [availableTypes]="availableTypes"
+  [availableCategories]="availableCategories"
+  [availableConditions]="availableConditions"
+  [selectedFilters]="selectedFilters"
+  [activeFilterSection]="activeFilterSection"
+  (closeSidebar)="closeFilters()"
+  (toggleFilterSection)="toggleFilterSection($event)"
+  (toggleFilter)="toggleFilter($event)"
+  (clearAllFilters)="clearAllFilters()">
+</app-filters-sidebar>
+
+<!-- DEBUG: filtersOpened in app = {{filtersOpened}} -->
 
 <!-- Overlay للشاشات الصغيرة -->
 <div
@@ -37,3 +48,4 @@
 <div class="click-to-close-hint" *ngIf="filtersOpened">
   انقر في أي مكان لإغلاق الفلتر
 </div>
+

@@ -115,7 +115,6 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 1;
   transition: margin-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   margin-top: 8px;
-  backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 
   &::before {
@@ -132,8 +131,6 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   &.shifted {
     margin-right: 350px;
-    transform: scale(0.98);
-    filter: brightness(0.95);
   }
 }
 
@@ -158,7 +155,7 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    // left: -100%;
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
@@ -670,7 +667,7 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         content: '';
         position: absolute;
         top: 0;
-        left: -100%;
+        // left: -100%;
         width: 100%;
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
@@ -788,7 +785,6 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   &.open {
     transform: translateX(0);
-    margin-left: 15px;
   }
 
   .filter-header {
@@ -861,7 +857,7 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
           content: "";
           position: absolute;
           top: 0;
-          left: -100%;
+          // left: -100%;
           width: 100%;
           height: 100%;
           background: linear-gradient(
@@ -1099,7 +1095,7 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
       content: "";
       position: absolute;
       top: 0;
-      left: -100%;
+      // left: -100%;
       width: 100%;
       height: 100%;
       background: linear-gradient(
@@ -1501,7 +1497,7 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
       content: '';
       position: absolute;
       top: 0;
-      left: -100%;
+      // left: -100%;
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
@@ -1533,6 +1529,7 @@ $elastic-timing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
   }
 }
+
 
 // Global dropdown panel fixes
 ::ng-deep {
