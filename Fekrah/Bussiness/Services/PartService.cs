@@ -6,6 +6,7 @@ using Data;
 using Data.DTOs;
 using Data.Enums;
 using Data.Interfaces;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class PartService : _BusinessService<Part, PartDTO>, IPartService
@@ -39,7 +40,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 ConditionName = Enum.GetName(p.Condition),
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category?.Name,
-                ImageUrl = p.ImageUrl,
+                ImageUrl = p.ImageUrls.Select(i => i.ImagePath).ToList(),
                 Description = p.Description,
                 Name = p.Name,
                 Price = p.Price,
@@ -93,7 +94,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             ConditionName = Enum.GetName(part.Condition),
             CategoryId = part.CategoryId,
             CategoryName = part.Category?.Name,
-            ImageUrl = part.ImageUrl,
+            ImageUrl = part.ImageUrls.Select(i => i.ImagePath).ToList(),
             Description = part.Description,
             Name = part.Name,
             Price = part.Price,
@@ -150,6 +151,27 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
         return GetById(result.Id);
     }
 
+    public override PartDTO Update(PartDTO entity)
+    {
+        if (_sessionService.UserType.HasValue && _sessionService.UserType != (int)UserTypeEnum.Merchant)
+            return null;
+
+        var currentPart = _UnitOfWork.Repository<Part>()
+            .GetAll()
+            .Include(p => p.ImageUrls)
+            .FirstOrDefault(p => p.Id == entity.Id);
+
+        if(currentPart is not null)
+        {
+            foreach (var img in currentPart.ImageUrls)
+            {
+                _UnitOfWork.Repository<Image>().Delete(img);
+            }
+        }
+
+        return base.Update(entity);
+    }
+
     public DataSourceResult<PartDTO> AdvancedSearch(PartFilterViewModel part, int page, int pageSize)
     {
         var allFilteredParts = _UnitOfWork.Repository<Part>()
@@ -183,7 +205,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 ConditionName = Enum.GetName(p.Condition),
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category?.Name,
-                ImageUrl = p.ImageUrl,
+                ImageUrl = p.ImageUrls.Select(i => i.ImagePath).ToList(),
                 Description = p.Description,
                 Name = p.Name,
                 Price = p.Price,

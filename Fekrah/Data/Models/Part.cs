@@ -8,7 +8,6 @@ public class Part : IAuditableInsert, IAuditableUpdate
     public double Price { get; set; }
     public double FinalPrice { get; set; }
     public PartConditionEnum Condition { get; set; }
-    public string ImageUrl { get; set; }
     public bool IsSold { get; set; }
     public bool IsFavorit { get; set; } = false;
     public bool IsDelivery { get; set; } = false;
@@ -32,6 +31,7 @@ public class Part : IAuditableInsert, IAuditableUpdate
     public ModelType CarModelType { get; set; }
 
     public virtual ICollection<Offer> Offers { get; set; }
+    public ICollection<Image> ImageUrls { get; set; }
 
     // Add Category relation
     public int CategoryId { get; set; }
