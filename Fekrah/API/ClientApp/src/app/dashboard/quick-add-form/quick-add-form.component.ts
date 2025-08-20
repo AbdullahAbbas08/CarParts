@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/co
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DataSourceResultOfBrandDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
 
 interface PartType {
-  value: string;
+  value: number;
   label: string;
   icon: string;
   color: string;
@@ -56,16 +57,16 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
 
 
   partTypes: PartType[] = [
-    { value: 'original', label: 'أصلي', icon: 'fas fa-star', color: '#38a169' },
-    { value: 'commercial', label: 'هاي كوبي', icon: 'fas fa-industry', color: '#3182ce' },
-    { value: 'aftermarket', label: 'بديل', icon: 'fas fa-tools', color: '#d69e2e' }
+    { value: 1, label: 'أصلي', icon: 'fas fa-star', color: '#38a169' },
+    { value: 2, label: 'هاي كوبي', icon: 'fas fa-industry', color: '#3182ce' },
+    { value: 3, label: 'بديل', icon: 'fas fa-tools', color: '#d69e2e' }
   ];
 
-  conditionOptions = ['جديد', 'مستعمل'];
-  gradeOptions = ['فرز أول', 'فرز ثاني'];
+  conditionOptions = [{value:1,label:'جديد'}, {value:2,label:'مستعمل'}];
+  gradeOptions = [{value:1,label:'فرز أول'},{value:2,label:'فرز ثاني'} ];
 
-  availableCarBrands = ['تويوتا', 'هوندا', 'نيسان', 'هيونداي', 'كيا', 'مازدا', 'فورد', 'شيفروليه'];
-  filteredCarModels: string[] = [];
+  availableCarBrands:any[] = [];
+  filteredCarModels: any[] = [];
   availableYears: string[] = [];
 
   stores: Store[] = [
@@ -97,7 +98,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     'شيفروليه': ['ماليبو', 'إمبالا', 'تاهو', 'سوبربان']
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private swagger:SwaggerClient) {
     this.initializeForm();
     this.generateYears();
   }
@@ -107,6 +108,8 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.setupKeyboardShortcuts();
     this.loadDraftIfExists();
     this.updateProgress();
+    this.getAllCarBrands();
+    this.getAllModelTypes()
   }
 
   ngOnDestroy(): void {
@@ -223,9 +226,9 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   }
 
   onBrandChange(): void {
-    const brand = this.partForm.get('carBrand')!.value;
-    this.filteredCarModels = this.carModels[brand] || [];
-    this.partForm.patchValue({ carModel: '', carYear: '' });
+    // const brand = this.partForm.get('carBrand')!.value;
+    // this.filteredCarModels = this.carModels[brand] || [];
+    // this.partForm.patchValue({ carModel: '', carYear: '' });
   }
 
   selectPopularCombo(combo: CarCombo): void {
@@ -321,6 +324,14 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.lastSubmittedPart = { ...formData };
       this.isLoading = false;
+      // const parts = new PartDTO({
+      //   name: formData.partName,
+      //   partType: formData.partType,
+      //   quality:  formData.condition,
+      //   condition: formData.grade,
+      //   description: formData.subtitle,
+      //   price: formData.price,
+      // })
       console.log('Submitted part data:', formData);
       this.resetForm();
     }, 1500);
@@ -607,6 +618,18 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       control.setValue(!control.value);
     }
   }
-
-
+  getAllCarBrands(){
+  this.swagger.apiBrandGetAllGet(50,1,undefined).subscribe((res:DataSourceResultOfBrandDTO) => {
+        if(res){
+           this.availableCarBrands = res.data;
+        }
+    })
+  }
+  getAllModelTypes() {
+    this.swagger.apiModelTypeGetAllGet(50, 1, undefined).subscribe((res: any) => {
+      if (res && res.data) {
+        this.filteredCarModels = res.data;
+      }
+    });
+  }
 }

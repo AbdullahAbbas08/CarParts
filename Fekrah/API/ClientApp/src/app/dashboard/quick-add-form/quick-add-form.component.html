@@ -105,12 +105,12 @@
                 </label>
                 <div class="radio-grid">
                   <div class="radio-card" *ngFor="let cond of conditionOptions; let i = index">
-                    <input type="radio" [id]="'condition' + i" formControlName="condition" [value]="cond"
-                      [checked]="partForm.get('condition')?.value === cond" />
+                    <input type="radio" [id]="'condition' + i" formControlName="condition" [value]="cond.value"
+                      [checked]="partForm.get('condition')?.value === cond.value" />
                     <label [for]="'condition' + i">
                       <span>
                         <!-- <i class="fas" [ngClass]="cond === 'جديد' ? 'fa-sparkles me-1' : 'fa-recycle me-1'"></i> -->
-                        {{ cond}}
+                        {{ cond.label}}
                       </span>
                     </label>
                   </div>
@@ -127,10 +127,10 @@
                 </label>
                 <div class="radio-grid">
                   <div class="radio-card" *ngFor="let grade of gradeOptions; let i = index">
-                    <input type="radio" [id]="'grade' + i" formControlName="grade" [value]="grade"
-                      [checked]="partForm.get('grade')?.value === grade" />
+                    <input type="radio" [id]="'grade' + i" formControlName="grade" [value]="grade.value"
+                      [checked]="partForm.get('grade')?.value === grade.value" />
                     <label [for]="'grade' + i">
-                      <span>{{ grade }}</span>
+                      <span>{{ grade.label }}</span>
                     </label>
                   </div>
                 </div>
@@ -139,35 +139,7 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="section-label">
-              <!-- <i class="fas fa-check-circle"></i> -->
-              خيارات إضافية
-            </label>
-            <div class="checkbox-grid">
-              <div class="switch-group" (click)="toggleDelivery($event)">
-                <label class="switch-label">
-                  <i class="fas fa-truck text-info me-2"></i>
-                  توصيل
-                </label>
-                <label class="switch">
-                  <input type="checkbox" formControlName="hasDelivery" #deliveryCheckbox />
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="switch-group" (click)="toggleCheckbox($event, 'isFavorite')">
-                <label class="switch-label">
-                  <i class="fas fa-heart text-danger me-2"></i> مفضلة
-                </label>
-                <label class="switch">
-                  <input type="checkbox" formControlName="isFavorite" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-            </div>
-          </div>
+ 
 
           <div class="floating-label-group">
             <textarea formControlName="subtitle" class="form-control" rows="3" placeholder=" " id="subtitle"></textarea>
@@ -196,7 +168,7 @@
               <div class="floating-label-group">
                 <select formControlName="carBrand" class="form-select form-select-lg" id="carBrand">
                   <option value=""> اختر الماركة</option>
-                  <option *ngFor="let brand of availableCarBrands" [value]="brand">{{ brand }}</option>
+                  <option *ngFor="let brand of availableCarBrands" [value]="brand.id">{{ brand.name }}</option>
                 </select>
                 <label for="carBrand">
                   <i class="fas fa-trademark text-primary me-2"></i> ماركة السيارة *
@@ -209,7 +181,7 @@
               <div class="floating-label-group">
                 <select formControlName="carModel" class="form-select form-select-lg" id="carModel">
                   <option value="">اختر الموديل</option>
-                  <option *ngFor="let model of filteredCarModels" [value]="model">{{ model }}</option>
+                  <option *ngFor="let model of filteredCarModels" [value]="model.brandId">{{ model.name }}</option>
                 </select>
                 <label for="carModel">
                   <i class="fas fa-car-side text-primary me-2"></i> موديل السيارة *
