@@ -1,131 +1,177 @@
-<!-- Enhanced offers.component.html -->
-<div class="offers-section p-4 p-lg-5 position-relative">
-  <!-- Header Section -->
-  <div class="text-center mb-4">
-    <h2 class="section-title display-4 fw-bold mb-3 position-relative">
-      أفضل العروض الحصرية
-    </h2>
-    <p class="section-subtitle lead text-muted mb-0 px-3">
-      لا تفوّت الفرص الذهبية – منتجات مميزة بأسعار استثنائية لفترة محدودة!
-    </p>
-  </div>
-
-  <!-- Swiper Container -->
-  <div class="swiper offers-swiper position-relative">
-    <div class="swiper-wrapper align-items-stretch">
-
-      <!-- Offer Card Template -->
-      <div class="swiper-slide" *ngFor="let offer of bestOffers; let i = index; trackBy: trackByOfferId">
-
-        <div class="offer-card rounded-4 p-3 h-100 d-flex flex-column position-relative overflow-hidden shadow-lg"
-          [class.animate__animated]="true" [class.animate__fadeInUp]="true" [style.animation-delay]="(i * 0.1) + 's'"
-          #offerCard>
-
-          <!-- Product Image Section -->
-          <div class="image-container rounded-3 p-2 mb-3 text-center position-relative">
-            <img [src]="offer.imageUrl" [alt]="offer.name" class="offer-image img-fluid"
-              style="width: 100px; height: 100px; object-fit: contain;" loading="lazy" (error)="onImageError($event)">
-          </div>
-
-          <!-- Content Section -->
-          <div class="flex-grow-1 d-flex flex-column">
-            <!-- Product Title -->
-            <h3 class="offer-title h6 fw-bold text-center mb-2 lh-base">
-              {{ offer.name }}
-            </h3>
-
-            <!-- Product Description -->
-            <p class="offer-description text-muted text-center flex-grow-1 mb-3 small lh-sm">
-              {{ offer.description }}
-            </p>
-
-            <!-- Seller Information -->
-            <div class="seller-info text-center mb-3">
-              <div class="d-flex align-items-center justify-content-center gap-2">
-                <i class="fas fa-store text-success"></i>
-                <span [routerLink]="['/seller', offer.id]" class="seller-name fw-semibold text-success small">
-                  {{ offer.sellerName }}
-                </span>
-              </div>
-              <div class="mt-1" *ngIf="offer.condition">
-                <span class="badge rounded-pill" [class.bg-success]="offer.condition === 'New'"
-                  [class.bg-warning]="offer.condition === 'Used'" style="font-size: 0.7rem;">
-                  {{ offer.condition === 'New' ? 'جديد' : 'مستعمل' }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Price Section -->
-            <div class="price-section rounded-3 p-2 mb-3 text-center position-relative">
-              <div class="d-flex justify-content-center align-items-center gap-2 mb-2 flex-wrap">
-                <span class="current-price h5 fw-bold mb-0">
-                  {{ offer.price | currency:'ج.م':'symbol':'1.0-0' }}
-                </span>
-                <span class="old-price text-decoration-line-through text-muted position-relative"
-                  *ngIf="offer.oldPrice">
-                  {{ offer.oldPrice | currency:'ج.م':'symbol':'1.0-0' }}
-                </span>
-              </div>
-
-              <!-- Discount Badge -->
-              <div *ngIf="offer.discount" class="discount-section">
-                <div class="discount-badge badge rounded-pill px-2 py-1 fw-semibold position-relative">
-                  <i class="fas fa-fire me-1"></i>
-                  خصم {{ offer.discount }}%
-                </div>
-                <div class="mt-2">
-                  <small class="text-success fw-semibold">
-                    وفّر {{ (offer.oldPrice! - offer.price) | currency:'ج.م':'symbol':'1.0-0' }}
-                  </small>
-                </div>
-              </div>
-            </div>
-
-            <!-- Action Button -->
-            <div class="text-center mt-auto">
-              <a class="details-btn btn btn-lg rounded-pill px-3 py-2 fw-semibold position-relative border-0 w-100 text-decoration-none"
-                [routerLink]="['/parts', offer.id]" [attr.aria-label]="'عرض تفاصيل ' + offer.name" type="button">
-                <span class="position-relative z-1 d-flex align-items-center justify-content-center gap-2">
-                  <i class="fas fa-eye"></i>
-                  <span>عرض التفاصيل</span>
-                  <i class="fas fa-arrow-left"></i>
-                </span>
-              </a>
-            </div>
-          </div>
+<!-- Car Parts Offers Section -->
+<section class="car-parts-offers" [attr.aria-label]="'عروض قطع غيار السيارات'">
+  <div class="container">
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-skeleton">
+      <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-price"></div>
+          <div class="skeleton-actions"></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- View More Button Section -->
-  <div class="text-center mt-4 position-relative">
-    <button class="view-more-btn btn btn-lg rounded-pill px-4 py-3 fw-bold position-relative border-0 text-decoration-none"
-      (click)="navigateToAllOffers()"
-      [attr.aria-label]="'عرض جميع العروض المتاحة'"
-      type="button">
-      <span class="position-relative z-1 d-flex align-items-center justify-content-center gap-3">
-        <i class="fas fa-tags"></i>
-        <span>عرض جميع العروض</span>
-        <i class="fas fa-arrow-left"></i>
-      </span>
-      <div class="btn-glow"></div>
-    </button>
+    <!-- Car Part Offers in Swiper -->
+    <div class="offers-swiper-container" *ngIf="!isLoading">
+      <div class="swiper offers-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let offer of carPartOffers; trackBy: trackByOfferId">
+            <article 
+              class="car-part-card" 
+              [attr.data-part-id]="offer.partId"
+              [class.out-of-stock]="offer.isSold || offer.count === 0"
+              role="button"
+              tabindex="0"
+              (click)="viewPartDetails(offer)"
+              (keydown.enter)="viewPartDetails(offer)"
+              (keydown.space)="viewPartDetails(offer)">
 
-    <!-- Statistics Info -->
-    <div class="mt-3">
-      <small class="text-white-50 fw-semibold">
-        <i class="fas fa-info-circle me-1"></i>
-        أكثر من {{ totalOffersCount }} عرض متاح من {{ totalStoresCount }} متجر
-      </small>
+              <!-- Image Slider Section -->
+              <div class="image-section">
+                <div class="swiper image-swiper" *ngIf="offer.images && offer.images.length > 1">
+                  <div class="swiper-wrapper">
+                    <div class="swiper-slide" *ngFor="let image of offer.images; let i = index">
+                      <img 
+                        [src]="image" 
+                        [alt]="offer.partName + ' - صورة ' + (i + 1)"
+                        class="part-image"
+                        loading="lazy"
+                        (error)="onImageError($event)">
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Single Image -->
+                <div class="single-image" *ngIf="!offer.images || offer.images.length <= 1">
+                  <img 
+                    [src]="offer.images?.[0] || 'assets/images/placeholder-car-part.png'" 
+                    [alt]="offer.partName"
+                    class="part-image"
+                    loading="lazy"
+                    (error)="onImageError($event)">
+                </div>
+              </div>
+
+              <!-- Card Content -->
+              <div class="card-content">
+                
+                <!-- Wishlist Button -->
+                <!-- <div class="wishlist-section">
+                  <button 
+                    class="wishlist-btn"
+                    [class.active]="offer.isFavorite"
+                    (click)="toggleWishlist(offer, $event)"
+                    [attr.aria-label]="offer.isFavorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'"
+                    type="button">
+                    <i class="fas fa-heart" *ngIf="offer.isFavorite"></i>
+                    <i class="far fa-heart" *ngIf="!offer.isFavorite"></i>
+                  </button>
+                </div> -->
+
+                <!-- Part Name -->
+                <h3 class="part-name" [title]="offer.partName">{{ offer.partName }}</h3>
+
+                <!-- Badges Section -->
+                <div class="badges-section">
+                  <span class="condition-badge" [class]="'condition-' + offer.partCondition">
+                    <i class="fas fa-certificate"></i>
+                    {{ offer.conditionName }}
+                  </span>
+                  <span class="out-of-stock-badge" *ngIf="offer.isSold || offer.count === 0">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    نفد المخزون
+                  </span>
+                  <span class="delivery-badge" *ngIf="offer.isDelivery">
+                    <i class="fas fa-shipping-fast"></i>
+                    توصيل سريع
+                  </span>
+                </div>
+
+                <!-- Part Quality & Type -->
+                <div class="part-meta">
+                  <span class="meta-item quality">
+                    <i class="fas fa-award" aria-hidden="true"></i>
+                    <span>{{ offer.qualityName }}</span>
+                  </span>
+                  <span class="meta-item type">
+                    <i class="fas fa-tag" aria-hidden="true"></i>
+                    <span>{{ offer.partTypeName }}</span>
+                  </span>
+                </div>
+
+                <!-- Price Section -->
+                <div class="price-section">
+                  <div class="price-row">
+                    <span class="current-price">{{ formatPrice(offer.finalPrice) }}</span>
+                    <span class="discount-badge" *ngIf="getDiscountPercentage(offer) > 0">
+                      <i class="fas fa-tags"></i>
+                      {{ getDiscountPercentage(offer) }}% خصم
+                    </span>
+                    <span class="old-price" *ngIf="offer.originalPrice > offer.finalPrice">{{ formatPrice(offer.originalPrice) }}</span>
+                    <!-- <span class="savings" *ngIf="offer.originalPrice > offer.finalPrice">
+                      وفر {{ formatPrice(offer.originalPrice - offer.finalPrice) }}
+                    </span> -->
+                  </div>
+                </div>
+
+                <!-- Stock Info -->
+                <!-- <div class="stock-info" *ngIf="offer.count > 0 && !offer.isSold">
+                  <i class="fas fa-box" aria-hidden="true"></i>
+                  <span *ngIf="offer.count <= 5" class="low-stock">
+                    متبقي {{ offer.count }} قطع فقط
+                  </span>
+                  <span *ngIf="offer.count > 5" class="in-stock">
+                    متوفر في المخزون
+                  </span>
+                </div> -->
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                  <button 
+                    class="btn-details"
+                    (click)="viewPartDetails(offer)"
+                    [attr.aria-label]="'عرض تفاصيل ' + offer.partName"
+                    type="button">
+                    <i class="fas fa-info-circle" aria-hidden="true"></i>
+                  </button>
+
+                  <button 
+                    class="btn-add-to-cart"
+                    [disabled]="offer.isSold || offer.count === 0"
+                    (click)="addToCart(offer, $event)"
+                    [attr.aria-label]="'إضافة ' + offer.partName + ' للسلة'"
+                    type="button">
+                    <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                    <span *ngIf="!offer.isSold && offer.count > 0">أضف للسلة</span>
+                    <span *ngIf="offer.isSold || offer.count === 0">غير متوفر</span>
+                  </button>
+                </div>
+
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Navigation -->
+      <div class="swiper-button-prev offers-button-prev"></div>
+      <div class="swiper-button-next offers-button-next"></div>
+      
+      <!-- Pagination -->
+      <div class="swiper-pagination offers-pagination"></div>
     </div>
-  </div>
 
-  <!-- Loading State -->
-  <div class="text-center py-4" *ngIf="bestOffers.length === 0">
-    <div class="spinner-border text-primary" role="status" style="width: 2.5rem; height: 2.5rem;">
-      <span class="visually-hidden">جاري التحميل...</span>
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && carPartOffers.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-box-open"></i>
+      </div>
+      <h3>لا توجد عروض متاحة حالياً</h3>
+      <p>تحقق مرة أخرى لاحقاً للحصول على أفضل العروض على قطع غيار السيارات</p>
     </div>
-    <p class="mt-2 text-muted">جاري تحميل العروض...</p>
+
   </div>
-</div>
+</section>

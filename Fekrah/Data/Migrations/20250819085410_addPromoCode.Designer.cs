@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250819085410_addPromoCode")]
+    partial class addPromoCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,31 +215,6 @@ namespace Data.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Governorate");
-                });
-
-            modelBuilder.Entity("Data.Models.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Data.Models.Localization", b =>
@@ -644,21 +622,6 @@ namespace Data.Migrations
                     b.ToTable("VisitorRegisters");
                 });
 
-            modelBuilder.Entity("ImagePart", b =>
-                {
-                    b.Property<int>("ImageUrlsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PartsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ImageUrlsId", "PartsId");
-
-                    b.HasIndex("PartsId");
-
-                    b.ToTable("ImagePart");
-                });
-
             modelBuilder.Entity("Merchant", b =>
                 {
                     b.Property<int>("Id")
@@ -827,6 +790,10 @@ namespace Data.Migrations
                     b.Property<double>("FinalPrice")
                         .HasColumnType("float");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDelivery")
                         .HasColumnType("bit");
 
@@ -960,15 +927,6 @@ namespace Data.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("UpdatedByUser");
-                });
-
-            modelBuilder.Entity("Data.Models.Image", b =>
-                {
-                    b.HasOne("Data.Models.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
-
-                    b.Navigation("CreatedByUser");
                 });
 
             modelBuilder.Entity("Data.Models.Localization", b =>
@@ -1141,21 +1099,6 @@ namespace Data.Migrations
                     b.Navigation("UpdatedByUser");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ImagePart", b =>
-                {
-                    b.HasOne("Data.Models.Image", null)
-                        .WithMany()
-                        .HasForeignKey("ImageUrlsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Part", null)
-                        .WithMany()
-                        .HasForeignKey("PartsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Merchant", b =>

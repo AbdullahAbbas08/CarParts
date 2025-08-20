@@ -12,7 +12,7 @@ namespace Data.DTOs
         public double FinalPrice { get; set; }
         public PartConditionEnum Condition { get; set; }
         public string ConditionName { get; set; }
-        public string ImageUrl { get; set; }
+        public List<string> ImageUrl { get; set; }
         public bool IsSold { get; set; }
         public bool IsFavorit { get; set; }
         public bool IsDelivery { get; set; }

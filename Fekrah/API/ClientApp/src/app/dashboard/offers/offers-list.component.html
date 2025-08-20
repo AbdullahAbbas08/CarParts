@@ -230,6 +230,10 @@
           <div class="detail-item" *ngIf="offer.bundlePartIdsCsv">
             <label>باقة القطع:</label>
             <span class="bundle-highlight">{{ offer.bundlePartIdsCsv.split(',').length }} قطعة</span>
+             <button class="bundle-details-btn" (click)="openBundleDetailsModal(offer)">
+               <i class="fas fa-box-open"></i>
+               تفاصيل الباقة
+             </button>
           </div>
           
           <div class="detail-item">
@@ -245,7 +249,7 @@
           <i class="fas fa-edit"></i>
           تعديل
         </button>
-        <button class="action-btn delete-btn" (click)="deleteOffer(offer.id!)">
+        <button class="action-btn delete-btn" (click)="openDeleteModal(offer)">
           <i class="fas fa-trash"></i>
           حذف
         </button>
@@ -339,7 +343,7 @@
                 <button class="action-btn edit-btn" (click)="openEditModal(offer)" title="تعديل">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button class="action-btn delete-btn" (click)="deleteOffer(offer.id!)" title="حذف">
+                <button class="action-btn delete-btn" (click)="openDeleteModal(offer)" title="حذف">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -396,9 +400,47 @@
       </button>
     </div>
   </div>
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="offerToDelete" (click)="cancelDeleteOffer()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>تأكيد حذف العرض</h3>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="confirmation-content">
+        <div class="warning-icon">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <h4>هل أنت متأكد من الحذف؟</h4>
+        <p>سيتم حذف العرض:</p>
+        <div class="offer-info">
+          <strong>{{ getPartName(offerToDelete?.partId) }}</strong>
+          <span>كود: {{ getPartCode(offerToDelete?.partId) }}</span>
+        </div>
+        <div class="warning-note">
+          <i class="fas fa-exclamation-circle"></i>
+          لا يمكن التراجع عن هذا الإجراء
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="cancelDeleteOffer()">
+        <i class="fas fa-arrow-right"></i>
+        العودة
+      </button>
+      <button type="button" class="btn-delete" (click)="confirmDeleteOffer()">
+        <i class="fas fa-trash"></i>
+        تأكيد الحذف
+      </button>
+    </div>
+  </div>
+</div>
 </div>
 
-<!-- Add/Edit Offer Component - Outside main container -->
+<!-- Add/Edit Offer Component -->
 <app-add-offer
   [isVisible]="showModal"
   [editingOffer]="selectedOffer"
@@ -406,8 +448,10 @@
   (offerSaved)="onOfferSaved($event)">
 </app-add-offer>
 
-<!-- Bundle Details Modal - Outside main container -->
-<div class="bundle-modal-overlay" *ngIf="showBundleModal" (click)="closeBundleModal()">
+<!-- Bundle Details Modal -->
+
+<!-- Place modal at the end of file, outside offers-container -->
+<div class="modal-overlay" *ngIf="showBundleModal" (click)="closeBundleModal()">
   <div class="bundle-modal" (click)="$event.stopPropagation()">
     <div class="bundle-modal-header">
       <h3 class="modal-title">
@@ -429,7 +473,7 @@
           <i class="fas fa-calculator"></i>
           <span>إجمالي السعر الأصلي: {{ getTotalOriginalPrice() }} ج.م</span>
         </div>
-        <div class="summary-item discount">
+        <div class="summary-item discount px-4">
           <i class="fas fa-percentage"></i>
           <span>قيمة الخصم: {{ getDiscountAmount() }} ج.م</span>
         </div>

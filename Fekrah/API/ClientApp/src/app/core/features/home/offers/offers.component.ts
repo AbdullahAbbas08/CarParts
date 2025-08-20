@@ -5,34 +5,34 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   TrackByFunction,
-  ViewChildren,
-  QueryList,
-  ElementRef,
   ChangeDetectorRef,
   NgZone
 } from '@angular/core';
 import { Router } from '@angular/router';
 import Swiper from 'swiper';
-import { Pagination, EffectCoverflow, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { SwaggerClient, OfferDTO, PartDTO, DataSourceResultOfOfferDTO, PartConditionEnum, PartQualityEnum, PartTypeEnum } from '../../../../Shared/Services/Swagger/SwaggerClient.service';
 
-// Enhanced Offer Interface
-export interface Offer {
+// Simplified Car Part Offer Interface
+export interface CarPartOffer {
   id: number;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  discount?: number;
-  condition: 'New' | 'Used' | 'Refurbished';
-  sellerName: string;
-  sellerId: number;
-  description: string;
-  imageUrl: string;
-  category?: string;
-  categoryId?: number;
-  rating?: number;
-  reviewsCount?: number;
-  inStock?: boolean;
-  fastDelivery?: boolean;
+  partId: number;
+  partName: string;
+  partDescription: string;
+  originalPrice: number;
+  finalPrice: number;
+  discountRate?: number;
+  partCondition: PartConditionEnum;
+  conditionName: string;
+  images: string[]; // مصفوفة الصور المتعددة
+  quality: PartQualityEnum;
+  qualityName: string;
+  partType: PartTypeEnum;
+  partTypeName: string;
+  isDelivery: boolean;
+  isFavorite: boolean;
+  isSold: boolean;
+  count: number;
 }
 
 @Component({
@@ -42,569 +42,388 @@ export interface Offer {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChildren('offerCard', { read: ElementRef }) offerCards!: QueryList<ElementRef>;
-
-  bestOffers: Offer[] = [];
-  swiper?: Swiper;
-  private resizeObserver?: ResizeObserver;
+  carPartOffers: CarPartOffer[] = [];
   private intersectionObserver?: IntersectionObserver;
-  private animationFrameId?: number;
+  private swipers: Swiper[] = [];
 
-  // Animation and interaction states
   isLoading = true;
-  activeSlideIndex = 0;
-
-  // Statistics for view more button
-  totalOffersCount = 1250; // إجمالي العروض في الموقع
-  totalStoresCount = 89;   // إجمالي المتاجر
+  wishlist: number[] = []; // قائمة المفضلة
+  cart: number[] = []; // قائمة السلة
 
   constructor(
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-    private router: Router
+    private router: Router,
+    private swaggerClient: SwaggerClient
   ) { }
 
   ngOnInit(): void {
-    this.loadOffers();
+    this.loadCarPartOffers();
+    this.loadWishlist();
+    this.loadCart();
     this.setupIntersectionObserver();
-    this.loadSiteStatistics();
   }
 
   ngAfterViewInit(): void {
-    // تأخير لضمان تحميل DOM
-    this.ngZone.runOutsideAngular(() => {
-      setTimeout(() => {
-        this.initializeSwiper();
-        this.setupResizeObserver();
-        this.setupCardAnimations();
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }, 150);
-    });
+    // Initialize main offers swiper
+    setTimeout(() => {
+      this.initializeOffersSwipers();
+      this.initializeImageSwipers();
+    }, 100);
   }
 
   ngOnDestroy(): void {
     this.cleanup();
   }
 
-  trackByOfferId: TrackByFunction<Offer> = (index: number, offer: Offer) => offer.id;
+  trackByOfferId: TrackByFunction<CarPartOffer> = (index: number, offer: CarPartOffer) => offer.id;
 
-  /**
-   * Navigate to all offers page
-   */
-  navigateToAllOffers(): void {
-    // إضافة تأثير بصري عند الضغط
-    const button = event?.target as HTMLElement;
-    this.createAdvancedRippleEffect(button);
-
-    // الانتقال إلى صفحة جميع العروض
-    this.router.navigate(['/offers']);
-
-    // يمكن إضافة إحصائيات تتبع هنا
-    this.trackUserInteraction('view_all_offers_clicked');
-  }
-
-  /**
-   * Load site statistics
-   */
-  private loadSiteStatistics(): void {
-    // هنا يمكن تحميل الإحصائيات من API
-    // this.offersService.getSiteStatistics().subscribe(stats => {
-    //   this.totalOffersCount = stats.totalOffers;
-    //   this.totalStoresCount = stats.totalStores;
-    //   this.cdr.detectChanges();
-    // });
-  }
-
-  /**
-   * Track user interactions for analytics
-   */
-  private trackUserInteraction(action: string, data?: any): void {
-    // تتبع تفاعلات المستخدم لأغراض التحليل
-    console.log('User interaction:', action, data);
-    // يمكن إرسال البيانات إلى Google Analytics أو خدمة تحليل أخرى
-  }
-
-  private loadOffers(): void {
-    // Enhanced sample data with more realistic car parts
-    this.bestOffers = [
+  private loadCarPartOffers(): void {
+    // Simplified sample data
+    this.carPartOffers = [
       {
         id: 1,
-        name: 'كشاف أمامي هونداي LED',
-        price: 409,
-        oldPrice: 489,
-        discount: 16,
-        condition: 'New',
-        sellerName: 'متجر الإنارة المتطورة',
-        sellerId: 4,
-        description: 'كشاف LED عالي الكفاءة من هونداي يوفر إضاءة قوية وواضحة للقيادة الآمنة في جميع الأوقات.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'إضاءة',
-        categoryId: 4,
-        rating: 4.6,
-        reviewsCount: 89,
-        inStock: true,
-        fastDelivery: true
+        partId: 101,
+        partName: 'مساعد أمامي أصلي KYB',
+        partDescription: 'مساعد أمامي عالي الجودة لامتصاص الصدمات وتوفير قيادة مريحة',
+        originalPrice: 1500,
+        finalPrice: 1200,
+        discountRate: 20,
+        partCondition: PartConditionEnum.New,
+        conditionName: 'جديد',
+        images: [
+          'assets/images/variable_section/banner1.png',
+          'assets/images/variable_section/banner2.png',
+          'assets/images/variable_section/banner3.png'
+        ],
+        quality: PartQualityEnum.FirstSort,
+        qualityName: 'الدرجة الأولى',
+        partType: PartTypeEnum.Original,
+        partTypeName: 'أصلي',
+        isDelivery: true,
+        isFavorite: false,
+        isSold: false,
+        count: 5
       },
       {
-        id: 5,
-        name: 'ردياتير نيسان الأصلي',
-        price: 781,
-        oldPrice: 920,
-        discount: 15,
-        condition: 'New',
-        sellerName: 'شركة التبريد المتخصصة',
-        sellerId: 4,
-        description: 'ردياتير تبريد أصلي من نيسان مصنوع من أجود المواد لضمان تحكم مثالي في درجة حرارة المحرك.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'تبريد',
-        categoryId: 4,
-        rating: 4.8,
-        reviewsCount: 167,
-        inStock: true,
-        fastDelivery: false
+        id: 2,
+        partId: 102,
+        partName: 'طقم فحمات فرامل سيراميك',
+        partDescription: 'فحمات فرامل سيراميك عالية الأداء لفرملة قوية وآمنة',
+        originalPrice: 600,
+        finalPrice: 450,
+        discountRate: 25,
+        partCondition: PartConditionEnum.New,
+        conditionName: 'جديد',
+       images: [
+          'assets/images/variable_section/banner1.png',
+          'assets/images/variable_section/banner2.png',
+          'assets/images/variable_section/banner3.png'
+        ],
+        quality: PartQualityEnum.FirstSort,
+        qualityName: 'الدرجة الأولى',
+        partType: PartTypeEnum.Original,
+        partTypeName: 'أصلي',
+        isDelivery: true,
+        isFavorite: true,
+        isSold: false,
+        count: 12
       },
       {
-        id: 6,
-        name: 'طرمبة بنزين عالية الأداء',
-        price: 368,
-        oldPrice: 434,
-        discount: 15,
-        condition: 'New',
-        sellerName: 'ورشة الجودة المعتمدة',
-        sellerId: 4,
-        description: 'طرمبة بنزين قوية ومتينة تضمن ضخ الوقود بكفاءة عالية وثبات تام لجميع أنواع السيارات.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'وقود',
-        categoryId: 4,
-        rating: 4.5,
-        reviewsCount: 112,
-        inStock: true,
-        fastDelivery: true
+        id: 3,
+        partId: 103,
+        partName: 'فلتر زيت المحرك Mann-Filter',
+        partDescription: 'فلتر زيت عالي الكفاءة للحفاظ على نظافة زيت المحرك',
+        originalPrice: 120,
+        finalPrice: 95,
+        discountRate: 21,
+        partCondition: PartConditionEnum.New,
+        conditionName: 'جديد',
+        images: [
+          'assets/images/variable_section/banner1.png',
+          'assets/images/variable_section/banner2.png',
+          'assets/images/variable_section/banner3.png'
+        ],
+        quality: PartQualityEnum.FirstSort,
+        qualityName: 'الدرجة الأولى',
+        partType: PartTypeEnum.Original,
+        partTypeName: 'أصلي',
+        isDelivery: false,
+        isFavorite: false,
+        isSold: false,
+        count: 0
       },
       {
-        id: 7,
-        name: 'كمبروسر تكييف متطور',
-        price: 947,
-        oldPrice: 1354,
-        discount: 30,
-        condition: 'New',
-        sellerName: 'التبريد المركزي المحدود',
-        sellerId: 4,
-        description: 'كمبروسر تكييف عالي الأداء يوفر تبريداً فائقاً وكفاءة في استهلاك الطاقة حتى في أقسى الظروف.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'تكييف',
-        categoryId: 4,
-        rating: 4.9,
-        reviewsCount: 234,
-        inStock: true,
-        fastDelivery: false
-      },
-      {
-        id: 8,
-        name: 'زيت محرك شل هيليكس الفائق',
-        price: 843,
-        oldPrice: 1032,
-        discount: 18,
-        condition: 'New',
-        sellerName: 'محل زيوت السيارات الممتاز',
-        sellerId: 4,
-        description: 'زيت شل هيليكس الأصلي يوفر حماية فائقة للمحرك وأداءً استثنائياً في جميع ظروف القيادة.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'زيوت',
-        categoryId: 4,
-        rating: 4.8,
-        reviewsCount: 189,
-        inStock: true,
-        fastDelivery: true
-      },
-      {
-        id: 9,
-        name: 'مساعدين أمامي تويوتا',
-        price: 1125,
-        oldPrice: 1300,
-        discount: 14,
-        condition: 'New',
-        sellerName: 'العفشة الأصلية المعتمدة',
-        sellerId: 4,
-        description: 'مساعدين أمامي أصلي من تويوتا يوفر راحة قصوى وثبات مثالي أثناء القيادة على جميع الطرق.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'تعليق',
-        categoryId: 4,
-        rating: 4.7,
-        reviewsCount: 143,
-        inStock: true,
-        fastDelivery: false
-      },
-      {
-        id: 10,
-        name: 'كمبيوتر السيارة الذكي',
-        price: 2850,
-        oldPrice: 3200,
-        discount: 11,
-        condition: 'Used',
-        sellerName: 'الورشة الإلكترونية المتقدمة',
-        sellerId: 4,
-        description: 'وحدة تحكم إلكترونية شاملة ومتطورة لجميع أنظمة السيارة مع ضمان الجودة والأداء.',
-        imageUrl: 'assets/images/image_100_100.png',
-        category: 'إلكترونيات',
-        categoryId: 4,
-        rating: 4.4,
-        reviewsCount: 67,
-        inStock: false,
-        fastDelivery: false
+        id: 4,
+        partId: 104,
+        partName: 'مصباح أمامي LED فيليبس',
+        partDescription: 'مصباح أمامي LED عالي الكفاءة يوفر إضاءة قوية وواضحة',
+        originalPrice: 1200,
+        finalPrice: 950,
+        discountRate: 21,
+        partCondition: PartConditionEnum.Used,
+        conditionName: 'مستعمل',
+        images: [
+          'assets/images/variable_section/banner1.png',
+          'assets/images/variable_section/banner2.png',
+          'assets/images/variable_section/banner3.png'
+        ],
+        quality: PartQualityEnum.FirstSort,
+        qualityName: 'الدرجة الأولى',
+        partType: PartTypeEnum.Original,
+        partTypeName: 'أصلي',
+        isDelivery: true,
+        isFavorite: false,
+        isSold: false,
+        count: 3
       }
     ];
-  }
-
-  private initializeSwiper(): void {
-    const swiperElement = document.querySelector('.offers-swiper') as HTMLElement;
-    if (!swiperElement) return;
-
-    this.swiper = new Swiper(swiperElement, {
-      modules: [Pagination, Autoplay],
-      slidesPerView: 'auto',
-      spaceBetween: 1,
-      centeredSlides: false,
-      loop: false,
-      grabCursor: true,
-      speed: 800,
-
-      // Auto play for better engagement
-      autoplay: {
-        delay: 4000,
-        disableOnInteraction: true,
-        pauseOnMouseEnter: true,
-      },
-
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-        dynamicBullets: true,
-        dynamicMainBullets: 3,
-        renderBullet: (index: number, className: string) => {
-          return `<span class="${className} position-relative">
-            <span class="position-absolute top-50 start-50 translate-middle w-100 h-100 rounded-circle border border-2 opacity-50"></span>
-          </span>`;
-        }
-      },
-
-      breakpoints: {
-        320: {
-          slidesPerView: 1.1,
-          spaceBetween: 5,
-          centeredSlides: true,
-        },
-        576: {
-          slidesPerView: 1.5,
-          spaceBetween: 5,
-          centeredSlides: true,
-        },
-        768: {
-          slidesPerView: 2.2,
-          spaceBetween: 5,
-          centeredSlides: false,
-        },
-        992: {
-          slidesPerView: 3,
-          spaceBetween: 5,
-        },
-        1200: {
-          slidesPerView: 4,
-          spaceBetween: 5,
-        },
-        1400: {
-          slidesPerView: 5,
-          spaceBetween: 5,
-        }
-      },
-
-      on: {
-        init: () => {
-          this.updateSlideEffects();
-          this.startParallaxAnimation();
-        },
-        slideChange: () => {
-          this.activeSlideIndex = this.swiper?.activeIndex || 0;
-          this.updateSlideEffects();
-          this.triggerSlideChangeEffects();
-        },
-        resize: () => this.updateSlideEffects(),
-        touchStart: () => this.pauseAutoplay(),
-        touchEnd: () => this.resumeAutoplay()
-      }
-    });
-  }
-
-  private applyCardTransition(card: HTMLElement, distance: number): void {
-    const scale = 1; // ثابت بدون تصغير
-    const opacity = 1; // ثابت بدون شفافية
-    const blur = 0; // إزالة الضبابية
-
-    card.style.opacity = opacity.toString();
-    card.style.filter = 'none'; // إزالة جميع الفلاتر
-  }
-
-  private updateSlideEffects(): void {
-    if (!this.swiper) return;
-
-    const slides = this.swiper.slides;
-    const activeIndex = this.swiper.activeIndex;
-
-    slides.forEach((slide: HTMLElement, index: number) => {
-      const card = slide.querySelector('.offer-card') as HTMLElement;
-      if (!card) return;
-
-      // إزالة جميع الكلاسات السابقة
-      card.classList.remove('slide-active', 'slide-adjacent', 'slide-distant');
-
-      // إضافة كلاس active فقط للكارد النشط
-      if (index === activeIndex) {
-        card.classList.add('slide-active');
-        this.addCardGlowEffect(card);
-      }
-
-      // تطبيق التأثيرات بدون ضبابية أو بهتان
-      this.applyCardTransition(card, 0);
-    });
-  }
-
-  private addCardGlowEffect(card: HTMLElement): void {
-    card.style.boxShadow = '0 25px 50px rgba(255, 107, 53, 0.3), 0 0 30px rgba(255, 107, 53, 0.2)';
-    setTimeout(() => {
-      card.style.boxShadow = '';
-    }, 2000);
-  }
-
-  private triggerSlideChangeEffects(): void {
-    // Add subtle animation to active card
-    const activeSlide = this.swiper?.slides[this.activeSlideIndex];
-    if (activeSlide) {
-      const card = activeSlide.querySelector('.offer-card') as HTMLElement;
-      if (card) {
-        card.style.animation = 'none';
-        setTimeout(() => {
-          card.style.animation = 'cardPulse 0.6s ease-out';
-        }, 10);
-      }
-    }
-  }
-
-  private setupCardAnimations(): void {
-    if (this.offerCards) {
-      this.offerCards.forEach((cardRef, index) => {
-        const card = cardRef.nativeElement;
-
-        // Mouse enter effects
-        card.addEventListener('mouseenter', () => {
-          this.pauseAutoplay();
-          this.addHoverEffects(card);
-        });
-
-        // Mouse leave effects
-        card.addEventListener('mouseleave', () => {
-          this.resumeAutoplay();
-          this.removeHoverEffects(card);
-        });
-      });
-    }
-  }
-
-  private addHoverEffects(card: HTMLElement): void {
-    const image = card.querySelector('.offer-image') as HTMLElement;
-    const title = card.querySelector('.offer-title') as HTMLElement;
-
-    if (image) {
-      image.style.transform = 'scale(1.1) rotateY(10deg)';
-      image.style.filter = 'brightness(1.1) saturate(1.2)';
-    }
-
-    if (title) {
-      title.style.background = 'linear-gradient(135deg, #ff6b35, #f7931e)';
-      title.style.webkitBackgroundClip = 'text';
-      title.style.webkitTextFillColor = 'transparent';
-      title.style.backgroundClip = 'text';
-    }
-  }
-
-  private removeHoverEffects(card: HTMLElement): void {
-    const image = card.querySelector('.offer-image') as HTMLElement;
-    const title = card.querySelector('.offer-title') as HTMLElement;
-
-    if (image) {
-      image.style.transform = '';
-      image.style.filter = '';
-    }
-
-    if (title) {
-      title.style.background = '';
-      title.style.webkitBackgroundClip = '';
-      title.style.webkitTextFillColor = '';
-      title.style.backgroundClip = '';
-    }
-  }
-
-  private startParallaxAnimation(): void {
-    const animateParallax = () => {
-      const scrollY = window.scrollY;
-      const cards = document.querySelectorAll('.offer-card');
-
-      cards.forEach((card, index) => {
-        const speed = 0.5 + (index % 3) * 0.1;
-        const yPos = -(scrollY * speed);
-        (card as HTMLElement).style.transform += ` translateY(${yPos}px)`;
-      });
-
-      this.animationFrameId = requestAnimationFrame(animateParallax);
-    };
+    
+    // Set loading to false after data is loaded
+    this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   private setupIntersectionObserver(): void {
-    if (typeof IntersectionObserver !== 'undefined') {
-      this.intersectionObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('animate__fadeInUp');
-            }
-          });
+    // Removed intersection observer for animations
+  }
+
+  private initializeOffersSwipers(): void {
+    const offersSwiper = new Swiper('.offers-swiper', {
+      modules: [Navigation, Pagination, Autoplay],
+      slidesPerView: 'auto',
+      spaceBetween: 20,
+      slidesPerGroup: 1,
+      loop: false,
+      centeredSlides: false,
+      grabCursor: true,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.offers-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.offers-button-next',
+        prevEl: '.offers-button-prev',
+      },
+      breakpoints: {
+        320: {
+          slidesPerView: 1.2,
+          spaceBetween: 15,
         },
-        { threshold: 0.1 }
-      );
-    }
-  }
-
-  private setupResizeObserver(): void {
-    if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => {
-        if (this.swiper) {
-          this.swiper.update();
-          setTimeout(() => this.updateSlideEffects(), 100);
-        }
-      });
-
-      const container = document.querySelector('.offers-section');
-      if (container) {
-        this.resizeObserver.observe(container);
+        480: {
+          slidesPerView: 1.5,
+          spaceBetween: 15,
+        },
+        768: {
+          slidesPerView: 2.5,
+          spaceBetween: 20,
+        },
+        1024: {
+          slidesPerView: 3.5,
+          spaceBetween: 20,
+        },
+        1280: {
+          slidesPerView: 4.5,
+          spaceBetween: 25,
+        },
       }
+    });
+    
+    this.swipers.push(offersSwiper);
+  }
+
+  private initializeImageSwipers(): void {
+    const imageSwipers = document.querySelectorAll('.image-swiper');
+    
+    imageSwipers.forEach((swiperEl, index) => {
+      const imageSwiper = new Swiper(swiperEl as HTMLElement, {
+        modules: [Navigation, Pagination],
+        slidesPerView: 1,
+        spaceBetween: 0,
+        loop: true,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+        navigation: {
+          nextEl: swiperEl.querySelector('.swiper-button-next') as HTMLElement,
+          prevEl: swiperEl.querySelector('.swiper-button-prev') as HTMLElement,
+        },
+        pagination: {
+          el: swiperEl.querySelector('.swiper-pagination') as HTMLElement,
+          clickable: true,
+        },
+      });
+      
+      this.swipers.push(imageSwiper);
+    });
+  }
+
+  // --- Action Methods ---
+
+  viewPartDetails(offer: CarPartOffer): void {
+    this.router.navigate(['/parts', offer.partId]);
+  }
+
+  toggleWishlist(offer: CarPartOffer, event: Event): void {
+    event.stopPropagation();
+    
+    const index = this.wishlist.indexOf(offer.partId);
+    if (index > -1) {
+      this.wishlist.splice(index, 1);
+      offer.isFavorite = false;
+    } else {
+      this.wishlist.push(offer.partId);
+      offer.isFavorite = true;
+    }
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+    }
+    
+    this.showToast(offer.isFavorite ? 'تم إضافة القطعة للمفضلة' : 'تم إزالة القطعة من المفضلة', 'success');
+    this.cdr.detectChanges();
+  }
+
+  addToCart(offer: CarPartOffer, event: Event): void {
+    event.stopPropagation();
+    
+    if (offer.isSold || offer.count === 0) {
+      this.showToast('هذه القطعة غير متوفرة حالياً', 'error');
+      return;
+    }
+
+    const cartIndex = this.cart.indexOf(offer.partId);
+    if (cartIndex === -1) {
+      this.cart.push(offer.partId);
+      
+      if (typeof localStorage !== 'undefined') {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cart.push({
+          partId: offer.partId,
+          partName: offer.partName,
+          price: offer.finalPrice,
+          image: offer.images[0],
+          quantity: 1
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+      }
+      
+      this.showToast('تم إضافة القطعة للسلة بنجاح', 'success');
+    } else {
+      this.showToast('هذه القطعة موجودة بالفعل في السلة', 'warning');
+    }
+    
+    this.cdr.detectChanges();
+  }
+
+  // --- Helper Methods ---
+
+  private loadWishlist(): void {
+    if (typeof localStorage !== 'undefined') {
+      this.wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      // تحديث حالة المفضلة للعروض
+      this.carPartOffers.forEach(offer => {
+        offer.isFavorite = this.wishlist.includes(offer.partId);
+      });
     }
   }
 
-  private pauseAutoplay(): void {
-    if (this.swiper?.autoplay) {
-      this.swiper.autoplay.stop();
+  private loadCart(): void {
+    if (typeof localStorage !== 'undefined') {
+      const cartData = JSON.parse(localStorage.getItem('cart') || '[]');
+      this.cart = cartData.map((item: any) => item.partId);
     }
   }
 
-  private resumeAutoplay(): void {
-    if (this.swiper?.autoplay) {
-      setTimeout(() => {
-        this.swiper?.autoplay.start();
-      }, 2000);
-    }
+  isInWishlist(partId: number): boolean {
+    return this.wishlist.includes(partId);
   }
 
-  viewOfferDetails(offer: Offer): void {
-    const button = event?.target as HTMLElement;
+  isInCart(partId: number): boolean {
+    return this.cart.includes(partId);
+  }
 
-    // Create enhanced ripple effect
-    this.createAdvancedRippleEffect(button);
+  getDiscountPercentage(offer: CarPartOffer): number {
+    if (!offer.discountRate) {
+      return Math.round(((offer.originalPrice - offer.finalPrice) / offer.originalPrice) * 100);
+    }
+    return offer.discountRate;
+  }
 
-    // Add success feedback
-    this.showSuccessFeedback(button);
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('ar-EG', {
+      style: 'currency',
+      currency: 'EGP',
+      minimumFractionDigits: 0
+    }).format(price);
+  }
 
-    // Track user interaction
-    this.trackUserInteraction('offer_details_clicked', { offerId: offer.id });
+  private showToast(message: string, type: 'success' | 'error' | 'warning'): void {
+    const colors = {
+      success: '#10b981',
+      error: '#dc2626',
+      warning: '#f59e0b'
+    };
 
-    // Navigate to offer details
-    this.router.navigate(['/parts', offer.id]);
+    const icons = {
+      success: 'fa-check-circle',
+      error: 'fa-times-circle',
+      warning: 'fa-exclamation-triangle'
+    };
+
+    const toast = document.createElement('div');
+    toast.innerHTML = `<i class="fas ${icons[type]}"></i> ${message}`;
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, ${colors[type]}, ${this.adjustColor(colors[type], 40)});
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      z-index: 10000;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      animation: toast-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      max-width: 400px;
+      text-align: center;
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'toast-out 0.5s forwards';
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+  }
+
+  private adjustColor(color: string, amount: number): string {
+    return '#' + color.replace(/^#/, '').replace(/../g, c => ('0'+Math.min(255, Math.max(0, parseInt(c, 16) + amount)).toString(16)).substr(-2));
+  }
+
+  private cleanup(): void {
+    // Destroy all swipers
+    this.swipers.forEach(swiper => {
+      if (swiper && !swiper.destroyed) {
+        swiper.destroy(true, true);
+      }
+    });
+    this.swipers = [];
+    
+    this.intersectionObserver?.disconnect();
   }
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/images/placeholder-car-part.png';
     img.alt = 'صورة غير متوفرة';
-  }
-
-  private createAdvancedRippleEffect(element: HTMLElement): void {
-    if (!element) return;
-
-    const rect = element.getBoundingClientRect();
-    const ripple = document.createElement('div');
-    const size = Math.max(rect.width, rect.height) * 2;
-
-    // Enhanced ripple styles
-    Object.assign(ripple.style, {
-      width: `${size}px`,
-      height: `${size}px`,
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%) scale(0)',
-      position: 'absolute',
-      borderRadius: '50%',
-      background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 70%, transparent 100%)',
-      animation: 'advancedRipple 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-      pointerEvents: 'none',
-      zIndex: '1000'
-    });
-
-    element.style.position = 'relative';
-    element.style.overflow = 'hidden';
-    element.appendChild(ripple);
-
-    setTimeout(() => ripple.remove(), 800);
-  }
-
-  private showSuccessFeedback(element: HTMLElement): void {
-    const originalText = element.textContent;
-    const icon = element.querySelector('i');
-
-    if (icon) {
-      icon.className = 'fas fa-check';
-    }
-
-    element.style.background = 'linear-gradient(135deg, #11998e, #38ef7d)';
-
-    setTimeout(() => {
-      if (icon) {
-        icon.className = 'fas fa-eye';
-      }
-      element.style.background = '';
-    }, 1500);
-  }
-
-  private cleanup(): void {
-    if (this.swiper) {
-      this.swiper.destroy(true, true);
-      this.swiper = undefined;
-    }
-
-    this.resizeObserver?.disconnect();
-    this.intersectionObserver?.disconnect();
-
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-  }
-
-  // Utility methods for enhanced UX
-  isOfferNew(offer: Offer): boolean {
-    return offer.condition === 'New';
-  }
-
-  hasDiscount(offer: Offer): boolean {
-    return !!offer.discount && offer.discount > 0;
-  }
-
-  getDiscountAmount(offer: Offer): number {
-    return offer.oldPrice ? offer.oldPrice - offer.price : 0;
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency',
-      currency: 'EGP',
-      minimumFractionDigits: 0
-    }).format(price);
   }
 }

@@ -17,7 +17,7 @@ export class CarBrandsComponent implements OnInit {
       modules: [Navigation, Pagination, Autoplay],
       slidesPerView: 'auto',
       spaceBetween: 15,
-      slidesPerGroup: 1,
+      slidesPerGroup: 2,
       loop: true,
       centeredSlides: false,
       autoplay: {
