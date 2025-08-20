@@ -592,17 +592,21 @@ export class OffersListComponent implements OnInit {
 
   // Bundle Modal Functions
   openBundleDetailsModal(offer: OfferDTO): void {
-    this.selectedBundleOffer = offer;
-    this.selectedBundleParts = offer.bundlePartIdsCsv?.split(',') || [];
-    this.showBundleModal = true;
-    document.body.style.overflow = 'hidden'; // Prevent body scroll
+  this.selectedBundleOffer = offer;
+  this.selectedBundleParts = offer.bundlePartIdsCsv?.split(',') || [];
+  this.showBundleModal = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
   }
 
   closeBundleModal(): void {
-    this.showBundleModal = false;
-    this.selectedBundleOffer = null;
-    this.selectedBundleParts = [];
-    document.body.style.overflow = 'auto'; // Restore body scroll
+  this.showBundleModal = false;
+  this.selectedBundleOffer = null;
+  this.selectedBundleParts = [];
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
   }
 
   getTotalOriginalPrice(): number {

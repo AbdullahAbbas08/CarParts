@@ -451,8 +451,8 @@
 <!-- Bundle Details Modal -->
 
 <!-- Place modal at the end of file, outside offers-container -->
-<div class="bundle-modal-overlay" *ngIf="showBundleModal" (click)="closeBundleModal()" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: rgba(0,0,0,0.5); display: flex; align-items: flex-start; justify-content: center; overflow: hidden;">
-  <div class="bundle-modal" (click)="$event.stopPropagation()" style="margin-top: 40px;">
+<div class="modal-overlay" *ngIf="showBundleModal" (click)="closeBundleModal()">
+  <div class="bundle-modal" (click)="$event.stopPropagation()">
     <div class="bundle-modal-header">
       <h3 class="modal-title">
         <i class="fas fa-box-open"></i>
@@ -473,7 +473,7 @@
           <i class="fas fa-calculator"></i>
           <span>إجمالي السعر الأصلي: {{ getTotalOriginalPrice() }} ج.م</span>
         </div>
-        <div class="summary-item discount">
+        <div class="summary-item discount px-4">
           <i class="fas fa-percentage"></i>
           <span>قيمة الخصم: {{ getDiscountAmount() }} ج.م</span>
         </div>
