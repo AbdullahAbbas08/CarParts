@@ -328,6 +328,13 @@ body {
   direction: rtl;
   text-align: right;
   font-family: "Cairo", "Tajawal", "sans-serif"; // خطوط عربية جميلة
+  overflow-x: hidden; // منع التمرير الأفقي
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-x: hidden; // منع التمرير الأفقي على مستوى HTML
 }
 
 // button {

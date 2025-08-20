@@ -77,12 +77,6 @@ export class CategoryPartsComponent implements OnInit {
     this.filteredParts = [...this.allParts];
     this.updateDisplayParts();
 
-    // الاشتراك في حالة الشريط الجانبي
-    this.filterService.sidebarState$.subscribe(isOpen => {
-      console.log('Sidebar state changed in category-parts:', isOpen);
-      this.showSidebar = isOpen;
-    });
-
     console.log('Category-parts component initialized with FilterService');
   }
 
@@ -132,9 +126,7 @@ export class CategoryPartsComponent implements OnInit {
   }
 
   toggleSidebar() {
-    console.log('toggleSidebar clicked in category-parts!');
     this.filterService.toggleSidebar();
-    console.log('FilterService toggleSidebar called');
   }
 
   closeSidebar() {

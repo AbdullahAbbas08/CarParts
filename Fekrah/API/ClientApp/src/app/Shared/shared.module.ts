@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { PartCardComponent } from './components/part-card/part-card.component';
-import { FilterSidebarComponent } from './components/filter-sidebar/filter-sidebar.component';
+// import { FilterSidebarComponent } from './components/filter-sidebar/filter-sidebar.component';
 import { FiltersSidebarComponent } from './components/filters-sidebar/filters-sidebar.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CardComponent } from './components/card/card.component';
@@ -16,7 +16,7 @@ import { PrimeNGModule } from './primeng.module';
 @NgModule({
    declarations: [
     PartCardComponent,
-    FilterSidebarComponent,
+    // FilterSidebarComponent,
     FiltersSidebarComponent,
     CardComponent,
     BreadcrumbComponent,
@@ -39,7 +39,7 @@ import { PrimeNGModule } from './primeng.module';
     HttpClientModule,
     RouterModule,
     PartCardComponent,
-    FilterSidebarComponent,
+    // FilterSidebarComponent,
     FiltersSidebarComponent,
     NgxPaginationModule,
     CardComponent,

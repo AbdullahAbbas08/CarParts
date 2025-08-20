@@ -42,7 +42,6 @@ export class FilterService {
   private partsDataSubject = new BehaviorSubject<PartItem[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private sidebarStateSubject = new BehaviorSubject<boolean>(false);
-
   // Observable للفلاتر الحالية
   filters$ = this.filtersSubject.asObservable();
 
@@ -69,7 +68,6 @@ export class FilterService {
   constructor() {
     // تحميل البيانات المحفوظة عند البدء
     this.loadSavedFilters();
-    console.log('FilterService: Service initialized. Initial sidebar state:', this.sidebarStateSubject.value);
   }
 
   // تحديث الفلاتر
@@ -102,22 +100,17 @@ export class FilterService {
   // تبديل حالة الشريط الجانبي
   toggleSidebar(): void {
     const currentState = this.sidebarStateSubject.value;
-    console.log('FilterService: toggleSidebar called. Current:', currentState);
     const newState = !currentState;
     this.sidebarStateSubject.next(newState);
-    console.log('FilterService: New state set to:', newState);
-    alert(this.sidebarStateSubject.value);
   }
 
   // فتح الشريط الجانبي
   openSidebar(): void {
-    console.log('FilterService: openSidebar called');
     this.sidebarStateSubject.next(true);
   }
 
   // إغلاق الشريط الجانبي
   closeSidebar(): void {
-    console.log('FilterService: closeSidebar called');
     this.sidebarStateSubject.next(false);
   }
 

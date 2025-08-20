@@ -1,3 +1,322 @@
+// GLOBAL MODAL OVERRIDE - Break Angular ViewEncapsulation (copied from brand)
+:host ::ng-deep .modal-overlay,
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+  transform: none !important;
+  contain: none !important;
+  clip: unset !important;
+  overflow: visible !important;
+
+  .confirmation-modal {
+    position: relative !important;
+    margin: auto !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    background: #f5f7fa !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px rgba(102, 126, 234, 0.18) !important;
+    animation: slideUp 0.4s ease !important;
+    width: 90% !important;
+    max-width: 500px !important;
+    min-width: 300px !important;
+    max-height: calc(100vh - 4rem) !important;
+    height: auto !important;
+    min-height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+
+    .modal-header {
+      background: linear-gradient(135deg, #ff5b5b, #f9fafb) !important;
+      color: white;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        h3 {
+          margin: 0;
+          font-size: 1.3rem;
+          font-weight: 600;
+        }
+        i {
+          font-size: 1.5rem;
+        }
+      }
+    }
+    .modal-body {
+      padding: 2rem !important;
+      flex: 1 !important;
+      overflow-y: auto !important;
+      max-height: calc(100vh - 200px) !important;
+      .confirmation-content {
+        text-align: center;
+        padding: 2rem 1rem;
+        .warning-icon {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #48cae4, #667eea);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 2rem auto;
+          color: white;
+          font-size: 2rem;
+        }
+        h4 {
+          color: #212529;
+          margin-bottom: 1rem;
+          font-size: 1.3rem;
+        }
+        p {
+          color: #495057;
+          margin-bottom: 1.5rem;
+        }
+        .offer-info {
+          background: #e3f2fd;
+          padding: 1rem;
+          border-radius: 12px;
+          margin: 1.5rem 0;
+          border-left: 4px solid #667eea;
+          strong {
+            display: block;
+            color: #212529;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+          }
+          span {
+            color: #495057;
+            font-size: 0.9rem;
+          }
+        }
+        .warning-note {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          color: #dc3545;
+          font-size: 0.9rem;
+          font-style: italic;
+          i {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+    .modal-footer {
+      background: #f8f9fa;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      flex-shrink: 0;
+      .btn-cancel {
+        background: #adb5bd;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        &:hover {
+          background: #6c757d;
+          transform: translateY(-2px);
+        }
+      }
+      .btn-delete {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.15);
+        &:hover {
+          background: linear-gradient(135deg, #20c997, #17a2b8);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+// Delete Confirmation Modal Styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(44, 62, 80, 0.55);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInScale 0.3s;
+}
+
+.confirmation-modal {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(44, 62, 80, 0.18), 0 0 0 1px rgba(44, 62, 80, 0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  min-width: 350px;
+  max-width: 95vw;
+  width: 100%;
+  position: relative;
+  animation: fadeInScale 0.4s;
+}
+
+.confirmation-modal .modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-modal .modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #dc3545;
+}
+
+.confirmation-modal .modal-title.danger i {
+  color: #dc3545;
+  font-size: 1.7rem;
+  filter: drop-shadow(0 0 8px rgba(220, 53, 69, 0.3));
+}
+
+.confirmation-modal .modal-body {
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-modal .confirmation-content {
+  text-align: center;
+}
+
+.confirmation-modal .warning-icon {
+  font-size: 2.5rem;
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.confirmation-modal h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.confirmation-modal p {
+  color: #666;
+  font-size: 0.98rem;
+  margin-bottom: 1rem;
+}
+
+.confirmation-modal .offer-info {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 1rem;
+}
+
+.confirmation-modal .warning-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dc3545;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  justify-content: center;
+}
+
+.confirmation-modal .modal-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.confirmation-modal .btn-cancel {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #333;
+  border: 2px solid #e2e8f0;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirmation-modal .btn-cancel:hover {
+  background: #e2e8f0;
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.confirmation-modal .btn-delete {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.15);
+}
+
+.confirmation-modal .btn-delete:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.25);
+}
 .offers-container {
   padding: 2rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);

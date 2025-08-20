@@ -102,21 +102,17 @@ export class AppComponent implements OnInit, OnDestroy {
     this.setupOrdersUpdateInterval();
     this.initializePageSetup();
     
-    // الاشتراك في حالة الشريط الجانبي من الخدمة
-    this.filterService.sidebarState$.subscribe(isOpen => {
-      console.log('App component: Sidebar state changed to:', isOpen);
-      console.log('App component: filtersOpened BEFORE =', this.filtersOpened);
+   
+
+  // الاشتراك في حالة الشريط الجانبي من الخدمة
+  this.filterService.sidebarState$.subscribe(isOpen => {
       this.filtersOpened = isOpen;
-      console.log('App component: filtersOpened AFTER =123', this.filtersOpened);
-      
       if (isOpen) {
         this.applyFilterOpenStyles();
       } else {
         this.applyFilterCloseStyles();
       }
     });
-
-    console.log('App component initialized with FilterService');
   }
 
   ngOnDestroy(): void {
@@ -239,7 +235,6 @@ export class AppComponent implements OnInit, OnDestroy {
       // إحصائيات الفلاتر المطبقة
       this.trackFilterUsage('applied', filters);
 
-      console.log('Applied filters:', filters);
     } catch (error) {
       console.error('Error applying filters:', error);
     }
@@ -364,15 +359,21 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onSiteClick(event: Event): void {
-    if (this.filtersOpened) {
-      // التأكد من أن النقر ليس على زر الفلتر نفسه
-      const target = event.target as HTMLElement;
-      const isFilterButton = target.closest('.filter-toggle-btn');
+  // Prevent auto-closing right after clicking the toggle button which caused double emission
+  if (!this.filtersOpened) { return; }
 
-      if (!isFilterButton) {
-        this.closeFilters();
-      }
-    }
+  const target = event.target as HTMLElement;
+
+  // Treat both .filter-btn and .filter-toggle-btn as valid toggle buttons
+  const isFilterButton = target.closest('.filter-btn, .filter-toggle-btn');
+
+  // If click is inside any element that represents the sidebar (add a class in template e.g. .filters-sidebar) don't close
+  const isInsideSidebar = target.closest('.filters-sidebar');
+
+
+  if (isFilterButton || isInsideSidebar) { return; }
+
+  this.closeFilters();
   }
 
   // Filter-related methods
@@ -432,7 +433,6 @@ export class AppComponent implements OnInit, OnDestroy {
     localStorage.setItem('last_login_time', new Date().toISOString());
     localStorage.setItem('admin_session_id', 'session_' + Date.now());
 
-    console.log('✅ تم إعداد بيانات اختبار الأدمن بنجاح');
   }
 
   /* 
