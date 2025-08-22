@@ -249,7 +249,7 @@
                 <div class="floating-label-group">
                   <select formControlName="storeName" class="form-select" id="storeName">
                     <option value="">اختر المتجر</option>
-                    <option *ngFor="let store of stores" [value]="store.name">{{ store.name }}</option>
+                    <option *ngFor="let store of stores" [value]="store.id">{{ store.shopName }}</option>
                   </select>
                   <label for="storeName">
                     <i class="fas fa-building text-info me-2"></i>اسم المتجر *

@@ -69,11 +69,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   filteredCarModels: any[] = [];
   availableYears: string[] = [];
 
-  stores: Store[] = [
-    { name: 'متجر قطع الغيار الأول', phone: '01234567890' },
-    { name: 'مركز الخليج للسيارات', phone: '01098765432' },
-    { name: 'شركة النصر للقطع', phone: '01156789012' }
-  ];
+  stores: any[] = []
 
   popularCombos: CarCombo[] = [
     { name: 'تويوتا كامري 2020', brand: 'تويوتا', model: 'كامري', year: '2020' },
@@ -109,7 +105,8 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.loadDraftIfExists();
     this.updateProgress();
     this.getAllCarBrands();
-    this.getAllModelTypes()
+    this.getAllModelTypes();
+    this.getAllMerchant()
   }
 
   ngOnDestroy(): void {
@@ -331,6 +328,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       //   condition: formData.grade,
       //   description: formData.subtitle,
       //   price: formData.price,
+      //   finalPrice:+formData.priceAfterDiscount,
       // })
       console.log('Submitted part data:', formData);
       this.resetForm();
@@ -631,5 +629,12 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
         this.filteredCarModels = res.data;
       }
     });
+  }
+  getAllMerchant(){
+      this.swagger.apiMerchantGetAllGet(50, 1, undefined).subscribe((res: any) => { 
+            if (res && res.data) {
+           this.stores = res.data;
+         }
+      })
   }
 }

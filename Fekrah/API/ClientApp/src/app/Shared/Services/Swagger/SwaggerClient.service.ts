@@ -4693,7 +4693,7 @@ export class PartDTO implements IPartDTO {
     finalPrice!: number;
     condition!: PartConditionEnum;
     conditionName!: string;
-    imageUrl!: string;
+    imageUrl!: string[];
     isSold!: boolean;
     isFavorit!: boolean;
     isDelivery!: boolean;
@@ -4722,6 +4722,9 @@ export class PartDTO implements IPartDTO {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.imageUrl = [];
+        }
     }
 
     init(_data?: any) {
@@ -4733,7 +4736,11 @@ export class PartDTO implements IPartDTO {
             this.finalPrice = _data["finalPrice"];
             this.condition = _data["condition"];
             this.conditionName = _data["conditionName"];
-            this.imageUrl = _data["imageUrl"];
+            if (Array.isArray(_data["imageUrl"])) {
+                this.imageUrl = [] as any;
+                for (let item of _data["imageUrl"])
+                    this.imageUrl!.push(item);
+            }
             this.isSold = _data["isSold"];
             this.isFavorit = _data["isFavorit"];
             this.isDelivery = _data["isDelivery"];
@@ -4773,7 +4780,11 @@ export class PartDTO implements IPartDTO {
         data["finalPrice"] = this.finalPrice;
         data["condition"] = this.condition;
         data["conditionName"] = this.conditionName;
-        data["imageUrl"] = this.imageUrl;
+        if (Array.isArray(this.imageUrl)) {
+            data["imageUrl"] = [];
+            for (let item of this.imageUrl)
+                data["imageUrl"].push(item);
+        }
         data["isSold"] = this.isSold;
         data["isFavorit"] = this.isFavorit;
         data["isDelivery"] = this.isDelivery;
@@ -4806,7 +4817,7 @@ export interface IPartDTO {
     finalPrice: number;
     condition: PartConditionEnum;
     conditionName: string;
-    imageUrl: string;
+    imageUrl: string[];
     isSold: boolean;
     isFavorit: boolean;
     isDelivery: boolean;

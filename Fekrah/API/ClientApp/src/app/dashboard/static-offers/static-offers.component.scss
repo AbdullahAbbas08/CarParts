@@ -1,0 +1,247 @@
+/* تصميم عصري وجمالي لصفحة إدارة العروض الثابتة */
+.static-offers-modern {
+  padding: 2rem;
+  background: linear-gradient(120deg, #f7b733 0%, #fc4a1a 100%);
+  min-height: 100vh;
+//   border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(252, 74, 26, 0.12);
+  position: relative;
+}
+
+.offers-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  padding: 2rem 0 1.5rem 0;
+  background: linear-gradient(90deg, #fc4a1a 0%, #f7b733 100%);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px #fc4a1a22;
+  overflow: hidden;
+  h2 {
+    font-size: 2.6rem;
+    color: #fff;
+    letter-spacing: 2px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-shadow: 0 4px 16px rgba(252, 74, 26, 0.22);
+    margin-bottom: 0.5rem;
+    i {
+      font-size: 2.2rem;
+      color: #fff;
+      filter: drop-shadow(0 2px 8px #f7b73388);
+      margin-left: 0.5rem;
+      animation: headerIconPulse 1.8s infinite alternate;
+    }
+  }
+  .subtitle {
+    color: #fffde7;
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px #fc4a1a44;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 18px;
+    background: linear-gradient(90deg, #fff2 0%, #fc4a1a22 100%);
+    border-radius: 0 0 18px 18px;
+    pointer-events: none;
+  }
+}
+
+@keyframes headerIconPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 2px 8px #f7b73388); }
+  100% { transform: scale(1.15); filter: drop-shadow(0 6px 16px #fc4a1a88); }
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+.offer-card {
+  width: 100%;
+  min-height: 420px;
+  max-width: 100%;
+  margin: 0 auto;
+  /* ...existing code... */
+}
+
+// تصميم احترافي وبحجم صورة كبير
+.offer-card {
+  background: linear-gradient(135deg, #fff 60%, #f7b733 100%);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(252, 74, 26, 0.12);
+  padding: 2.5rem 2rem 2rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .card-bg {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, #fc4a1a33 0%, transparent 80%);
+    z-index: 0;
+  }
+    .card-img {
+      z-index: 1;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 420px;
+      img {
+        max-width: 720px;
+        max-height: 420px;
+        min-height: 240px;
+        border-radius: 28px;
+        box-shadow: 0 12px 48px rgba(252, 74, 26, 0.28);
+        background: #f7b73322;
+        object-fit: cover;
+        border: 6px solid #fc4a1a44;
+        transition: transform 0.2s;
+        display: block;
+        margin: 0 auto;
+      }
+    }
+  .card-info {
+    z-index: 1;
+    width: 100%;
+    .info-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      .label {
+        min-width: 110px;
+        color: #fc4a1a;
+        font-weight: 700;
+        margin-left: 0.7rem;
+        font-size: 1.1rem;
+      }
+      input {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        border: 2px solid #f7b733;
+        background: #fff8;
+        font-size: 1.1rem;
+        transition: border-color 0.2s;
+        &:focus {
+          border-color: #fc4a1a;
+          outline: none;
+        }
+      }
+    }
+  }
+  .card-actions {
+    z-index: 1;
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    .save-btn {
+      background: linear-gradient(90deg, #f7b733 60%, #fc4a1a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.7rem 1.7rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 12px #fc4a1a22;
+      cursor: pointer;
+      transition: background 0.2s;
+      i {
+        margin-left: 0.7rem;
+      }
+      &:hover {
+        background: linear-gradient(90deg, #fc4a1a 60%, #f7b733 100%);
+        transform: scale(1.05);
+      }
+    }
+    .remove-btn {
+      background: #fff;
+      color: #fc4a1a;
+      border: 2px solid #fc4a1a;
+      border-radius: 10px;
+      padding: 0.7rem 1.7rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 12px #fc4a1a22;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      i {
+        margin-left: 0.7rem;
+      }
+      &:hover {
+        background: #fc4a1a;
+        color: #fff;
+        transform: scale(1.05);
+      }
+    }
+  }
+  &:hover {
+    box-shadow: 0 16px 48px rgba(252, 74, 26, 0.22);
+    transform: translateY(-4px) scale(1.02);
+    .card-img img {
+      transform: scale(1.04);
+    }
+  }
+}
+
+.add-section {
+  text-align: center;
+  margin-top: 2.5rem;
+  .add-btn {
+    background: linear-gradient(90deg, #f7b733 60%, #fc4a1a 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.7rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 12px #fc4a1a22;
+    cursor: pointer;
+    transition: background 0.2s;
+    i {
+      margin-left: 0.7rem;
+    }
+    &:hover {
+      background: linear-gradient(90deg, #fc4a1a 60%, #f7b733 100%);
+    }
+  }
+}
+.static-offers {
+  h2 {
+    margin-bottom: 1rem;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    li {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      img {
+        margin-right: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      span {
+        font-weight: bold;
+      }
+    }
+  }
+}

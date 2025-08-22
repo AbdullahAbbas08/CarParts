@@ -1,0 +1,41 @@
+<div class="static-offers-modern">
+  <div class="offers-header">
+    <h2>
+      <i class="fas fa-images"></i>
+      إدارة العروض الثابتة لكل سيكشن
+    </h2>
+    <p class="subtitle">تحكم في صور البانر لكل جزء من الصفحة الرئيسية بسهولة وبلمسة فنية</p>
+  </div>
+
+  <div class="offers-grid">
+    <div class="offer-card" *ngFor="let banner of sectionBanners; let i = index">
+      <div class="card-bg"></div>
+      <div class="card-img">
+        <img [src]="banner.imagePath || 'assets/images/variable_section/placeholder.png'" [alt]="banner.altText" />
+      </div>
+      <div class="card-info">
+        <div class="info-row">
+          <span class="label">الكود:</span>
+          <input [(ngModel)]="banner.code" class="code-input" />
+        </div>
+        <div class="info-row">
+          <span class="label">مسار الصورة:</span>
+          <input [(ngModel)]="banner.imagePath" class="img-input" />
+        </div>
+        <div class="info-row">
+          <span class="label">النص البديل:</span>
+          <input [(ngModel)]="banner.altText" class="alt-input" />
+        </div>
+      </div>
+      <div class="card-actions">
+        <button (click)="saveBanner(i)" class="save-btn"><i class="fas fa-save"></i> حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="add-section">
+    <button (click)="addBanner()" class="add-btn">
+      <i class="fas fa-plus-circle"></i> إضافة سيكشن جديد
+    </button>
+  </div> -->
+</div>

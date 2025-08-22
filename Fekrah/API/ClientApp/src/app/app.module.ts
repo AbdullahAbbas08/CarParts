@@ -20,6 +20,7 @@ import { LoaderComponent } from './Shared/components/loader/loader.component';
 import { environment } from '../environments/environment';
 import { ToastrModule } from 'ngx-toastr';
 import { AdminComponent } from './dashboard/admin.component';
+import { StaticOffersModule } from './dashboard/static-offers/static-offers.module';
 import { UserManagementService } from './dashboard/manage-users/user-management.service';
 import { SharedModule } from './Shared/shared.module';
 registerLocaleData(localeAr);
@@ -47,8 +48,8 @@ registerLocaleData(localeAr);
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-    SharedModule
-
+    SharedModule,
+    StaticOffersModule
   ],
   exports: [
     HeaderComponent,

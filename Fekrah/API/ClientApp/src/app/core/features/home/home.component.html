@@ -8,43 +8,39 @@
       <app-categories></app-categories>
 
       <app-banner></app-banner>
-         <app-offers id="offers-section"></app-offers>
+      <app-offers id="offers-section"></app-offers>
       <app-car-brands id="brands-section"></app-car-brands>
-      <app-full-width-banner imagePath="assets/images/variable_section/banner1.png" altText="First Banner" [size]="1"
-        [height]="0.75">
-      </app-full-width-banner>
+
+      <app-full-width-banner *ngIf="getBanner('main')" [imagePath]="getBanner('main')?.imagePath || ''"
+        [altText]="getBanner('main')?.altText || ''" [size]="1" [height]="0.75"> </app-full-width-banner>
+
       <app-featured-stores id="stores-section"></app-featured-stores>
       <!-- <app-featured-sellers id="stores-section"></app-featured-sellers> -->
       <app-model-types id="model-types-section"></app-model-types>
       <div class="row g-0">
-        <div class="col">
-          <app-full-width-banner imagePath="assets/images/variable_section/banner1.png" altText="First Banner"
-            [size]="1" [height]="0.5">
-          </app-full-width-banner>
+        <div class="col" *ngIf="getBanner('main2')">
+          <app-full-width-banner [imagePath]="getBanner('main2')?.imagePath || ''"
+            [altText]="getBanner('main2')?.altText || ''" [size]="1" [height]="0.5"> </app-full-width-banner>
         </div>
-        <div class="col">
-          <app-full-width-banner imagePath="assets/images/variable_section/banner2.png" altText="First Banner"
-            [size]="1" [height]="0.5">
-          </app-full-width-banner>
+        <div class="col" *ngIf="getBanner('main3')">
+          <app-full-width-banner [imagePath]="getBanner('main3')?.imagePath || ''"
+            [altText]="getBanner('main3')?.altText || ''" [size]="1" [height]="0.5"> </app-full-width-banner>
         </div>
-        <div class="col">
-          <app-full-width-banner imagePath="assets/images/variable_section/banner4.png" altText="First Banner"
-            [size]="1" [height]="0.5">
-          </app-full-width-banner>
+        <div class="col" *ngIf="getBanner('main4')">
+          <app-full-width-banner [imagePath]="getBanner('main4')?.imagePath || ''"
+            [altText]="getBanner('main4')?.altText || ''" [size]="1" [height]="0.5"> </app-full-width-banner>
         </div>
       </div>
-   
+
       <app-part-preview id="latest-section"></app-part-preview>
       <div class="row g-0">
         <div class="col-6">
           <app-full-width-banner imagePath="assets/images/variable_section/banner2.png" altText="Left Banner" [size]="1"
-            [height]="0.75">
-          </app-full-width-banner>
+            [height]="0.75"> </app-full-width-banner>
         </div>
         <div class="col-6">
           <app-full-width-banner imagePath="assets/images/variable_section/banner1.png" altText="Right Banner"
-            [size]="1" [height]="0.75">
-          </app-full-width-banner>
+            [size]="1" [height]="0.75"> </app-full-width-banner>
         </div>
       </div>
       <app-part-types id="part-types"></app-part-types>
