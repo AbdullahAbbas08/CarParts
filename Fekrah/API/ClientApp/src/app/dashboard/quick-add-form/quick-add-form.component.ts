@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject } from '@an
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { API_BASE_URL, DataSourceResultOfBrandDTO, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
-import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { API_BASE_URL, DataSourceResultOfBrandDTO, FileTypeEnum, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { HttpClient, HttpEventType, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 
 interface PartType {
   value: number;
@@ -70,7 +70,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   availableCarBrands:any[] = [];
   filteredCarModels: any[] = [];
   availableYears: string[] = [];
-
+  imageTypeEnum!:FileTypeEnum;
   stores: any[] = []
   allcountries:LookupDTO[]= []
   popularCombos: CarCombo[] = [
@@ -285,25 +285,26 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     });
     this.prepareImagesData(files);
   }
+  imagesNames:string[]=[]
 private prepareImagesData(files: File[], slug?: string) {
   if (!files?.length) return;
 
   const formData = new FormData();
-  for (const f of files) {
-    formData.append('file', f, f.name); 
-  }
+  for (const f of files) formData.append('file', f, f.name)
 
-  if (slug) formData.append('slug', slug);
-  const options = { reportProgress: true, observe: 'events' as const };
+  const fileType = 1; // أو FileTypeEnum.YourValue
+  const params = new HttpParams().set('fileType', String(fileType));
 
-  this.http.post(`${this.baseUrl}/api/File/UploadFile`, formData, options)
-    .subscribe({
-      next: (event: any) => {
-        if (event?.type === HttpEventType.Response) {
-          console.log('Files uploaded successfully', event.body);
-        }
-      }
-    });
+  this.http.post(`${this.baseUrl}/api/File/UploadFile`, formData, {
+    reportProgress: true,
+    observe: 'events',
+    params
+  }).subscribe(event => {
+    if ((event as any)?.type === HttpEventType.Response) {
+      this.imagesNames.push((event as any).body.fileName);
+      console.log('Uploaded image names:', this.imagesNames);
+    }
+  });
 }
     
   private isValidImageFile(file: File): boolean {
@@ -347,8 +348,7 @@ private prepareImagesData(files: File[], slug?: string) {
       this.lastSubmittedPart = { ...formData };
       this.isLoading = false;
       const parts:any = {
-        id: 0,
-        imageUrl: [],        
+        imageUrl: this.imagesNames,        
         isSold: false,
         isFavorit: false,
         isDelivery: false,
