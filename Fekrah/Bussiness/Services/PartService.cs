@@ -44,7 +44,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 ConditionName = Enum.GetName(p.Condition),
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category?.Name,
-                ImageUrl = p.ImageUrls.Select(i => i.ImagePath).ToList(),
+                ImageUrl = p.ImageUrls?.Select(i => i.ImagePath).ToList(),
                 Description = p.Description,
                 Name = p.Name,
                 Price = p.Price,
