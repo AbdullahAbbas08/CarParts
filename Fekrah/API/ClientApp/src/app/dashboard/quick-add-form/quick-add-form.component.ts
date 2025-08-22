@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { DataSourceResultOfBrandDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { API_BASE_URL, DataSourceResultOfBrandDTO, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
 
 interface PartType {
   value: number;
@@ -43,7 +44,8 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   totalSteps = 4;
   isLoading = false;
   isDragOver = false;
-
+  baseUrl: string;
+   headers!: HttpHeaders;
   partNames: string[] = [
     'بطارية',
     'فلتر زيت',
@@ -70,7 +72,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   availableYears: string[] = [];
 
   stores: any[] = []
-
+  allcountries:LookupDTO[]= []
   popularCombos: CarCombo[] = [
     { name: 'تويوتا كامري 2020', brand: 'تويوتا', model: 'كامري', year: '2020' },
     { name: 'هوندا أكورد 2019', brand: 'هوندا', model: 'أكورد', year: '2019' },
@@ -94,9 +96,10 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     'شيفروليه': ['ماليبو', 'إمبالا', 'تاهو', 'سوبربان']
   };
 
-  constructor(private fb: FormBuilder,private swagger:SwaggerClient) {
+  constructor(private fb: FormBuilder,private swagger:SwaggerClient,@Inject(API_BASE_URL) baseUrl: string, private http: HttpClient) {
     this.initializeForm();
     this.generateYears();
+    this.baseUrl = baseUrl;
   }
 
   ngOnInit(): void {
@@ -106,7 +109,8 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.updateProgress();
     this.getAllCarBrands();
     this.getAllModelTypes();
-    this.getAllMerchant()
+    this.getAllMerchant();
+    this.getAllCounties()
   }
 
   ngOnDestroy(): void {
@@ -117,7 +121,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.partForm = this.fb.group({
       partName: ['', [Validators.required, Validators.minLength(2)]],
-      origin: ['', [Validators.required, Validators.minLength(2)]],
+      origin: ['', [Validators.required]],
       partType: ['', Validators.required],
       condition: ['جديد', Validators.required],
       grade: ['فرز أول', Validators.required],
@@ -279,8 +283,29 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       };
       reader.readAsDataURL(file);
     });
+    this.prepareImagesData(files);
+  }
+private prepareImagesData(files: File[], slug?: string) {
+  if (!files?.length) return;
+
+  const formData = new FormData();
+  for (const f of files) {
+    formData.append('file', f, f.name); 
   }
 
+  if (slug) formData.append('slug', slug);
+  const options = { reportProgress: true, observe: 'events' as const };
+
+  this.http.post(`${this.baseUrl}/api/File/UploadFile`, formData, options)
+    .subscribe({
+      next: (event: any) => {
+        if (event?.type === HttpEventType.Response) {
+          console.log('Files uploaded successfully', event.body);
+        }
+      }
+    });
+}
+    
   private isValidImageFile(file: File): boolean {
     const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const maxSize = 5 * 1024 * 1024;
@@ -321,16 +346,29 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.lastSubmittedPart = { ...formData };
       this.isLoading = false;
-      // const parts = new PartDTO({
-      //   name: formData.partName,
-      //   partType: formData.partType,
-      //   quality:  formData.condition,
-      //   condition: formData.grade,
-      //   description: formData.subtitle,
-      //   price: formData.price,
-      //   finalPrice:+formData.priceAfterDiscount,
-      // })
-      console.log('Submitted part data:', formData);
+      const parts:any = {
+        id: 0,
+        imageUrl: [],        
+        isSold: false,
+        isFavorit: false,
+        isDelivery: false,
+        name: formData.partName,
+        partType: formData.partType,
+        quality:  formData.condition,
+        condition: formData.grade,
+        description: formData.subtitle,
+        price: formData.price,
+        finalPrice:+formData.priceAfterDiscount,
+        discount: formData.discount,
+        countryOfManufactureId: +formData.origin,
+        carModelId:+formData.carModel,
+        yearOfManufacture: +formData.carYear,
+        merchantId: +formData.storeName,
+      }
+      // console.log('Submitted part data:', formData);
+      this.swagger.apiPartsInsertPost(parts).subscribe((res:any) => {
+      console.log(res)
+      })
       this.resetForm();
     }, 1500);
   }
@@ -636,5 +674,12 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
            this.stores = res.data;
          }
       })
+  }
+  getAllCounties(){
+    this.swagger.apiLookupGetLookupGet('countryofmanufacture',undefined).subscribe((res:any) => {
+      if(res){
+        this.allcountries = res
+      }
+    })
   }
 }

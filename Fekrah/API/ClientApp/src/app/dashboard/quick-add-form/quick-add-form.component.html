@@ -62,7 +62,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-4">
+            <!-- <div class="col-lg-4">
               <div class="floating-label-group">
                 <input list="countries" formControlName="origin" class="form-control" placeholder=" " id="origin" />
                 <label for="origin">
@@ -72,6 +72,18 @@
                   <option *ngFor="let country of countries" [value]="country"></option>
                 </datalist>
 
+                <small *ngIf="isFieldInvalid('origin')" class="text-danger">{{ getFieldError('origin') }}</small>
+              </div>
+            </div> -->
+            <div class="col-lg-4">
+              <div class="floating-label-group">
+                <select formControlName="origin" class="form-select form-select-lg" id="origin">
+                  <option value=""> اختر البلد</option>
+                  <option *ngFor="let country of allcountries" [value]="country.id">{{ country.text }}</option>
+                </select>
+                <label for="carBrand">
+                  <i class="fas fa-trademark text-primary me-2"></i>  بلد المنشأ *
+                </label>
                 <small *ngIf="isFieldInvalid('origin')" class="text-danger">{{ getFieldError('origin') }}</small>
               </div>
             </div>
