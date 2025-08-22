@@ -23,10 +23,12 @@ public class Part : IAuditableInsert, IAuditableUpdate
     public Merchant Merchant { get; set; }
 
     public int CountryOfManufactureId { get; set; }
+
     [ForeignKey(nameof(CountryOfManufactureId))]
     public CountryOfManufacture CountryOfManufacture { get; set; }
 
     public int CarModelTypeId { get; set; }
+
     [ForeignKey(nameof(CarModelTypeId))]
     public ModelType CarModelType { get; set; }
 

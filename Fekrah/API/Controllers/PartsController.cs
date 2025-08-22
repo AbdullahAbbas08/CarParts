@@ -1,12 +1,14 @@
 ﻿using API.Controllers;
 using Bussiness.Helpers;
 using Data.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-[Route("api/[controller]")]
+[AllowAnonymous]
 [ApiController]
+[Route("api/[controller]")]
 public class PartsController : _BaseController<Part, PartDTO>
 {
     private readonly IPartService _partService;

@@ -11,10 +11,14 @@ using Microsoft.EntityFrameworkCore;
 
 public class PartService : _BusinessService<Part, PartDTO>, IPartService
 {
+    private readonly IUnitOfWork unitOfWork;
+    private readonly IMapper mapper;
     private readonly ISessionService _sessionService;
 
     public PartService(IUnitOfWork unitOfWork, IMapper mapper, ISessionService sessionService) : base(unitOfWork, mapper)
     {
+        this.unitOfWork = unitOfWork;
+        this.mapper = mapper;
         _sessionService = sessionService;
     }
 
@@ -119,24 +123,10 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
         if (_sessionService.UserType.HasValue && _sessionService.UserType != (int)UserTypeEnum.Merchant)
             return null;
 
-        PartDTO addNewPart = new()
-        {
-            Name = part.Name,
-            CountryOfManufactureId = part.CountryOfManufactureId.Value,
-            PartType = part.PartType,
-            Condition = part.Condition,
-            Quality = part.Quality,
-            IsSold = part.IsSold,
-            Description = part.Description,
-            YearOfManufacture = part.YearOfManufacture,
-            CarModelTypeId = part.CarModelTypeId.Value,
-            Price = part.Price,
-            FinalPrice = part.FinalPrice,
-            Discount = part.Discount,
-            ImageUrl = part.ImageUrl,
-            MerchantId = part.MerchantId.HasValue ? part.MerchantId :  _sessionService.MerchantId.Value,
-            Count = part.Count
-        };
+        Part _addNewPart = mapper.Map<Part>(part);
+        _addNewPart.MerchantId = part.MerchantId.HasValue ? (int)part.MerchantId : _sessionService.MerchantId.Value;
+        //_addNewPart.
+        var addNewPart = mapper.Map<PartDTO>(_addNewPart);
 
         var result = base.Insert(addNewPart);
 

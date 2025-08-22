@@ -2670,6 +2670,272 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
+    apiCountryOfManufactureGetAllGet(pageSize: number | undefined, page: number | undefined, searchTerm: string | null | undefined): Observable<DataSourceResultOfCountryOfManufactureDTO> {
+        let url_ = this.baseUrl + "/api/CountryOfManufacture/GetAll?";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiCountryOfManufactureGetAllGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiCountryOfManufactureGetAllGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DataSourceResultOfCountryOfManufactureDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DataSourceResultOfCountryOfManufactureDTO>;
+        }));
+    }
+
+    protected processApiCountryOfManufactureGetAllGet(response: HttpResponseBase): Observable<DataSourceResultOfCountryOfManufactureDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DataSourceResultOfCountryOfManufactureDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiCountryOfManufactureGetDetailsGet(id: number | undefined): Observable<CountryOfManufactureDTO> {
+        let url_ = this.baseUrl + "/api/CountryOfManufacture/GetDetails?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiCountryOfManufactureGetDetailsGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiCountryOfManufactureGetDetailsGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountryOfManufactureDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountryOfManufactureDTO>;
+        }));
+    }
+
+    protected processApiCountryOfManufactureGetDetailsGet(response: HttpResponseBase): Observable<CountryOfManufactureDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CountryOfManufactureDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiCountryOfManufactureInsertPost(entity: CountryOfManufactureDTO): Observable<CountryOfManufactureDTO> {
+        let url_ = this.baseUrl + "/api/CountryOfManufacture/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiCountryOfManufactureInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiCountryOfManufactureInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountryOfManufactureDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountryOfManufactureDTO>;
+        }));
+    }
+
+    protected processApiCountryOfManufactureInsertPost(response: HttpResponseBase): Observable<CountryOfManufactureDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CountryOfManufactureDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiCountryOfManufactureUpdatePost(entity: CountryOfManufactureDTO): Observable<CountryOfManufactureDTO> {
+        let url_ = this.baseUrl + "/api/CountryOfManufacture/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(entity);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiCountryOfManufactureUpdatePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiCountryOfManufactureUpdatePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountryOfManufactureDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountryOfManufactureDTO>;
+        }));
+    }
+
+    protected processApiCountryOfManufactureUpdatePost(response: HttpResponseBase): Observable<CountryOfManufactureDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CountryOfManufactureDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    apiCountryOfManufactureDeletePost(id: number | undefined): Observable<CountryOfManufactureDTO> {
+        let url_ = this.baseUrl + "/api/CountryOfManufacture/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiCountryOfManufactureDeletePost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiCountryOfManufactureDeletePost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountryOfManufactureDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountryOfManufactureDTO>;
+        }));
+    }
+
+    protected processApiCountryOfManufactureDeletePost(response: HttpResponseBase): Observable<CountryOfManufactureDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CountryOfManufactureDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     apiFileUploadFilePost(file: FileParameter | undefined, fileType: FileTypeEnum | undefined): Observable<UploadDTO> {
         let url_ = this.baseUrl + "/api/File/UploadFile?";
         if (fileType === null)
@@ -4687,33 +4953,31 @@ export interface IDataSourceResultOfPartDTO {
 
 export class PartDTO implements IPartDTO {
     id!: number;
-    name!: string;
-    description!: string;
+    name?: string | undefined;
+    description?: string | undefined;
     price!: number;
     finalPrice!: number;
     condition!: PartConditionEnum;
-    conditionName!: string;
+    conditionName?: string | undefined;
     imageUrl!: string[];
-    isSold!: boolean;
-    isFavorit!: boolean;
-    isDelivery!: boolean;
-    discount!: number;
+    isSold?: boolean | undefined;
+    discount?: number | undefined;
     quality!: PartQualityEnum;
-    qualityName!: string;
+    qualityName?: string | undefined;
     partType!: PartTypeEnum;
-    partTypeName!: string;
-    yearOfManufacture!: number;
+    partTypeName?: string | undefined;
+    yearOfManufacture?: number | undefined;
     merchantId?: number | undefined;
-    merchantName!: string;
+    merchantName?: string | undefined;
     categoryId!: number;
-    categoryName!: string;
+    categoryName?: string | undefined;
     carModelId?: number | undefined;
     carModelName?: string | undefined;
     carModelTypeId?: number | undefined;
     carModelTypeName?: string | undefined;
     countryOfManufactureId?: number | undefined;
     countryOfManufactureName?: string | undefined;
-    count!: number;
+    count?: number | undefined;
 
     constructor(data?: IPartDTO) {
         if (data) {
@@ -4742,8 +5006,6 @@ export class PartDTO implements IPartDTO {
                     this.imageUrl!.push(item);
             }
             this.isSold = _data["isSold"];
-            this.isFavorit = _data["isFavorit"];
-            this.isDelivery = _data["isDelivery"];
             this.discount = _data["discount"];
             this.quality = _data["quality"];
             this.qualityName = _data["qualityName"];
@@ -4786,8 +5048,6 @@ export class PartDTO implements IPartDTO {
                 data["imageUrl"].push(item);
         }
         data["isSold"] = this.isSold;
-        data["isFavorit"] = this.isFavorit;
-        data["isDelivery"] = this.isDelivery;
         data["discount"] = this.discount;
         data["quality"] = this.quality;
         data["qualityName"] = this.qualityName;
@@ -4811,33 +5071,31 @@ export class PartDTO implements IPartDTO {
 
 export interface IPartDTO {
     id: number;
-    name: string;
-    description: string;
+    name?: string | undefined;
+    description?: string | undefined;
     price: number;
     finalPrice: number;
     condition: PartConditionEnum;
-    conditionName: string;
+    conditionName?: string | undefined;
     imageUrl: string[];
-    isSold: boolean;
-    isFavorit: boolean;
-    isDelivery: boolean;
-    discount: number;
+    isSold?: boolean | undefined;
+    discount?: number | undefined;
     quality: PartQualityEnum;
-    qualityName: string;
+    qualityName?: string | undefined;
     partType: PartTypeEnum;
-    partTypeName: string;
-    yearOfManufacture: number;
+    partTypeName?: string | undefined;
+    yearOfManufacture?: number | undefined;
     merchantId?: number | undefined;
-    merchantName: string;
+    merchantName?: string | undefined;
     categoryId: number;
-    categoryName: string;
+    categoryName?: string | undefined;
     carModelId?: number | undefined;
     carModelName?: string | undefined;
     carModelTypeId?: number | undefined;
     carModelTypeName?: string | undefined;
     countryOfManufactureId?: number | undefined;
     countryOfManufactureName?: string | undefined;
-    count: number;
+    count?: number | undefined;
 }
 
 export enum PartConditionEnum {
@@ -5520,6 +5778,101 @@ export interface IDataSourceResultOfCityDTO {
     data: CityDTO[];
     count: number;
     additionalValue: number;
+}
+
+export class DataSourceResultOfCountryOfManufactureDTO implements IDataSourceResultOfCountryOfManufactureDTO {
+    data!: CountryOfManufactureDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfCountryOfManufactureDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(CountryOfManufactureDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfCountryOfManufactureDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfCountryOfManufactureDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfCountryOfManufactureDTO {
+    data: CountryOfManufactureDTO[];
+    count: number;
+    additionalValue: number;
+}
+
+export class CountryOfManufactureDTO implements ICountryOfManufactureDTO {
+    id!: number;
+    name!: string;
+
+    constructor(data?: ICountryOfManufactureDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): CountryOfManufactureDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new CountryOfManufactureDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICountryOfManufactureDTO {
+    id: number;
+    name: string;
 }
 
 export class UploadDTO implements IUploadDTO {
