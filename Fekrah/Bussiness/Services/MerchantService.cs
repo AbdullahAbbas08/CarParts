@@ -371,7 +371,7 @@ public class MerchantService : _BusinessService<Merchant, MerchantDTO>, IMerchan
             var entity = _unitOfWork.Repository<Merchant>().GetAll()
                 .Include(m => m.Members).ThenInclude(x => x.MerchantMember)
                 .Include(x => x.City)
-                .Include(x => x.Governorate)
+                .ThenInclude(x => x.Governorate)
                 .Include(x => x.Categories)
                 .FirstOrDefault(m => m.Id == id);
             var ttt = entity == null ? null : _mapper.Map<MerchantDTO>(entity);

@@ -45,14 +45,11 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 Name = p.Name,
                 Price = p.Price,
                 FinalPrice = p.FinalPrice,
-                Discount = p.Discount,
                 Quality = p.Quality,
                 QualityName = Enum.GetName(p.Quality),
                 PartType = p.PartType,
                 PartTypeName = Enum.GetName(p.PartType),
                 IsSold = p.IsSold,
-                IsDelivery = p.IsDelivery,
-                IsFavorit = p.IsFavorit,
                 YearOfManufacture = p.YearOfManufacture,
                 MerchantId = p.MerchantId,
                 MerchantName = p.Merchant?.ShopName,
@@ -99,14 +96,11 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             Name = part.Name,
             Price = part.Price,
             FinalPrice = part.FinalPrice,
-            Discount = part.Discount,
             Quality = part.Quality,
             QualityName = Enum.GetName(part.Quality),
             PartType = part.PartType,
             PartTypeName = Enum.GetName(part.PartType),
             IsSold = part.IsSold,
-            IsDelivery = part.IsDelivery,
-            IsFavorit = part.IsFavorit,
             YearOfManufacture = part.YearOfManufacture, 
             MerchantId = part.MerchantId,
             MerchantName = part.Merchant?.ShopName,
@@ -191,9 +185,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                         (part.CountryOfManufacture == 0 || p.CountryOfManufactureId == part.CountryOfManufacture) &&
                         (part.PartCount == 0 || p.Count >= part.PartCount) &&
                         (!part.CreatedOn.HasValue || p.CreatedOn.Equals(part.CreatedOn)) &&
-                        (!part.IsDelivery || (part.IsDelivery && p.IsDelivery)) &&
-                        (!(part.IsSold || (part.IsSold && p.IsSold)) &&
-                        (!part.IsFavorit || (part.IsFavorit && p.IsFavorit))))
+                        (!(part.IsSold || (part.IsSold && p.IsSold))
+                        ))
             .ToList();
 
         List<PartDTO> result = allFilteredParts
@@ -210,14 +203,11 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 Name = p.Name,
                 Price = p.Price,
                 FinalPrice = p.FinalPrice,
-                Discount = p.Discount,
                 Quality = p.Quality,
                 QualityName = Enum.GetName(p.Quality),
                 PartType = p.PartType,
                 PartTypeName = Enum.GetName(p.PartType),
                 IsSold = p.IsSold,
-                IsDelivery = p.IsDelivery,
-                IsFavorit = p.IsFavorit,
                 YearOfManufacture = p.YearOfManufacture,
                 MerchantId = p.MerchantId,
                 MerchantName = p.Merchant?.ShopName,

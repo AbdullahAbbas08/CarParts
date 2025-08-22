@@ -36,9 +36,6 @@ public class Merchant : IAuditableInsert, IAuditableUpdate, IAuditableDelete
     [ForeignKey(nameof(CityId))]
     public virtual City City { get; set; }
 
-    [ForeignKey("GovernorateId")]
-    public virtual Governorate Governorate { get; set; }
-
     public ICollection<Part> Parts { get; set; }
     public virtual ICollection<Category> Categories { get; set; }
 

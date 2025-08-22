@@ -69,5 +69,12 @@ public class DatabaseContext : DbContext
         .WithOne()
         .HasForeignKey<UserRole>(ur => ur.CreatedByUserId)
         .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Merchant>()
+       .HasOne(m => m.City)
+       .WithMany(c => c.Merchants)
+       .HasForeignKey(m => m.CityId)
+       .OnDelete(DeleteBehavior.NoAction);  
+
     }
 }

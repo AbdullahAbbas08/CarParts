@@ -6,14 +6,14 @@ public class Part : IAuditableInsert, IAuditableUpdate
     public string Name { get; set; }
     public string Description { get; set; }
     public double Price { get; set; }
+    public double Discount { get; set; } = 0.0;
+
     public double FinalPrice { get; set; }
     public PartConditionEnum Condition { get; set; }
     public bool IsSold { get; set; }
-    public bool IsFavorit { get; set; } = false;
-    public bool IsDelivery { get; set; } = false;
-    public double Discount { get; set; } = 0.0;
     public PartQualityEnum Quality { get; set; }
     public PartTypeEnum PartType { get; set; }
+
     [Required, MaxLength(4)]
     public int YearOfManufacture { get; set; }
     public int Count { get; set; }
