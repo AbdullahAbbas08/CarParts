@@ -27,5 +27,7 @@ namespace Data.Models
         public DateTimeOffset? UpdatedOn { get; set; }
         [ForeignKey(nameof(UpdatedBy))]
         public User? UpdatedByUser { get; set; }
+        public ICollection<Merchant> Merchants { get; set; }
+
     }
 }

@@ -714,7 +714,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GovernorateId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<bool>("IsFavoriteMerchant")
@@ -782,8 +781,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
-
-                    b.HasIndex("GovernorateId");
 
                     b.ToTable("Merchants");
                 });
@@ -1161,20 +1158,12 @@ namespace Data.Migrations
             modelBuilder.Entity("Merchant", b =>
                 {
                     b.HasOne("Data.Models.City", "City")
-                        .WithMany()
+                        .WithMany("Merchants")
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.Governorate", "Governorate")
-                        .WithMany()
-                        .HasForeignKey("GovernorateId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("City");
-
-                    b.Navigation("Governorate");
                 });
 
             modelBuilder.Entity("Part", b =>
@@ -1232,6 +1221,11 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Models.Brand", b =>
                 {
                     b.Navigation("ModelTypes");
+                });
+
+            modelBuilder.Entity("Data.Models.City", b =>
+                {
+                    b.Navigation("Merchants");
                 });
 
             modelBuilder.Entity("Data.Models.Governorate", b =>

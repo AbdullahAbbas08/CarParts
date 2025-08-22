@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class makeRolenuall : Migration
+    public partial class initdb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,12 +82,15 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CarsModels",
+                name: "Brands",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true),
@@ -95,14 +98,14 @@ namespace Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CarsModels", x => x.Id);
+                    table.PrimaryKey("PK_Brands", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CarsModels_Users_CreatedByUserId",
+                        name: "FK_Brands_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_CarsModels_Users_UpdatedBy",
+                        name: "FK_Brands_Users_UpdatedBy",
                         column: x => x.UpdatedBy,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -163,6 +166,26 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Localizations",
                 columns: table => new
                 {
@@ -192,13 +215,43 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleNameAr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleNameEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    UpdatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Roles_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Roles_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ModelTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CarsModelId = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true),
@@ -208,11 +261,11 @@ namespace Data.Migrations
                 {
                     table.PrimaryKey("PK_ModelTypes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ModelTypes_CarsModels_CarsModelId",
-                        column: x => x.CarsModelId,
-                        principalTable: "CarsModels",
+                        name: "FK_ModelTypes_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ModelTypes_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
@@ -246,7 +299,7 @@ namespace Data.Migrations
                         column: x => x.GovernorateId,
                         principalTable: "Governorate",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_City_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
@@ -260,13 +313,92 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PermissionNameAr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PermissionNameEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PermissionCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    UpdatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Permissions_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Permissions_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Permissions_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    UserRoleId = table.Column<int>(type: "int", nullable: false),
+                    IsLastSelected = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    UpdatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Merchants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: true),
                     ShopName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MobileNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WhatsAppMobileNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -279,13 +411,13 @@ namespace Data.Migrations
                     LocationOnMap = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
                     RatingCount = table.Column<int>(type: "int", nullable: false),
-                    GovernorateId = table.Column<int>(type: "int", nullable: false),
+                    GovernorateId = table.Column<int>(type: "int", nullable: true),
                     CityId = table.Column<int>(type: "int", nullable: false),
                     IsFavoriteMerchant = table.Column<bool>(type: "bit", nullable: false),
                     CommercialRegistrationNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CommercialRegistrationImage = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    CommercialRegistrationImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NationalIdNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    NationalIdImage = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    NationalIdImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BusinessHours = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     DeletedBy = table.Column<int>(type: "int", nullable: true),
                     DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -301,14 +433,7 @@ namespace Data.Migrations
                         name: "FK_Merchants_City_CityId",
                         column: x => x.CityId,
                         principalTable: "City",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_Merchants_Governorate_GovernorateId",
-                        column: x => x.GovernorateId,
-                        principalTable: "Governorate",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -326,13 +451,13 @@ namespace Data.Migrations
                         column: x => x.CategoriesId,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CategoryMerchant_Merchants_MerchantsId",
                         column: x => x.MerchantsId,
                         principalTable: "Merchants",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -353,13 +478,13 @@ namespace Data.Migrations
                         column: x => x.MerchantId,
                         principalTable: "Merchants",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Member_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -373,7 +498,6 @@ namespace Data.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     FinalPrice = table.Column<double>(type: "float", nullable: false),
                     Condition = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsSold = table.Column<bool>(type: "bit", nullable: false),
                     IsFavorit = table.Column<bool>(type: "bit", nullable: false),
                     IsDelivery = table.Column<bool>(type: "bit", nullable: false),
@@ -381,44 +505,77 @@ namespace Data.Migrations
                     Quality = table.Column<int>(type: "int", nullable: false),
                     PartType = table.Column<int>(type: "int", nullable: false),
                     YearOfManufacture = table.Column<int>(type: "int", maxLength: 4, nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false),
                     MerchantId = table.Column<int>(type: "int", nullable: false),
                     CountryOfManufactureId = table.Column<int>(type: "int", nullable: false),
                     CarModelTypeId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    CarsModelId = table.Column<int>(type: "int", nullable: true)
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    UpdatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Parts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Parts_CarsModels_CarsModelId",
-                        column: x => x.CarsModelId,
-                        principalTable: "CarsModels",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Parts_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Parts_CountryOfManufacture_CountryOfManufactureId",
                         column: x => x.CountryOfManufactureId,
                         principalTable: "CountryOfManufacture",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Parts_Merchants_MerchantId",
                         column: x => x.MerchantId,
                         principalTable: "Merchants",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Parts_ModelTypes_CarModelTypeId",
                         column: x => x.CarModelTypeId,
                         principalTable: "ModelTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Parts_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Parts_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ImagePart",
+                columns: table => new
+                {
+                    ImageUrlsId = table.Column<int>(type: "int", nullable: false),
+                    PartsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImagePart", x => new { x.ImageUrlsId, x.PartsId });
+                    table.ForeignKey(
+                        name: "FK_ImagePart_Images_ImageUrlsId",
+                        column: x => x.ImageUrlsId,
+                        principalTable: "Images",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ImagePart_Parts_PartsId",
+                        column: x => x.PartsId,
+                        principalTable: "Parts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -427,8 +584,22 @@ namespace Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NewPrice = table.Column<double>(type: "float", nullable: false),
-                    DiscountRate = table.Column<double>(type: "float", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    NewPrice = table.Column<double>(type: "float", nullable: true),
+                    DiscountRate = table.Column<double>(type: "float", nullable: true),
+                    FixedAmount = table.Column<double>(type: "float", nullable: true),
+                    BuyQuantity = table.Column<int>(type: "int", nullable: true),
+                    GetQuantity = table.Column<int>(type: "int", nullable: true),
+                    FreePartId = table.Column<int>(type: "int", nullable: true),
+                    BundlePartIdsCsv = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PromoCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UsageLimit = table.Column<int>(type: "int", nullable: true),
+                    PerUserLimit = table.Column<int>(type: "int", nullable: true),
+                    TimesUsed = table.Column<int>(type: "int", nullable: true),
+                    MinOrderSubtotal = table.Column<double>(type: "float", nullable: true),
+                    StartAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     PartId = table.Column<int>(type: "int", nullable: false),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -439,11 +610,17 @@ namespace Data.Migrations
                 {
                     table.PrimaryKey("PK_Offers", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Offers_Parts_FreePartId",
+                        column: x => x.FreePartId,
+                        principalTable: "Parts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Offers_Parts_PartId",
                         column: x => x.PartId,
                         principalTable: "Parts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Offers_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
@@ -457,13 +634,13 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarsModels_CreatedByUserId",
-                table: "CarsModels",
+                name: "IX_Brands_CreatedByUserId",
+                table: "Brands",
                 column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarsModels_UpdatedBy",
-                table: "CarsModels",
+                name: "IX_Brands_UpdatedBy",
+                table: "Brands",
                 column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
@@ -507,6 +684,16 @@ namespace Data.Migrations
                 column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ImagePart_PartsId",
+                table: "ImagePart",
+                column: "PartsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_CreatedByUserId",
+                table: "Images",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Localizations_CreatedByUserId",
                 table: "Localizations",
                 column: "CreatedByUserId");
@@ -532,14 +719,9 @@ namespace Data.Migrations
                 column: "CityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Merchants_GovernorateId",
-                table: "Merchants",
-                column: "GovernorateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ModelTypes_CarsModelId",
+                name: "IX_ModelTypes_BrandId",
                 table: "ModelTypes",
-                column: "CarsModelId");
+                column: "BrandId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ModelTypes_CreatedByUserId",
@@ -557,6 +739,11 @@ namespace Data.Migrations
                 column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Offers_FreePartId",
+                table: "Offers",
+                column: "FreePartId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Offers_PartId",
                 table: "Offers",
                 column: "PartId");
@@ -572,11 +759,6 @@ namespace Data.Migrations
                 column: "CarModelTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Parts_CarsModelId",
-                table: "Parts",
-                column: "CarsModelId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Parts_CategoryId",
                 table: "Parts",
                 column: "CategoryId");
@@ -587,9 +769,61 @@ namespace Data.Migrations
                 column: "CountryOfManufactureId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Parts_CreatedByUserId",
+                table: "Parts",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Parts_MerchantId",
                 table: "Parts",
                 column: "MerchantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Parts_UpdatedBy",
+                table: "Parts",
+                column: "UpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permissions_CreatedByUserId",
+                table: "Permissions",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permissions_RoleId",
+                table: "Permissions",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permissions_UpdatedBy",
+                table: "Permissions",
+                column: "UpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_CreatedByUserId",
+                table: "Roles",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_UpdatedBy",
+                table: "Roles",
+                column: "UpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_CreatedByUserId",
+                table: "UserRoles",
+                column: "CreatedByUserId",
+                unique: true,
+                filter: "[CreatedByUserId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_UpdatedBy",
+                table: "UserRoles",
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CreatedByUserId",
@@ -609,6 +843,9 @@ namespace Data.Migrations
                 name: "CategoryMerchant");
 
             migrationBuilder.DropTable(
+                name: "ImagePart");
+
+            migrationBuilder.DropTable(
                 name: "Localizations");
 
             migrationBuilder.DropTable(
@@ -618,10 +855,22 @@ namespace Data.Migrations
                 name: "Offers");
 
             migrationBuilder.DropTable(
+                name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "UserRoles");
+
+            migrationBuilder.DropTable(
                 name: "VisitorRegisters");
 
             migrationBuilder.DropTable(
+                name: "Images");
+
+            migrationBuilder.DropTable(
                 name: "Parts");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -639,7 +888,7 @@ namespace Data.Migrations
                 name: "City");
 
             migrationBuilder.DropTable(
-                name: "CarsModels");
+                name: "Brands");
 
             migrationBuilder.DropTable(
                 name: "Governorate");
