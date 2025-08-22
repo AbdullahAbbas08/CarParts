@@ -18,6 +18,7 @@ namespace API.Middlewares.Middlewares
                 ServicesRegistration.SeedRoles(dbContext).GetAwaiter().GetResult();
                 ServicesRegistration.SeedBrands(dbContext).GetAwaiter().GetResult();
                 ServicesRegistration.SeedModelTypes(dbContext).GetAwaiter().GetResult();
+                ServicesRegistration.SeedCountryOfManufacture(dbContext).GetAwaiter().GetResult();
             }
         }
     }

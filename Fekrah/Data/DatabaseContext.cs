@@ -33,10 +33,10 @@ public class DatabaseContext : DbContext
             .WithOne(p => p.Merchant)
             .HasForeignKey(p => p.MerchantId);
 
-        modelBuilder.Entity<Category>()
-          .HasMany(c => c.Parts)
-          .WithOne(p => p.Category)
-          .HasForeignKey(p => p.CategoryId);
+        //modelBuilder.Entity<Category>()
+        //  .HasMany(c => c.Parts)
+        //  .WithOne(p => p.Category)
+        //  .HasForeignKey(p => p.CategoryId);
 
         // Offer relationships (توضيح العلاقات لتجنب الغموض)
         modelBuilder.Entity<Offer>()

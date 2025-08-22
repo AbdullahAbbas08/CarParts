@@ -37,6 +37,8 @@ public class Part : IAuditableInsert, IAuditableUpdate
 
     // Add Category relation
     public int CategoryId { get; set; }
+
+    [ForeignKey(nameof(CategoryId))]
     public virtual Category Category { get; set; }
 
     public int? CreatedByUserId { get; set; }

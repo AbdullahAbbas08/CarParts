@@ -88,14 +88,14 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
 
         if (part is null) return null;
 
-        return new PartDTO
+        var RES = new PartDTO
         {
             Id = part.Id,
             Condition = part.Condition,
             ConditionName = Enum.GetName(part.Condition),
             CategoryId = part.CategoryId,
             CategoryName = part.Category?.Name,
-            ImageUrl = part.ImageUrls.Select(i => i.ImagePath).ToList(),
+            ImageUrl = part.ImageUrls?.Select(i => i.ImagePath).ToList(),
             Description = part.Description,
             Name = part.Name,
             Price = part.Price,
@@ -116,7 +116,10 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             CountryOfManufactureName = part.CountryOfManufacture.Name,
             Count = part.Count
         };
+        return RES;
     }
+
+
 
     public override PartDTO Insert(PartDTO part)
     {
@@ -125,6 +128,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
 
         Part _addNewPart = mapper.Map<Part>(part);
         _addNewPart.MerchantId = part.MerchantId.HasValue ? (int)part.MerchantId : _sessionService.MerchantId.Value;
+        _addNewPart.CarModelType = null;
         //_addNewPart.
         var addNewPart = mapper.Map<PartDTO>(_addNewPart);
 
