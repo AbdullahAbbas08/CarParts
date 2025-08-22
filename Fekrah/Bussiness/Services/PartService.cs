@@ -126,8 +126,6 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             PartType = part.PartType,
             Condition = part.Condition,
             Quality = part.Quality,
-            IsDelivery = part.IsDelivery,
-            IsFavorit = part.IsFavorit,
             IsSold = part.IsSold,
             Description = part.Description,
             YearOfManufacture = part.YearOfManufacture,
