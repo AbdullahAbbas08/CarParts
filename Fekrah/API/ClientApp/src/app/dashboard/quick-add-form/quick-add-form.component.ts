@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject } from '@an
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { API_BASE_URL, DataSourceResultOfBrandDTO, FileTypeEnum, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { API_BASE_URL, CategoryDTO, DataSourceResultOfBrandDTO, FileTypeEnum, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
 import { HttpClient, HttpEventType, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 
 interface PartType {
@@ -82,7 +82,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
 
   images: ImageFile[] = [];
   lastSubmittedPart: any = null;
-
+  allcategories:CategoryDTO[]=[]
   private destroy$ = new Subject<void>();
 
   private carModels: { [brand: string]: string[] } = {
@@ -110,7 +110,8 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.getAllCarBrands();
     this.getAllModelTypes();
     this.getAllMerchant();
-    this.getAllCounties()
+    this.getAllCounties();
+    this.getAllCategories()
   }
 
   ngOnDestroy(): void {
@@ -125,10 +126,11 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       partType: ['', Validators.required],
       condition: ['جديد', Validators.required],
       grade: ['فرز أول', Validators.required],
+      category:['',Validators.required],
       hasDelivery: [false],
       isFavorite: [false],
       subtitle: [''],
-
+ 
       carBrand: ['', Validators.required],
       carModel: ['', Validators.required],
       carYear: ['', Validators.required],
@@ -364,6 +366,7 @@ private prepareImagesData(files: File[], slug?: string) {
         carModelId:+formData.carModel,
         yearOfManufacture: +formData.carYear,
         merchantId: +formData.storeName,
+        categoryId:+ formData.category
       }
       // console.log('Submitted part data:', formData);
       this.swagger.apiPartsInsertPost(parts).subscribe((res:any) => {
@@ -679,6 +682,13 @@ private prepareImagesData(files: File[], slug?: string) {
     this.swagger.apiLookupGetLookupGet('countryofmanufacture',undefined).subscribe((res:any) => {
       if(res){
         this.allcountries = res
+      }
+    })
+  }
+    getAllCategories(){
+    this.swagger.apiCategoriesGetAllGet(50, 1, undefined).subscribe((res:any) => {
+      if(res){
+        this.allcategories = res.data;
       }
     })
   }
