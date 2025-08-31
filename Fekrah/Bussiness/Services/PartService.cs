@@ -44,7 +44,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 ConditionName = Enum.GetName(p.Condition),
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category?.Name,
-                ImageUrl = p.ImageUrls?.Select(i => i.ImagePath).ToList(),
+                ImageUrls = mapper.Map<List<ImageDTO>>( p.ImageUrls),
                 Description = p.Description,
                 Name = p.Name,
                 Price = p.Price,
@@ -95,7 +95,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             ConditionName = Enum.GetName(part.Condition),
             CategoryId = part.CategoryId,
             CategoryName = part.Category?.Name,
-            ImageUrl = part.ImageUrls?.Select(i => i.ImagePath).ToList(),
+            ImageUrls = mapper.Map<List<ImageDTO>>(part.ImageUrls),
             Description = part.Description,
             Name = part.Name,
             Price = part.Price,
@@ -123,8 +123,8 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
 
     public override PartDTO Insert(PartDTO part)
     {
-        if (_sessionService.UserType.HasValue && _sessionService.UserType != (int)UserTypeEnum.Merchant)
-            return null;
+        //if (_sessionService.UserType.HasValue && _sessionService.UserType != (int)UserTypeEnum.Merchant)
+        //    return null;
 
         Part _addNewPart = mapper.Map<Part>(part);
         _addNewPart.MerchantId = part.MerchantId.HasValue ? (int)part.MerchantId : _sessionService.MerchantId.Value;
@@ -190,7 +190,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 ConditionName = Enum.GetName(p.Condition),
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category?.Name,
-                ImageUrl = p.ImageUrls.Select(i => i.ImagePath).ToList(),
+                ImageUrls = mapper.Map<List<ImageDTO>>(p.ImageUrls),
                 Description = p.Description,
                 Name = p.Name,
                 Price = p.Price,

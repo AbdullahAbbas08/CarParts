@@ -214,6 +214,18 @@
                 <small *ngIf="isFieldInvalid('carYear')" class="text-danger">{{ getFieldError('carYear') }}</small>
               </div>
             </div>
+                   <div class="col-lg-4">
+              <div class="floating-label-group">
+                <select formControlName="category" class="form-select form-select-lg" id="carYear">
+                  <option value="">التصنيف </option>
+                  <option *ngFor="let cat of category" [value]="cat.id">{{ cat.name }}</option>
+                </select>
+                <label for="carYear">
+                  <i class="fas fa-calendar text-primary me-2"></i>   * التصنيف
+                </label>
+                <small *ngIf="isFieldInvalid('category')" class="text-danger">{{ getFieldError('category') }}</small>
+              </div>
+            </div>
           </div>
         </div>
 

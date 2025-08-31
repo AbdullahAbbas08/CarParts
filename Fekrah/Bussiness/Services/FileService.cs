@@ -20,19 +20,28 @@ namespace Bussiness.Services
             _configuration = configuration;
         }
 
-        public UploadDTO SaveFile(IFormFile file, FileTypeEnum fileType)
+        public List<UploadDTO> SaveFile(IFormFile file, FileTypeEnum fileType)
         {
-            UploadDTO response = new();
-
-            if (file == null) return null;
+            var responses = new List<UploadDTO>();
+            if (file == null)
+            {
+                responses.Add(new UploadDTO { Message = "الملف غير موجود" });
+                return responses;
+            }
             var fileName = $"{Guid.NewGuid()}_{Enum.GetName(fileType)}_{Path.GetFileName(file.FileName)}";
             var fileExtension = Path.GetExtension(file.FileName);
 
             if (!fileExtenstion.Any(e => e == fileExtension.ToLower()))
-                return new UploadDTO{ Message = "الملفات المسموح بها .png, .jpg, .jpeg" };
+            {
+                responses.Add(new UploadDTO { Message = "الملفات المسموح بها .png, .jpg, .jpeg" });
+                return responses;
+            }
 
             if (file.Length > maxFileSize)
-                return new UploadDTO { Message = "حجم الملف المسموح به أقل من أو يساوي 2 ميجا" };
+            {
+                responses.Add(new UploadDTO { Message = "حجم الملف المسموح به أقل من أو يساوي 2 ميجا" });
+                return responses;
+            }
 
             string? _mainImagePath = _configuration.GetSection($"ApplicationImagePaths:{Enum.GetName(fileType)}:Main").Value;
             string? _backupImagePath = _configuration.GetSection($"ApplicationImagePaths:{Enum.GetName(fileType)}:Backup").Value;
@@ -48,23 +57,33 @@ namespace Bussiness.Services
             if (!Directory.Exists(backupDir))
                 Directory.CreateDirectory(backupDir);
 
+            // رفع الملف الرئيسي
             using (var stream = new FileStream(mainPath, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
+            responses.Add(new UploadDTO
+            {
+                FileName = fileName.Replace("\\", "/"),
+                FileSize = $"{Math.Round((file.Length / 1024d) / 1024d, 2)} MB",
+                Successfully_Uploaded = true,
+                Message = "تم رفع الصورة بنجاح (رئيسي) ."
+            });
+
+            // رفع النسخة الاحتياطية
             using (var stream = new FileStream(backupPath, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
+            responses.Add(new UploadDTO
+            {
+                FileName = fileName.Replace("\\", "/"),
+                FileSize = $"{Math.Round((file.Length / 1024d) / 1024d, 2)} MB",
+                Successfully_Uploaded = true,
+                Message = "تم رفع الصورة بنجاح (احتياطي) ."
+            });
 
-            double fileSizeInMB = (file.Length / 1024d) / 1024d;
-
-            response.FileName = fileName.Replace("\\", "/");
-            response.FileSize = $"{Math.Round(fileSizeInMB, 2)} MB";
-            response.Successfully_Uploaded = true;
-            response.Message = "تم رفع الصورة بنجاح .";
-
-            return response; ;
+            return responses;
         }
 
         public UploadDTO DeleteFile(string fileName, FileTypeEnum fileType)

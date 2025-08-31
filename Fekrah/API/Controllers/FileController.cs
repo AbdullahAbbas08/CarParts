@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost("UploadFile")]
-        public UploadDTO UploadFile(IFormFile file, FileTypeEnum fileType) =>
+        public List<UploadDTO> UploadFile(IFormFile file, FileTypeEnum fileType) =>
             _fileService.SaveFile(file, fileType);
 
         [HttpPost("DeleteFile")]
