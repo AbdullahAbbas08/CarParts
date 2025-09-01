@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject } from '@an
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { API_BASE_URL, CategoryDTO, DataSourceResultOfBrandDTO, FileTypeEnum, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { API_BASE_URL, DataSourceResultOfBrandDTO, FileTypeEnum, ImageDTO, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
 import { HttpClient, HttpEventType, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 
 interface PartType {
@@ -72,6 +72,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   availableYears: string[] = [];
   imageTypeEnum!:FileTypeEnum;
   stores: any[] = []
+  category:any[]=[]
   allcountries:LookupDTO[]= []
   popularCombos: CarCombo[] = [
     { name: 'تويوتا كامري 2020', brand: 'تويوتا', model: 'كامري', year: '2020' },
@@ -111,7 +112,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.getAllModelTypes();
     this.getAllMerchant();
     this.getAllCounties();
-    this.getAllCategories()
+    this.getAllCategory()
   }
 
   ngOnDestroy(): void {
@@ -124,6 +125,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       partName: ['', [Validators.required, Validators.minLength(2)]],
       origin: ['', [Validators.required]],
       partType: ['', Validators.required],
+      category:['',Validators.required],
       condition: ['جديد', Validators.required],
       grade: ['فرز أول', Validators.required],
       category:['',Validators.required],
@@ -287,7 +289,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     });
     this.prepareImagesData(files);
   }
-  imagesNames:string[]=[]
+  imagesNames:ImageDTO[]=[]
 private prepareImagesData(files: File[], slug?: string) {
   if (!files?.length) return;
 
@@ -303,8 +305,13 @@ private prepareImagesData(files: File[], slug?: string) {
     params
   }).subscribe(event => {
     if ((event as any)?.type === HttpEventType.Response) {
-      this.imagesNames.push((event as any).body.fileName);
-      console.log('Uploaded image names:', this.imagesNames);
+       let images: ImageDTO = {
+         id: 0, 
+         imagePath: (event as any)?.body?.url,
+         init: () => {}, // Provide actual implementation if needed
+         toJSON: () => ({ id: 0, imagePath: (event as any)?.body?.url }) 
+       };
+      this.imagesNames.push(images);
     }
   });
 }
@@ -350,7 +357,7 @@ private prepareImagesData(files: File[], slug?: string) {
       this.lastSubmittedPart = { ...formData };
       this.isLoading = false;
       const parts:any = {
-        imageUrl: this.imagesNames,        
+        imageUrls: this.imagesNames,        
         isSold: false,
         isFavorit: false,
         isDelivery: false,
@@ -366,7 +373,7 @@ private prepareImagesData(files: File[], slug?: string) {
         carModelId:+formData.carModel,
         yearOfManufacture: +formData.carYear,
         merchantId: +formData.storeName,
-        categoryId:+ formData.category
+        categoryId: +formData.category
       }
       // console.log('Submitted part data:', formData);
       this.swagger.apiPartsInsertPost(parts).subscribe((res:any) => {
@@ -685,11 +692,11 @@ private prepareImagesData(files: File[], slug?: string) {
       }
     })
   }
-    getAllCategories(){
-    this.swagger.apiCategoriesGetAllGet(50, 1, undefined).subscribe((res:any) => {
-      if(res){
-        this.allcategories = res.data;
-      }
-    })
+    getAllCategory(){
+    this.swagger.apiCategoriesGetAllGet(50, 1, undefined).subscribe((res: any) => { 
+            if (res && res.data) {
+           this.category = res.data;
+         }
+      })
   }
 }

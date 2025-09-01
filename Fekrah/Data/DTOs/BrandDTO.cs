@@ -14,4 +14,5 @@
         public ICollection<PartDTO>? Parts { get; set; }
         public ICollection<ModelTypeDTO>? ModelTypes { get; set; }
     }
+
 }

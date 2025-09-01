@@ -18,4 +18,7 @@ namespace Data.Models
         [ForeignKey(nameof(CreatedByUserId))]
         public User? CreatedByUser { get; set; }
     }
+ 
+    
+
 }

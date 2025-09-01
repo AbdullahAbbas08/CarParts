@@ -2936,7 +2936,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiFileUploadFilePost(file: FileParameter | undefined, fileType: FileTypeEnum | undefined): Observable<UploadDTO> {
+    apiFileUploadFilePost(file: FileParameter | undefined, fileType: FileTypeEnum | undefined): Observable<UploadDTO[]> {
         let url_ = this.baseUrl + "/api/File/UploadFile?";
         if (fileType === null)
             throw new Error("The parameter 'fileType' cannot be null.");
@@ -2966,14 +2966,14 @@ export class SwaggerClient {
                 try {
                     return this.processApiFileUploadFilePost(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<UploadDTO>;
+                    return _observableThrow(e) as any as Observable<UploadDTO[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<UploadDTO>;
+                return _observableThrow(response_) as any as Observable<UploadDTO[]>;
         }));
     }
 
-    protected processApiFileUploadFilePost(response: HttpResponseBase): Observable<UploadDTO> {
+    protected processApiFileUploadFilePost(response: HttpResponseBase): Observable<UploadDTO[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2984,7 +2984,14 @@ export class SwaggerClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UploadDTO.fromJS(resultData200);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(UploadDTO.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -4959,7 +4966,7 @@ export class PartDTO implements IPartDTO {
     finalPrice!: number;
     condition!: PartConditionEnum;
     conditionName?: string | undefined;
-    imageUrl!: string[];
+    imageUrls!: ImageDTO[];
     isSold?: boolean | undefined;
     discount?: number | undefined;
     quality!: PartQualityEnum;
@@ -4987,7 +4994,7 @@ export class PartDTO implements IPartDTO {
             }
         }
         if (!data) {
-            this.imageUrl = [];
+            this.imageUrls = [];
         }
     }
 
@@ -5000,10 +5007,10 @@ export class PartDTO implements IPartDTO {
             this.finalPrice = _data["finalPrice"];
             this.condition = _data["condition"];
             this.conditionName = _data["conditionName"];
-            if (Array.isArray(_data["imageUrl"])) {
-                this.imageUrl = [] as any;
-                for (let item of _data["imageUrl"])
-                    this.imageUrl!.push(item);
+            if (Array.isArray(_data["imageUrls"])) {
+                this.imageUrls = [] as any;
+                for (let item of _data["imageUrls"])
+                    this.imageUrls!.push(ImageDTO.fromJS(item));
             }
             this.isSold = _data["isSold"];
             this.discount = _data["discount"];
@@ -5042,10 +5049,10 @@ export class PartDTO implements IPartDTO {
         data["finalPrice"] = this.finalPrice;
         data["condition"] = this.condition;
         data["conditionName"] = this.conditionName;
-        if (Array.isArray(this.imageUrl)) {
-            data["imageUrl"] = [];
-            for (let item of this.imageUrl)
-                data["imageUrl"].push(item);
+        if (Array.isArray(this.imageUrls)) {
+            data["imageUrls"] = [];
+            for (let item of this.imageUrls)
+                data["imageUrls"].push(item.toJSON());
         }
         data["isSold"] = this.isSold;
         data["discount"] = this.discount;
@@ -5077,7 +5084,7 @@ export interface IPartDTO {
     finalPrice: number;
     condition: PartConditionEnum;
     conditionName?: string | undefined;
-    imageUrl: string[];
+    imageUrls: ImageDTO[];
     isSold?: boolean | undefined;
     discount?: number | undefined;
     quality: PartQualityEnum;
@@ -5102,6 +5109,54 @@ export enum PartConditionEnum {
     New = 1,
     Used = 2,
     Refurbished = 3,
+}
+
+export class ImageDTO implements IImageDTO {
+    id!: number;
+    imagePath!: string;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
+
+    constructor(data?: IImageDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.imagePath = _data["imagePath"];
+            this.createdByUserId = _data["createdByUserId"];
+            this.createdOn = _data["createdOn"] ? new Date(_data["createdOn"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ImageDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImageDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["imagePath"] = this.imagePath;
+        data["createdByUserId"] = this.createdByUserId;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IImageDTO {
+    id: number;
+    imagePath: string;
+    createdByUserId?: number | undefined;
+    createdOn?: Date | undefined;
 }
 
 export enum PartQualityEnum {
