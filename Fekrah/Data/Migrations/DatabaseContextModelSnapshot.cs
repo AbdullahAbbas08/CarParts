@@ -47,7 +47,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CategoryMerchant", b =>
@@ -62,7 +62,7 @@ namespace Data.Migrations
 
                     b.HasIndex("MerchantsId");
 
-                    b.ToTable("CategoryMerchant", (string)null);
+                    b.ToTable("CategoryMerchant");
                 });
 
             modelBuilder.Entity("Data.Models.Brand", b =>
@@ -106,7 +106,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Data.Models.City", b =>
@@ -144,7 +144,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("City", (string)null);
+                    b.ToTable("City");
                 });
 
             modelBuilder.Entity("Data.Models.CountryOfManufacture", b =>
@@ -177,7 +177,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("CountryOfManufacture", (string)null);
+                    b.ToTable("CountryOfManufacture");
                 });
 
             modelBuilder.Entity("Data.Models.Governorate", b =>
@@ -211,7 +211,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Governorate", (string)null);
+                    b.ToTable("Governorate");
                 });
 
             modelBuilder.Entity("Data.Models.Image", b =>
@@ -236,7 +236,7 @@ namespace Data.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Data.Models.Localization", b =>
@@ -277,7 +277,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Localizations", (string)null);
+                    b.ToTable("Localizations");
                 });
 
             modelBuilder.Entity("Data.Models.Member", b =>
@@ -303,7 +303,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Member", (string)null);
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Data.Models.ModelType", b =>
@@ -344,7 +344,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("ModelTypes", (string)null);
+                    b.ToTable("ModelTypes");
                 });
 
             modelBuilder.Entity("Data.Models.Offer", b =>
@@ -428,7 +428,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Offers", (string)null);
+                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("Data.Models.Permission", b =>
@@ -474,7 +474,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("Data.Models.Role", b =>
@@ -514,7 +514,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Data.Models.User", b =>
@@ -574,7 +574,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Data.Models.UserRole", b =>
@@ -613,7 +613,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Data.Models.VisitorRegister", b =>
@@ -641,7 +641,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("VisitorRegisters", (string)null);
+                    b.ToTable("VisitorRegisters");
                 });
 
             modelBuilder.Entity("ImagePart", b =>
@@ -656,7 +656,7 @@ namespace Data.Migrations
 
                     b.HasIndex("PartsId");
 
-                    b.ToTable("ImagePart", (string)null);
+                    b.ToTable("ImagePart");
                 });
 
             modelBuilder.Entity("Merchant", b =>
@@ -782,7 +782,7 @@ namespace Data.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("Merchants", (string)null);
+                    b.ToTable("Merchants");
                 });
 
             modelBuilder.Entity("Part", b =>
@@ -792,9 +792,6 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CarModelTypeId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -830,6 +827,9 @@ namespace Data.Migrations
                     b.Property<int>("MerchantId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ModelTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -855,8 +855,6 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarModelTypeId");
-
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("CountryOfManufactureId");
@@ -865,9 +863,11 @@ namespace Data.Migrations
 
                     b.HasIndex("MerchantId");
 
+                    b.HasIndex("ModelTypeId");
+
                     b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Parts", (string)null);
+                    b.ToTable("Parts");
                 });
 
             modelBuilder.Entity("CategoryMerchant", b =>
@@ -1162,12 +1162,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Part", b =>
                 {
-                    b.HasOne("Data.Models.ModelType", "CarModelType")
-                        .WithMany()
-                        .HasForeignKey("CarModelTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Category", "Category")
                         .WithMany("Parts")
                         .HasForeignKey("CategoryId")
@@ -1190,11 +1184,15 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Data.Models.ModelType", "ModelType")
+                        .WithMany()
+                        .HasForeignKey("ModelTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Data.Models.User", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedBy");
-
-                    b.Navigation("CarModelType");
 
                     b.Navigation("Category");
 
@@ -1203,6 +1201,8 @@ namespace Data.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("Merchant");
+
+                    b.Navigation("ModelType");
 
                     b.Navigation("UpdatedByUser");
                 });

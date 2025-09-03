@@ -10,8 +10,8 @@
         <div class="particle"></div>
         <div class="particle"></div>
       </div>
-      <h2>إضافة قطعة غيار سريعة <i class="fas fa-plus-circle"></i> </h2>
-      <p class="subtitle">نظام إدخال محسن للسرعة والكفاءة</p>
+      <h2>{{ editMode ? 'تعديل قطعة الغيار' : 'إضافة قطعة غيار سريعة' }} <i class="fas" [class.fa-edit]="editMode" [class.fa-plus-circle]="!editMode"></i> </h2>
+      <p class="subtitle">{{ editMode ? 'تحديث بيانات القطعة' : 'نظام إدخال محسن للسرعة والكفاءة' }}</p>
     </div>
 
     <!-- Enhanced Progress Steps -->
@@ -193,7 +193,7 @@
               <div class="floating-label-group">
                 <select formControlName="carModel" class="form-select form-select-lg" id="carModel">
                   <option value="">اختر الموديل</option>
-                  <option *ngFor="let model of filteredCarModels" [value]="model.brandId">{{ model.name }}</option>
+                  <option *ngFor="let model of filteredCarModels" [value]="model.id">{{ model.name }}</option>
                 </select>
                 <label for="carModel">
                   <i class="fas fa-car-side text-primary me-2"></i> موديل السيارة *
@@ -232,33 +232,14 @@
         <!-- Step 3: Price and Store Information -->
         <div class="form-step" [class.active]="currentStep === 3">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="floating-label-group">
                 <input type="number" formControlName="price" class="form-control form-control-lg" step="0.01" min="0"
                   placeholder=" " id="price" />
                 <label for="price">
-                  <i class="fas fa-money-bill text-success me-2"></i>السعر الأصلي (ج.م) *
+                  <i class="fas fa-money-bill text-success me-2"></i>السعر (ج.م) *
                 </label>
                 <small *ngIf="isFieldInvalid('price')" class="text-danger">{{ getFieldError('price') }}</small>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="floating-label-group">
-                <input type="number" formControlName="discount" class="form-control" min="0" max="100" step="0.01"
-                  placeholder=" " id="discount" />
-                <label for="discount">
-                  <i class="fas fa-percentage text-warning me-2"></i>نسبة الخصم %
-                </label>
-                <small *ngIf="isFieldInvalid('discount')" class="text-danger">{{ getFieldError('discount') }}</small>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="floating-label-group">
-                <input type="number" formControlName="priceAfterDiscount" class="form-control" readonly placeholder=" "
-                  id="finalPrice" style="background: #edf2f7;" />
-                <label for="finalPrice">
-                  <i class="fas fa-tag text-success me-2"></i>السعر النهائي (ج.م)
-                </label>
               </div>
             </div>
           </div>
@@ -374,10 +355,7 @@
                     <strong>المتجر:</strong> {{ partForm.get('storeName')?.value || 'غير محدد' }}
                   </div>
                   <div class="col-md-6">
-                    <strong>السعر الأصلي:</strong> {{ partForm.get('price')?.value || 0 }} ج.م
-                  </div>
-                  <div class="col-md-6">
-                    <strong>السعر النهائي:</strong> {{ partForm.get('priceAfterDiscount')?.value || 0 }} ج.م
+                    <strong>السعر:</strong> {{ partForm.get('price')?.value || 0 }} ج.م
                   </div>
                   <div class="col-md-6">
                     <strong>عدد الصور:</strong> {{ images.length }} صورة
@@ -395,11 +373,15 @@
           </button>
 
           <div class="ms-auto d-flex gap-2">
-            <button type="button" class="nav-btn btn-outline-info" (click)="saveAsDraft()">
+            <button type="button" class="nav-btn btn-outline-secondary" (click)="formCancelled.emit()" *ngIf="editMode">
+              <i class="fas fa-times me-2"></i>إلغاء
+            </button>
+
+            <button type="button" class="nav-btn btn-outline-info" (click)="saveAsDraft()" *ngIf="!editMode">
               <i class="fas fa-save me-2"></i>حفظ مسودة
             </button>
 
-            <button type="button" class="nav-btn btn-outline-warning" *ngIf="lastSubmittedPart"
+            <button type="button" class="nav-btn btn-outline-warning" *ngIf="lastSubmittedPart && !editMode"
               (click)="duplicateLastEntry()">
               <i class="fas fa-copy me-2"></i>تكرار آخر إدخال
             </button>
@@ -410,10 +392,10 @@
 
             <button type="submit" class="nav-btn btn-success" *ngIf="currentStep === totalSteps"
               [disabled]="!partForm.valid || isLoading">
-              <i class="fas fa-check me-2"></i>حفظ القطعة
+              <i class="fas fa-check me-2"></i>{{ editMode ? 'تحديث القطعة' : 'حفظ القطعة' }}
             </button>
 
-            <button type="button" class="nav-btn btn-info" *ngIf="currentStep === totalSteps"
+            <button type="button" class="nav-btn btn-info" *ngIf="currentStep === totalSteps && !editMode"
               (click)="submitAndAddAnother()" [disabled]="!partForm.valid || isLoading">
               <i class="fas fa-plus me-2"></i>حفظ وإضافة أخرى
             </button>

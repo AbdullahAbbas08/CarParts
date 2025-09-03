@@ -2936,7 +2936,7 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
-    apiFileUploadFilePost(file: FileParameter | undefined, fileType: FileTypeEnum | undefined): Observable<UploadDTO[]> {
+    apiFileUploadFilePost(file: FileParameter[] | undefined, fileType: FileTypeEnum | undefined): Observable<UploadDTO[]> {
         let url_ = this.baseUrl + "/api/File/UploadFile?";
         if (fileType === null)
             throw new Error("The parameter 'fileType' cannot be null.");
@@ -2948,7 +2948,7 @@ export class SwaggerClient {
         if (file === null || file === undefined)
             throw new Error("The parameter 'file' cannot be null.");
         else
-            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+            file.forEach(item_ => content_.append("file", item_.data, item_.fileName ? item_.fileName : "file") );
 
         let options_ : any = {
             body: content_,
@@ -4978,10 +4978,10 @@ export class PartDTO implements IPartDTO {
     merchantName?: string | undefined;
     categoryId!: number;
     categoryName?: string | undefined;
-    carModelId?: number | undefined;
+    modelTypeId?: number | undefined;
     carModelName?: string | undefined;
-    carModelTypeId?: number | undefined;
-    carModelTypeName?: string | undefined;
+    brandId?: number | undefined;
+    brandName?: string | undefined;
     countryOfManufactureId?: number | undefined;
     countryOfManufactureName?: string | undefined;
     count?: number | undefined;
@@ -5023,10 +5023,10 @@ export class PartDTO implements IPartDTO {
             this.merchantName = _data["merchantName"];
             this.categoryId = _data["categoryId"];
             this.categoryName = _data["categoryName"];
-            this.carModelId = _data["carModelId"];
+            this.modelTypeId = _data["modelTypeId"];
             this.carModelName = _data["carModelName"];
-            this.carModelTypeId = _data["carModelTypeId"];
-            this.carModelTypeName = _data["carModelTypeName"];
+            this.brandId = _data["brandId"];
+            this.brandName = _data["brandName"];
             this.countryOfManufactureId = _data["countryOfManufactureId"];
             this.countryOfManufactureName = _data["countryOfManufactureName"];
             this.count = _data["count"];
@@ -5065,10 +5065,10 @@ export class PartDTO implements IPartDTO {
         data["merchantName"] = this.merchantName;
         data["categoryId"] = this.categoryId;
         data["categoryName"] = this.categoryName;
-        data["carModelId"] = this.carModelId;
+        data["modelTypeId"] = this.modelTypeId;
         data["carModelName"] = this.carModelName;
-        data["carModelTypeId"] = this.carModelTypeId;
-        data["carModelTypeName"] = this.carModelTypeName;
+        data["brandId"] = this.brandId;
+        data["brandName"] = this.brandName;
         data["countryOfManufactureId"] = this.countryOfManufactureId;
         data["countryOfManufactureName"] = this.countryOfManufactureName;
         data["count"] = this.count;
@@ -5096,10 +5096,10 @@ export interface IPartDTO {
     merchantName?: string | undefined;
     categoryId: number;
     categoryName?: string | undefined;
-    carModelId?: number | undefined;
+    modelTypeId?: number | undefined;
     carModelName?: string | undefined;
-    carModelTypeId?: number | undefined;
-    carModelTypeName?: string | undefined;
+    brandId?: number | undefined;
+    brandName?: string | undefined;
     countryOfManufactureId?: number | undefined;
     countryOfManufactureName?: string | undefined;
     count?: number | undefined;

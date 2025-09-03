@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2 } from '
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { CarPart } from '../../Shared/Models/car-card';
 import { ProductManagementService } from './product-management.service';
+import { SwaggerClient, PartDTO, DataSourceResultOfPartDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
 
 export interface FilterOption {
   label: string;
@@ -36,6 +37,7 @@ export class ProductsComponent {
 
   // Data
   parts: CarPart[] = [];
+  partsFromApi: PartDTO[] = [];
   filteredParts: CarPart[] = [];
   availableBrands: string[] = [];
 
@@ -65,19 +67,29 @@ export class ProductsComponent {
   currentPage = 1;
   itemsPerPage = 12;
   totalPages = 0;
+  totalCount = 0;
 
   // View settings
   viewMode: 'grid' | 'list' = 'list';
   showQuickAddModal = false;
+  showEditModal = false;
+  editingPart: CarPart | null = null;
   isLoading = false;
   resultsCount = 120;
 
-  constructor(private renderer: Renderer2,private productMangment:ProductManagementService) {
+  constructor(
+    private renderer: Renderer2,
+    private productMangment: ProductManagementService,
+    private swagger: SwaggerClient
+  ) {
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
-    ).subscribe(() => this.applyFilters());
+    ).subscribe(() => {
+      this.currentPage = 1; // Reset to first page on search
+      this.loadParts(); // Load parts with new search term
+    });
   }
 
   ngOnInit(): void {
@@ -183,17 +195,17 @@ export class ProductsComponent {
     this.updateResultsCount();
   }
 
+  // Apply filters method updated to trigger API call
+  applyFilters(): void {
+    // Reset to first page when applying new filters
+    this.currentPage = 1;
+    // Reload data from API with current search term
+    this.loadParts();
+  }
+
   // Update results count based on search and filters
   updateResultsCount(): void {
-    const activeFiltersCount = this.activeFilters.length;
-    const searchTerm = this.searchTerm;
-    const baseCount = this.parts.length;
-
-    let filteredCount = baseCount;
-    if (searchTerm) filteredCount = Math.max(10, filteredCount - 20);
-    if (activeFiltersCount > 0) filteredCount = Math.max(5, filteredCount - (activeFiltersCount * 10));
-
-    this.resultsCount = Math.max(5, filteredCount);
+    this.resultsCount = this.totalCount;
   }
 
   // Update active filters display
@@ -206,63 +218,9 @@ export class ProductsComponent {
       this.activeFilters.push({ label: 'بحث', value: this.searchTerm });
     }
 
-    // Check all select filters
-    if (this.selectedBrand) {
-      this.activeFilters.push({ label: 'ماركة السيارة', value: this.selectedBrand });
-    }
-    if (this.selectedModel) {
-      this.activeFilters.push({ label: 'موديل السيارة', value: this.selectedModel });
-    }
-    if (this.selectedCondition) {
-      this.activeFilters.push({ label: 'حالة القطعة', value: this.selectedCondition });
-    }
-    if (this.selectedGrade) {
-      this.activeFilters.push({ label: 'درجة الجودة', value: this.selectedGrade });
-    }
-    if (this.selectedPartType) {
-      this.activeFilters.push({ label: 'نوع القطعة', value: this.selectedPartType });
-    }
-    if (this.selectedOrigin) {
-      this.activeFilters.push({ label: 'بلد المنشأ', value: this.selectedOrigin });
-    }
-    if (this.selectedStore) {
-      this.activeFilters.push({ label: 'المتجر/المورد', value: this.selectedStore });
-    }
-    if (this.selectedLocation) {
-      this.activeFilters.push({ label: 'الموقع/المحافظة', value: this.selectedLocation });
-    }
-    if (this.selectedDateAdded) {
-      this.activeFilters.push({ label: 'تاريخ الإضافة', value: this.selectedDateAdded });
-    }
-
-    // Check range inputs
-    if (this.yearFrom || this.yearTo) {
-      const value = `${this.yearFrom || 'غير محدد'} - ${this.yearTo || 'غير محدد'}`;
-      this.activeFilters.push({ label: 'سنة الصنع', value });
-    }
-    if (this.priceFrom || this.priceTo) {
-      const value = `${this.priceFrom || 'غير محدد'} - ${this.priceTo || 'غير محدد'}`;
-      this.activeFilters.push({ label: 'نطاق السعر (جنيه)', value });
-    }
-    if (this.quantityFrom || this.quantityTo) {
-      const value = `${this.quantityFrom || 'غير محدد'} - ${this.quantityTo || 'غير محدد'}`;
-      this.activeFilters.push({ label: 'الكمية المتاحة', value });
-    }
-
-    // Check toggle switches
-    if (this.hasDelivery) {
-      this.activeFilters.push({ label: 'يوجد توصيل', value: 'مفعل' });
-    }
-    if (this.hasWarranty) {
-      this.activeFilters.push({ label: 'يوجد ضمان', value: 'مفعل' });
-    }
-    if (this.hasDiscount) {
-      this.activeFilters.push({ label: 'يوجد خصم', value: 'مفعل' });
-    }
-    if (this.favoritesOnly) {
-      this.activeFilters.push({ label: 'المفضلة فقط', value: 'مفعل' });
-    }
-
+    // Note: For now, only search is implemented via API
+    // Other filters would require backend API support for advanced filtering
+    
     this.updateResultsCount();
   }
 
@@ -272,128 +230,11 @@ export class ProductsComponent {
       case 'بحث':
         this.searchTerm = '';
         break;
-      case 'ماركة السيارة':
-        this.selectedBrand = '';
-        break;
-      case 'موديل السيارة':
-        this.selectedModel = '';
-        break;
-      case 'سنة الصنع':
-        this.yearFrom = null;
-        this.yearTo = null;
-        break;
-      case 'حالة القطعة':
-        this.selectedCondition = '';
-        break;
-      case 'درجة الجودة':
-        this.selectedGrade = '';
-        break;
-      case 'نوع القطعة':
-        this.selectedPartType = '';
-        break;
-      case 'نطاق السعر (جنيه)':
-        this.priceFrom = null;
-        this.priceTo = null;
-        break;
-      case 'بلد المنشأ':
-        this.selectedOrigin = '';
-        break;
-      case 'يوجد توصيل':
-        this.hasDelivery = false;
-        break;
-      case 'يوجد ضمان':
-        this.hasWarranty = false;
-        break;
-      case 'يوجد خصم':
-        this.hasDiscount = false;
-        break;
-      case 'المفضلة فقط':
-        this.favoritesOnly = false;
-        break;
-      case 'المتجر/المورد':
-        this.selectedStore = '';
-        break;
-      case 'الموقع/المحافظة':
-        this.selectedLocation = '';
-        break;
-      case 'الكمية المتاحة':
-        this.quantityFrom = null;
-        this.quantityTo = null;
-        break;
-      case 'تاريخ الإضافة':
-        this.selectedDateAdded = '';
-        break;
+      // Add other filter removals when advanced filtering is implemented
       default:
         break;
     }
     this.applyFilters();
-  }
-
-  // Apply all filters
-  applyFilters(): void {
-    let filtered = [...this.parts];
-    const searchLower = this.searchTerm.trim().toLowerCase();
-
-    if (searchLower) {
-      filtered = filtered.filter(part =>
-        part.name.toLowerCase().includes(searchLower) ||
-        part.car.brand.toLowerCase().includes(searchLower) ||
-        part.car.model.toLowerCase().includes(searchLower) ||
-        part.store.name.toLowerCase().includes(searchLower) ||
-        part.origin.toLowerCase().includes(searchLower)
-      );
-    }
-
-    if (this.selectedBrand) {
-      filtered = filtered.filter(part => part.car.brand === this.selectedBrand);
-    }
-    if (this.selectedModel) {
-      filtered = filtered.filter(part => part.car.model === this.selectedModel);
-    }
-    if (this.yearFrom !== null) {
-      filtered = filtered.filter(part => Number(part.car.year) >= this.yearFrom!);
-    }
-    if (this.yearTo !== null) {
-      filtered = filtered.filter(part => Number(part.car.year) <= this.yearTo!);
-    }
-    if (this.selectedCondition) {
-      filtered = filtered.filter(part => part.condition === this.selectedCondition);
-    }
-    if (this.selectedGrade) {
-      filtered = filtered.filter(part => part.grade === this.selectedGrade);
-    }
-    if (this.selectedPartType) {
-      filtered = filtered.filter(part => part.partType === this.selectedPartType);
-    }
-    if (this.priceFrom !== null) {
-      filtered = filtered.filter(part => part.priceAfterDiscount >= this.priceFrom!);
-    }
-    if (this.priceTo !== null) {
-      filtered = filtered.filter(part => part.priceAfterDiscount <= this.priceTo!);
-    }
-    if (this.selectedOrigin) {
-      filtered = filtered.filter(part => part.origin === this.selectedOrigin);
-    }
-    if (this.hasDelivery) {
-      filtered = filtered.filter(part => part.hasDelivery === true);
-    }
-    if (this.hasWarranty) {
-      filtered = filtered.filter(part => part.hasWarranty === true);
-    }
-    if (this.hasDiscount) {
-      filtered = filtered.filter(part => part.discount > 0);
-    }
-    if (this.favoritesOnly) {
-      filtered = filtered.filter(part => part.isFavorite === true);
-    }
-    if (this.selectedStore) {
-      filtered = filtered.filter(part => part.store.name === this.selectedStore);
-    }
-
-    this.filteredParts = filtered;
-    this.updateActiveFilters();
-    this.calculatePagination();
-    this.currentPage = 1;
   }
 
   // Apply all filters (for button)
@@ -563,12 +404,14 @@ export class ProductsComponent {
 
   // Existing methods preserved
   calculatePagination(): void {
-    this.totalPages = Math.ceil(this.filteredParts.length / this.itemsPerPage);
+    // Pagination is now calculated based on API response in loadParts()
+    this.totalPages = Math.ceil(this.totalCount / this.itemsPerPage);
   }
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.loadParts(); // Reload data for new page
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
@@ -597,6 +440,13 @@ export class ProductsComponent {
     this.renderer.removeClass(document.body, 'modal-open');
   }
 
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.editingPart = null;
+    // Re-enable body scrolling when modal is closed
+    this.renderer.removeClass(document.body, 'modal-open');
+  }
+
   onPartAdded(formData: any): void {
     console.log('Part added with data:', formData);
     const carPart: CarPart = this.mapFormDataToCarPart(formData);
@@ -607,9 +457,101 @@ export class ProductsComponent {
     this.showMessage('تم إضافة القطعة بنجاح', 'success');
   }
 
+  onPartUpdated(formData: any): void {
+    console.log('Part updated with data:', formData);
+    
+    if (!this.editingPart) return;
+    
+    // Convert form data to PartDTO for API call
+    const partDto = this.mapFormDataToPartDTO(formData, this.editingPart.id);
+    
+    this.isLoading = true;
+    this.swagger.apiPartsUpdatePost(partDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedPart: PartDTO) => {
+          console.log('Part updated successfully:', updatedPart);
+          
+          // Update the part in the local array
+          const index = this.parts.findIndex(p => p.id === this.editingPart!.id);
+          if (index !== -1) {
+            this.parts[index] = this.mapPartDTOToCarPart(updatedPart);
+          }
+          
+          this.extractAvailableBrands();
+          this.applyFilters();
+          this.closeEditModal();
+          this.showMessage('تم تحديث القطعة بنجاح', 'success');
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error updating part:', error);
+          this.showMessage('خطأ في تحديث القطعة', 'error');
+          this.isLoading = false;
+        }
+      });
+  }
+
   toggleFavorite(part: CarPart): void {
     part.isFavorite = !part.isFavorite;
     this.showMessage(part.isFavorite ? 'تمت الإضافة للمفضلة' : 'تمت الإزالة من المفضلة', 'success');
+  }
+
+  private mapPartDTOToCarPart(part: PartDTO): CarPart {
+    return {
+      id: part.id?.toString() || this.generateId(),
+      name: part.name || 'غير محدد',
+      subtitle: part.description || '',
+      condition: this.mapConditionEnum(part.condition) as 'جديد' | 'مستعمل',
+      store: {
+        name: part.merchantName || 'غير محدد',
+        phone: '01000000000', // PartDTO doesn't contain phone
+      },
+      car: {
+        brand: part.brandName || 'غير محدد',
+        model: part.carModelName || 'غير محدد',
+        year: part.yearOfManufacture?.toString() || 'غير محدد'
+      },
+      price: part.price || 0,
+      priceAfterDiscount: part.finalPrice || part.price || 0,
+      discount: part.discount || 0,
+      isFavorite: false, // PartDTO doesn't have favorite field
+      hasDelivery: false, // PartDTO doesn't have delivery field
+      hasWarranty: false, // PartDTO doesn't have warranty field
+      grade: this.mapQualityEnum(part.quality) as 'فرز أول' | 'فرز تاني',
+      partType: this.mapPartTypeEnum(part.partType),
+      origin: part.countryOfManufactureName || 'غير محدد',
+      image: part.imageUrls && part.imageUrls.length > 0 ? `./assets/Parts/${part.imageUrls[0].imagePath}` : '',
+      thumbnails: part.imageUrls ? part.imageUrls.map(img => `./assets/Parts/${img.imagePath}`) : []
+    };
+  }
+
+  private mapConditionEnum(condition: any): string {
+    // Map PartConditionEnum to Arabic
+    switch (condition) {
+      case 1: return 'جديد';
+      case 2: return 'مستعمل';
+      default: return 'جديد';
+    }
+  }
+
+  private mapQualityEnum(quality: any): string {
+    // Map PartQualityEnum to Arabic
+    switch (quality) {
+      case 1: return 'فرز أول';
+      case 2: return 'فرز ثاني';
+      default: return 'فرز أول';
+    }
+  }
+
+  private mapPartTypeEnum(partType: any): string {
+    // Map PartTypeEnum to Arabic
+    switch (partType) {
+      case 1: return 'أصلي';
+      case 2: return 'هاي كوبي';
+      case 3: return 'بديل';
+      default: return 'غير محدد';
+    }
   }
 
   private mapFormDataToCarPart(formData: any): CarPart {
@@ -641,6 +583,43 @@ export class ProductsComponent {
     };
   }
 
+  private mapFormDataToPartDTO(formData: any, partId: string): PartDTO {
+    const partDto = new PartDTO();
+    partDto.id = parseInt(partId);
+    partDto.name = formData.partName;
+    partDto.description = formData.subtitle;
+    partDto.price = formData.price || 0;
+    partDto.finalPrice = formData.price || 0; // Since we removed discount
+    partDto.discount = 0;
+    
+    // Map condition from Arabic to enum
+    partDto.condition = formData.condition === 'جديد' ? 1 : 2;
+    
+    // Map quality from Arabic to enum
+    partDto.quality = formData.grade === 'فرز أول' ? 1 : 2;
+    
+    // Map part type from Arabic to enum
+    switch (formData.partType) {
+      case 'أصلي': partDto.partType = 1; break;
+      case 'هاي كوبي': partDto.partType = 2; break;
+      case 'بديل': partDto.partType = 3; break;
+      default: partDto.partType = 1;
+    }
+    
+    // Set other properties with correct PartDTO property names
+    partDto.countryOfManufactureId = formData.origin;
+    partDto.brandId = formData.carBrand;
+    partDto.modelTypeId = formData.carModel;
+    partDto.yearOfManufacture = parseInt(formData.carYear);
+    partDto.categoryId = formData.category;
+    partDto.merchantId = formData.storeName;
+    
+    // Initialize imageUrls as empty array if not provided
+    partDto.imageUrls = [];
+    
+    return partDto;
+  }
+
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
@@ -652,7 +631,11 @@ export class ProductsComponent {
   }
 
   editPart(part: CarPart): void {
-    console.log('Editing:', part);
+    this.editingPart = part;
+    this.showEditModal = true;
+    // Prevent body scrolling when modal is open
+    this.renderer.addClass(document.body, 'modal-open');
+    console.log('Editing part:', part);
   }
 
   deletePart(part: CarPart): void {
@@ -677,16 +660,29 @@ export class ProductsComponent {
   }
 
   loadParts(): void {
-      this.productMangment.getProducStatistics()
+    this.isLoading = true;
+    
+    this.swagger.apiPartsGetAllGet(this.itemsPerPage, this.currentPage, this.searchTerm)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (parts) => {
-          // this.parts = parts;
-         console.log(parts)
-          // this.applyFilters();
+        next: (result: DataSourceResultOfPartDTO) => {
+          this.partsFromApi = result.data || [];
+          this.totalCount = result.count || 0;
+          this.totalPages = Math.ceil(this.totalCount / this.itemsPerPage);
+          
+          // Convert PartDTO to CarPart format for existing UI
+          this.parts = this.partsFromApi.map(part => this.mapPartDTOToCarPart(part));
+          this.filteredParts = [...this.parts];
+          this.extractAvailableBrands();
+          this.resultsCount = this.totalCount;
+          this.isLoading = false;
+          
+          console.log('Parts loaded successfully:', result);
         },
         error: (error) => {
-          console.error('Error loading statistics:', error);
+          console.error('Error loading parts:', error);
+          this.isLoading = false;
+          this.showMessage('خطأ في تحميل البيانات', 'error');
         }
       });
   }

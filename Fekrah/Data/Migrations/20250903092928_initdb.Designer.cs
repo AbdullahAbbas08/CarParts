@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250822074534_initdb")]
+    [Migration("20250903092928_initdb")]
     partial class initdb
     {
         /// <inheritdoc />
@@ -826,12 +826,6 @@ namespace Data.Migrations
 
                     b.Property<double>("FinalPrice")
                         .HasColumnType("float");
-
-                    b.Property<bool>("IsDelivery")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsFavorit")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSold")
                         .HasColumnType("bit");

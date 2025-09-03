@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250822152300_dsfs")]
-    partial class dsfs
+    [Migration("20250903102215_initdb2")]
+    partial class initdb2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -796,9 +796,6 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarModelTypeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -833,6 +830,9 @@ namespace Data.Migrations
                     b.Property<int>("MerchantId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ModelTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -858,8 +858,6 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarModelTypeId");
-
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("CountryOfManufactureId");
@@ -867,6 +865,8 @@ namespace Data.Migrations
                     b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("MerchantId");
+
+                    b.HasIndex("ModelTypeId");
 
                     b.HasIndex("UpdatedBy");
 
@@ -1165,12 +1165,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Part", b =>
                 {
-                    b.HasOne("Data.Models.ModelType", "CarModelType")
-                        .WithMany()
-                        .HasForeignKey("CarModelTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Category", "Category")
                         .WithMany("Parts")
                         .HasForeignKey("CategoryId")
@@ -1193,11 +1187,15 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Data.Models.ModelType", "ModelType")
+                        .WithMany()
+                        .HasForeignKey("ModelTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Data.Models.User", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedBy");
-
-                    b.Navigation("CarModelType");
 
                     b.Navigation("Category");
 
@@ -1206,6 +1204,8 @@ namespace Data.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("Merchant");
+
+                    b.Navigation("ModelType");
 
                     b.Navigation("UpdatedByUser");
                 });

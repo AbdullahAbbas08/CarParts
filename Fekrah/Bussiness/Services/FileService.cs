@@ -20,68 +20,78 @@ namespace Bussiness.Services
             _configuration = configuration;
         }
 
-        public List<UploadDTO> SaveFile(IFormFile file, FileTypeEnum fileType)
+        public List<UploadDTO> SaveFile(IEnumerable<IFormFile> formFile, FileTypeEnum fileType)
         {
             var responses = new List<UploadDTO>();
-            if (file == null)
+            if (formFile == null || !formFile.Any())
             {
                 responses.Add(new UploadDTO { Message = "الملف غير موجود" });
-                return responses;
-            }
-            var fileName = $"{Guid.NewGuid()}_{Enum.GetName(fileType)}_{Path.GetFileName(file.FileName)}";
-            var fileExtension = Path.GetExtension(file.FileName);
-
-            if (!fileExtenstion.Any(e => e == fileExtension.ToLower()))
-            {
-                responses.Add(new UploadDTO { Message = "الملفات المسموح بها .png, .jpg, .jpeg" });
-                return responses;
-            }
-
-            if (file.Length > maxFileSize)
-            {
-                responses.Add(new UploadDTO { Message = "حجم الملف المسموح به أقل من أو يساوي 2 ميجا" });
                 return responses;
             }
 
             string? _mainImagePath = _configuration.GetSection($"ApplicationImagePaths:{Enum.GetName(fileType)}:Main").Value;
             string? _backupImagePath = _configuration.GetSection($"ApplicationImagePaths:{Enum.GetName(fileType)}:Backup").Value;
 
-            var mainPath = Path.Combine(_webRootPath, _mainImagePath, fileName);
-            var backupPath = Path.Combine(_webRootPath, _backupImagePath, fileName);
-
-            var mainDir = Path.GetDirectoryName(mainPath);
-            var backupDir = Path.GetDirectoryName(backupPath);
-
-            if (!Directory.Exists(mainDir))
-                Directory.CreateDirectory(mainDir);
-            if (!Directory.Exists(backupDir))
-                Directory.CreateDirectory(backupDir);
-
-            // رفع الملف الرئيسي
-            using (var stream = new FileStream(mainPath, FileMode.Create))
+            foreach (var file in formFile)
             {
-                file.CopyTo(stream);
+                if (file == null)
+                {
+                    responses.Add(new UploadDTO { Message = "الملف غير موجود" });
+                    continue;
+                }
+
+                var fileName = $"{Guid.NewGuid()}_{Enum.GetName(fileType)}_{Path.GetFileName(file.FileName)}";
+                var fileExtension = Path.GetExtension(file.FileName);
+
+                if (!fileExtenstion.Any(e => e == fileExtension.ToLower()))
+                {
+                    responses.Add(new UploadDTO { Message = "الملفات المسموح بها .png, .jpg, .jpeg" });
+                    continue;
+                }
+
+                if (file.Length > maxFileSize)
+                {
+                    responses.Add(new UploadDTO { Message = "حجم الملف المسموح به أقل من أو يساوي 2 ميجا" });
+                    continue;
+                }
+
+                var mainPath = Path.Combine(_webRootPath, _mainImagePath, fileName);
+                var backupPath = Path.Combine(_webRootPath, _backupImagePath, fileName);
+
+                var mainDir = Path.GetDirectoryName(mainPath);
+                var backupDir = Path.GetDirectoryName(backupPath);
+
+                if (!Directory.Exists(mainDir))
+                    Directory.CreateDirectory(mainDir);
+                if (!Directory.Exists(backupDir))
+                    Directory.CreateDirectory(backupDir);
+
+                // رفع الملف الرئيسي
+                using (var stream = new FileStream(mainPath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                responses.Add(new UploadDTO
+                {
+                    FileName = fileName.Replace("\\", "/"),
+                    FileSize = $"{Math.Round((file.Length / 1024d) / 1024d, 2)} MB",
+                    Successfully_Uploaded = true,
+                    Message = "تم رفع الصورة بنجاح (رئيسي) ."
+                });
+
+                // رفع النسخة الاحتياطية
+                using (var stream = new FileStream(backupPath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                responses.Add(new UploadDTO
+                {
+                    FileName = fileName.Replace("\\", "/"),
+                    FileSize = $"{Math.Round((file.Length / 1024d) / 1024d, 2)} MB",
+                    Successfully_Uploaded = true,
+                    Message = "تم رفع الصورة بنجاح (احتياطي) ."
+                });
             }
-            responses.Add(new UploadDTO
-            {
-                FileName = fileName.Replace("\\", "/"),
-                FileSize = $"{Math.Round((file.Length / 1024d) / 1024d, 2)} MB",
-                Successfully_Uploaded = true,
-                Message = "تم رفع الصورة بنجاح (رئيسي) ."
-            });
-
-            // رفع النسخة الاحتياطية
-            using (var stream = new FileStream(backupPath, FileMode.Create))
-            {
-                file.CopyTo(stream);
-            }
-            responses.Add(new UploadDTO
-            {
-                FileName = fileName.Replace("\\", "/"),
-                FileSize = $"{Math.Round((file.Length / 1024d) / 1024d, 2)} MB",
-                Successfully_Uploaded = true,
-                Message = "تم رفع الصورة بنجاح (احتياطي) ."
-            });
 
             return responses;
         }

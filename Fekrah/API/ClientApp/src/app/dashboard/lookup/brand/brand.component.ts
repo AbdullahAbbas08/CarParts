@@ -230,15 +230,17 @@ export class BrandComponent implements OnInit, OnDestroy {
 
       this.uploadLoading = true;
       
-      this.swagger.apiFileUploadFilePost(fileParameter, FileTypeEnum.Brands)
+      this.swagger.apiFileUploadFilePost([fileParameter], FileTypeEnum.Brands)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (uploadResult) => {
             this.uploadLoading = false;
-            if (uploadResult.successfully_Uploaded && uploadResult.fileName) {
-              resolve(uploadResult.fileName);
+            // uploadResult is an array, get the first item
+            const result = uploadResult && uploadResult.length > 0 ? uploadResult[0] : null;
+            if (result && result.successfully_Uploaded && result.fileName) {
+              resolve(result.fileName);
             } else {
-              reject(uploadResult.message || 'فشل في رفع الملف');
+              reject(result?.message || 'فشل في رفع الملف');
             }
           },
           error: (error) => {

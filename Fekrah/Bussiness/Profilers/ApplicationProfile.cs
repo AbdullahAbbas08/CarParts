@@ -24,7 +24,7 @@ namespace Bussiness.Profilers
                   .ReverseMap()
                   .ForMember(dest => dest.Category, opt => opt.Ignore())
                   .ForMember(dest => dest.CountryOfManufacture, opt => opt.Ignore())
-                  .ForMember(dest => dest.CarModelType, opt => opt.Ignore());
+                  .ForMember(dest => dest.ModelType, opt => opt.Ignore());
             CreateMap<Brand, BrandDTO>().ReverseMap();
             CreateMap<City, CityDTO>().ReverseMap();
             CreateMap<User, UserDTO>().ReverseMap();

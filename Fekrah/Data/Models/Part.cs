@@ -27,10 +27,10 @@ public class Part : IAuditableInsert, IAuditableUpdate
     [ForeignKey(nameof(CountryOfManufactureId))]
     public CountryOfManufacture CountryOfManufacture { get; set; }
 
-    public int CarModelTypeId { get; set; }
+    public int ModelTypeId { get; set; }
 
-    [ForeignKey(nameof(CarModelTypeId))]
-    public ModelType CarModelType { get; set; }
+    [ForeignKey(nameof(ModelTypeId))]
+    public ModelType ModelType { get; set; }
 
     public virtual ICollection<Offer> Offers { get; set; }
     public ICollection<Image> ImageUrls { get; set; }

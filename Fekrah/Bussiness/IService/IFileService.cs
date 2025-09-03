@@ -11,7 +11,7 @@ namespace Bussiness.IService
 {
     public interface IFileService
     {
-        List<UploadDTO> SaveFile(IFormFile formFile, FileTypeEnum fileType);
+        List<UploadDTO> SaveFile(IEnumerable<IFormFile> formFile, FileTypeEnum fileType);
         UploadDTO DeleteFile(string fileName, FileTypeEnum fileType);
     }
 }

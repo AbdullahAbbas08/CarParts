@@ -24,7 +24,11 @@
   <div class="search-container">
     <div class="search-header">
       <div class="search-box">
-        <input type="text" class="search-input" placeholder="ابحث عن قطعة غيار... (اسم، كود، ماركة)" id="searchInput">
+        <input type="text" class="search-input" 
+               [(ngModel)]="searchTerm"
+               (input)="onSearch()"
+               placeholder="ابحث عن قطعة غيار... (اسم، كود، ماركة)" 
+               id="searchInput" #searchInput>
         <i class="fas fa-search search-icon"></i>
       </div>
 
@@ -47,7 +51,7 @@
 
         <div class="results-info">
           <i class="fas fa-list-ol"></i>
-          <span id="resultsCount">120 قطعة غيار</span>
+          <span id="resultsCount">{{ totalCount }} قطعة غيار</span>
         </div>
       </div>
     </div>
@@ -402,8 +406,6 @@
             <th>الحالة</th>
             <th>الدرجة</th>
             <th>السعر</th>
-            <th>خصم</th>
-            <th>توصيل</th>
             <th>منشأ</th>
             <th>إجراءات</th>
           </tr>
@@ -430,13 +432,8 @@
             <td>
               <span class="current-price">{{ part.priceAfterDiscount | currency:'EGP' }}</span>
             </td>
-            <td>
-              <span class="discount-badge" *ngIf="part.discount > 0">-{{ part.discount }}%</span>
-            </td>
-            <td>
-              <span class="badge badge-delivery" *ngIf="part.hasDelivery">✔️</span>
-              <span class="badge badge-nodelivery" *ngIf="!part.hasDelivery">✗</span>
-            </td>
+          
+          
             <td>
               <span class="badge badge-origin">{{ part.origin }}</span>
             </td>
@@ -494,6 +491,18 @@
 <div class="modal-overlay" *ngIf="showQuickAddModal" (click)="closeQuickAddModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <app-quick-add-form (formSubmitted)="onPartAdded($event)" (formCancelled)="closeQuickAddModal()">
+    </app-quick-add-form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-quick-add-form 
+      [editMode]="true" 
+      [editingPart]="editingPart" 
+      (formSubmitted)="onPartUpdated($event)" 
+      (formCancelled)="closeEditModal()">
     </app-quick-add-form>
   </div>
 </div>

@@ -24,10 +24,10 @@ namespace Data.DTOs
         public string? MerchantName { get; set; }
         public int CategoryId { get; set; } 
         public string? CategoryName { get; set; } 
-        public int? CarModelId { get; set; } 
+        public int? ModelTypeId { get; set; } 
         public string? CarModelName { get; set; }
-        public int? CarModelTypeId { get; set; }
-        public string? CarModelTypeName { get; set; }
+        public int? BrandId { get; set; }
+        public string? BrandName { get; set; }
         public int? CountryOfManufactureId { get; set; }
         public string? CountryOfManufactureName { get; set; }
         public int? Count { get; set; }

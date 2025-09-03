@@ -28,7 +28,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             .GetAll()
             .Include(p => p.Merchant)
             .Include(p => p.Category)
-            .Include(p => p.CarModelType)
+            .Include(p => p.ModelType)
             .ThenInclude(p => p.Brand)
             .Include(p => p.CountryOfManufacture)
             .AsSplitQuery()
@@ -57,10 +57,10 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 YearOfManufacture = p.YearOfManufacture,
                 MerchantId = p.MerchantId,
                 MerchantName = p.Merchant?.ShopName,
-                CarModelTypeId = p.CarModelTypeId,
-                CarModelTypeName = p.CarModelType?.Name,
-                CarModelId = p.CarModelType.BrandId,
-                CarModelName = p.CarModelType.Brand?.Name,
+                ModelTypeId = p.ModelTypeId,
+                BrandName = p.ModelType?.Name,
+                BrandId = p.ModelType.BrandId,
+                CarModelName = p.ModelType.Brand?.Name,
                 CountryOfManufactureId = p.CountryOfManufactureId,
                 CountryOfManufactureName = p.CountryOfManufacture.Name,
                 Count = p.Count
@@ -80,7 +80,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             .GetAll()
             .Include(p => p.Merchant)
             .Include(p => p.Category)
-            .Include(p => p.CarModelType)
+            .Include(p => p.ModelType)
             .ThenInclude(p => p.Brand)
             .Include(p => p.CountryOfManufacture)
             .AsSplitQuery()
@@ -108,10 +108,10 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
             YearOfManufacture = part.YearOfManufacture, 
             MerchantId = part.MerchantId,
             MerchantName = part.Merchant?.ShopName,
-            CarModelTypeId = part.CarModelTypeId,
-            CarModelTypeName = part.CarModelType?.Name,
-            CarModelId = part.CarModelType.BrandId,
-            CarModelName = part.CarModelType.Brand?.Name,
+            BrandId = part.ModelTypeId,
+            BrandName = part.ModelType?.Name,
+            ModelTypeId = part.ModelType.BrandId,
+            CarModelName = part.ModelType.Brand?.Name,
             CountryOfManufactureId = part.CountryOfManufactureId,
             CountryOfManufactureName = part.CountryOfManufacture.Name,
             Count = part.Count
@@ -128,7 +128,7 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
 
         Part _addNewPart = mapper.Map<Part>(part);
         _addNewPart.MerchantId = part.MerchantId.HasValue ? (int)part.MerchantId : _sessionService.MerchantId.Value;
-        _addNewPart.CarModelType = null;
+        _addNewPart.ModelType = null;
         //_addNewPart.
         var addNewPart = mapper.Map<PartDTO>(_addNewPart);
 
@@ -162,11 +162,11 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
     {
         var allFilteredParts = _UnitOfWork.Repository<Part>()
             .GetAll()
-            .Include(p => p.CarModelType)
+            .Include(p => p.ModelType)
             .ThenInclude(c => c.Brand)
             .Include(c => c.CountryOfManufacture)
-            .Where(p => (part.CarModel == 0 || p.CarModelType.BrandId == part.CarModel) &&
-                        (part.CarModelType == 0 || p.CarModelTypeId == part.CarModelType) &&
+            .Where(p => (part.CarModel == 0 || p.ModelType.BrandId == part.CarModel) &&
+                        (part.CarModelType == 0 || p.ModelTypeId == part.CarModelType) &&
                         (part.YearOfManufactureFrom == 0 || p.YearOfManufacture >= part.YearOfManufactureFrom) &&
                         (part.YearOfManufactureTo == 0 || p.YearOfManufacture <= part.YearOfManufactureTo) &&
                         (part.PartCondition == 0 || (int)p.Condition == part.PartCondition) &&
@@ -203,10 +203,10 @@ public class PartService : _BusinessService<Part, PartDTO>, IPartService
                 YearOfManufacture = p.YearOfManufacture,
                 MerchantId = p.MerchantId,
                 MerchantName = p.Merchant?.ShopName,
-                CarModelTypeId = p.CarModelTypeId,
-                CarModelTypeName = p.CarModelType?.Name,
-                CarModelId = p.CarModelType.BrandId,
-                CarModelName = p.CarModelType.Brand?.Name,
+                BrandId = p.ModelTypeId,
+            BrandName = p.ModelType?.Name,
+                ModelTypeId = p.ModelType.BrandId,
+                CarModelName = p.ModelType.Brand?.Name,
                 CountryOfManufactureId = p.CountryOfManufactureId,
                 CountryOfManufactureName = p.CountryOfManufacture.Name,
                 Count = p.Count

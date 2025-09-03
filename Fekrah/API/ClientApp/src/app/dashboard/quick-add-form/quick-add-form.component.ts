@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { API_BASE_URL, DataSourceResultOfBrandDTO, FileTypeEnum, ImageDTO, LookupDTO, PartDTO, SwaggerClient } from '../../Shared/Services/Swagger/SwaggerClient.service';
+import { API_BASE_URL, DataSourceResultOfBrandDTO, FileTypeEnum, ImageDTO, LookupDTO, PartDTO, SwaggerClient, CategoryDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
 import { HttpClient, HttpEventType, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
+import { CarPart } from '../../Shared/Models/car-card';
 
 interface PartType {
   value: number;
@@ -38,6 +39,12 @@ interface ImageFile {
 })
 export class QuickAddFormComponent implements OnInit, OnDestroy {
   @ViewChild('imageInput', { static: false }) imageInput!: ElementRef<HTMLInputElement>;
+  
+  // Edit mode inputs
+  @Input() editMode: boolean = false;
+  @Input() editingPart: CarPart | null = null;
+  @Output() formSubmitted = new EventEmitter<any>();
+  @Output() formCancelled = new EventEmitter<void>();
 
   partForm!: FormGroup;
   currentStep = 1;
@@ -69,6 +76,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
 
   availableCarBrands:any[] = [];
   filteredCarModels: any[] = [];
+  allCarModels: any[] = []; // Store all models for filtering
   availableYears: string[] = [];
   imageTypeEnum!:FileTypeEnum;
   stores: any[] = []
@@ -112,7 +120,12 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.getAllModelTypes();
     this.getAllMerchant();
     this.getAllCounties();
-    this.getAllCategory()
+    this.getAllCategory();
+    
+    // If in edit mode, populate the form with existing data
+    if (this.editMode && this.editingPart) {
+      this.populateFormForEdit();
+    }
   }
 
   ngOnDestroy(): void {
@@ -120,15 +133,69 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  private populateFormForEdit(): void {
+    if (!this.editingPart) return;
+    
+    const part = this.editingPart;
+    
+    // Map CarPart data back to form values
+    this.partForm.patchValue({
+      partName: part.name,
+      subtitle: part.subtitle,
+      condition: part.condition === 'جديد' ? 1 : 2,
+      grade: part.grade === 'فرز أول' ? 1 : 2,
+      carBrand: this.findBrandIdByName(part.car.brand),
+      carModel: this.findModelIdByName(part.car.model),
+      carYear: parseInt(part.car.year),
+      price: part.price,
+      storeName: this.findStoreIdByName(part.store.name),
+      storePhone: part.store.phone
+    });
+    
+    // Map part type
+    switch (part.partType) {
+      case 'أصلي': this.partForm.patchValue({ partType: 1 }); break;
+      case 'هاي كوبي': this.partForm.patchValue({ partType: 2 }); break;
+      case 'بديل': this.partForm.patchValue({ partType: 3 }); break;
+    }
+    
+    // Set origin (country)
+    const originId = this.findCountryIdByName(part.origin);
+    if (originId) {
+      this.partForm.patchValue({ origin: originId });
+    }
+    
+    console.log('Form populated for edit:', this.partForm.value);
+  }
+
+  private findBrandIdByName(brandName: string): number | null {
+    const brand = this.availableCarBrands.find(b => b.name === brandName);
+    return brand ? brand.id : null;
+  }
+
+  private findModelIdByName(modelName: string): number | null {
+    const model = this.allCarModels.find(m => m.name === modelName);
+    return model ? model.id : null;
+  }
+
+  private findStoreIdByName(storeName: string): number | null {
+    const store = this.stores.find(s => s.shopName === storeName);
+    return store ? store.id : null;
+  }
+
+  private findCountryIdByName(countryName: string): number | null {
+    const country = this.allcountries.find(c => c.text === countryName);
+    return country ? country.id : null;
+  }
+
   private initializeForm(): void {
     this.partForm = this.fb.group({
       partName: ['', [Validators.required, Validators.minLength(2)]],
       origin: ['', [Validators.required]],
       partType: ['', Validators.required],
-      category:['',Validators.required],
+      category: ['', Validators.required],
       condition: ['جديد', Validators.required],
       grade: ['فرز أول', Validators.required],
-      category:['',Validators.required],
       hasDelivery: [false],
       isFavorite: [false],
       subtitle: [''],
@@ -138,8 +205,6 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       carYear: ['', Validators.required],
 
       price: ['', [Validators.required, Validators.min(0.01)]],
-      discount: [0, [Validators.min(0), Validators.max(100)]],
-      priceAfterDiscount: [{ value: 0, disabled: true }],
       storeName: ['', Validators.required],
       storePhone: ['', [Validators.required, Validators.pattern(/^01[0-9]{9}$/)]],
 
@@ -148,18 +213,6 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   }
 
   private setupFormSubscriptions(): void {
-    this.partForm.get('price')!.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => this.calculateFinalPrice());
-
-    this.partForm.get('discount')!.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => this.calculateFinalPrice());
-
     this.partForm.get('carBrand')!.valueChanges.pipe(
       takeUntil(this.destroy$)
     ).subscribe(() => this.onBrandChange());
@@ -174,13 +227,20 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
 
   private setupKeyboardShortcuts(): void {
     document.addEventListener('keydown', (e) => {
+      // Escape key to cancel in edit mode
+      if (e.key === 'Escape' && this.editMode) {
+        e.preventDefault();
+        this.formCancelled.emit();
+        return;
+      }
+      
       if (e.ctrlKey && e.key.toLowerCase() === 's') {
         e.preventDefault();
-        this.saveAsDraft();
+        if (!this.editMode) this.saveAsDraft();
       }
       if (e.ctrlKey && e.key.toLowerCase() === 'd') {
         e.preventDefault();
-        this.duplicateLastEntry();
+        if (!this.editMode) this.duplicateLastEntry();
       }
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault();
@@ -189,7 +249,7 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       }
       if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
         e.preventDefault();
-        this.submitAndAddAnother();
+        if (!this.editMode) this.submitAndAddAnother();
       }
       if (e.key === 'Enter' && e.target && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
         e.preventDefault();
@@ -231,9 +291,16 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
   }
 
   onBrandChange(): void {
-    // const brand = this.partForm.get('carBrand')!.value;
-    // this.filteredCarModels = this.carModels[brand] || [];
-    // this.partForm.patchValue({ carModel: '', carYear: '' });
+    const selectedBrandId = this.partForm.get('carBrand')?.value;
+    if (selectedBrandId) {
+      // Filter models based on selected brand
+      this.filteredCarModels = this.allCarModels.filter(model => model.brandId == selectedBrandId);
+    } else {
+      // If no brand selected, show all models
+      this.filteredCarModels = [...this.allCarModels];
+    }
+    // Reset model and year when brand changes
+    this.partForm.patchValue({ carModel: '', carYear: '' });
   }
 
   selectPopularCombo(combo: CarCombo): void {
@@ -243,13 +310,6 @@ export class QuickAddFormComponent implements OnInit, OnDestroy {
       carYear: combo.year
     });
     this.filteredCarModels = this.carModels[combo.brand] || [];
-  }
-
-  private calculateFinalPrice(): void {
-    const price = +this.partForm.get('price')!.value || 0;
-    const discount = +this.partForm.get('discount')!.value || 0;
-    const finalPrice = price * (1 - discount / 100);
-    this.partForm.get('priceAfterDiscount')!.setValue(finalPrice.toFixed(2), { emitEvent: false });
   }
 
   onImageSelected(event: Event): void {
@@ -296,22 +356,37 @@ private prepareImagesData(files: File[], slug?: string) {
   const formData = new FormData();
   for (const f of files) formData.append('file', f, f.name)
 
-  const fileType = 1; // أو FileTypeEnum.YourValue
+  const fileType = FileTypeEnum.Parts; // Use the correct enum value for Parts
   const params = new HttpParams().set('fileType', String(fileType));
 
   this.http.post(`${this.baseUrl}/api/File/UploadFile`, formData, {
     reportProgress: true,
     observe: 'events',
     params
-  }).subscribe(event => {
-    if ((event as any)?.type === HttpEventType.Response) {
-       let images: ImageDTO = {
-         id: 0, 
-         imagePath: (event as any)?.body?.url,
-         init: () => {}, // Provide actual implementation if needed
-         toJSON: () => ({ id: 0, imagePath: (event as any)?.body?.url }) 
-       };
-      this.imagesNames.push(images);
+  }).subscribe({
+    next: (event) => {
+      if ((event as any)?.type === HttpEventType.Response) {
+        console.log('Upload response:', (event as any)?.body); // Debug log
+        const responseBody = (event as any)?.body;
+        
+        // Handle both single object and array responses
+        const uploadResults = Array.isArray(responseBody) ? responseBody : [responseBody];
+        
+        uploadResults.forEach((result: any) => {
+          if (result?.fileName) {
+            // Use the proper ImageDTO constructor
+            let images = new ImageDTO({
+              id: 0,
+              imagePath: result.fileName
+            });
+            this.imagesNames.push(images);
+          }
+        });
+      }
+    },
+    error: (error) => {
+      console.error('Upload error:', error);
+      alert('فشل في رفع الصورة');
     }
   });
 }
@@ -350,36 +425,26 @@ private prepareImagesData(files: File[], slug?: string) {
       return;
     }
 
+    // Check if we have images with valid paths (skip for edit mode)
+    if (!this.editMode && (this.imagesNames.length === 0 || !this.imagesNames.some(img => img.imagePath))) {
+      alert('يرجى رفع صورة واحدة على الأقل للقطعة');
+      return;
+    }
+
     this.isLoading = true;
     const formData = this.prepareFormData();
 
     setTimeout(() => {
       this.lastSubmittedPart = { ...formData };
       this.isLoading = false;
-      const parts:any = {
-        imageUrls: this.imagesNames,        
-        isSold: false,
-        isFavorit: false,
-        isDelivery: false,
-        name: formData.partName,
-        partType: formData.partType,
-        quality:  formData.condition,
-        condition: formData.grade,
-        description: formData.subtitle,
-        price: formData.price,
-        finalPrice:+formData.priceAfterDiscount,
-        discount: formData.discount,
-        countryOfManufactureId: +formData.origin,
-        carModelId:+formData.carModel,
-        yearOfManufacture: +formData.carYear,
-        merchantId: +formData.storeName,
-        categoryId: +formData.category
+      
+      // Emit the form data to the parent component
+      this.formSubmitted.emit(formData);
+      
+      if (!this.editMode) {
+        // Only reset form if not in edit mode
+        this.resetForm();
       }
-      // console.log('Submitted part data:', formData);
-      this.swagger.apiPartsInsertPost(parts).subscribe((res:any) => {
-      console.log(res)
-      })
-      this.resetForm();
     }, 1500);
   }
 
@@ -453,9 +518,7 @@ private prepareImagesData(files: File[], slug?: string) {
       this.partForm.patchValue({
         ...this.lastSubmittedPart,
         partName: '',
-        price: '',
-        discount: 0,
-        priceAfterDiscount: 0
+        price: ''
       });
       this.currentStep = 1;
       this.images = [];
@@ -674,7 +737,8 @@ private prepareImagesData(files: File[], slug?: string) {
   getAllModelTypes() {
     this.swagger.apiModelTypeGetAllGet(50, 1, undefined).subscribe((res: any) => {
       if (res && res.data) {
-        this.filteredCarModels = res.data;
+        this.allCarModels = res.data; // Store all models
+        this.filteredCarModels = res.data; // Initially show all models
       }
     });
   }
