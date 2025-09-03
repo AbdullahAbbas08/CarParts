@@ -15,6 +15,7 @@ import { PartTypesComponent } from './part-types/part-types.component';
 import { FeaturedStoresComponent } from './featured-stores/featured-stores.component';
 import { ModelTypesComponent } from './model-types/model-types.component';
 import { FullWidthBannerComponent } from './full-width-banner/full-width-banner.component';
+import { OfferDetailsComponent } from './offers/offer-details/offer-details.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { FullWidthBannerComponent } from './full-width-banner/full-width-banner.
     BannerComponent,
     PartPreviewComponent,
     OffersComponent,
+    OfferDetailsComponent,
     CategoriesComponent,
     CategoryPageComponent,
     SuggestedOffersComponent,

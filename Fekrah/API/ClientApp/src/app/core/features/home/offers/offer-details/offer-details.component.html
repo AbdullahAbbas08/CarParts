@@ -1,0 +1,310 @@
+<!-- Offer Details Component -->
+<div class="offer-details-page">
+  <!-- Header Section -->
+  <div class="details-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-right"></i>
+        العودة للعروض
+      </button>
+      
+      <div class="offer-info">
+        <div class="offer-badge" [ngClass]="getOfferBadgeClass(offer?.type || 1)">
+          <i class="fas" [class]="getOfferTypeIcon(offer?.type || 1)"></i>
+          <span>{{ getOfferTypeLabel(offer?.type || 1) }}</span>
+        </div>
+        
+        <h1 class="offer-title">{{ getPartName(offer?.partId || 1) }}</h1>
+        <p class="offer-subtitle">عرض خاص ولفترة محدودة</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="details-content" *ngIf="offer">
+    <!-- Part Image and Gallery -->
+    <div class="image-section">
+      <div class="main-image">
+        <img 
+          [src]="getPartImage(offer.partId)" 
+          [alt]="getPartName(offer.partId)"
+          class="part-image"
+          (error)="onImageError($event)"
+        >
+        <div class="image-overlay">
+          <button class="zoom-btn">
+            <i class="fas fa-search-plus"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="image-thumbnails" *ngIf="getPartImages(offer.partId).length > 1">
+        <div 
+          *ngFor="let image of getPartImages(offer.partId); let i = index"
+          class="thumbnail"
+          [class.active]="i === selectedImageIndex"
+          (click)="selectImage(i)"
+        >
+          <img [src]="image" [alt]="getPartName(offer.partId)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Offer Information -->
+    <div class="info-section">
+      <!-- Part Basic Info -->
+      <div class="part-basic-info">
+        <h2 class="part-name">{{ getPartName(offer.partId) }}</h2>
+        <p class="part-code">كود القطعة: {{ getPartCode(offer.partId) }}</p>
+        <div class="part-category">
+          <i class="fas fa-tag"></i>
+          <span>{{ getPartCategory(offer.partId) }}</span>
+        </div>
+      </div>
+
+      <!-- Price Information -->
+      <div class="price-info-section">
+        <!-- Bundle Offer -->
+        <div *ngIf="offer.bundlePartIdsCsv" class="bundle-offer-details">
+          <div class="bundle-header">
+            <i class="fas fa-box-open"></i>
+            <h3>باقة قطع مترابطة</h3>
+            <span class="parts-count">{{ getBundlePartsCount(offer) }} قطع</span>
+          </div>
+          
+          <div class="bundle-pricing">
+            <div class="price-breakdown">
+              <div class="original-total">
+                <span class="label">إجمالي السعر الأصلي:</span>
+                <span class="value">{{ getBundleOriginalPrice(offer) }} ج.م</span>
+              </div>
+              <div class="discount-amount">
+                <span class="label">قيمة الخصم:</span>
+                <span class="value">{{ getBundleDiscountAmount(offer) }} ج.م</span>
+              </div>
+              <div class="final-price">
+                <span class="label">السعر النهائي:</span>
+                <span class="value">{{ getBundleOfferPrice(offer) }} ج.م</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bundle-parts-list">
+            <h4>القطع المشمولة بالعرض:</h4>
+            <div class="parts-grid">
+              <div 
+                *ngFor="let partId of getBundleParts(offer); let i = index"
+                class="bundle-part-item"
+              >
+                <div class="part-number">{{ i + 1 }}</div>
+                <div class="part-info">
+                  <h5>{{ getPartName(+partId) }}</h5>
+                  <p>{{ getPartCode(+partId) }}</p>
+                  <span class="part-price">{{ getPartPrice(+partId) }} ج.م</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regular Offer -->
+        <div *ngIf="!offer.bundlePartIdsCsv" class="regular-offer-details">
+          <div class="price-comparison">
+            <div class="original-price-section" *ngIf="hasDiscount(offer)">
+              <span class="label">السعر الأصلي:</span>
+              <span class="original-price">{{ getOriginalPrice(offer) }} ج.م</span>
+            </div>
+            
+            <div class="offer-price-section">
+              <span class="label">سعر العرض:</span>
+              <span class="offer-price">{{ getCurrentPrice(offer) }} ج.م</span>
+            </div>
+            
+            <div class="savings-section" *ngIf="getSavingsAmount(offer) > 0">
+              <div class="savings-badge">
+                <i class="fas fa-piggy-bank"></i>
+                <span>توفر {{ getSavingsAmount(offer) }} ج.م</span>
+                <small>({{ getDiscountPercentage(offer) }}% خصم)</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Special Offer Types -->
+          <div class="special-offer-details">
+            <!-- Buy X Get Y Offer -->
+            <div *ngIf="offer.buyQuantity && offer.getQuantity" class="buy-get-details">
+              <div class="buy-get-header">
+                <i class="fas fa-gift"></i>
+                <h3>عرض اشتري واحصل على</h3>
+              </div>
+              <div class="buy-get-content">
+                <div class="buy-section">
+                  <span class="number">{{ offer.buyQuantity }}</span>
+                  <span class="text">اشتري</span>
+                </div>
+                <div class="plus-icon">+</div>
+                <div class="get-section">
+                  <span class="number">{{ offer.getQuantity }}</span>
+                  <span class="text">مجاناً</span>
+                </div>
+              </div>
+              <p class="buy-get-note">
+                عند شراء {{ offer.buyQuantity }} قطع ستحصل على {{ offer.getQuantity }} قطع إضافية مجاناً
+              </p>
+            </div>
+
+            <!-- Promo Code Offer -->
+            <div *ngIf="offer.promoCode" class="promo-code-details">
+              <div class="promo-header">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>كود الخصم</h3>
+              </div>
+              <div class="promo-code-display">
+                <span class="code">{{ offer.promoCode }}</span>
+                <button class="copy-btn" (click)="copyPromoCode(offer.promoCode)">
+                  <i class="fas fa-copy"></i>
+                  نسخ
+                </button>
+              </div>
+              <p class="promo-note">
+                استخدم هذا الكود عند إتمام الطلب للحصول على خصم {{ offer.discountRate }}%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offer Duration -->
+      <div class="duration-section">
+        <div class="duration-header">
+          <i class="fas fa-clock"></i>
+          <h3>مدة العرض</h3>
+        </div>
+        
+        <div class="duration-info">
+          <div class="date-range">
+            <div class="start-date">
+              <span class="label">يبدأ:</span>
+              <span class="date">{{ formatDate(offer.startAt) }}</span>
+            </div>
+            <div class="end-date">
+              <span class="label">ينتهي:</span>
+              <span class="date">{{ formatDate(offer.endAt) }}</span>
+            </div>
+          </div>
+          
+          <div class="countdown">
+            <div class="countdown-item">
+              <span class="number">{{ countdown.days }}</span>
+              <span class="unit">يوم</span>
+            </div>
+            <div class="countdown-item">
+              <span class="number">{{ countdown.hours }}</span>
+              <span class="unit">ساعة</span>
+            </div>
+            <div class="countdown-item">
+              <span class="number">{{ countdown.minutes }}</span>
+              <span class="unit">دقيقة</span>
+            </div>
+          </div>
+          
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getOfferProgress(offer)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part Specifications -->
+      <div class="specifications-section">
+        <div class="specs-header">
+          <i class="fas fa-cogs"></i>
+          <h3>مواصفات القطعة</h3>
+        </div>
+        
+        <div class="specs-grid">
+          <div class="spec-item" *ngFor="let spec of getPartSpecifications(offer.partId)">
+            <span class="spec-label">{{ spec.label }}:</span>
+            <span class="spec-value">{{ spec.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-section">
+        <div class="quantity-selector">
+          <label>الكمية:</label>
+          <div class="quantity-controls">
+            <button class="qty-btn minus" (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="quantity">{{ quantity }}</span>
+            <button class="qty-btn plus" (click)="increaseQuantity()">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="add-to-cart-btn" (click)="addToCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span>أضف للسلة</span>
+            <small>{{ getTotalPrice() }} ج.م</small>
+          </button>
+          
+          <button class="buy-now-btn" (click)="buyNow()">
+            <i class="fas fa-bolt"></i>
+            <span>اشتري الآن</span>
+          </button>
+          
+          <button class="wishlist-btn" (click)="toggleWishlist()" [class.active]="isInWishlist">
+            <i class="fas" [class]="isInWishlist ? 'fa-heart' : 'fa-heart-o'"></i>
+            <span>{{ isInWishlist ? 'في المفضلة' : 'أضف للمفضلة' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Offers -->
+  <div class="related-offers-section">
+    <div class="section-header">
+      <h2>عروض مماثلة</h2>
+      <p>قد تعجبك هذه العروض أيضاً</p>
+    </div>
+    
+    <div class="related-offers-grid">
+      <div 
+        *ngFor="let relatedOffer of getRelatedOffers(); trackBy: trackByOfferId"
+        class="related-offer-card"
+        (click)="viewOffer(relatedOffer.id)"
+      >
+        <div class="card-image">
+          <img [src]="getPartImage(relatedOffer.partId)" [alt]="getPartName(relatedOffer.partId)">
+          <div class="discount-badge" *ngIf="getDiscountPercentage(relatedOffer) > 0">
+            {{ getDiscountPercentage(relatedOffer) }}%
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <h4>{{ getPartName(relatedOffer.partId) }}</h4>
+          <div class="price-display">
+            <span class="current-price">{{ getCurrentPrice(relatedOffer) }} ج.م</span>
+            <span class="original-price" *ngIf="hasDiscount(relatedOffer)">
+              {{ getOriginalPrice(relatedOffer) }} ج.م
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="!offer">
+  <div class="spinner">
+    <div class="spinner-ring"></div>
+    <div class="spinner-ring"></div>
+    <div class="spinner-ring"></div>
+  </div>
+  <p>جاري تحميل تفاصيل العرض...</p>
+</div>
