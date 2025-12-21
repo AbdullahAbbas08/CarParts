@@ -1,11 +1,11 @@
 // featured-stores.component.scss - Optimized
 .featured-sellers-section {
   // Simplified gradient for better performance
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: linear-gradient(135deg, #cccccc, #ffffff);
   padding: 40px 20px;
   // border-radius: 20px;
   // margin: 20px;
-  color: #fff;
+  color: #00250b;
   overflow: hidden;
   position: relative;
 
@@ -48,7 +48,7 @@
     }
 
     .section-subtitle {
-      font-size: 18px;
+      font-size: 23px;
       opacity: 0.9;
       font-weight: 300;
       margin-bottom: 0;
@@ -446,18 +446,21 @@
       font-size: 4rem;
       margin-bottom: 20px;
       opacity: 0.7;
+       color: #000;
     }
 
     .empty-title {
       font-size: 24px;
       font-weight: 600;
       margin-bottom: 10px;
+      color: #000;
     }
 
     .empty-subtitle {
       font-size: 16px;
       opacity: 0.8;
       margin-bottom: 30px;
+       color: #000;
     }
 
     .btn {
@@ -468,7 +471,7 @@
       border-radius: 25px;
       font-weight: 600;
       transition: all 0.3s ease;
-
+      background-color: #000;
       &:hover {
         background: rgba(255, 255, 255, 0.3);
         border-color: rgba(255, 255, 255, 0.5);

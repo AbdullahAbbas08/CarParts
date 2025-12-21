@@ -2510,3 +2510,18 @@
   white-space: nowrap;
   border: 0;
 }
+
+
+
+#simpleSearchInput::placeholder {
+   font-family: "Almarai", sans-serif !important;
+  font-weight: 400;
+  font-size: 14px;                  /* اختياري */
+  opacity: 1;                       /* عشان بعض المتصفحات بتقلله تلقائيًا */
+    font-style: normal !important; /* دي اللي هتوقف الإيطاليك */
+}
+
+:host ::ng-deep #simpleSearchInput::placeholder {
+   font-family: "Almarai", sans-serif !important;
+     font-style: normal !important; /* دي اللي هتوقف الإيطاليك */
+}

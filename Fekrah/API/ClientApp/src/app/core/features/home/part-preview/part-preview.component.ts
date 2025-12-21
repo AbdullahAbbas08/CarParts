@@ -121,9 +121,8 @@ export class PartPreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
+
       this.initializeSwiper();
-    }, 100);
   }
 
   ngOnDestroy(): void {

@@ -1219,6 +1219,125 @@ export class SwaggerClient {
         return _observableOf(null as any);
     }
 
+    apiPartsInsertPost(id: number | undefined, name: string | null | undefined, description: string | null | undefined, price: number | undefined, finalPrice: number | undefined, condition: PartConditionEnum | undefined, conditionName: string | null | undefined, imageUrls: ImageDTO[] | undefined, isSold: boolean | null | undefined, discount: number | null | undefined, quality: PartQualityEnum | undefined, qualityName: string | null | undefined, partType: PartTypeEnum | undefined, partTypeName: string | null | undefined, yearOfManufacture: number | null | undefined, merchantId: number | null | undefined, merchantName: string | null | undefined, categoryId: number | undefined, categoryName: string | null | undefined, modelTypeId: number | null | undefined, carModelName: string | null | undefined, brandId: number | null | undefined, brandName: string | null | undefined, countryOfManufactureId: number | null | undefined, countryOfManufactureName: string | null | undefined, count: number | null | undefined): Observable<PartDTO> {
+        let url_ = this.baseUrl + "/api/Parts/Insert";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (id === null || id === undefined)
+            throw new Error("The parameter 'id' cannot be null.");
+        else
+            content_.append("Id", id.toString());
+        if (name !== null && name !== undefined)
+            content_.append("Name", name.toString());
+        if (description !== null && description !== undefined)
+            content_.append("Description", description.toString());
+        if (price === null || price === undefined)
+            throw new Error("The parameter 'price' cannot be null.");
+        else
+            content_.append("Price", price.toString());
+        if (finalPrice === null || finalPrice === undefined)
+            throw new Error("The parameter 'finalPrice' cannot be null.");
+        else
+            content_.append("FinalPrice", finalPrice.toString());
+        if (condition === null || condition === undefined)
+            throw new Error("The parameter 'condition' cannot be null.");
+        else
+            content_.append("Condition", condition.toString());
+        if (conditionName !== null && conditionName !== undefined)
+            content_.append("ConditionName", conditionName.toString());
+        if (imageUrls === null || imageUrls === undefined)
+            throw new Error("The parameter 'imageUrls' cannot be null.");
+        else
+            imageUrls.forEach(item_ => content_.append("ImageUrls", item_.toString()));
+        if (isSold !== null && isSold !== undefined)
+            content_.append("IsSold", isSold.toString());
+        if (discount !== null && discount !== undefined)
+            content_.append("Discount", discount.toString());
+        if (quality === null || quality === undefined)
+            throw new Error("The parameter 'quality' cannot be null.");
+        else
+            content_.append("Quality", quality.toString());
+        if (qualityName !== null && qualityName !== undefined)
+            content_.append("QualityName", qualityName.toString());
+        if (partType === null || partType === undefined)
+            throw new Error("The parameter 'partType' cannot be null.");
+        else
+            content_.append("PartType", partType.toString());
+        if (partTypeName !== null && partTypeName !== undefined)
+            content_.append("PartTypeName", partTypeName.toString());
+        if (yearOfManufacture !== null && yearOfManufacture !== undefined)
+            content_.append("YearOfManufacture", yearOfManufacture.toString());
+        if (merchantId !== null && merchantId !== undefined)
+            content_.append("MerchantId", merchantId.toString());
+        if (merchantName !== null && merchantName !== undefined)
+            content_.append("MerchantName", merchantName.toString());
+        if (categoryId === null || categoryId === undefined)
+            throw new Error("The parameter 'categoryId' cannot be null.");
+        else
+            content_.append("CategoryId", categoryId.toString());
+        if (categoryName !== null && categoryName !== undefined)
+            content_.append("CategoryName", categoryName.toString());
+        if (modelTypeId !== null && modelTypeId !== undefined)
+            content_.append("ModelTypeId", modelTypeId.toString());
+        if (carModelName !== null && carModelName !== undefined)
+            content_.append("CarModelName", carModelName.toString());
+        if (brandId !== null && brandId !== undefined)
+            content_.append("BrandId", brandId.toString());
+        if (brandName !== null && brandName !== undefined)
+            content_.append("BrandName", brandName.toString());
+        if (countryOfManufactureId !== null && countryOfManufactureId !== undefined)
+            content_.append("CountryOfManufactureId", countryOfManufactureId.toString());
+        if (countryOfManufactureName !== null && countryOfManufactureName !== undefined)
+            content_.append("CountryOfManufactureName", countryOfManufactureName.toString());
+        if (count !== null && count !== undefined)
+            content_.append("Count", count.toString());
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processApiPartsInsertPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processApiPartsInsertPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PartDTO>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PartDTO>;
+        }));
+    }
+
+    protected processApiPartsInsertPost(response: HttpResponseBase): Observable<PartDTO> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PartDTO.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     apiPartsAdvancedSearchPartPost(part: PartFilterViewModel, page: number | undefined, pageSize: number | undefined): Observable<DataSourceResultOfPartDTO> {
         let url_ = this.baseUrl + "/api/Parts/AdvancedSearchPart?";
         if (page === null)
@@ -1368,58 +1487,6 @@ export class SwaggerClient {
     }
 
     protected processApiPartsGetDetailsGet(response: HttpResponseBase): Observable<PartDTO> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PartDTO.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    apiPartsInsertPost(entity: PartDTO): Observable<PartDTO> {
-        let url_ = this.baseUrl + "/api/Parts/Insert";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(entity);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApiPartsInsertPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApiPartsInsertPost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<PartDTO>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<PartDTO>;
-        }));
-    }
-
-    protected processApiPartsInsertPost(response: HttpResponseBase): Observable<PartDTO> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -4903,61 +4970,6 @@ export interface IDataSourceResultOfMerchantDTO {
     additionalValue: number;
 }
 
-export class DataSourceResultOfPartDTO implements IDataSourceResultOfPartDTO {
-    data!: PartDTO[];
-    count!: number;
-    additionalValue!: number;
-
-    constructor(data?: IDataSourceResultOfPartDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.data = [];
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["data"])) {
-                this.data = [] as any;
-                for (let item of _data["data"])
-                    this.data!.push(PartDTO.fromJS(item));
-            }
-            this.count = _data["count"];
-            this.additionalValue = _data["additionalValue"];
-        }
-    }
-
-    static fromJS(data: any): DataSourceResultOfPartDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new DataSourceResultOfPartDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.data)) {
-            data["data"] = [];
-            for (let item of this.data)
-                data["data"].push(item.toJSON());
-        }
-        data["count"] = this.count;
-        data["additionalValue"] = this.additionalValue;
-        return data;
-    }
-}
-
-export interface IDataSourceResultOfPartDTO {
-    data: PartDTO[];
-    count: number;
-    additionalValue: number;
-}
-
 export class PartDTO implements IPartDTO {
     id!: number;
     name?: string | undefined;
@@ -5168,6 +5180,61 @@ export enum PartTypeEnum {
     Original = 1,
     HighCopy = 2,
     Imitation = 3,
+}
+
+export class DataSourceResultOfPartDTO implements IDataSourceResultOfPartDTO {
+    data!: PartDTO[];
+    count!: number;
+    additionalValue!: number;
+
+    constructor(data?: IDataSourceResultOfPartDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(PartDTO.fromJS(item));
+            }
+            this.count = _data["count"];
+            this.additionalValue = _data["additionalValue"];
+        }
+    }
+
+    static fromJS(data: any): DataSourceResultOfPartDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceResultOfPartDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["count"] = this.count;
+        data["additionalValue"] = this.additionalValue;
+        return data;
+    }
+}
+
+export interface IDataSourceResultOfPartDTO {
+    data: PartDTO[];
+    count: number;
+    additionalValue: number;
 }
 
 export class PartFilterViewModel implements IPartFilterViewModel {

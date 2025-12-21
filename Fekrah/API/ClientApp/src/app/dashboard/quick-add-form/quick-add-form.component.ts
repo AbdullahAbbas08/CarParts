@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 import { API_BASE_URL, DataSourceResultOfBrandDTO, FileTypeEnum, ImageDTO, LookupDTO, PartDTO, SwaggerClient, CategoryDTO } from '../../Shared/Services/Swagger/SwaggerClient.service';
 import { HttpClient, HttpEventType, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 import { CarPart } from '../../Shared/Models/car-card';
@@ -431,21 +431,99 @@ private prepareImagesData(files: File[], slug?: string) {
       return;
     }
 
+    debugger
     this.isLoading = true;
     const formData = this.prepareFormData();
-
-    setTimeout(() => {
       this.lastSubmittedPart = { ...formData };
-      this.isLoading = false;
-      
-      // Emit the form data to the parent component
-      this.formSubmitted.emit(formData);
-      
-      if (!this.editMode) {
-        // Only reset form if not in edit mode
-        this.resetForm();
+      if(this.lastSubmittedPart){
+        this.lastSubmittedPart.id = 0
       }
-    }, 1500);
+ 
+      
+        const v = this.partForm.getRawValue();
+
+  const id = undefined; // Insert
+  const name = v.partName ?? null;
+  const description = v.subtitle ?? null;
+
+  const price = Number(v.price);
+  const finalPrice = price; // لو عندك خصم عدّلها
+  const isSold = false;
+
+  const discount = 0;
+
+  // condition / quality / partType لازم يطابقوا الـ enums بتوع swagger
+  const condition = Number(v.condition) //as PartConditionEnum; // 1/2
+  const conditionName = null;
+
+  const quality = Number(v.grade) //as PartQualityEnum; // 1/2
+  const qualityName = null;
+
+  const partType = Number(v.partType) //as PartTypeEnum; // 1/2/3
+  const partTypeName = null;
+
+  const yearOfManufacture = Number(v.carYear) || null;
+
+  const merchantId = Number(v.storeName) || null;
+  const merchantName = null;
+
+  const categoryId = Number(v.category);
+  const categoryName = null;
+
+  const modelTypeId = Number(v.carModel) || null;
+  const carModelName = null;
+
+  const brandId = Number(v.carBrand) || null;
+  const brandName = null;
+
+  const countryOfManufactureId = Number(v.origin) || null;
+  const countryOfManufactureName = null;
+
+  const count = 1;
+
+  const imageUrls = this.imagesNames; // ImageDTO[]
+
+  this.swagger.apiPartsInsertPost(
+    id,
+    name,
+    description,
+    price,
+    finalPrice,
+    condition,
+    conditionName,
+    imageUrls,
+    isSold,
+    discount,
+    quality,
+    qualityName,
+    partType,
+    partTypeName,
+    yearOfManufacture,
+    merchantId,
+    merchantName,
+    categoryId,
+    categoryName,
+    modelTypeId,
+    carModelName,
+    brandId,
+    brandName,
+    countryOfManufactureId,
+    countryOfManufactureName,
+    count
+  )
+  .pipe(finalize(() => (this.isLoading = false)))
+  .subscribe({
+    next: (res) => {
+      alert('تم حفظ القطعة بنجاح ✅');
+      this.formSubmitted.emit(res);
+      this.resetForm();
+    },
+    error: (err) => {
+      console.error(err);
+      alert('حصل خطأ أثناء الحفظ ❌');
+    }
+  });
+
   }
 
   submitAndAddAnother(): void {

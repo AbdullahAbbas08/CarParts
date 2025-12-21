@@ -18,6 +18,13 @@ public class PartsController : _BaseController<Part, PartDTO>
         _partService = partService;
     }
 
+
+    [HttpPost, Route("Insert")]
+    public override PartDTO Insert([FromForm] PartDTO entity)
+    {
+        return _partService.Insert(entity);
+    }
+
     [HttpPost("AdvancedSearchPart")]
     public DataSourceResult<PartDTO> AdvancedSearch(PartFilterViewModel part, int page, int pageSize)
         => _partService.AdvancedSearch(part, page, pageSize);

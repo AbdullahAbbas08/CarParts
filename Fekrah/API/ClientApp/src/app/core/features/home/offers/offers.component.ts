@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
 
 // Customer Offer Interface
 interface CustomerOffer {
@@ -24,6 +24,8 @@ interface CustomerOffer {
   originalPrice?: number;
   discountPercentage?: number;
   savingsAmount?: number;
+  // Flip card state
+  isFlipped?: boolean;
 }
 
 @Component({
@@ -72,59 +74,72 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.initializeSwiper();
+    // انتظار حتى تحميل العروض ثم تهيئة Swiper
+    const checkOffersLoaded = () => {
+      if (!this.isLoading && this.filteredOffers.length > 0) {
+        setTimeout(() => {
+          this.initializeSwiper();
+        }, 100);
+      } else {
+        setTimeout(checkOffersLoaded, 100);
+      }
+    };
+    checkOffersLoaded();
   }
 
   private initializeSwiper(): void {
+    console.log('Initializing Swiper...');
+    console.log('Offers:', this.filteredOffers?.length);
+    
+    const swiperElement = document.querySelector('.offers-swiper');
+    const paginationElement = document.querySelector('.swiper-pagination');
+    
+    console.log('Swiper Element:', swiperElement);
+    console.log('Pagination Element:', paginationElement);
+    
     // تهيئة Swiper
-    this.swiper = new Swiper('.offers-swiper', {
-      modules: [Navigation, Pagination, Autoplay],
-      slidesPerView: 'auto',
-      spaceBetween: 20,
-      centeredSlides: false,
-      loop: false,
-      direction: 'horizontal',
+    // this.swiper = new Swiper('.offers-swiper', {
+    //   modules: [Pagination, Autoplay],
+    //   slidesPerView: 'auto',
+    //   spaceBetween: 20,
+    //   centeredSlides: true,
+    //   loop: true,
+    //   direction: 'horizontal',
       
-      // Navigation arrows
-      navigation: {
-        nextEl: '.offers-button-next',
-        prevEl: '.offers-button-prev',
-      },
+    //   // Pagination
+    //   pagination: {
+    //     el: '.offers-pagination',
+    //     clickable: true,
+    //     dynamicBullets: true,
+    //   },
       
-      // Pagination
-      pagination: {
-        el: '.offers-pagination',
-        clickable: true,
-        dynamicBullets: true,
-      },
+    //   // Autoplay
+    //   autoplay: {
+    //     delay: 4000,
+    //     disableOnInteraction: false,
+    //     pauseOnMouseEnter: true,
+    //   },
       
-      // Autoplay
-      autoplay: {
-        delay: 4000,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-      },
-      
-      // Responsive breakpoints
-      breakpoints: {
-        320: {
-          slidesPerView: 1,
-          spaceBetween: 15,
-        },
-        768: {
-          slidesPerView: 2,
-          spaceBetween: 20,
-        },
-        1024: {
-          slidesPerView: 3,
-          spaceBetween: 25,
-        },
-        1200: {
-          slidesPerView: 3,
-          spaceBetween: 30,
-        }
-      }
-    });
+    //   // Responsive breakpoints
+    //   breakpoints: {
+    //     320: {
+    //       slidesPerView: 1,
+    //       spaceBetween: 15,
+    //     },
+    //     768: {
+    //       slidesPerView: 2,
+    //       spaceBetween: 20,
+    //     },
+    //     1024: {
+    //       slidesPerView: 3,
+    //       spaceBetween: 25,
+    //     },
+    //     1200: {
+    //       slidesPerView: 3,
+    //       spaceBetween: 30,
+    //     }
+    //   }
+    // });
   }
 
   // تحميل بيانات القطع
@@ -194,6 +209,14 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
       this.filteredOffers = [...this.offers];
       this.sortOffers();
       this.isLoading = false;
+      
+      // إعادة تهيئة Swiper بعد تحميل البيانات
+      setTimeout(() => {
+        if (this.swiper) {
+          this.swiper.destroy();
+        }
+        this.initializeSwiper();
+      }, 100);
     }, 1000);
   }
 
@@ -457,6 +480,10 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
     return offer.bundlePartIdsCsv ? offer.bundlePartIdsCsv.split(',').length : 0;
   }
 
+  getBundlePartIds(offer: CustomerOffer): string[] {
+    return offer.bundlePartIdsCsv ? offer.bundlePartIdsCsv.split(',').map(id => id.trim()) : [];
+  }
+
   getBundleOriginalPrice(offer: CustomerOffer | null): number {
     if (!offer || !offer.bundlePartIdsCsv) return 0;
     
@@ -584,6 +611,16 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
     // You can add your cart service logic here
   }
 
+  viewDetails(offer: CustomerOffer): void {
+    // If it's a bundle offer, show bundle details
+    if (offer.bundlePartIdsCsv) {
+      this.showBundleDetails(offer);
+    } else {
+      // Otherwise, show part details
+      this.viewPartDetails(offer.partId);
+    }
+  }
+
   viewPartDetails(partId: number): void {
     // Implementation for viewing part details
     console.log('Viewing part details:', partId);
@@ -604,6 +641,28 @@ export class OffersComponent implements OnInit, AfterViewInit, OnDestroy {
     if (discountPercentage >= 30) return 'high-discount';
     if (discountPercentage >= 15) return 'medium-discount';
     return 'low-discount';
+  }
+
+  // Flip Card Methods
+  toggleBundleView(offer: CustomerOffer): void {
+    
+    console.log('🔄 Toggling bundle view for offer:', offer?.id);
+    
+    if (!offer) {
+      console.warn('❌ Offer is null or undefined');
+      return;
+    }
+    
+    // Toggle flip state for both bundles and single products
+    const previousState = offer.isFlipped || false;
+    offer.isFlipped = !previousState;
+    
+    console.log(`✅ Card ${offer.id} flipped from ${previousState ? 'back' : 'front'} to ${offer.isFlipped ? 'back' : 'front'}`);
+    
+    // Optional: Add haptic feedback on mobile devices
+    if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(50);
+    }
   }
 
   ngOnDestroy(): void {

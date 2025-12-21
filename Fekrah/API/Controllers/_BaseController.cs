@@ -30,7 +30,7 @@ namespace API.Controllers
         }
 
         [HttpPost, Route("Insert")]
-        public TDetailsDTO Insert([FromBody] TDetailsDTO entity)
+        public virtual TDetailsDTO Insert([FromBody] TDetailsDTO entity)
         {
             return _IBusinessServices.Insert(entity);
         }
