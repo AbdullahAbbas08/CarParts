@@ -1,0 +1,16 @@
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/bin/Debug/net8.0/BusinessLayer.deps.json
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/bin/Debug/net8.0/BusinessLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/bin/Debug/net8.0/BusinessLayer.pdb
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/bin/Debug/net8.0/DataLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/bin/Debug/net8.0/DataLayer.pdb
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.csproj.AssemblyReference.cache
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.AssemblyInfoInputs.cache
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.AssemblyInfo.cs
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.csproj.CoreCompileInputs.cache
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.sourcelink.json
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/Business.EA331CBA.Up2Date
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/refint/BusinessLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/BusinessLayer.pdb
+/home/runner/work/CarParts/CarParts/EcommerceSoap/BusinessLayer/obj/Debug/net8.0/ref/BusinessLayer.dll

@@ -1,0 +1,12 @@
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/bin/Debug/net8.0/DataLayer.deps.json
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/bin/Debug/net8.0/DataLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/bin/Debug/net8.0/DataLayer.pdb
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.AssemblyInfoInputs.cache
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.AssemblyInfo.cs
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.csproj.CoreCompileInputs.cache
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.sourcelink.json
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/refint/DataLayer.dll
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/DataLayer.pdb
+/home/runner/work/CarParts/CarParts/EcommerceSoap/DataLayer/obj/Debug/net8.0/ref/DataLayer.dll
