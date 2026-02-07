@@ -1,6 +1,43 @@
 @SoapService_HostAddress = http://localhost:5002
 
-GET {{SoapService_HostAddress}}/weatherforecast/
-Accept: application/json
+# اختبار الصفحة الرئيسية - Test Home Page
+GET {{SoapService_HostAddress}}/
+Accept: text/html
+
+###
+
+# اختبار WSDL لخدمة المنتجات - Test Product Service WSDL
+GET {{SoapService_HostAddress}}/ProductService.asmx?wsdl
+Accept: text/xml
+
+###
+
+# اختبار SOAP: الحصول على جميع المنتجات - Test SOAP: Get All Products
+POST {{SoapService_HostAddress}}/ProductService.asmx
+Content-Type: text/xml; charset=utf-8
+SOAPAction: http://tempuri.org/IProductSoapService/GetAllProducts
+
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetAllProducts xmlns="http://tempuri.org/" />
+  </soap:Body>
+</soap:Envelope>
+
+###
+
+# اختبار SOAP: الحصول على منتج بالمعرف - Test SOAP: Get Product by ID
+POST {{SoapService_HostAddress}}/ProductService.asmx
+Content-Type: text/xml; charset=utf-8
+SOAPAction: http://tempuri.org/IProductSoapService/GetProductById
+
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetProductById xmlns="http://tempuri.org/">
+      <productId>1</productId>
+    </GetProductById>
+  </soap:Body>
+</soap:Envelope>
 
 ###
